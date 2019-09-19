@@ -1,0 +1,115 @@
+#!/usr/bin/env python
+##########################################################################
+# Function: Get gene abundance for each sample
+# Author: Yancong Zhang (zhangyc201211@gmail.com)
+# Date: 05/28/2019
+##########################################################################
+import sys
+import os
+import re
+import argparse
+
+
+# ---------------------------------------------------------------
+# Description and arguments
+# ---------------------------------------------------------------
+description = """
+Get gene abundance for each sample
+"""
+
+def get_args ():
+	parser = argparse.ArgumentParser()
+	parser.add_argument('-w', help='the working directory', required=True)
+	parser.add_argument('-u', help='the input files', required=True)
+	parser.add_argument('-r', help='the reference file', required=True)
+	parser.add_argument('-t', help='the number of threads', required=True)
+	parser.add_argument('-s', help='the sample name', required=True)
+	values = parser.parse_args()
+	return values
+# get_args
+
+
+#==============================================================
+# Mapping with bowtie2
+#==============================================================
+def bowtie2_mapping (work_dir, ref_seq, input_file, thread, sample):
+	# Prepare directory
+	print(">>Running botwie2...")
+	os.system("mkdir -p " + work_dir)
+	os.chdir(work_dir)
+
+	# Index reference sequences
+	ref_index = re.sub(".fasta$", "", ref_seq)
+	ref_index = re.sub(".fna$", "", ref_seq)
+	mym = re.search("([^\/]+)$", ref_seq)
+	base_name = mym.group(1)
+	base_name = re.sub(".fasta$", "", base_name)
+	base_name = re.sub(".fna$", "", base_name)
+	os.system("ln -s " + ref_index + "*" + "  .")
+
+	# Mapping
+	sam = sample + ".sam"
+	print("bowtie2 -x " + base_name + " -U " + input_file + " --threads " + thread + " -S " + sam + "\n") 
+	os.system("bowtie2 -x " + base_name + " -U " + input_file + " --threads " + thread + " -S " + sam) 
+	
+	return sam
+# function bowtie2_mapping
+
+
+#==============================================================
+# Extract reads count info
+#==============================================================
+def extract_count_info (work_dir, sam_file, ref_seq, thread):
+	os.chdir(work_dir)
+	
+	# filter out low quality mapping reads
+	ann_file = re.sub(".fasta", ".saf.gtf", ref_seq)
+	ann_file = re.sub(".fna$", ".saf.gtf", ref_seq)
+	bam_file = re.sub(".sam", ".bam", sam_file)
+	flt_bam = re.sub(".sam", ".flt.bam", sam_file)
+	sort_bam = re.sub(".sam", ".sort.bam", sam_file)
+	#print("\n>>Filtering low mappping quality...")
+	print("samtools view -b " + sam_file + " > " + bam_file)
+	#print("samtools view -bq " + q_cutoff + " " + bam_file + " > " + flt_bam)
+	print("samtools sort " + bam_file + " -o " + sort_bam)
+	print("samtools index " + sort_bam)
+	os.system("samtools view -b " + sam_file + " > " + bam_file)
+	#os.system("samtools view -bq " + q_cutoff + " " + bam_file + " > " + flt_bam)
+	os.system("samtools sort " + bam_file + " -o  " + sort_bam)
+	os.system("samtools index " + sort_bam)
+	os.system("rm -f " + sam_file)
+	os.system("rm -f " + bam_file)
+
+	# Extract abundance
+	bed = re.sub(".bam", ".bed", sort_bam)
+	print("\n>>Get abundance...")
+	print("featureCounts -F SAF -T " + thread + " -a  " + ann_file +  " -o " +  bed + " " + sort_bam)	
+	os.system("featureCounts -F SAF -T " + thread + " -a " + ann_file +  " -o " +  bed + " " + sort_bam)	
+	#print("bedtools multicov -bams " + sort_bam + " -bed " + bed_file)	
+	#os.system("bedtools multicov -bams " + sort_bam + " -bed " + bed_file)	
+# extract_count_info
+
+
+#==============================================================
+###########  Main processing ############
+#==============================================================
+if __name__ == '__main__':
+	
+	### get arguments ###
+	values = get_args()
+
+	sys.stderr.write("### Start gene_abundance.py -r " + values.r + " ####\n")
+	
+	### Mapping ###
+	sys.stderr.write("Bowtie2 mapping......starting\n")
+	sam_file = bowtie2_mapping (values.w, values.r, values.u, values.t, values.s)
+	sys.stderr.write("Bowtie2 mapping......done\n")
+	
+	### Getting abundance ###
+	sys.stderr.write("\nExtract gene abundance......starting\n")
+	extract_count_info (values.w, sam_file, values.r, values.t)
+	sys.stderr.write("\nExtract gene abundance......done\n")
+	
+	sys.stderr.write("### Finish gene_abundance.py ####\n\n\n")
+
+# end: main
