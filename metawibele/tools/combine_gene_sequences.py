@@ -105,8 +105,8 @@ def collect_sequence (gene_path, extension, outfile):
 				continue
 			else:
 				open_out.write(line + "\n")
-				if flag == 1:
-					#open_out1.write(line + "\n")
+				#if flag == 1:
+				#	open_out1.write(line + "\n")
 		# foreach line
 		open_file.close()
 	# foeach sample
