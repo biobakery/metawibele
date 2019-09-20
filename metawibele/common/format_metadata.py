@@ -43,7 +43,7 @@ def get_args ():
 	parser = argparse.ArgumentParser(description=description)
 	parser.add_argument('-s', help='specify the name of study', required=True)
 	parser.add_argument('-a', help='input raw metadata info', required=True)
-	parser.add_argument('-b', help='input sequence info', required=True)
+	parser.add_argument('-b', help='input sequence info', default="none")
 	parser.add_argument('-c', help='input vocabulary file to format metadata', required=True)
 	parser.add_argument('-o', help='output the formated metadata file', required=True)
 	values = parser.parse_args()
@@ -299,7 +299,10 @@ if __name__ == '__main__':
 	### format info ###
 	sys.stderr.write("Format info ......starting\n")
 	meta_raw = collect_metadata_info (values.s, values.a)
-	seq = collect_sequence_info (values.s, values.b)
+	if values.b == "none":
+		seq = {}
+	else:
+		seq = collect_sequence_info (values.s, values.b)
 	format_info (meta_raw, seq, values.c, values.o)
 	sys.stderr.write("Format info ......done\n")
 	
