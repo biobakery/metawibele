@@ -76,34 +76,6 @@ def parse_cli_arguments():
 	                      default=True,
 	                      action="store_true")
 
-	'''
-	workflow.add_argument("pair-identifier", desc="the string to identify the first file in a pair", default=".R1")
-	workflow.add_argument("interleaved", desc="indicates whether or not sequence files are interleaved", default=False,
-                      action="store_true")
-	workflow.add_argument("bypass-quality-control", desc="do not run the quality control tasks", action="store_true")
-	workflow.add_argument("contaminate-databases",
-                      desc="the path (or comma-delimited paths) to the contaminate\nreference databases for QC",
-                      default=",".join([workflow_config.kneaddata_db_human_genome, workflow_config.kneaddata_db_rrna]))
-	workflow.add_argument("qc-options", desc="additional options when running the QC step", default="")
-	workflow.add_argument("remove-intermediate-output", desc="remove intermediate output files", action="store_true")
-	workflow.add_argument("bypass-functional-profiling", desc="do not run the functional profiling tasks",
-                      action="store_true")
-	workflow.add_argument("bypass-strain-profiling", desc="do not run the strain profiling tasks (StrainPhlAn)",
-                      action="store_true")
-	workflow.add_argument("run-strain-gene-profiling", desc="run the gene-based strain profiling tasks (PanPhlAn)",
-                      action="store_true")
-	workflow.add_argument("bypass-taxonomic-profiling",
-                      desc="do not run the taxonomic profiling tasks (a tsv profile for each sequence file must be included in the input folder using the same sample name)",
-                      action="store_true")
-	workflow.add_argument("run-assembly", desc="run the assembly and annotation tasks", action="store_true")
-	workflow.add_argument("strain-profiling-options", desc="additional options when running the strain profiling step",
-                      default="")
-	workflow.add_argument("max-strains", desc="the max number of strains to profile", default=20, type=int)
-	workflow.add_argument("strain-list", desc="input file with list of strains to profile", default="")
-	workflow.add_argument("assembly-options", desc="additional options when running the assembly step", default="")
-
-	'''
-
 	return workflow
 
 
@@ -169,8 +141,8 @@ def main(workflow):
 		                                                             gene_catalog_nuc, gene_catalog_prot,
 		                                                             mapping_dir, gene_catalog_saf, gene_catalog_count)
 
-		### start the workflow
-		workflow.go()
+	### start the workflow
+	workflow.go()
 
-	if __name__ == "__main__":
-		main(parse_cli_arguments())
+if __name__ == "__main__":
+	main(parse_cli_arguments())
