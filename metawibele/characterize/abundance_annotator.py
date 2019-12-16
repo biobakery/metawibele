@@ -1,4 +1,5 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
+
 """
 MetaWIBELE: abundance_annotator module
 Summary the abundance for each taxon of each protein family across samples
@@ -106,6 +107,7 @@ def collect_cluster_info (clust_file, flag):  # discovery_cohort.peptides.clust
 def collect_cluster_abundance (abufile, sample_info):
 	abundance = {}
 	sample_num = {}
+	phe_category = {}
 	titles = {}
 	open_file = open(abufile, "r")
 	line = open_file.readline()
@@ -128,10 +130,19 @@ def collect_cluster_abundance (abufile, sample_info):
 			mytype = "NA"
 			if mys in sample_info:
 				mytype = sample_info[mys]
+			type_split = mytype.split(config.c_metedata_delim)
 			if mytype != "NA":
 				if not mytype in sample_num:
 					sample_num[mytype] = {}
 				sample_num[mytype][mys] = ""
+				if len(type_split) > 1:
+					for mytmp in type_split:
+						if not mytmp in sample_num:
+							sample_num[mytmp] = {}
+						sample_num[mytmp][mys] = ""
+						phe_category[mytmp] = ""
+				else:
+					phe_category[mytype] = ""
 			if myvalue != "NA" and myvalue != "NaN" and myvalue != "nan" and myvalue != "inf" and myvalue != "Inf":
 				myvalue = float(myvalue)
 				if myvalue > float(config.abundance_detection_level):
@@ -144,17 +155,22 @@ def collect_cluster_abundance (abufile, sample_info):
 						if not mytype in abundance[myid]:
 							abundance[myid][mytype] = []
 						abundance[myid][mytype].append(myvalue)
+						if len(type_split) > 1:
+							for mytmp in type_split:
+								if not mytmp in abundance[myid]:
+									abundance[myid][mytmp] = []
+								abundance[myid][mytmp].append(myvalue)
 			myindex = myindex + 1
 	# foreach line
 	open_file.close()
-	return abundance, sample_num
+	return sample_num, phe_category, abundance
 # collect_cluster_abundance
 
 
 # ==============================================================
 # output info
 # ==============================================================
-def output_info (cluster, sample_num, abundance, myflag, flag, outfile):
+def output_info (cluster, sample_num, phe_category, abundance, myflag, flag, outfile):
 	myID = utilities.PROTEIN_FAMILY_ID
 	if flag == "protein":
 		myID = utilities.PROTEIN_ID
@@ -162,6 +178,9 @@ def output_info (cluster, sample_num, abundance, myflag, flag, outfile):
 	open_out.write(myID + "\ttype\tdetail\tmean_abundance\tmean_prevalent_abundance\tprevalence\ttotal_abundance\ttotal_samples\n")
 	for myid in sorted(cluster.keys()):
 		if myid in abundance:
+			maximal = -999999
+			hit_abundance = "NA"
+			hit_prevalence = "NA"
 			for mytype in sorted(abundance[myid].keys()):
 				mynum = len(abundance[myid][mytype])
 				mytotal = sum(abundance[myid][mytype])
@@ -171,17 +190,28 @@ def output_info (cluster, sample_num, abundance, myflag, flag, outfile):
 				myflag1 = re.sub("_abundance", "-" + mytype + "_abundance", myflag)
 				myflag1 = re.sub("-combined_abundance", "_abundance", myflag1)
 				myflag1 = re.sub("non_", "non-", myflag1)
-				mystr = myid + "\t" + myflag1 + "\t" + str(mymean_beta) + "\t" + str(mymean) + "\t" + str(mymean_beta) + "\t" + str(mypre) + "\t" + str(mytotal) + "\t" + str(len(sample_num[mytype].keys()))
+				mystr = myid + "\t" + myflag1 + "\t" + str(mymean) + "\t" + str(mymean) + "\t" + str(mymean_beta) + "\t" + str(mypre) + "\t" + str(mytotal) + "\t" + str(len(sample_num[mytype].keys()))
 				open_out.write(mystr + "\n")
 				
 				myflag2 = re.sub("abundance", "prevalence", myflag1)
 				mystr = myid + "\t" + myflag2 + "\t" + str(mypre) + "\t" + str(mymean) + "\t" + str(mymean_beta) + "\t" + str(mypre) + "\t" + str(mytotal) + "\t" + str(len(sample_num[mytype].keys()))
 				open_out.write(mystr + "\n")
+				
+				if mymean > maximal:
+					maximal = mymean
+					myflag1 = re.sub("_abundance", "-" + "stratified-phenotype" + "_abundance", myflag)
+					hit_abundance = myid + "\t" + myflag1 + "\t" + str(mymean) + "\t" + str(mymean) + "\t" + str(mymean_beta) + "\t" + str(mypre) + "\t" + str(mytotal) + "\t" + str(len(sample_num[mytype].keys()))
+					myflag2 = re.sub("abundance", "prevalence", myflag1)
+					hit_prevalence = myid + "\t" + myflag2 + "\t" + str(mypre) + "\t" + str(mymean) + "\t" + str(mymean_beta) + "\t" + str(mypre) + "\t" + str(mytotal) + "\t" + str(len(sample_num[mytype].keys()))
+			
+			if hit_abundance != "NA":
+				open_out.write(hit_abundance + "\n")
+				open_out.write(hit_prevalence + "\n")
 		else:
-			mystr = myid + "\t" + myflag + "\t" + "NA" + "\t" + "NaN" + "\t" + "NaN" + "\t" + "NaN" + "\t" + "NaN" + "\t" + str(len(sample_num["combined"].keys()))
+			mystr = myid + "\t" + myflag + "\t" + "NaN" + "\t" + "NaN" + "\t" + "NaN" + "\t" + "NaN" + "\t" + "NaN" + "\t" + str(len(sample_num["combined"].keys()))
 			open_out.write(mystr + "\n")
 			myflag1 = re.sub("abundance", "prevalence", myflag)
-			mystr = myid + "\t" + myflag1 + "\t" + "NA" + "\t" + "NaN" + "\t" + "NaN" + "\t" + "NaN" + "\t" + "NaN" + "\t" + str(len(sample_num["combined"].keys()))
+			mystr = myid + "\t" + myflag1 + "\t" + "NaN" + "\t" + "NaN" + "\t" + "NaN" + "\t" + "NaN" + "\t" + "NaN" + "\t" + str(len(sample_num["combined"].keys()))
 			open_out.write(mystr + "\n")
 	open_out.close()
 # combine info
@@ -201,12 +231,12 @@ if __name__ == '__main__':
 	sys.stderr.write("Get info ......starting\n")
 	sample_info = utilities.sample_info (config.metadata, config.study)
 	cluster = collect_cluster_info (config.protein_family, values.flag)
-	abundance, sample_num = collect_cluster_abundance (values.abundance, sample_info)
+	sample_num, phe_category, abundance = collect_cluster_abundance (values.abundance, sample_info)
 	sys.stderr.write("Get info ......done\n")
 
 	### convert info ###
 	sys.stderr.write("Convert info ......starting\n")
-	output_info (cluster, sample_num, abundance, values.type, values.flag, values.output)
+	output_info (cluster, sample_num, phe_category, abundance, values.type, values.flag, values.output)
 	sys.stderr.write("Output info ......done\n")
 
 	sys.stderr.write("### Finish abundance_annotator.py ####\n\n\n")
