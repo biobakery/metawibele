@@ -1,8 +1,9 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 """
-MeteWIBELE: select_prioritization.py module
-Select out prioritized protein families using sequence annotations as selection factor 
+MeteWIBELE: filter_prioritization.py module
+1) Filter subsets using binary annotation (sequence-based annotation, interested genes, etc) as prioritization factor 
+2) Narrow down prioritized candidates
 
 Copyright (c) 2019 Harvard School of Public Health
 
@@ -41,8 +42,8 @@ from operator import attrgetter, itemgetter
 
 # Try to load one of the MetaWIBELE modules to check the installation
 try:
-	import config
-	import utilities
+	from metawibele import config
+	from metawibele import utilities
 except ImportError:
 	sys.exit("CRITICAL ERROR: Unable to find the MetaWIBELE python package." +
 	         " Please check your install.")
@@ -57,13 +58,13 @@ def parse_arguments():
 	Parse the arguments from the user
 	"""
 	parser = argparse.ArgumentParser(
-		description = "MetaWIBELE-prioritize: prioritize importance of protein families based on annotation and phenotype properties\n",
+		description = "MetaWIBELE-prioritize: prioritize importance of protein families based on binary annotation\n",
 		formatter_class = argparse.RawTextHelpFormatter,
-		prog = "prioritization_selection")
+		prog = "filter_prioritization.py")
 	parser.add_argument(
 		"-c", "--config",
-		help = "[REQUIRED]config file for prioritization selection\n",
-		default = "prioritization_selection.cfg",
+		help = "[REQUIRED]config file for prioritization filtering\n",
+		default = "prioritization.cfg",
 		required=True)
 	parser.add_argument(
 		"-a", "--annotation",
@@ -78,7 +79,7 @@ def parse_arguments():
 	parser.add_argument(
 		"-o", "--outfile",
 		help = "[REQUIRED] the name of output file\n",
-		default = "metawibele_supervised_prioritization.priority-selection.tsv",
+		default = "metawibele_supervised_prioritization.priority-filter.tsv",
 		required=True)
 
 	return parser.parse_args()
@@ -86,48 +87,40 @@ def parse_arguments():
 
 def read_config_file (conf_file):
 	"""
-	Collect config info for prioritization selection
+	Collect config info for prioritization filtering
 	Input: config filename
 	Output: evidence_conf = {signaling:1, interaction:1, extracellular:1 ...}
 	"""
 
-	logger.debug('read_config_file')
+	print('read_config_file')
 
 	config_items = config.read_user_edit_config_file(conf_file)
 	required_conf = {}
 	optional_conf = {}
 	specific_annotation = {}
 	specific_cluster = {}
+	values = ["required", "optional", "none"]
 
-	if "requirement" in config_items:
-		for name in config_items["requirement"].keys():
-			myvalue = config_items["requirement"][name]
-			try:
-				float(myvalue)
-				if float(myvalue) == 0:
+	if "filtering" in config_items:
+		for name in config_items["filtering"].keys():
+			myvalue = config_items["filtering"][name]
+			if name == "vignettes" or name == "clusters":
+				if name == "vignettes":
+					specific_annotation[myvalue] = ""
+				if name == "clusters":
+					specific_cluster[myvalue] = ""
+			else:
+				if not myvalue in values:
+					print("Please use valid value for the config item " + name + ": e.g. required | optional | none")
 					continue
-			except ValueError:
-				logger.debug('Not numberic values for the config item')
-			required_conf[name] = myvalue
-			if name == "vignettes":
-				specific_annotation[myvalue] = ""
-			if name == "clusters":
-				specific_cluster[myvalue] = ""
-
-	if "option" in config_items:
-		for name in config_items["option"].keys():
-			myvalue = config_items["option"][name]
-			try:
-				float(myvalue)
-				if float(myvalue) == 0:
+				if myvalue == "none":
 					continue
-			except ValueError:
-				logger.debug('Not numberic values for the config item')
-			optional_conf[name] = myvalue
-			if name == "vignettes":
-				specific_annotation[myvalue] = ""
-			if name == "clusters":
-				specific_cluster[myvalue] = ""
+				if myvalue == "required":
+					print("Required filtering item: " + name + "\t" + myvalue)
+					required_conf[name] = myvalue
+				if myvalue == "optional": 
+					print("Optional filtering item: " + name + "\t" + myvalue)
+					optional_conf[name] = myvalue
 
 	return required_conf, optional_conf, specific_annotation, specific_cluster
 
@@ -138,7 +131,7 @@ def read_vignettes_file (vignettes_file, specific_annotation):
 	Input: vignettes filename
 	Output: vignettes = [ann1, ann2, ann3, ..]
 	"""
-	logger.debug('read_vignettes_file')
+	print('read_vignettes_file')
 
 	vignettes = {}
 	titles = {}
@@ -163,7 +156,7 @@ def read_vignettes_file (vignettes_file, specific_annotation):
 			print("No accession info!\t" + line)
 			continue
 		myid = info[titles["accession"]]
-		vignettes[info[0]] = ""
+		vignettes[myid] = ""
 	# foreach line
 	open_file.close()
 
@@ -177,7 +170,7 @@ def read_cluster_file (specific_cluster):
 	Output: clusters = [ann1, ann2, ann3, ..]
 	"""
 
-	logger.debug('read_cluster_file')
+	print('read_cluster_file')
 
 	cluster = {}
 	titles = {}
@@ -214,7 +207,7 @@ def read_annotation_file (ann_file, required_conf, optional_conf, specific_ann, 
 	Output: ann_score = {Cluster_XYZ: 3, ...}
 	"""
 
-	logger.debug('read_annotation_file')
+	print('read_annotation_file')
 
 	ann = {}
 	ann_types = {}
@@ -235,6 +228,13 @@ def read_annotation_file (ann_file, required_conf, optional_conf, specific_ann, 
 		myf = info[titles["feature"]]
 		if myann == "NA":
 			continue
+		try:
+			float(myann)
+			if float(myann) == 0:
+				continue
+		except ValueError:
+			#print('Not numberic values for annotation item' + "\t" + myann)
+			pass
 		if myf.lower() in required_conf or myf.lower() in optional_conf:
 			if not myid in ann:
 				ann[myid] = {}
@@ -257,8 +257,7 @@ def read_annotation_file (ann_file, required_conf, optional_conf, specific_ann, 
 	# foreach line
 	open_file.close()
 
-	# check requirement and option
-	flag = 0
+	# check required and optional annotation
 	cluster1 = {}
 	for myid in ann.keys():
 		mynum = 0
@@ -269,11 +268,11 @@ def read_annotation_file (ann_file, required_conf, optional_conf, specific_ann, 
 		if len(required_conf.keys()) == mynum:
 			cluster1[myid] = ""
 
-	flag = 0
 	cluster2 = {}
 	for myid in ann.keys():
+		flag = 0
 		for mytype in ann[myid].keys():
-			if mytype.lower() in optional_conf:
+			if mytype.lower() in optional_conf.keys():
 				flag = 1
 			ann_types[mytype] = ""
 		if len(optional_conf.keys()) == 0:
@@ -288,15 +287,15 @@ def read_annotation_file (ann_file, required_conf, optional_conf, specific_ann, 
 	return cluster
 
 
-def select_prioritization (priority_file, cluster, outfile):
+def filter_prioritization (priority_file, cluster, outfile):
 	"""
-	Select prioritized protein families based on guiding evidence
+	Filter prioritized protein families based on guiding evidence
 	Input: prioritized file
 			specific_families = {cluster_A, cluster_B, ...}
-	Output: selected prioritized list
+	Output: prioritized list after filtering
 	"""
 
-	logger.debug('select_prioritization')
+	print('filter_prioritization')
 
 	open_file = open(priority_file, "r")
 	open_out = open(outfile, "w")
@@ -333,13 +332,13 @@ def main():
 	clusters = read_annotation_file (args_value.annotation, required_conf, optional_conf, spe_ann, spe_cluster)
 
 	if config.verbose == 'DEBUG':
-		print ("--- Select subset of prioritized protein families ---")
-	select_prioritization (args_value.priority, clusters, args_value.outfile)
+		print ("--- Filter for subset of prioritized protein families ---")
+	filter_prioritization (args_value.priority, clusters, args_value.outfile)
 
 
 	if config.verbose == 'DEBUG':
-		print ("--- The prioritization_selection output is written in %s ..." % (args_value.outfile))
-		print ("--- Prioritization-selection process is successfully completed ---")
+		print ("--- The filter_prioritization output is written in %s ..." % (args_value.outfile))
+		print ("--- Prioritization-filter process is successfully completed ---")
 
 
 if __name__ == '__main__':

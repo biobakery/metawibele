@@ -1,8 +1,8 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 """
 MeteWIBELE: quantify_prioritization module
-1) Define quantitative criteria to prioritize the importance of protein families
+1) Define quantitative criteria to calculate numerical ranks and prioritize the importance of protein families
 2) Prioritize the importance of protein families using unsupervised or supervised approaches
 
 Copyright (c) 2019 Harvard School of Public Health
@@ -42,8 +42,8 @@ from operator import attrgetter, itemgetter
 
 # Try to load one of the MetaWIBELE modules to check the installation
 try:
-	import config
-	import utilities
+	from metawibele import config
+	from metawibele import utilities
 except ImportError:
 	sys.exit("CRITICAL ERROR: Unable to find the MetaWIBELE python package." +
 	         " Please check your install.")
@@ -58,9 +58,9 @@ def parse_arguments():
 	Parse the arguments from the user
 	"""
 	parser = argparse.ArgumentParser(
-		description = "MetaWIBELE-prioritize: prioritize importance of protein families based on annotation and phenotype properties\n",
+		description = "MetaWIBELE-prioritize: prioritize importance of protein families based on quantitative properties\n",
 		formatter_class = argparse.RawTextHelpFormatter,
-		prog = "prioritization")
+		prog = "quantify_prioritization.py")
 	parser.add_argument(
 		"-c", "--config",
 		help = "[REQUIRED] sconfig file for prioritization evidence\n",
@@ -73,13 +73,18 @@ def parse_arguments():
 		default = "supervised",
 		required=True)
 	parser.add_argument(
+		"-r", "--ranking",
+		help = "[REQUIRED] approach for ranking\n",
+		choices= ["harmonic_mean", "arithmetic_mean", "minimal", "maximal"],
+		default = "harmonic_mean")
+	parser.add_argument(
 		"-w", "--weight",
 		help = "[REQUIRED] method for weighting: "
-		       "[uniform] specify uniform weight for each evidence; "
+		       "[equal] specify equal weight for each evidence; "
 		       "[correlated] specify weigh based on the pairwise correlation between evidence items;"
 		       "[fixed] specify weigh manually in the config file\n",
-		choices= ["uniform", "correlated", "fixed"],
-		default = "uniform",
+		choices= ["equal", "correlated", "fixed"],
+		default = "equal",
 		required=True)
 	parser.add_argument(
 		"-a", "--annotation",
@@ -107,11 +112,12 @@ def read_config_file (conf_file, method):
 	Output: evidence_conf = {DNA_prevalence:1, DNA_abundance:1, ...}
 	"""
 
-	logger.debug('read_config_file')
+	print('read_config_file')
 
 	config_items = config.read_user_edit_config_file(conf_file)
 	ann_conf = {}
 	attr_conf = {}
+	values = ["required", "optional", "none"]
 
 	if method == "unsupervised":
 		if "unsupervised" in config_items:
@@ -119,10 +125,9 @@ def read_config_file (conf_file, method):
 				myvalue = config_items["unsupervised"][name]
 				try:
 					float(myvalue)
-					if float(myvalue) == 0:
-						continue
 				except ValueError:
-					logger.debug('Not numberic values for the config item')
+					print("Not numberic values for the config item " + name)
+					continue
 				if re.search("__", name):
 					name = re.sub("-", "_", name)
 					name = re.sub("\.", "_", name)
@@ -136,12 +141,20 @@ def read_config_file (conf_file, method):
 		if "supervised" in config_items:
 			for name in config_items["supervised"].keys():
 				myvalue = config_items["supervised"][name]
-				try:
-					float(myvalue)
-					if float(myvalue) == 0:
+				if name == "tshld_priority" or name == "tshld_priority_score":
+					try:
+						float(myvalue)
+					except ValueError:
+						print('Not numberic values for the config item ' + name)
 						continue
-				except ValueError:
-					logger.debug('Not numberic values for the config item')
+				else:
+					if not myvalue in values:
+						print("Please use valid value for the config item " + name + ": e.g. required | optional | none")
+						continue
+					if myvalue == "required":
+						print("Required ranking item: " + name + "\t" + myvalue)
+					if myvalue == "optional":
+						print("Optional ranking item: " + name + "\t" + myvalue)
 				if re.search("__", name):
 					name = re.sub("-", "_", name)
 					name = re.sub("\.", "_", name)
@@ -213,7 +226,7 @@ def read_annotation_file (ann_file, ann_conf):
 	Input: filename of the characterization file
 	Output: ann = {Cluster_XYZ: {prevalence:0.001, abundance:0.3, ...}, ...}
 	"""
-	logger.debug('read_annotation_file')
+	print('read_annotation_file')
 
 	required = {}
 	annotation = {}
@@ -256,7 +269,7 @@ def combine_annotation (annotation, split, required, total_ann, ann_types, requi
 			split = {Cluster_XYZ:{Cluster_XYZ|A, Cluster_XYZ|B, ...}, ...}
 	Output: total = {Cluster_XYZ: {prevalence:0.001, abundance:0.3, ...}, ...}
 	"""
-	logger.debug('combine_annotation')
+	print('combine_annotation')
 
 	for myid in annotation.keys():
 		if myid in split:
@@ -312,14 +325,17 @@ def combine_evidence (ann, ann_types):
 	Output: evidence_dm = {Cluster_XYZ: {'qvalue':0.001, 'coef':-0.3, 'annotation':3, ...}, ...}
 	"""
 
-	logger.debug('combine_evidence')
+	print('combine_evidence')
 
 	evidence_row = sorted(ann_types.keys())
 	metawibele_row = []
 	for item in evidence_row:
 		metawibele_row.append(item + "__value")
 		metawibele_row.append(item + "__percentile")
-	evidence_table_row = namedtuple("evidence_table_row", evidence_row, verbose=False, rename=False)
+	try:
+		evidence_table_row = namedtuple("evidence_table_row", evidence_row, verbose=False, rename=False)
+	except:
+		evidence_table_row = namedtuple("evidence_table_row", evidence_row, rename=False)
 	evidence_table = pd.DataFrame(index=sorted(ann.keys()), columns=evidence_table_row._fields)
 
 	# build data frame
@@ -359,9 +375,9 @@ def get_correlated_weight (evidence_table):
 		return weight_conf
 
 
-def get_uniform_weight (ann_types):
+def get_equal_weight (ann_types):
 	"""
-	Calculate the uniform weight and return weight table
+	Calculate the equal weight and return weight table
 	Input:  evidence_table = {family: {'abundance': abundance, 'prevalence': prevalence}r
 	Output: weight_conf = {'abundance': 0.5, 'prevalence': 0.5, ...}
 	"""
@@ -377,7 +393,7 @@ def get_uniform_weight (ann_types):
 
 def get_fixed_weight (ann_types, ann_conf, attr_conf):
 	"""
-	Calculate the uniform weight and return weight table
+	Calculate the fixed weight and return weight table
 	Input:  evidence_table = {family: {'abundance': abundance, 'prevalence': prevalence}}
 	Output: weight_conf = {'abundance': 0.5, 'prevalence': 0.5, ...}
 	"""
@@ -418,9 +434,32 @@ def weighted_harmonic_mean (summary_table, evidence, weight_conf, score_name):
 			total_weight = total_weight + myw
 			myscore = myscore + myw / summary_table[mykey]
 	summary_table[score_name] = float(total_weight) / myscore
+
+
+def arithmetic_mean (summary_table, evidence, score_name):
+	"""
+	Calculate the Arithmetic mean
+	Input:  summary_table = {family: {'abundance': 0.5, 'prevalence': 0.8}, ...}
+			evidence = ['abundance', 'prevalence', ...]
+			weight_conf = {'abundance': 0.5, 'prevalence': 0.5, ...}
+	Output: summary_table = {family: {'score_name': 0.9, 'abundance_value': 0.5, 'abundance_percentile':0.9,...},...}
+	"""
+
+	# Arithmetic mean
+	total_item = 0
+	mytype = evidence[0]
+	mykey = mytype + "__percentile"
+	total_item = total_item + 1
+	myscore = summary_table[mykey]
+	for mytype in evidence[1:]:
+		mykey = mytype + "__percentile"
+		total_item = total_item + 1
+		myscore = myscore + summary_table[mykey]
+	
+	summary_table[score_name] = myscore / float(total_item)
 	
 
-def get_rank_score (evidence_table, evidence_row, metawibele_row, weight_conf):
+def get_rank_score (evidence_table, evidence_row, metawibele_row, weight_conf, rank_method):
 		"""
 		Return the data frame of protein families with their annotation, percentiles, and MetaWIBELE score
 		Input:  evidence_table = {family: {'abundance': 0.5, 'prevalence': 0.8}}
@@ -428,10 +467,13 @@ def get_rank_score (evidence_table, evidence_row, metawibele_row, weight_conf):
 		Output: summary_table = {family: {'abundance_value': 0.5, 'abundance_percentiles': 0.9,...},...}
 		"""
 
-		logger.debug('get_rank_score')
+		print('get_rank_score')
 
 		# create a data frame
-		metawibele_table_row = namedtuple("metawibele_table_row", metawibele_row, verbose=False, rename=False)
+		try:
+			metawibele_table_row = namedtuple("metawibele_table_row", metawibele_row, verbose=False, rename=False)
+		except:
+			metawibele_table_row = namedtuple("metawibele_table_row", metawibele_row, rename=False)
 		summary_table = pd.DataFrame(index=evidence_table.index, columns=metawibele_table_row._fields)
 
 		# calculate percentile
@@ -448,8 +490,14 @@ def get_rank_score (evidence_table, evidence_row, metawibele_row, weight_conf):
 			rank_name.append(mytype + "__percentile")
 
 		# calculate MetaWIBELE score
-		weighted_harmonic_mean (summary_table, evidence_row, weight_conf, "ranking_score")
-		#summary_table["ranking_score"] = summary_table[rank_name].min(axis=1)
+		if rank_method == "minimal":
+			summary_table["priority_score"] = summary_table[rank_name].min(axis=1)
+		if rank_method == "maximal":
+			summary_table["priority_score"] = summary_table[rank_name].max(axis=1)
+		if rank_method == "harmonic_mean":
+			weighted_harmonic_mean (summary_table, evidence_row, weight_conf, "priority_score")
+		if rank_method == "arithmetic_mean":
+			arithmetic_mean (summary_table, evidence_row, "priority_score")
 		summary_rank = summary_table[rank_name]
 
 		return summary_table, summary_rank
@@ -462,9 +510,9 @@ def prioritize_families (summary_table, score_column, ann_conf):
 			beta = parameter value
 	Output: imp_families = {family: {'abundance': mean abundance, 'prevalence': prevalence}}
 	"""
-	logger.debug('prioritize_families')
+	print('prioritize_families')
 
-	pri_beta = ann_conf["tshld_priority"]
+	pri_percentile = ann_conf["tshld_priority"]
 	pri_score = ann_conf["tshld_priority_score"]
 	#metawibele_score = config.tshld_score  # 1/((1/(beta*tshld_prev)) + (1/((1-beta)*tshld_abund)))
 
@@ -476,14 +524,14 @@ def prioritize_families (summary_table, score_column, ann_conf):
 	except:
 		#imp_families = imp_families.sort(score_column, ascending=False)
 		summary_table = summary_table.sort_values(score_column, ascending=False)
-	if pri_score != "none":
+	if pri_score != "NaN":
 		imp_families = summary_table[summary_table[score_column] > float(pri_score)]
 		# debug
 		print("Specified threshold of priority score: " + str(pri_score))
 	else:
-		mytop_num = int(summary_table.shape[0] * float(pri_beta))
+		mytop_num = int(summary_table.shape[0] * float(pri_percentile))
 		imp_families = summary_table.head(mytop_num)
-		print("Specified threshold of priority: " + str(pri_beta))
+		print("Specified threshold of priority: " + str(pri_percentile))
 	
 	return summary_table, imp_families
 
@@ -496,7 +544,7 @@ def write_results (summary_table, split, out_file):
 	Output: Writes the family dictionary to the output_filename
 	"""
 
-	logger.debug('write_prioritization_results')
+	print('write_prioritization_results')
 
 	keys = summary_table.columns.values.tolist()
 	foo = open(out_file, 'w')
@@ -535,26 +583,29 @@ def main():
 	write_results (evidence_table, split, metawibele_output_file)
 
 	if config.verbose == 'DEBUG':
-		print ("--- Calculate Ranking score for protein families ---")
+		print ("\n--- Calculate Ranking score for protein families ---")
 	if args_value.weight == "fixed":
 		weight_conf = get_fixed_weight (ann_types, ann_conf, attr_conf)
-	if args_value.weight == "uniform":
-		weight_conf = get_uniform_weight (ann_types)
+	if args_value.weight == "equal":
+		weight_conf = get_equal_weight (ann_types)
 	if args_value.weight == "correlated":
 		weight_conf = get_correlated_weight (evidence_table)
-	summary_table, rank_table = get_rank_score (evidence_table, evidence_row, metawibele_row, weight_conf)
+	if config.verbose == 'DEBUG':
+		print ("\n--- Weighted method: " + args_value.weight)
+		print ("\n--- Ranking method: " + args_value.ranking)
+	summary_table, rank_table = get_rank_score (evidence_table, evidence_row, metawibele_row, weight_conf, args_value.ranking)
 
 	### get important families ###
 	if config.verbose == 'DEBUG':
-		print ("--- Get prioritized families based on MetaWIBELE score ---")
-	summary_table, imp_family = prioritize_families (summary_table, "ranking_score", ann_conf)
+		print ("\n--- Get prioritized families based on MetaWIBELE score ---")
+	summary_table, imp_family = prioritize_families (summary_table, "priority_score", ann_conf)
 	metawibele_output_file = args_value.output + '/' + myout + '.rank.tsv'
 	write_results(summary_table, split, metawibele_output_file)
 	metawibele_output_file = args_value.output + '/' + myout + '.priority.tsv'
 	write_results (imp_family, split, metawibele_output_file)
 
 	if config.verbose == 'DEBUG':
-		print ("--- The prioritization output is written in %s ..." % (args_value.output))
+		print ("\n--- The prioritization output is written in %s ..." % (args_value.output))
 		print ("--- Prioritization process is successfully completed ---")
 
 

@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 
 """
 MeteWIBELE: finalize prioritization module
