@@ -432,15 +432,15 @@ MSPminer_module = required
 	
 	```
 	familyID    annotation  feature category    method  AID
-Cluster_1   demo    study   project Shotgun NA
-Cluster_1   Cluster_1   protein_family  Denovo_clustering   CD-hit  Cluster_1__Denovo_clustering
-Cluster_1   UniRef90_A0A3E2UKI3 strong_homology UniRef90_homology   UniRef90    Cluster_1__UniRef90_homology
-Cluster_1   Faecalibacterium prausnitzii    Species Taxonomy_characterization   Taxonomy_annotation Cluster_1__Taxonomy_characterization
-Cluster_1   UniRef90_uncharacterized    UniRef90_uncharacterized    UniRef90_characterization   UniRef90    Cluster_1__UniRef90_uncharacterized
-Cluster_1   184.02247661692778  DNA_abundance   Denovo_characterization DNA Cluster_1__DNA_abundance
-Cluster_1   0.9410658307210031  DNA_prevalence  Denovo_characterization DNA Cluster_1__DNA_prevalence
-Cluster_1   PF00408:PF02878;PF00408:PF02879;PF00408:PF02880;PF02878:PF02879;PF02878:PF02880;PF02879:PF02880 DOMINE_interaction  Denovo_characterization DOMINE  Cluster_1__DOMINE_interaction
-...
+	Cluster_1   demo    study   project Shotgun NA
+	Cluster_1   Cluster_1   protein_family  Denovo_clustering   CD-hit  Cluster_1__Denovo_clustering
+	Cluster_1   UniRef90_A0A3E2UKI3 strong_homology UniRef90_homology   UniRef90    Cluster_1__UniRef90_homology
+	Cluster_1   Faecalibacterium prausnitzii    Species Taxonomy_characterization   Taxonomy_annotation	Cluster_1__Taxonomy_characterization
+	Cluster_1   UniRef90_uncharacterized    UniRef90_uncharacterized    UniRef90_characterization   UniRef90    Cluster_1__UniRef90_uncharacterized
+	Cluster_1   184.02247661692778  DNA_abundance   Denovo_characterization DNA Cluster_1__DNA_abundance
+	Cluster_1   0.9410658307210031  DNA_prevalence  Denovo_characterization DNA Cluster_1__DNA_prevalence
+	Cluster_1   PF00408:PF02878;PF00408:PF02879;PF00408:PF02880;PF02878:PF02879;PF02878:PF02880;PF02879:PF02880 DOMINE_interaction  Denovo_characterization DOMINE  Cluster_1__DOMINE_interaction
+	...
 	```
 	
 	* File name: $OUTPUT_DIR/characterization/$BASENAME\_proteinfamilies\_annotation.tsv
@@ -453,33 +453,34 @@ Cluster_1   PF00408:PF02878;PF00408:PF02879;PF00408:PF02880;PF02878:PF02879;PF02
 	
 	```
 	TID AID key value
-1   Cluster_1__Denovo_clustering    repID   HSMA33LJ_27125
-2   Cluster_1__Denovo_clustering    rep_length  504
-3   Cluster_1__Denovo_clustering    cluster_size    139
-4   Cluster_1__UniRef90_homology    UniProtKB   A0A3E2UKI3_9FIRM
-5   Cluster_1__UniRef90_homology    description Phosphoglucosamine mutase
-6   Cluster_1__UniRef90_homology    organism    Faecalibacterium prausnitzii
-7   Cluster_1__UniRef90_homology    query_cov_type  high_confidence
-8   Cluster_1__UniRef90_homology    mutual_cov_type high_confidence
-9   Cluster_1__UniRef90_homology    identity    95.2
-10  Cluster_1__UniRef90_homology    query_coverage  0.9146825396825397
-11  Cluster_1__UniRef90_homology    mutual_coverage 0.9146825396825397
-12  Cluster_1__UniRef90_homology    taxa_id 1239
-13  Cluster_1__UniRef90_homology    taxa_name   Firmicutes
-14  Cluster_1__Taxonomy_characterization    taxa_id 853
-15  Cluster_1__Taxonomy_characterization    taxa_lineage    k__Bacteria|p__Firmicutes|c__Clostridia|o__Clostridiales|f__Ruminococcaceae|g__Faecalibacterium|s__Faecalibacterium_prausnitzii
-16  Cluster_1__Taxonomy_characterization    LCA_Tax Faecalibacterium prausnitzii
-17  Cluster_1__Taxonomy_characterization    LCA_TaxID   853
-18  Cluster_1__Taxonomy_characterization    Rep_Tax Faecalibacterium prausnitzii
-19  Cluster_1__Taxonomy_characterization    Rep_TaxID   853
-20  Cluster_1__Taxonomy_characterization    msp_name    msp_unknown
-21  Cluster_1__Taxonomy_characterization    msp_taxa_name   NA
-22  Cluster_1__Taxonomy_characterization    msp_taxa_id NA
-23  Cluster_1__DNA-CD_abundance mean_abundance  145.88748347267776
-24  Cluster_1__DNA-CD_abundance mean_prevalent_abundance    164.03938233794182
-25  Cluster_1__DNA-CD_abundance prevalence  0.889344262295082
-...
+	1   Cluster_1__Denovo_clustering    repID   HSMA33LJ_27125
+	2   Cluster_1__Denovo_clustering    rep_length  504
+	3   Cluster_1__Denovo_clustering    cluster_size    139
+	4   Cluster_1__UniRef90_homology    UniProtKB   A0A3E2UKI3_9FIRM
+	5   Cluster_1__UniRef90_homology    description Phosphoglucosamine mutase
+	6   Cluster_1__UniRef90_homology    organism    Faecalibacterium prausnitzii
+	7   Cluster_1__UniRef90_homology    query_cov_type  high_confidence
+	8   Cluster_1__UniRef90_homology    mutual_cov_type high_confidence
+	9   Cluster_1__UniRef90_homology    identity    95.2
+	10  Cluster_1__UniRef90_homology    query_coverage  0.9146825396825397
+	11  Cluster_1__UniRef90_homology    mutual_coverage 0.9146825396825397
+	12  Cluster_1__UniRef90_homology    taxa_id 1239
+	13  Cluster_1__UniRef90_homology    taxa_name   Firmicutes
+	14  Cluster_1__Taxonomy_characterization    taxa_id 853
+	15  Cluster_1__Taxonomy_characterization    taxa_lineage    k__Bacteria|p__Firmicutes|c__Clostridia|o__Clostridiales|f__Ruminococcaceae|g__Faecalibacterium|s__Faecalibacterium_prausnitzii
+	16  Cluster_1__Taxonomy_characterization    LCA_Tax Faecalibacterium prausnitzii
+	17  Cluster_1__Taxonomy_characterization    LCA_TaxID   853
+	18  Cluster_1__Taxonomy_characterization    Rep_Tax Faecalibacterium prausnitzii
+	19  Cluster_1__Taxonomy_characterization    Rep_TaxID   853
+	20  Cluster_1__Taxonomy_characterization    msp_name    msp_unknown
+	21  Cluster_1__Taxonomy_characterization    msp_taxa_name   NA
+	22  Cluster_1__Taxonomy_characterization    msp_taxa_id NA
+	23  Cluster_1__DNA-CD_abundance mean_abundance  145.88748347267776
+	24  Cluster_1__DNA-CD_abundance mean_prevalent_abundance    164.03938233794182
+	25  Cluster_1__DNA-CD_abundance prevalence  0.889344262295082
+	...
 	```
+	
 	* File name: $OUTPUT_DIR/characterization/$BASENAME\_proteinfamilies\_annotation.attribute.tsv
 	* This is the supplementory results for characterization.
 	* Each of item is the supplemental information about the corresponding results. `AID` is the key to connect `$BASENAME_proteinfamilies_annotation.tsv` with `$BASENAME_proteinfamilies_annotation.attribute.tsv`.
@@ -488,12 +489,12 @@ Cluster_1   PF00408:PF02878;PF00408:PF02879;PF00408:PF02880;PF02878:PF02879;PF02
 	
 	```
 	familyID    study   map_type    query_type  mutual_type identity    query_coverage  mutual_coverage detail  Tax TaxID   Rep_Tax Rep_TaxID   organism    UniProtKB   unirefID    note    msp_name    msp_taxa_name   msp_taxa_id MSP_Tax MSP_TaxID   MSP_Rep_Tax MSP_Rep_TaxID   taxa_id taxa_name   taxa_rank   taxa_lineage
-Cluster_1   demo    UniRef90_uncharacterized    high_confidence high_confidence 95.2    0.9146825396825397  0.9146825396825397  Phosphoglucosamine mutase   Firmicutes  1239    Faecalibacterium prausnitzii    853 Faecalibacterium prausnitzii    A0A3E2UKI3_9FIRM    UniRef90_A0A3E2UKI3 good    msp_unknown NA  NA  Faecalibacterium prausnitzii    853 Faecalibacterium prausnitzii    853 853 Faecalibacterium prausnitzii    Species k__Bacteria|p__Firmicutes|c__Clostridia|o__Clostridiales|f__Ruminococcaceae|g__Faecalibacterium|s__Faecalibacterium_prausnitzii
-Cluster_10  demo    UniRef90_uncharacterized    high_confidence high_confidence 93.3    0.9782608695652174  0.9782608695652174  MafF    Bacteria    2   Escherichia coli    562 Escherichia coli    B8QUG6_ECOLX    UniRef90_B8QUG6 good    msp_unknown NA  NA  NA  NA  Escherichia coli    562 562 Escherichia coli    Species k__Bacteria|p__Proteobacteria|c__Gammaproteobacteria|o__Enterobacterales|f__Enterobacteriaceae|g__Escherichia|s__Escherichia_coli
-Cluster_100 demo    UniRef90_characterized  high_confidence high_confidence 95.8    1.0 1.0 Uncharacterized protein Clostridiales   186802  Faecalibacterium prausnitzii M21/2  411485  Faecalibacterium prausnitzii M21/2  A8SEK6_9FIRM    UniRef90_A8SEK6 good    msp_unknown NA  NA  Faecalibacterium prausnitzii M21/2  411485  Faecalibacterium prausnitzii M21/2  411485  411485  Faecalibacterium prausnitzii M21/2  Terminal    k__Bacteria|p__Firmicutes|c__Clostridia|o__Clostridiales|f__Ruminococcaceae|g__Faecalibacterium|s__Faecalibacterium_prausnitzii|t__Faecalibacterium_prausnitzii_M21/2
-Cluster_1000    demo    UniRef90_characterized  high_confidence high_confidence 99.8    1.0 1.0 FeS assembly protein SufD   Bacteroidaceae  815 Bacteroides fragilis HMW 615    1073387 Bacteroides fragilis HMW 615    K1GB77_BACFG    UniRef90_K1GB77 good    msp_02  Bacteroides fragilis    817 Bacteroides 816 Bacteroides fragilis HMW 615    1073387 1073387 Bacteroides fragilis HMW 615    Terminal    k__Bacteria|p__Bacteroidetes|c__Bacteroidia|o__Bacteroidales|f__Bacteroidaceae|g__Bacteroides|s__Bacteroides_fragilis|t__Bacteroides_fragilis_HMW_615
-Cluster_10000   demo    UniRef90_characterized  high_confidence high_confidence 90.9    0.900355871886121   0.900355871886121   Methanol dehydrogenase  Faecalibacterium    216851  Faecalibacterium prausnitzii    853 Faecalibacterium prausnitzii    A0A329U1M8_9FIRM    UniRef90_A0A329U1M8 good    msp_unknown NA  NA  NA  NA  Faecalibacterium prausnitzii    853 853 Faecalibacterium prausnitzii    Species k__Bacteria|p__Firmicutes|c__Clostridia|o__Clostridiales|f__Ruminococcaceae|g__Faecalibacterium|s__Faecalibacterium_prausnitzii
-...
+	Cluster_1   demo    UniRef90_uncharacterized    high_confidence high_confidence 95.2    0.9146825396825397  0.9146825396825397  Phosphoglucosamine mutase   Firmicutes  1239    Faecalibacterium prausnitzii    853 Faecalibacterium prausnitzii    A0A3E2UKI3_9FIRM    UniRef90_A0A3E2UKI3 good    msp_unknown NA  NA  Faecalibacterium prausnitzii    853 Faecalibacterium prausnitzii    853 853 Faecalibacterium prausnitzii    Species k__Bacteria|p__Firmicutes|c__Clostridia|o__Clostridiales|f__Ruminococcaceae|g__Faecalibacterium|s__Faecalibacterium_prausnitzii
+	Cluster_10  demo    UniRef90_uncharacterized    high_confidence high_confidence 93.3    0.9782608695652174  0.9782608695652174  MafF    Bacteria    2   Escherichia coli    562 Escherichia coli    B8QUG6_ECOLX    UniRef90_B8QUG6 good    msp_unknown NA  NA  NA  NA  Escherichia coli    562 562 Escherichia coli    Species k__Bacteria|p__Proteobacteria|c__Gammaproteobacteria|o__Enterobacterales|f__Enterobacteriaceae|g__Escherichia|s__Escherichia_coli
+	Cluster_100 demo    UniRef90_characterized  high_confidence high_confidence 95.8    1.0 1.0 Uncharacterized protein Clostridiales   186802  Faecalibacterium prausnitzii M21/2  411485  Faecalibacterium prausnitzii M21/2  A8SEK6_9FIRM    UniRef90_A8SEK6 good    msp_unknown NA  NA  Faecalibacterium prausnitzii M21/2  411485  Faecalibacterium prausnitzii M21/2  411485  411485  Faecalibacterium prausnitzii M21/2  Terminal    k__Bacteria|p__Firmicutes|c__Clostridia|o__Clostridiales|f__Ruminococcaceae|g__Faecalibacterium|s__Faecalibacterium_prausnitzii|t__Faecalibacterium_prausnitzii_M21/2
+	Cluster_1000    demo    UniRef90_characterized  high_confidence high_confidence 99.8    1.0 1.0 FeS assembly protein SufD   Bacteroidaceae  815 Bacteroides fragilis HMW 615    1073387 Bacteroides fragilis HMW 615    K1GB77_BACFG    UniRef90_K1GB77 good    msp_02  Bacteroides fragilis    817 Bacteroides 816 Bacteroides fragilis HMW 615    1073387 1073387 Bacteroides fragilis HMW 615    Terminal    k__Bacteria|p__Bacteroidetes|c__Bacteroidia|o__Bacteroidales|f__Bacteroidaceae|g__Bacteroides|s__Bacteroides_fragilis|t__Bacteroides_fragilis_HMW_615
+	Cluster_10000   demo    UniRef90_characterized  high_confidence high_confidence 90.9    0.900355871886121   0.900355871886121   Methanol dehydrogenase  Faecalibacterium    216851  Faecalibacterium prausnitzii    853 Faecalibacterium prausnitzii    A0A329U1M8_9FIRM    UniRef90_A0A329U1M8 good    msp_unknown NA  NA  NA  NA  Faecalibacterium prausnitzii    853 853 Faecalibacterium prausnitzii    Species k__Bacteria|p__Firmicutes|c__Clostridia|o__Clostridiales|f__Ruminococcaceae|g__Faecalibacterium|s__Faecalibacterium_prausnitzii
+	...
 	```
 	
 	* File name: $OUTPUT_DIR/characterization/$BASENAME\_proteinfamilies\_annotation.MSPminer\_taxonomy.tsv
@@ -505,14 +506,15 @@ Cluster_10000   demo    UniRef90_characterized  high_confidence high_confidence 
 	
 	```
 	ID      CSM5FZ3N_P      CSM5FZ3R_P      CSM5FZ3T_P      CSM5FZ3V_P      CSM5FZ3X_P      CSM5FZ3Z_P      CSM5FZ42_P      CSM5F
-Cluster_1       399.304 15.8845 0       171.157 1.41663 0.275544        1.16031 0       0       8.46607 321.148 60.9853 347.5
-Cluster_10      11.1512 8.81212 9.00341 5.77603 0       3.019   4.62291 5.2878  2.12412 7.00065 8.10752 27.1621 47.862  39.04
-Cluster_100     54.6202 26.7423 0       13.5309 8.26367 0       2.21515 11.261  0       44.7264 12.0862 65.9435 284.451 165.2
-Cluster_1000    21.6101 11.235  134.379 157.494 244.854 361.196 93.9497 126.383 269.297 0       280.881 13.575  11.6934 20.65
-Cluster_10000   62.6742 4.6883  0       48.853  0       0       0       0       0       0       72.9965 2.8902  20.9542 16.77
-Cluster_10001   2.42532 7.18719 0       0.628126        0       0       0       0       0       12.5615 7.93502 2.21535 8.351
-...
+	Cluster_1       399.304 15.8845 0       171.157 1.41663 0.275544        1.16031 0       0       8.46607 321.148 60.9853 347.5
+	Cluster_10      11.1512 8.81212 9.00341 5.77603 0       3.019   4.62291 5.2878  2.12412 7.00065 8.10752 27.1621 47.862  39.04
+	Cluster_100     54.6202 26.7423 0       13.5309 8.26367 0       2.21515 11.261  0       44.7264 12.0862 65.9435 284.451 165.2
+	Cluster_1000    21.6101 11.235  134.379 157.494 244.854 361.196 93.9497 126.383 269.297 0       280.881 13.575  11.6934 20.65
+	Cluster_10000   62.6742 4.6883  0       48.853  0       0       0       0       0       0       72.9965 2.8902  20.9542 16.77
+	Cluster_10001   2.42532 7.18719 0       0.628126        0       0       0       0       0       12.5615 7.93502 2.21535 8.351
+	...
 	```
+	
 	* File name: $OUTPUT_DIR/characterization/$BASENAME\_proteinfamilies\_relab.tsv
 	* This is the relative abundance per protein family across samples.
 	* Protein family abundance is reported in copies per million (CPM) units, which is "total sum scaling (TSS)"-style normalization: each sample is constrained to sum to 1 million. First, each protein family is normalized to RPK (reads per kilobase) units for gene length normalization; RPK units reflect relative gene (or transcript) copy number in the community. Then, RPK values are further sum-normalized (CPM) to adjust for differences in sequencing depth across samples. Further information can refer to the normalization approach in [HUMAnN2] (). 
@@ -529,6 +531,7 @@ Cluster_10001   2.42532 7.18719 0       0.628126        0       0       0       
 	MSM9VZIU_90100
 	...
 	```
+	
 	* File name: $OUTPUT_DIR/characterization/$BASENAME\_proteinfamilies.clstr
 	* This is the clustering information for protein families, formatted using extention-fasta style based on the version of CD-hit clustering file.
 	
@@ -578,14 +581,15 @@ Cluster_10001   2.42532 7.18719 0       0.628126        0       0       0       
 	
 	```
 	familyID    DNA_nonIBD_abundance__value DNA_nonIBD_abundance__percentile    DNA_nonIBD_prevalence__value    DNA_nonIBD_prevalence__percentile   priority_score
-Cluster_24570   2694.0590678779345  0.9999793230362054  1.0 1.0 0.9999896614112173
-Cluster_41147   2431.225870892018   0.9999586460724107  1.0 1.0 0.9999793226086595
-Cluster_22422   1336.999313239437   0.9998966151810268  1.0 1.0 0.9999483049182701
-Cluster_40049   1109.6718042394361  0.9998759382172322  1.0 1.0 0.9999379652605459
-Cluster_29449   803.4913150469486   0.9997311994706697  0.9976525821596244  0.9993898213934824  0.999560481284518
-Cluster_21419   383.6281626291082   0.9983458428964291  1.0 1.0 0.9991722368230451
-...
+	Cluster_24570   2694.0590678779345  0.9999793230362054  1.0 1.0 0.9999896614112173
+	Cluster_41147   2431.225870892018   0.9999586460724107  1.0 1.0 0.9999793226086595
+	Cluster_22422   1336.999313239437   0.9998966151810268  1.0 1.0 0.9999483049182701
+	Cluster_40049   1109.6718042394361  0.9998759382172322  1.0 1.0 0.9999379652605459
+	Cluster_29449   803.4913150469486   0.9997311994706697  0.9976525821596244  0.9993898213934824  0.999560481284518
+	Cluster_21419   383.6281626291082   0.9983458428964291  1.0 1.0 0.9991722368230451
+	...
 	```
+	
 	* File name: 
 	$OUTPUT\_DIR/prioritization/$BASENAME\_unsupervised\_prioritization.rank.tsv
 	$OUTPUT\_DIR/prioritization/$BASENAME\_unsupervised\_prioritization.priority.tsv
@@ -597,14 +601,15 @@ Cluster_21419   383.6281626291082   0.9983458428964291  1.0 1.0 0.99917223682304
 	
 	```
 	familyID    DNA_within_phenotype_abundance__value   DNA_within_phenotype_abundance__percentile  DNA_within_phenotype_prevalence__value  DNA_within_phenotype_prevalence__percentile MaAsLin2_DA__coef__value    MaAsLin2_DA__coef__percentile   MaAsLin2_DA__qvalue__value  MaAsLin2_DA__qvalue__percentile priority_score
-Cluster_14393|CD.dysbiosis_vs_CD.non_dysbiosis  844.0252184037556   0.9995526838966203  0.971830985915493   0.986622572543949   -480.492828810768   0.9995526838966203  4.31866766640033e-11    1.0 0.9963995495816218
-Cluster_47254|CD.dysbiosis_vs_CD.non_dysbiosis  718.2714984741792   0.9992047713717693  0.9741784037558685  0.9884128602332347  -392.524817430569   0.9993538767395627  4.87065570823145e-09    0.9937619603847205  0.9951628678096055
-Cluster_53|CD.dysbiosis_vs_CD.non_dysbiosis 357.3594103568074   0.9953280318091451  0.9954233409610984  0.9983340378446925  -143.260405479191   0.9928429423459244  4.93693768852676e-09    0.9936625493948356  0.9950374594865485
-Cluster_7|CD.dysbiosis_vs_CD.non_dysbiosis  438.19562671167034  0.9975646123260438  0.9741784037558685  0.9884128602332347  -250.126179947757   0.9979622266401591  3.60646971240824e-09    0.9947063647886274  0.9946467984814091
-Cluster_14|CD.dysbiosis_vs_CD.non_dysbiosis 428.82273066590415  0.9973658051689861  0.9624413145539906  0.9785911430489594  -256.077370752594   0.9982107355864811  3.00504043491864e-09    0.9950294505057534  0.9922342227131524
-Cluster_42|CD.dysbiosis_vs_CD.non_dysbiosis 437.4689617025174   0.9975149105367793  0.9765258215962441  0.9895317900390382  -220.208838202021   0.9974652087475149  1.33219876365297e-07    0.979198250366578   0.9908703385076423
-...
+	Cluster_14393|CD.dysbiosis_vs_CD.non_dysbiosis  844.0252184037556   0.9995526838966203  0.971830985915493   0.986622572543949   -480.492828810768   0.9995526838966203  4.31866766640033e-11    1.0 0.9963995495816218
+	Cluster_47254|CD.dysbiosis_vs_CD.non_dysbiosis  718.2714984741792   0.9992047713717693  0.9741784037558685  0.9884128602332347  -392.524817430569   0.9993538767395627  4.87065570823145e-09    0.9937619603847205  0.9951628678096055
+	Cluster_53|CD.dysbiosis_vs_CD.non_dysbiosis 357.3594103568074   0.9953280318091451  0.9954233409610984  0.9983340378446925  -143.260405479191   0.9928429423459244  4.93693768852676e-09    0.9936625493948356  0.9950374594865485
+	Cluster_7|CD.dysbiosis_vs_CD.non_dysbiosis  438.19562671167034  0.9975646123260438  0.9741784037558685  0.9884128602332347  -250.126179947757   0.9979622266401591  3.60646971240824e-09    0.9947063647886274  0.9946467984814091
+	Cluster_14|CD.dysbiosis_vs_CD.non_dysbiosis 428.82273066590415  0.9973658051689861  0.9624413145539906  0.9785911430489594  -256.077370752594   0.9982107355864811  3.00504043491864e-09    0.9950294505057534  0.9922342227131524
+	Cluster_42|CD.dysbiosis_vs_CD.non_dysbiosis 437.4689617025174   0.9975149105367793  0.9765258215962441  0.9895317900390382  -220.208838202021   0.9974652087475149  1.33219876365297e-07    0.979198250366578   0.9908703385076423
+	...
 	```
+	
 	* File name: 
 		$OUTPUT\_DIR/prioritization/$BASENAME\_supervised\_prioritization.rank.tsv
 		$OUTPUT\_DIR/prioritization/$BASENAME\_supervised\_prioritization.priority.tsv
@@ -616,14 +621,15 @@ Cluster_42|CD.dysbiosis_vs_CD.non_dysbiosis 437.4689617025174   0.99751491053677
 	
 	```
 	familyID    DNA_within_phenotype_abundance__value   DNA_within_phenotype_abundance__percentile  DNA_within_phenotype_prevalence__value  DNA_within_phenotype_prevalence__percentile MaAsLin2_DA__coef__value    MaAsLin2_DA__coef__percentile   MaAsLin2_DA__qvalue__value  MaAsLin2_DA__qvalue__percentile priority_score
-Cluster_196|CD.dysbiosis_vs_CD.non_dysbiosis    214.2212814279175   0.9686878727634195  0.9816933638443935  0.9924410075341273  -105.831926383983   0.9866302186878728  8.01016319636424e-09    0.991574918607252   0.9847393815443188
-Cluster_25293|CD.dysbiosis_vs_CD.non_dysbiosis  120.48241777803203  0.933051689860835   0.9931350114416476  0.9973394335728671  -67.2740317585006   0.9606858846918489  7.98001508992818e-11    0.9997266197778164  0.9719079557712381
-Cluster_129|CD.dysbiosis_vs_CD.non_dysbiosis    344.4962334050344   0.9944333996023856  0.9725400457665904  0.9875923117089788  -76.7386486741326   0.9705765407554672  9.37199044695546e-06    0.9324005268782464  0.9706435542254798
-Cluster_101|CD.dysbiosis_vs_CD.non_dysbiosis    535.9237779633867   0.9983598409542743  0.9633867276887872  0.9799338588159237  -96.7983809913901   0.9830019880715706  2.91093846771617e-05    0.9144816959514874  0.9678369794322969
-Cluster_273|CD.dysbiosis_vs_CD.non_dysbiosis    99.57769844622432   0.9164512922465209  0.9694835680751174  0.9847576895342766  -62.7194765911449   0.9544234592445328  1.06787781457237e-08    0.9904316922235753  0.960601551965445
-Cluster_533|CD.dysbiosis_vs_CD.non_dysbiosis    222.18690086498862  0.9715208747514911  0.9084507042253521  0.9206803093219286  -65.7308323652607   0.9584493041749503  0.000216885848009021    0.8523995327683476  0.9233657031704845
-...
+	Cluster_196|CD.dysbiosis_vs_CD.non_dysbiosis    214.2212814279175   0.9686878727634195  0.9816933638443935  0.9924410075341273  -105.831926383983   0.9866302186878728  8.01016319636424e-09    0.991574918607252   0.9847393815443188
+	Cluster_25293|CD.dysbiosis_vs_CD.non_dysbiosis  120.48241777803203  0.933051689860835   0.9931350114416476  0.9973394335728671  -67.2740317585006   0.9606858846918489  7.98001508992818e-11    0.9997266197778164  0.9719079557712381
+	Cluster_129|CD.dysbiosis_vs_CD.non_dysbiosis    344.4962334050344   0.9944333996023856  0.9725400457665904  0.9875923117089788  -76.7386486741326   0.9705765407554672  9.37199044695546e-06    0.9324005268782464  0.9706435542254798
+	Cluster_101|CD.dysbiosis_vs_CD.non_dysbiosis    535.9237779633867   0.9983598409542743  0.9633867276887872  0.9799338588159237  -96.7983809913901   0.9830019880715706  2.91093846771617e-05    0.9144816959514874  0.9678369794322969
+	Cluster_273|CD.dysbiosis_vs_CD.non_dysbiosis    99.57769844622432   0.9164512922465209  0.9694835680751174  0.9847576895342766  -62.7194765911449   0.9544234592445328  1.06787781457237e-08    0.9904316922235753  0.960601551965445
+	Cluster_533|CD.dysbiosis_vs_CD.non_dysbiosis    222.18690086498862  0.9715208747514911  0.9084507042253521  0.9206803093219286  -65.7308323652607   0.9584493041749503  0.000216885848009021    0.8523995327683476  0.9233657031704845
+	...
 	```
+	
 	* File name: $OUTPUT_DIR/prioritization/$BASENAME\_supervised\_prioritization.rank.filter.tsv
 	* This file is the results of supervised filtering of protein families based on binary annotation features.
 	* The default filtering approach is requiring that each of prioritized protein family should: 
@@ -634,12 +640,14 @@ Cluster_533|CD.dysbiosis_vs_CD.non_dysbiosis    222.18690086498862  0.9715208747
 	
 	```
 	TID familyID evidence    value   rank    description note
-1   Cluster_14393   DNA_within_phenotype_abundance  844.0252184037556   0.9995526838966203	ranking based on single evidence  CD.dysbiosis_vs_CD.non_dysbiosis
-2   Cluster_14393   DNA_within_phenotype_prevalence 0.971830985915493   0.986622572543949	ranking based on single evidence   CD.dysbiosis_vs_CD.non_dysbiosis
-3   Cluster_14393   MaAsLin2_DA__coef   -480.492828810768   0.9995526838966203	ranking based on single evidence  CD.dysbiosis_vs_CD.non_dysbiosis
-4   Cluster_14393   MaAsLin2_DA__qvalue 4.31866766640033e-11    1.0	ranking based on single evidence CD.dysbiosis_vs_CD.non_dysbiosis
-5   Cluster_14393   priority_score  0.9963995495816218  0.9963995495816218  meta ranking based on multiple evidences    CD.dysbiosis_vs_CD.non_dysbiosis
+	1   Cluster_14393   DNA_within_phenotype_abundance  844.0252184037556   0.9995526838966203	ranking based on single evidence  CD.dysbiosis_vs_CD.non_dysbiosis
+	2   Cluster_14393   DNA_within_phenotype_prevalence 0.971830985915493   0.986622572543949	ranking based on single evidence   CD.dysbiosis_vs_CD.non_dysbiosis
+	3   Cluster_14393   MaAsLin2_DA__coef   -480.492828810768   0.9995526838966203	ranking based on single evidence  CD.dysbiosis_vs_CD.non_dysbiosis
+	4   Cluster_14393   MaAsLin2_DA__qvalue 4.31866766640033e-11    1.0	ranking based on single evidence CD.dysbiosis_vs_CD.non_dysbiosis
+	5   Cluster_14393   priority_score  0.9963995495816218  0.9963995495816218  meta ranking based on multiple evidences    CD.dysbiosis_vs_CD.non_dysbiosis
+	...
 	```
+	
 	* File name: 
 		$OUTPUT\_DIR/prioritization/$BASENAME\_unsupervised\_prioritization.rank.table.tsv
 		$OUTPUT\_DIR/prioritization/$BASENAME\_unsupervised\_prioritization.priority.table.tsv
