@@ -1,4 +1,5 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
+
 """
 MetaWIBELE: utilities module
 Utilities relating to third party software, file permissions, and file formats
@@ -90,9 +91,8 @@ def sample_info (sampleinfo, study):
 		samples[sample] = disease
 	# foreac sample
 	open_file.close()
+	
 	return samples
-
-
 # sample_info
 
 
@@ -136,7 +136,6 @@ def collect_partial_info (infile):
 	# foreach line
 	open_file.close()
 	return partial
-
 
 # collect_partial_info
 
@@ -296,6 +295,73 @@ def collect_GO_info(gofile):  # go.obo
 # collect_GO_info
 
 
+#==============================================================
+# split files
+#==============================================================
+def split_fasta_file (seq, number, prefix, output, list_file, mylist):
+	open_list_file = open(list_file, "w")
+	open_list = open(mylist, "w")
+	mynum = 0
+	filenum = 0
+	start = 0
+	open_file = open(seq, "r")
+	for line in open_file:
+		line = line.strip()
+		if not len(line):
+			continue
+		if re.search("^>", line):
+			mym = re.search(">([\S]+)", line)
+			line = ">" + mym.group(1)
+			mynum = mynum + 1
+			myfile = int(mynum) % int(number)
+			filenum = myfile + 1
+			if (int(mynum) <= int(number)): # number
+				myfile = prefix + ".split" + str(filenum) + ".fasta"
+				mydir = output + "/" + "split" + str(filenum)
+				os.system("mkdir " + mydir)
+				myfile = mydir + "/" + myfile
+				open_list_file.write(myfile + "\n")
+				open_list.write("split" + str(filenum) + "\n")
+				open_out = open(myfile, "w")
+			else:
+				myfile = prefix + ".split" + str(filenum) + ".fasta"
+				mydir = output + "/" + "split" + str(filenum)
+				myfile = mydir + "/" + myfile
+				open_out = open(myfile, "a")
+		open_out.write(line + "\n")
+	# foreach line
+	open_file.close()
+	open_list.close()
+	open_list_file.close()
+
+# split_fasta_file
+
+
+def file_to_dict (infile):
+	"""
+	read data from file into dictionary variable 
+	"""
+
+	data = {}
+	open_file = open(infile, "r")
+	for line in open_file:
+		line = line.strip()
+		if not len(line):
+			continue
+		data[line] = ""        
+	return data
+	
+def dict_to_file (dict_data, outfile):
+	"""
+	write data in dictionary into file
+	"""
+
+	open_out = open(outfile, "w")
+	for mydata in sorted(dict_data.keys()):
+		open_out.write(mydata + "\n")
+	open_out.close()
+
+
 # ==============================================================
 # utilities used for basis statistics info
 # ==============================================================
@@ -303,8 +369,9 @@ def mean(data):
 	"""Return the sample arithmetic mean of data."""
 	n = len(data)
 	if n < 1:
-		raise ValueError('mean requires at least one data point')
-	return sum(data) / n  # in Python 2 use sum(data)/float(n)
+	#	raise ValueError('mean requires at least one data point')
+		return 0
+	return sum(data) / float(n) 
 
 
 def _ss(data):
@@ -461,6 +528,33 @@ def name_files(names, folder, subfolder=None, tag=None, extension=None, create_f
 		files = files[0]
 
 	return files
+
+
+def name_task(sample, software):
+    """ Name the task based on the sample name and software """
+    
+    return software + "____" + os.path.basename(sample)
+
+
+def add_to_list(items,new_item):
+	""" Add the value to the list/tuple. If the item is not a list, create a new
+        list from the item and the value 
+        
+    Args:
+        items (list, string or tuple): Single or multiple items
+        new_item (string): The new value
+        
+    Returns:
+        (list): A list of all values
+	"""
+    
+	if isinstance(items,tuple):
+		items=[i for i in items]
+    
+	if not isinstance(items,list):
+		items=[items]
+        
+	return items+[new_item]
 
 
 def create_folders(folder):

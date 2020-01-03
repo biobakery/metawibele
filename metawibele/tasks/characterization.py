@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 """
 MetaWIBELE Workflow: characterization module
@@ -105,7 +105,7 @@ def clustering (workflow, gene_catalog_seq, threads, output_folder, protein_fami
 	myraw_cluster = clustering_output_seq + ".clstr"
 	workflow.add_task(
 			"cd-hit -i [depends[0]] " + optional_arguments + " -o [targets[0]] > [args[0]] 2>&1",
-			depends = [gene_catalog_seq],
+			depends = [gene_catalog_seq, TrackedExecutable("CD-hit")],
 			targets = [clustering_output_seq, myraw_cluster],
 			args = [clustering_output_logs],
 			cores = threads,
@@ -127,14 +127,14 @@ def clustering (workflow, gene_catalog_seq, threads, output_folder, protein_fami
 	workflow.add_task("ln -fs [depends[0]] [targets[0]]",
 	                  depends=[clustering_output_cluster],
 	                  targets=[protein_family],
-	                  name="clustering-proteins")
+	                  name="ln__clustering-proteins")
 
 	return clustering_output_cluster, main_folder
 
 
 def protein_family_annotation (workflow, family_conf, gene_catalog_seq,
                                threads, output_folder, uniref_taxonomy_family, uniref_taxonomy,
-                               protein_family_ann_list, protein_ann_list):
+                               protein_family_ann_list, protein_ann_list, protein_family, protein_family_seq):
 	"""
 	This set of tasks will run annotations based on homologies to known proteins.
 
@@ -227,7 +227,7 @@ def protein_family_annotation (workflow, family_conf, gene_catalog_seq,
 		# uniRef annotation for each ORF
 		workflow.add_task(
 				"uniref_protein.py -m [depends[0]] -o [targets[0]] >[args[0]] 2>&1",
-				depends = [annotation_stat, TrackedExecutable("uniref_protein.py")],
+				depends = [annotation_stat, protein_family, protein_family_seq, TrackedExecutable("uniref_protein.py")],
 				targets = [uniref_ann_protein],
 				args = [uniref_log2],
 				cores = threads,
@@ -236,7 +236,7 @@ def protein_family_annotation (workflow, family_conf, gene_catalog_seq,
 		# uniRef annotation for each protein family
 		workflow.add_task(
 				"uniref_protein_family.py -u [depends[0]] -m [depends[1]] -f centroid -o [targets[0]] >[args[0]] 2>&1",
-				depends = [uniref_ann_protein, annotation_stat, TrackedExecutable("uniref_protein_family.py")],
+				depends = [uniref_ann_protein, annotation_stat, protein_family, protein_family_seq, TrackedExecutable("uniref_protein_family.py")],
 				targets = [uniref_ann_family, uniref_ann],
 				args = [uniref_log3],
 				cores = threads,
@@ -263,11 +263,11 @@ def protein_family_annotation (workflow, family_conf, gene_catalog_seq,
 		workflow.add_task("ln -fs [depends[0]] [targets[0]]",
 		        depends = [uniref_taxa_family],
 	            targets = [uniref_taxonomy_family],
-	            name = "summary_protein_family_uniref_annotation")
+	            name = "ln__uniref_taxa_family")
 		workflow.add_task("ln -fs [depends[0]] [targets[0]]",
 	            depends = [uniref_taxa],
 	            targets = [uniref_taxonomy],
-	            name = "summary_protein_family_uniref_annotation")
+	            name = "ln__uniref_taxa")
 		myprotein_family_ann[uniref_ann_family] = ""
 		myprotein_ann[uniref_ann] = ""
 	# if uniref annotation
@@ -282,7 +282,6 @@ def protein_family_annotation (workflow, family_conf, gene_catalog_seq,
 				args = [uniref_log5],
 				cores = threads,
 				name = "antiSMASH_annotator")
-
 
 		workflow.add_task(
 				"antiSMASH_annotator.py -a [depends[0]] -o [targets[0]] >>[args[0]] 2>&1",
@@ -307,7 +306,7 @@ def protein_family_annotation (workflow, family_conf, gene_catalog_seq,
 
 def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
                                split_number, threads, output_folder,
-                               protein_family_ann_list, protein_ann_list):
+                               protein_family_ann_list, protein_ann_list, protein_family, protein_family_seq):
 	"""
 	This set of tasks will run annotations predicted by sequences.
 
@@ -404,7 +403,8 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 	pfam_list = []
 	file_list_file = interpro + "/" + "split_files.list"
 	split_list_file = interpro + "/" + "split.list"
-	os.system("split_seq_files.py" + " -i " + gene_catalog_seq + " -n " + str(split_number) + " -p " + myprefix + " -o " + interpro + " -l " + file_list_file + " -s " + split_list_file)
+	##os.system("split_seq_files.py" + " -i " + gene_catalog_seq + " -n " + str(split_number) + " -p " + myprefix + " -o " + interpro + " -l " + file_list_file + " -s " + split_list_file)
+	utilities.split_fasta_file (gene_catalog_seq, split_number, myprefix, interpro, file_list_file, split_list_file)
 	file_list = []
 	split_list = []
 	open_file = open(file_list_file, "r")
@@ -436,24 +436,26 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 			myerr = re.sub(".fasta", ".err", myfile)
 			mytime = "24*60 if file_size('[depends[0]]') < 25 else 6*24*60"	# 24 hours or more depending on file size
 			mymem = "32*1024 if file_size('[depends[0]]') < 25 else 3*32*1024" # 32 GB or more depending on file size
-		
+
 			workflow.add_task_gridable(
-					"interproscan_annotator.py --split-file [args[0]] --threads [args[1]] -o [args[2]] -i [depends[0]] > [args[3]] 2> [args[4]] ",
-					depends = [myfile, TrackedExecutable("interproscan_annotator.py")],
+					"interproscan_annotator.py --split-file [args[0]] --threads [args[1]] -o [args[2]] -i [args[5]] > [args[3]] 2> [args[4]] ",
+					depends = [myfile, protein_family, protein_family_seq, TrackedExecutable("interproscan_annotator.py")],
 					targets = [myout],
-					args = [mysplit, threads, myout_dir, mylog, myerr],
-					cores = threads,   # time/mem based on 8 cores
+					args = [mysplit, threads, myout_dir, mylog, myerr, myfile],
+					cores = threads,   
 					time = mytime,
 					mem = mymem,
 					name = utilities.name_task(mysplit, "interproscan"))
 		
 		for myfile in interpro_list1:
 			mym = re.search("([^\/]+)$", myfile)
+			myname = mym.group(1)
 			myfile_new = interpro + "/" + mym.group(1)
 			workflow.add_task(
 					"ln -fs [depends[0]] [targets[0]]",
 					depends = [myfile],
-					targets = [myfile_new])
+					targets = [myfile_new],
+					name = utilities.name_task(myname, "ln"))
 
 		## InterProScan annotation for each ORF
 		mylog = interpro + "/interproscan.extract.log"
@@ -472,7 +474,7 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 			myout.append(myfile1)
 		workflow.add_task(
 				"interproscan_protein.py -e [args[0]] -p [args[1]] >[args[2]] 2>&1",
-				depends = interpro_list,
+				depends = utilities.add_to_list(interpro_list, TrackedExecutable("interproscan_protein.py")),
 				targets = myout,
 				args = ["interproscan.txt", interpro, mylog],
 				cores = threads,
@@ -482,7 +484,7 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 		mylog = re.sub(".tsv", ".log", signalp_ann_family)
 		workflow.add_task(
 				"interproscan_signalp_protein_family.py -e [args[0]] -p [args[1]] -a consistency -o [targets[0]] >[args[2]] 2>&1",
-				depends = myout, 
+				depends = utilities.add_to_list(myout, TrackedExecutable("interproscan_signalp_protein_family.py")), 
 				targets = [signalp_ann_family, signalp_ann],
 				args = ["signalp.signaling.tsv", interpro, mylog],
 				cores = threads,
@@ -491,7 +493,7 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 		mylog = re.sub(".tsv", ".log", tmhmm_ann_family)
 		workflow.add_task(
 				"interproscan_tmhmm_protein_family.py -e [args[0]] -p [args[1]] -a consistency -o [targets[0]] >[args[2]] 2>&1",
-				depends = myout, 
+				depends = utilities.add_to_list(myout, TrackedExecutable("interproscan_tmhmm_protein_family.py")),
 				targets = [tmhmm_ann_family, tmhmm_ann],
 				args = ["tmhmm.transmembrane.tsv", interpro, mylog],
 				cores = threads,
@@ -504,7 +506,7 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 		mylog = re.sub(".tsv", ".log", phobius_ann_family)
 		workflow.add_task(
 				"interproscan_phobius_protein_family.py -e [args[1]] -p [args[2]] -a consistency -o [args[0]] >[args[3]] 2>&1",
-				depends = myout,
+				depends = utilities.add_to_list(myout, TrackedExecutable("interproscan_phobius_protein_family.py")),
 				targets = [myfile1, myfile2, myfile3, myfile4],
 				args = [phobius_ann_family, "phobius.signaling.tsv", interpro, mylog],
 				cores = threads,
@@ -513,7 +515,7 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 		mylog = re.sub(".tsv", ".log", pfam_ann_family)
 		workflow.add_task(
 				"interproscan_pfam_protein_family.py -e [args[0]] -p [args[1]] -a consistency -o [targets[0]] >[args[2]] 2>&1",
-				depends = myout, 
+				depends = utilities.add_to_list(myout, TrackedExecutable("interproscan_pfam_protein_family.py")),
 				targets = [pfam_ann_family, pfam_ann],
 				args = ["interpro.PfamDomain.tsv", interpro, mylog],
 				cores = threads,
@@ -522,7 +524,7 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 		mylog = re.sub(".tsv", ".log", interProScan_ann_family)
 		workflow.add_task(
 				"interproscan_protein_family.py -e [args[0]] -p [args[1]] -a consistency -o [targets[0]] >[args[2]] 2>&1",
-				depends = myout,
+				depends = utilities.add_to_list(myout, TrackedExecutable("interproscan_protein_family.py")),
 				targets = [interProScan_ann_family, interProScan_ann],
 				args = ["interproscan.txt", interpro, mylog],
 				cores = threads,
@@ -597,7 +599,7 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 		
 		workflow.add_task(
 				"ddi_DOMINE_protein.py -e [args[0]] -p [args[2]] -f [args[3]] -s [args[1]] >[args[4]] 2>&1 ",
-				depends = pfam_list, 
+				depends = utilities.add_to_list(pfam_list, TrackedExecutable("ddi_DOMINE_protein.py")),
 				targets = myout,
 				#args = ["interpro.PfamDomain.tsv", "interpro.DDI.tsv", interpro, config.human_microbiome_ddi, mylog],
 				args = ["interpro.PfamDomain.tsv", "interpro.DDI.tsv", interpro, "yes", mylog],
@@ -606,7 +608,7 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 		
 		workflow.add_task(
 				"ddi_DOMINE_protein.py -e [args[0]] -p [args[2]] -f [args[3]] -s [args[1]] >[args[4]] 2>&1 ",
-				depends = pfam_list, 
+				depends = utilities.add_to_list(pfam_list, TrackedExecutable("ddi_DOMINE_protein.py")),
 				targets = myout,
 				args = ["interpro.PfamDomain.tsv", "interpro.all.DDI.tsv", interpro, "no", mylog],
 				cores = threads,
@@ -617,7 +619,7 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 		domine_ann_raw = re.sub(".detail", "", domine_ann)
 		workflow.add_task(
 				"ddi_DOMINE_protein_family.py -e [args[0]] -p [args[1]] -a consistency -o [targets[0]] >[args[2]] 2>&1 ",
-				depends = myout, 
+				depends = utilities.add_to_list(myout, TrackedExecutable("ddi_DOMINE_protein_family.py")),
 				targets = [domine_ann_family_raw, domine_ann_raw, domine_ann_family, domine_ann],
 				args = ["interpro.DDI.tsv", interpro, mylog],
 				cores = threads,
@@ -628,7 +630,7 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 		domine_ann_all_raw = re.sub(".detail", "", domine_ann_all)
 		workflow.add_task(
 				"ddi_DOMINE_protein_family.py -e [args[0]] -p [args[1]] -a consistency -o [targets[0]] >[args[2]] 2>&1 ",
-				depends = myout_all, 
+				depends = utilities.add_to_list(myout_all, TrackedExecutable("ddi_DOMINE_protein_family.py")),
 				targets = [domine_ann_family_all_raw, domine_ann_all_raw, domine_ann_family_all, domine_ann_all],
 				args = ["interpro.all.DDI.tsv", interpro, mylog],
 				cores = threads,
@@ -717,7 +719,8 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 	if domain_motif_conf["psortb"] == "yes" or domain_motif_conf["psortb"] == "Yes":
 		file_list_file = psortb + "/" + "split_files.list"
 		split_list_file = psortb + "/" + "split.list"
-		os.system("split_seq_files.py -i " + gene_catalog_seq + " -n " + str(split_number) +  " -p " +  myprefix + " -o  " + psortb + " -l " + file_list_file + " -s " + split_list_file)
+		##os.system("split_seq_files.py -i " + gene_catalog_seq + " -n " + str(split_number) +  " -p " +  myprefix + " -o  " + psortb + " -l " + file_list_file + " -s " + split_list_file)
+		utilities.split_fasta_file (gene_catalog_seq, split_number, myprefix, psortb, file_list_file, split_list_file)
 		file_list = []
 		split_list = []
 		open_file = open(file_list_file, "r")
@@ -745,19 +748,21 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 			mymem = "32*1024 if file_size('[depends[0]]') < 25 else 3*32*1024" # 32 GB or more depending on file size
 			
 			workflow.add_task_gridable(
-					"psortb_annotator.py --split-file [args[0]] --threads [args[1]] -o [args[2]] -i [depends[0]] > [args[3]] 2> [args[4]] ",
-					depends = [myfile, TrackedExecutable("psortb_annotator.py")],
+					"psortb_annotator.py --split-file [args[0]] --threads [args[1]] -o [args[2]] -i [args[5]] > [args[3]] 2> [args[4]] ",
+					depends = [myfile, protein_family, protein_family_seq, TrackedExecutable("psortb_annotator.py")],
 					targets = [myout1, myout2, myout3],
-					args = [mysplit, threads, myout_dir, mylog, myerr],
+					args = [mysplit, threads, myout_dir, mylog, myerr, myfile],
 					cores = threads,
 					time = mytime,
 					mem = mymem,
 					name = utilities.name_task(mysplit, "psortb"))
 		# foreach split file 
+		
 		psortb_list = []
 		myout = [] 
 		for myfile in psortb_list1:
 			mym = re.search("([^\/]+)$", myfile)
+			myname = mym.group(1)
 			myfile_new = psortb + "/" + mym.group(1)
 			psortb_list.append(myfile_new) 
 			myfile1 = re.sub("psortb.gram_positive.out.txt", "psortb.gram_positive.out.location.tsv", myfile_new)
@@ -768,7 +773,7 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 					"ln -fs [depends[0]] [targets[0]]",
 					depends = [myfile],
 					targets = [myfile_new],
-					args = [psortb])
+					name = utilities.name_task(myname, "ln"))
 
 
 		## PSORTb annotation for each ORF
@@ -776,7 +781,7 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 		#filelist = utilities.find_files(psortb, "psortb.gram_positive.out.txt", None)
 		workflow.add_task(
 				"psortb_protein.py -e [args[0]] -p [args[1]] >[args[2]] 2>&1",
-				depends = psortb_list, 
+				depends = utilities.add_to_list(psortb_list, TrackedExecutable("psortb_protein.py")),	
 				targets = myout,
 				args = ["psortb.gram_positive.out.txt", psortb, mylog],
 				cores = threads,
@@ -786,7 +791,7 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 		mylog = re.sub(".tsv", ".log", psortb_ann_family)
 		workflow.add_task(
 				"psortb_protein_family.py -e [args[0]] -p [args[1]] -a consistency -o [targets[0]] >[args[2]] 2>&1",
-				depends = myout,
+				depends = utilities.add_to_list(myout, TrackedExecutable("psortb_protein_family.py")),
 				targets = [psortb_ann_family, psortb_ann],
 				args = ["psortb.gram_positive.out.location.tsv", psortb, mylog],
 				cores = threads,
@@ -1062,11 +1067,11 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog, gene_catalog_c
 		workflow.add_task("ln -fs [depends[0]] [targets[0]]",
 		                  depends=[mymsp_detail_taxa_family],
 		                  targets=[taxonomy_annotation_family],
-		                  name="proteinfamilies_annotation_MSPminer_taxonomy")
+		                  name="ln__mymsp_detail_taxa_family")
 		workflow.add_task("ln -fs [depends[0]] [targets[0]]",
 		                  depends=[mymsp_detail_taxa],
 		                  targets=[taxonomy_annotation],
-		                  name="protein_annotation_MSPminer_taxonomy")
+		                  name="ln__mymsp_detail_taxa")
 
 		myprotein_family_ann[mymsp_detail_family] = ""
 		myprotein_ann[mymsp_detail] = ""
@@ -1153,7 +1158,7 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog, gene_catalog_c
 		workflow.add_task("ln -fs [depends[0]] [targets[0]]",
 		                  depends=[family_relab],
 		                  targets=[protein_family_relab],
-		                  name="proteinfamilies_relab")
+		                  name="ln__proteinfamilies_relab")
 
 		myprotein_family_ann[abundance_ann_family] = ""
 		myprotein_ann[abundance_ann] = ""
@@ -1361,7 +1366,7 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog, gene_catalog_c
 		workflow.add_task("ln -fs [depends[0]] [targets[0]]",
 		                  depends=[family_smooth],
 		                  targets=[feature_pcl],
-		                  name="proteinfamilies_relab_feature")
+		                  name="ln__proteinfamilies_relab_feature")
 
 		feature_tsv = re.sub(".pcl", ".tsv", feature_pcl)
 		mylog = re.sub(".pcl", ".pcl.log", feature_tsv)
@@ -1601,7 +1606,6 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog, gene_catalog_c
 
 def integration_annotation (workflow, integration_conf,
                           protein_family_ann_list, protein_ann_list,
-                          protein_family_ann_list_file, protein_ann_list_file,
                           uniref_annotation_family, uniref_annotation,
                           taxonomy_annotation_family, taxonomy_annotation,
                           threads, output_folder, protein_family_ann, protein_family_attr):
@@ -1669,41 +1673,23 @@ def integration_annotation (workflow, integration_conf,
 	protein_list = []
 	protein_family_ann_list_file = output_folder + "/protein_family_ann.list"
 	protein_ann_list_file = output_folder + "/protein_ann.list"
-	'''
-	open_out = open(protein_family_ann_list_file, "w")
-	for myfile in sorted(protein_family_ann_list.keys()):
-		open_out.write(myfile + "\n")
-	open_out.close()
-	open_out = open(protein_ann_list_file, "w")
-	for myfile in sorted(protein_ann_list.keys()):
-		open_out.write(myfile + "\n")
-	open_out.close()
-	'''
-	open_file = open(protein_family_ann_list_file, "r")
-	for line in open_file:
-		line = line.strip()
-		if not len(line):
-			continue
-		proteinfamily_list.append(line)
-	open_file.close()
-	open_file = open(protein_ann_list_file, "r")
-	for line in open_file:
-		line = line.strip()
-		if not len(line):
-			continue
-		protein_list.append(line)
-	open_file.close()
+	#utilities.dict_to_file (protein_family_ann_list, protein_family_ann_list_file)
+	#utilities.dict_to_file (protein_ann_list, protein_ann_list_file)
+	#proteinfamily_list = protein_family_ann_list
+	#protein_list = protein_ann_list
+	proteinfamily_list = utilities.file_to_dict (protein_family_ann_list_file)
+	protein_list = utilities.file_to_dict (protein_ann_list_file)
 
 	# summarize annotationa
 	if integration_conf["summary_ann"] == "yes" or abundance_conf["summary_ann"] == "Yes":
 		myinputs = []
-		myinputs.extend(proteinfamily_list)
 		myinputs.append(protein_family_ann_list_file)
 		myinputs.append(uniref_annotation_family)
+		myinputs.extend(proteinfamily_list)
 		mylog = re.sub(".tsv", ".tsv.log", summary_ann_family)
 		workflow.add_task(
 				"summary_function_annotation.py -l [depends[0]] -a [depends[1]] -o [targets[0]] > [args[0]] 2>&1",
-				depends = myinputs,
+				depends = utilities.add_to_list(myinputs, TrackedExecutable("summary_function_annotation.py")),
 				targets = [summary_ann_family],
 				args = [mylog],
 				cores = threads,
@@ -1711,12 +1697,12 @@ def integration_annotation (workflow, integration_conf,
 
 		mylog = re.sub(".tsv", ".tsv.log", summary_ann)
 		myinputs = []
-		myinputs.extend(protein_list)
 		myinputs.append(protein_ann_list_file)
 		myinputs.append(uniref_annotation)
+		myinputs.extend(protein_list)
 		workflow.add_task(
 				"summary_function_annotation.py -l [depends[0]] -a [depends[1]] -o [targets[0]] > [args[0]] 2>&1",
-				depends = myinputs,
+				depends = utilities.add_to_list(myinputs, TrackedExecutable("summary_function_annotation.py")),
 				targets = [summary_ann],
 				args = [mylog],
 				cores = threads,
@@ -1744,14 +1730,14 @@ def integration_annotation (workflow, integration_conf,
 	if integration_conf["finalization"] == "yes" or abundance_conf["finalization"] == "Yes":
 		mylog = re.sub(".tsv", ".tsv.log", final_ann_family)
 		myinputs = []
-		myinputs.extend(proteinfamily_list)
 		myinputs.append(protein_family_ann_list_file)
 		myinputs.append(summary_ann_family)
 		myinputs.append(taxonomy_annotation_family)
 		myinputs.append(uniref_annotation_family)
+		myinputs.extend(proteinfamily_list)
 		workflow.add_task(
 				"finalize_annotation.py -l [depends[0]] -a [depends[1]] -t [depends[2]] -u [depends[3]] -s protein_family -o [targets[0]] > [args[0]] 2>&1",
-				depends = myinputs,
+				depends = utilities.add_to_list(myinputs, TrackedExecutable("finalize_annotation.py")),
 				targets = [final_ann_family, final_attr_family],
 				args = [mylog],
 				cores = threads,
@@ -1759,27 +1745,27 @@ def integration_annotation (workflow, integration_conf,
 
 		mylog = re.sub(".tsv", ".tsv.log", final_ann)
 		myinputs = []
-		myinputs.extend(protein_list)
 		myinputs.append(protein_ann_list_file)
 		myinputs.append(summary_ann)
 		myinputs.append(taxonomy_annotation)
 		myinputs.append(uniref_annotation)
+		myinputs.extend(protein_list)
 		workflow.add_task(
 				"finalize_annotation.py -l [depends[0]] -a [depends[1]] -t [depends[2]] -u [depends[3]] -s protein -o [targets[0]] > [args[0]] 2>&1",
-				depends = myinputs,
+				depends = utilities.add_to_list(myinputs, TrackedExecutable("finalize_annotation.py")),
 				targets = [final_ann, final_attr],
 				args = [mylog],
 				cores = threads,
 				name = "finalize_annotation")
 
-		if final_ann_family != protein_family_ann:
-			workflow.add_task("ln -fs [depends[0]] [targets[0]]",
-		                  depends = [final_ann_family],
-		                  targets = [protein_family_ann],
-		                  name = "proteinfamilies_annotation")
-			workflow.add_task("ln -fs [depends[0]] [targets[0]]",
-		                  depends = [final_attr_family],
-		                  targets = [protein_family_attr],
-		                  name = "proteinfamilies_annotation_attribution")
+	#	if final_ann_family != protein_family_ann:
+	#		workflow.add_task("ln -fs [depends[0]] [targets[0]]",
+	#	                  depends = [final_ann_family],
+	#	                  targets = [protein_family_ann],
+	#	                  name = "proteinfamilies_annotation")
+	#		workflow.add_task("ln -fs [depends[0]] [targets[0]]",
+	#	                  depends = [final_attr_family],
+	#	                  targets = [protein_family_attr],
+	#	                  name = "proteinfamilies_annotation_attribution")
 
 	return final_ann_family, final_attr_family, main_folder

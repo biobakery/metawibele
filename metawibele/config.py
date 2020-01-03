@@ -57,17 +57,6 @@ def get_args ():
 # get_args
 
 
-##default option for MetaWIBELE
-version = '0.0.1'
-log_level = 'DEBUG'
-verbose = 'DEBUG'
-PROTEIN_FAMILY_ID = "familyID"
-PROTEIN_ID = "seqID"
-#arg_values = get_args ()
-
-# name global logging instance
-logger=logging.getLogger(__name__)
-
 def log_settings():
 	"""
 	Write to the log file the config settings for the run
@@ -244,19 +233,38 @@ def get_item(config_items, section, name, type=None):
 	return value
 
 
+## default option for MetaWIBELE
+version = '0.1'
+log_level = 'DEBUG'
+verbose = 'DEBUG'
+
+# name global logging instance
+loggeri = logging.getLogger(__name__)
+
+## constant values ##
+PROTEIN_FAMILY_ID = "familyID"
+PROTEIN_ID = "seqID"
+c_metedata_delim = "."	 # nested metadata, e.g. CD.dysbiosis
+c_strat_delim = "|" 	 # strantified item, e.g. Cluster_1000010|Bacteroides dorei
+c_taxon_delim = "|"	 	 # taxonomic lineage, e.g. g__Faecalibacterium|s__Faecalibacterium_prausnitzii|t__Faecalibacterium_prausnitzii_A2-165
+c_multiname_delim = ";"	 # multiple ietms, e.g. PF00482;PF01841 
+c_msp_unknown = "msp_unknown"
+#c_metedata_delim = get_item(config_items, "constant", "c_metedata_delim", "string")
+#c_strat_delim = get_item(config_items, "constant", "c_strat_delim", "string")
+#c_multiname_delim = get_item(config_items, "constant", "c_multiname_delim", "string")
+
+
 # User config file
-#metawibele_install_directory = "/n/home00/yancong/projects/R24_HMBR/src/assembly-based/metawibele/" 
 metawibele_install_directory = os.path.dirname(os.path.abspath(__file__))
 
 user_edit_config_file = os.getcwd() + "/metawibele.cfg"
 if not os.path.exists (user_edit_config_file):
 	user_edit_config_file = metawibele_install_directory + "/metawibele.cfg"
-#full_path_user_edit_config_file = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-#												user_edit_config_file)
 full_path_user_edit_config_file = user_edit_config_file
 
 # get the base settings from the user edit config file
 config_items = read_user_edit_config_file(full_path_user_edit_config_file)
+
 
 ## databases ##
 database_directory = metawibele_install_directory + "/data/"
@@ -267,7 +275,7 @@ mammalia_taxa = database_directory + taxonomy_database_choices[2]
 pdb_database_choices = ["pdb_chain_taxonomy.tsv","pdb_chain_pfam.tsv"]
 pdb_taxonomy = database_directory + pdb_database_choices[0]
 pdb_pfam = database_directory + pdb_database_choices[1]
-uniref_database_choices = ['uniref90.ann.all.tsv', 'uniref50.ann.all.tsv', 'map_UniRef90_UniRef50.dat', 'uniref90.fasta.dmnd', 'uniref50.fasta.dmnd', 'uniref90.fasta', 'uniref50.fasta']
+uniref_database_choices = ['uniref90.ann.tsv', 'uniref50.ann.tsv', 'map_UniRef90_UniRef50.dat', 'uniref90.fasta.dmnd', 'uniref50.fasta.dmnd', 'uniref90.fasta', 'uniref50.fasta']
 uniref_database = database_directory + uniref_database_choices[0]
 uniref50_database = database_directory + uniref_database_choices[1]
 uniref_map = database_directory + uniref_database_choices[2]
@@ -295,35 +303,45 @@ antiSMASH_database = database_directory + "BGC_genes_unirefID.tsv"
 essentialGene_database = database_directory + "essential_genes_unirefID.tsv"
 
 ## config files and computing resources
-config_directory = metawibele_install_directory + "/config/"
+config_directory = metawibele_install_directory + "/configs/"
 threads = get_item (config_items, "computation", "threads", "int")
+memory = get_item(config_items, "computation", "memory", "int")
+
 
 ## Input and output ##
 # input folder and files
 basename = get_item(config_items, "output", "basename", "string")
 working_dir = get_item(config_items, "output", "working_dir", "string")
-gene_catalog_dir = working_dir + "/input/"
-output_dir = working_dir + "/output/" 
+#gene_catalog_dir = working_dir + "/input/"
+#output_dir = working_dir + "/output/" 
 annotation_dir = working_dir + "/" + "characterization"
-cluster_dir = annotation_dir + "/" + "cluster"
-homology_dir = annotation_dir + "/" + "homology_annotation"
-sequence_dir = annotation_dir + "/" + "sequence_annotation"
+cluster_dir = annotation_dir + "/" + "clustering"
+protein_family_dir = annotation_dir + "/" + "protein_family_annotation"
+domain_motif_dir = annotation_dir + "/" + "doamin_motif_annotation"
 abundance_dir = annotation_dir + "/" + "abundance_annotation"
 priority_dir = working_dir + "/" + "prioritization"
 
-study = get_item(config_items, "input_dataset", "study", "string")
-metadata = get_item(config_items, "input_dataset", "metadata", "string")
-rna_metadata = get_item(config_items, "input_dataset", "rna_metadata", "string")
-sample_list = get_item(config_items, "input_dataset", "sample_list", "string")
-protein_seq = get_item(config_items, "input_dataset", "protein_seq", "string")
-gene_catalog = get_item(config_items, "input_dataset", "gene_catalog", "string")
-gene_catalog_nuc = get_item(config_items, "input_dataset", "gene_catalog_nuc", "string")
-gene_catalog_prot = get_item(config_items, "input_dataset", "gene_catalog_prot", "string")
-gene_catalog_count = get_item(config_items, "input_dataset", "gene_catalog_count", "string")
+study = get_item(config_items, "input", "study", "string")
+metadata = get_item(config_items, "input", "metadata", "string")
+try:
+	rna_metadata = get_item(config_items, "input", "rna_metadata", "string")
+except:
+	rna_metadata = "none"
+sample_list = get_item(config_items, "input", "sample_list", "string")
+#protein_seq = get_item(config_items, "input", "protein_seq", "string")
+gene_catalog = get_item(config_items, "input", "gene_catalog", "string")
+#gene_catalog_nuc = get_item(config_items, "input", "gene_catalog_nuc", "string")
+gene_catalog_prot = get_item(config_items, "input", "gene_catalog_prot", "string")
+gene_catalog_count = get_item(config_items, "input", "gene_catalog_count", "string")
+try:
+	gene_catalog_rna_count = get_item(config_items, "input", "gene_catalog_rna_count", "string")
+except:
+	gene_catalog_rna_count = "none"
 
-protein_family = cluster_dir + "/" + basename + "_proteinfamilies.clstr"
-protein_family_seq = cluster_dir + "/" + basename + "_proteinfamilies.centroid.fasta"
-protein_family_relab = abundance_dir + "/" + basename + "_proteinfamilies_relab.tsv"
+protein_family = annotation_dir + "/" + basename + "_proteinfamilies.clstr"
+protein_family_prot_seq = annotation_dir + "/" + basename + "_proteinfamilies.centroid.faa"
+protein_family_nuc_seq = annotation_dir + "/" + basename + "_proteinfamilies.centroid.fna"
+protein_family_relab = annotation_dir + "/" + basename + "_proteinfamilies_relab.tsv"
 protein_family_ann = annotation_dir + "/" + basename + "_proteinfamilies_annotation.tsv" 
 protein_family_attr = annotation_dir + "/" + basename + "_proteinfamilies_annotation.attribute.tsv"
 unsupervised_rank = priority_dir + "/" + basename + "_unsupervised_prioritization.rank.table.tsv"
@@ -332,20 +350,28 @@ unsupervised_priority = priority_dir + "/" + basename + "_unsupervised_prioritiz
 supervised_priority = priority_dir + "/" + basename + "_supervised_prioritization.priority.table.tsv"
 
 
-## characterization
-#tshld_consistency = 0.75	# the minimum annotation consistency in one protein family
-tshld_consistency = get_item(config_items, "characterization", "tshld_consistency", "float") # the minimum annotation consistency in one protein family
+## characterization ##
+tshld_consistency = 0.75	# the minimum annotation consistency in one protein family
+#tshld_consistency = get_item(config_items, "characterization", "tshld_consistency", "float") # the minimum annotation consistency in one protein family
 
 # CD-hit
-cd_hit_memory = get_item(config_items, "CD-hit", "cd_hit_memory", "int")
-cd_hit_protein_opts = get_item(config_items, "CD-hit", "cd_hit_protein_opts", "string")  # used for protein families
-cd_hit_gene_opts = get_item(config_items, "CD-hit", "cd_hit_gene_opts", "string") # ued for gene catalogs
-featureCounts_opts = get_item(config_items, "CD-hit", "featurecounts_opts", "string") + " -T " + str(threads)
+# memory used for CD-hit
+cd_hit_memory = memory 
+cd_hit_prot_opts = "-d 100 -c 0.9 -aL 0.8 -aS 0.8 -G 0 -M 0 -B 0"	# clustering protein families
+cd_hit_gene_opts = "-d 100 -c 0.95 -aS 0.8 -G 0 -M 0 -B 0"
+featureCounts_opts = " -F SAF "
+#cd_hit_memory = get_item(config_items, "CD-hit", "cd_hit_memory", "int")
+#cd_hit_prot_opts = get_item(config_items, "CD-hit", "cd_hit_protein_opts", "string")  # used for protein families
+#cd_hit_gene_opts = get_item(config_items, "CD-hit", "cd_hit_gene_opts", "string") # ued for gene catalogs
+#featureCounts_opts = get_item(config_items, "CD-hit", "featurecounts_opts", "string") + " -T " + str(threads)
 
 # diamond options
-diamond_database_extension = get_item(config_items, "diamond", "diamond_database_extension", "string")
-diamond_cmmd_protein_search = get_item(config_items, "diamond", "diamond_cmmd_protein_search", "string")
-diamond_cmmd_nucleotide_search = get_item(config_items, "diamond", "diamond_cmmd_nucleotide_search", "string")
+diamond_database_extension = ".dmnd"
+diamond_cmmd_protein_search = "blastp"
+diamond_cmmd_nucleotide_search = "blastx"
+diamond_identity = 0.9			# identity threshold for uniref90 strong homologies
+diamond_query_coverage = 0.8 	# query and mutual coverage threshold of uniref90 strong homologies
+diamond_mutual_coverage = 0.8
 diamond_version={
     "flag" : "--version",
     "major" : 0,
@@ -353,17 +379,24 @@ diamond_version={
     "second minor" : 22,
     "line" : 0,
     "column" : 2}
-diamond_identity = get_item(config_items, "diamond", "diamond_identity", "float")
-diamond_query_coverage = get_item(config_items, "diamond", "diamond_query_coverage", "float")
-diamond_mutual_coverage = get_item(config_items, "diamond", "diamond_mutual_coverage", "float")
+#diamond_database_extension = get_item(config_items, "diamond", "diamond_database_extension", "string")
+#diamond_cmmd_protein_search = get_item(config_items, "diamond", "diamond_cmmd_protein_search", "string")
+#diamond_cmmd_nucleotide_search = get_item(config_items, "diamond", "diamond_cmmd_nucleotide_search", "string")
+#diamond_identity = get_item(config_items, "diamond", "diamond_identity", "float")
+#diamond_query_coverage = get_item(config_items, "diamond", "diamond_query_coverage", "float")
+#diamond_mutual_coverage = get_item(config_items, "diamond", "diamond_mutual_coverage", "float")
 
-# homology-based
-tshld_identity = get_item(config_items, "homology-based", "tshld_identity", "float")    # the minimum identity of homology
-tshld_coverage = get_item(config_items, "homology-based", "tshld_coverage", "float") 	# the minimum coverage of homology
-taxa_source = get_item(config_items, "homology-based", "taxa_source", "string") 		# the source of taxa for one protein family, representatives vs. LCA
+# protein family
+tshld_identity = 0.25	# the minimum identity of homology
+tshld_coverage = 0.25	# the minimum coverage of homology
+taxa_source = "Rep"		# the source of taxa for one protein family, representatives vs. LCA
+#tshld_identity = get_item(config_items, "protein-family", "tshld_identity", "float")    # the minimum identity of homology
+#tshld_coverage = get_item(config_items, "protein-family", "tshld_coverage", "float") 	# the minimum coverage of homology
+#taxa_source = get_item(config_items, "protein-family", "taxa_source", "string") 		# the source of taxa for one protein family, representatives vs. LCA
 
 # interporscan
-interproscan_appl = get_item(config_items, "interproscan", "interproscan_appl", "string")
+interproscan_appl = "CDD,COILS,Gene3D,HAMAP,MobiDBLite,PANTHER,Pfam,PIRSF,PRINTS,ProDom,PROSITEPATTERNS,PROSITEPROFILES,SFLD,SMART,SUPERFAMILY,TIGRFAM,Phobius,SignalP,TMHMM"
+#interproscan_appl = get_item(config_items, "interproscan", "interproscan_appl", "string")
 interproscan_type = []
 tmp = interproscan_appl.split(",")
 for item in tmp:
@@ -384,20 +417,31 @@ for item in tmp:
 	item = "interpro." + item + ".tsv"
 	interproscan_type.append(item)
 
+# DDI
+#human_microbiome_ddi = get_item(config_items, "DDI", "human_microbiome_ddi", "string")
 
 # MSP
+tshld_unclassified = 0.10	# the minimum percentile of unclassified in one MSP
+tshld_diff = 0.50			# the minimum difference between most and second dominant taxa in the MSP
+tshld_lca = 0.80			# the minimum consistency for LCA calculattion
+taxa_final = "Rep"			# the source of taxa for one protein family, representatives vs. LCA
+
+mspminer = get_item(config_items, "abundance", "mspminer", "string")
 #msp_dir = get_item(config_items, "output_folders", "msp_dir", "string")
 #msp_dir = abundance_dir + "/MSPminer/"
 #msp_config =  get_item(config_items, "MSP", "msp_config", "string")
-tshld_unclassified = get_item(config_items, "MSP", "tshld_unclassified", "float")	# the minimum percentile of unclassified in one MSP
-tshld_diff = get_item(config_items, "MSP", "tshld_diff", "float")			        # the minimum difference between most and second dominant taxa in the MSP
-tshld_lca = get_item(config_items, "MSP", "tshld_lca", "float")				        # the minimum percentile of consistent taxon for protein family to get LCA
-taxa_final = get_item(config_items, "MSP", "taxa_final", "string")				    # the source of taxa for one protein family, representatives vs. LCA
+#tshld_unclassified = get_item(config_items, "MSP", "tshld_unclassified", "float")	# the minimum percentile of unclassified in one MSP
+#tshld_diff = get_item(config_items, "MSP", "tshld_diff", "float")			        # the minimum difference between most and second dominant taxa in the MSP
+#tshld_lca = get_item(config_items, "MSP", "tshld_lca", "float")				        # the minimum percentile of consistent taxon for protein family to get LCA
+#taxa_final = get_item(config_items, "MSP", "taxa_final", "string")				    # the source of taxa for one protein family, representatives vs. LCA
 
 # abundance
-normalization = get_item(config_items, "abundance", "normalization", "string") 		# the method for abundance normalization 
+normalize = "cpm"		# # the method for normalization: [cpm]:copies per million units (sum to 1 million); [relab]: relative abundance (sum to 1)
+#normalize = get_item(config_items, "abundance", "normalize", "string") 		# the method for abundance normalization
+rna_ratio_abundance = get_item(config_items, "abundance", "rna_ratio_abundance", "string") 
 
-# maaslin2 options
+
+# maaslin2
 maaslin2_dir = get_item(config_items, "maaslin2", "maaslin2_output", "string")
 maaslin2_dir = abundance_dir + "/" + maaslin2_dir + "/maaslin2_output/" 
 #maaslin2_dir = "/n/scratchlfs/huttenhower_lab/yancong/assembly-based/HMP2/combined/HUMAnN2/maaslin2_output/"
@@ -443,34 +487,33 @@ transform = get_item(config_items, "maaslin2", "transform", "string")
 analysis_method = get_item(config_items, "maaslin2", "analysis_method", "string")
 plot_heatmap = get_item(config_items, "maaslin2", "plot_heatmap", "string")
 plot_scatter = get_item(config_items, "maaslin2", "plot_scatter", "string")
-maaslin2_cmmd_opts=["--min_abundance", min_abundance, "--min_prevalence", min_prevalence, "--max_significance", max_significance, "--normalization", normalization,  "--transform", transform, "--analysis_method", analysis_method, "--cores", maaslin2_cores, "--fixed_effects", fixed_effects, "--random_effects", random_effects, "--plot_heatmap", plot_heatmap, "--plot_scatter", plot_scatter]
+maaslin2_cmmd_opts = ["--min_abundance", min_abundance, "--min_prevalence", min_prevalence, "--max_significance", max_significance, "--normalization", normalization,  "--transform", transform, "--analysis_method", analysis_method, "--cores", maaslin2_cores, "--fixed_effects", fixed_effects, "--random_effects", random_effects, "--plot_heatmap", plot_heatmap, "--plot_scatter", plot_scatter]
 
 
-## prioritization thresholds 
+## prioritization thresholds ## 
 #tshld_abund = 75
 #tshld_abund = 75
 #tshld_prev = 75
 #tshld_priority = 0.25		# the top percentile for priority
-tshld_priority = get_item(config_items, "prioritization", "tshld_priority", "float")
+#tshld_priority = get_item(config_items, "prioritization", "tshld_priority", "float")
 #tshld_score = 0.5			# the minimum score for priority 
-tshld_priority_score = get_item(config_items, "prioritization", "tshld_priority_score", "float")
+#tshld_priority_score = get_item(config_items, "prioritization", "tshld_priority_score", "float")
 
 
 ## assembly workflow
-
 # bowtie2 options and threshold
-bowtie2_large_index_threshold=4000000000
-bowtie2_index_ext_list=[".1.bt2",".2.bt2",".3.bt2",".4.bt2",
+bowtie2_large_index_threshold = 4000000000
+bowtie2_index_ext_list = [".1.bt2",".2.bt2",".3.bt2",".4.bt2",
     ".rev.1.bt2",".rev.2.bt2"]
-bowtie2_large_index_ext=".1.bt2l"
-bowtie2_version={
+bowtie2_large_index_ext = ".1.bt2l"
+bowtie2_version = {
     "flag" : "--version",
     "major" : 2,
     "minor" : 2,
     "line" : 0,
     "column" : 2}
-bowtie2_align_opts=["--threads", threads] # "--threads "+str(threads)
-bowtie2_index_name="_bowtie2_index"
+bowtie2_align_opts = ["--threads", threads] # "--threads "+str(threads)
+bowtie2_index_name = "_bowtie2_index"
 
 
 if __name__=='__main__':

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 """
 MetaWIBELE Workflow: prioritization module
@@ -27,8 +27,10 @@ THE SOFTWARE.
 
 import sys
 import os
+from os import path
 import subprocess
 import itertools
+import re
 
 from anadama2.tracked import TrackedExecutable, TrackedDirectory
 
@@ -72,29 +74,30 @@ def mandatory_prioritization (workflow, prioritization_conf,
 
 	# get the clustering output files
 	priority_dir = output_folder
-	unsupervised_rank = priority_dir + "/" + basename + "_unsupervised_prioritization.rank.tsv"
-	supervised_rank = priority_dir + "/" + basename + "_supervised_prioritization.rank.tsv"
-	unsupervised_priority = priority_dir + "/" + basename + "_unsupervised_prioritization.priority.tsv"
-	supervised_priority = priority_dir + "/" + basename + "_supervised_prioritization.priority.tsv"
-
+	unsupervised_rank = priority_dir + "/" + config.basename + "_unsupervised_prioritization.rank.tsv"
+	supervised_rank = priority_dir + "/" + config.basename + "_supervised_prioritization.rank.tsv"
+	unsupervised_priority = priority_dir + "/" + config.basename + "_unsupervised_prioritization.priority.tsv"
+	supervised_priority = priority_dir + "/" + config.basename + "_supervised_prioritization.priority.tsv"
+	if not os.path.exists(priority_dir): 
+		os.system("mkdir -p " + priority_dir)
 
 	# run unsupervised prioritization
 	mylog = re.sub(".tsv", ".log", unsupervised_rank)
 	workflow.add_task(
-			"quantify_prioritization.py -c [depends[0]] -m unsupervised -w fixed -a [depends[1]] -b [depends[2]] -o [args[0]] > [args[1]] 2>&1",
+			"quantify_prioritization.py -c [depends[0]] -m unsupervised -w fixed -a [depends[1]] -b [depends[2]] -o [args[0]] >[args[1]] 2>&1",
 			depends = [prioritization_conf, protein_family_ann, protein_family_attr, TrackedExecutable("quantify_prioritization.py")],
 			targets = [unsupervised_rank, unsupervised_priority],
 			args = [priority_dir, mylog],
-			name = "quantify_prioritization")
+			name = "quantify_prioritization__unsupervised")
 
 	# run supervised prioritization
 	mylog = re.sub(".tsv", ".log", supervised_rank)
 	workflow.add_task(
-			"quantify_prioritization.py -c [depends[0]] -m supervised -w fixed -a [depends[1]] -b [depends[2]] -o [args[0]] > [args[1]] 2>&1",
+			"quantify_prioritization.py -c [depends[0]] -m supervised -w equal -a [depends[1]] -b [depends[2]] -o [args[0]] >[args[1]] 2>&1",
 			depends = [prioritization_conf, protein_family_ann, protein_family_attr, TrackedExecutable("quantify_prioritization.py")],
 			targets = [supervised_rank, supervised_priority],
 			args = [priority_dir, mylog],
-			name = "quantify_prioritization")
+			name = "quantify_prioritization__supervised")
 
 	return unsupervised_priority, supervised_priority
 
@@ -136,6 +139,8 @@ def optional_prioritization (workflow, prioritization_conf,
 
 	# get the clustering output files
 	priority_dir = output_folder
+	if not os.path.exists(priority_dir): 
+		os.system("mkdir -p " + priority_dir)
 
 	# run annotation-based prioritization
 	mylog = re.sub(".tsv", ".log", selected_priority)
@@ -185,7 +190,11 @@ def finalize_prioritization (workflow,
 		# run the workflow
 		workflow.go()
 	"""
-
+	
+	priority_dir = output_folder
+	if not os.path.exists(priority_dir): 
+		os.system("mkdir -p " + priority_dir)
+	
 	# format prioritization
 	mylog = re.sub(".tsv", ".log", final_unsupervised_rank)
 	workflow.add_task(
@@ -193,7 +202,7 @@ def finalize_prioritization (workflow,
 			depends = [unsupervised_rank, TrackedExecutable("finalize_prioritization.py")],
 			targets = [final_unsupervised_rank],
 			args = [mylog],
-			name = "finalize_prioritization")
+			name = "finalize_prioritization__unsupervised_rank")
 
 	mylog = re.sub(".tsv", ".log", final_unsupervised_priority)
 	workflow.add_task(
@@ -201,7 +210,7 @@ def finalize_prioritization (workflow,
 			depends = [unsupervised_priority, TrackedExecutable("finalize_prioritization.py")],
 			targets = [final_unsupervised_priority],
 			args = [mylog],
-			name = "finalize_prioritization")
+			name = "finalize_prioritization__unsupervised_priority")
 
 	mylog = re.sub(".tsv", ".log", final_supervised_rank)
 	workflow.add_task(
@@ -209,7 +218,7 @@ def finalize_prioritization (workflow,
 			depends = [supervised_rank, TrackedExecutable("finalize_prioritization.py")],
 			targets = [final_supervised_rank],
 			args = [mylog],
-			name = "finalize_prioritization")
+			name = "finalize_prioritization__supervised_rank")
 
 	mylog = re.sub(".tsv", ".log", final_supervised_priority)
 	workflow.add_task(
@@ -217,7 +226,7 @@ def finalize_prioritization (workflow,
 			depends = [supervised_priority, TrackedExecutable("finalize_prioritization.py")],
 			targets = [final_supervised_priority],
 			args = [mylog],
-			name = "finalize_prioritization")
+			name = "finalize_prioritization__supervised_priority")
 
 	mylog = re.sub(".tsv", ".log", final_selected_priority)
 	workflow.add_task(
@@ -225,7 +234,7 @@ def finalize_prioritization (workflow,
 			depends = [selected_priority, TrackedExecutable("finalize_prioritization.py")],
 			targets = [final_selected_priority],
 			args = [mylog],
-			name = "finalize_prioritization")
+			name = "finalize_prioritization__selected_priority")
 
 
 def moduled_prioritization (workflow, prioritization_conf,
@@ -266,6 +275,8 @@ def moduled_prioritization (workflow, prioritization_conf,
 
 	# get the clustering output files
 	priority_dir = output_folder
+	if not os.path.exists(priority_dir): 
+		os.system("mkdir -p " + priority_dir)
 
 	# run moduling prioritization
 	mylog = re.sub(".tsv", ".log", moduled_priority)

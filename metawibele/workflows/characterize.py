@@ -43,6 +43,8 @@ from metawibele.tasks import characterization
 from metawibele import utilities, config
 
 
+VERSION = config.version
+
 def parse_cli_arguments ():
 	'''
 	 Parses any command-line arguments passed into the workflow.
@@ -51,15 +53,15 @@ def parse_cli_arguments ():
 	create a workflow instance, providing the version number and description
 	'''
 
-	workflow = Workflow(version = "0.0.1", description = "A workflow for MetaWIBELE characterization")
+	workflow = Workflow(version = VERSION, description = "A workflow for MetaWIBELE characterization")
 
 	# add the custom arguments to the workflow
 	workflow.add_argument("threads",
 	                      desc = "number of threads/cores for each task to use",
 	                      default = 20)
-	workflow.add_argument("config",
+	workflow.add_argument("characterization-config",
 	                      desc = "the configuration file of characterization analysis",
-	                      default = "characterization.cfg")
+	                      default = "none")
 	workflow.add_argument("clustering",
 	                      desc = "indicates whether or not cluster proteins into protein families",
 	                      default = True)
@@ -74,7 +76,7 @@ def parse_cli_arguments ():
 	                      default = True)
 	workflow.add_argument("split-number",
 	                      desc="indicates number of spliting files for annotation based on sequence information",
-	                      default = 20)
+	                      default = 10)
 	workflow.add_argument("rna-count",
 	                      desc = "indicates RNA count tables if is available",
 	                      default = "none")
@@ -122,6 +124,8 @@ def get_method_config (config_file):
 		for name in config_items["abundance"].keys():
 			myvalue = config_items["abundance"][name]
 			abundance_conf[name] = myvalue
+		abundance_conf["mspminer"] = config.mspminer
+		abundance_conf["rna_ratio_abundance"] = config.rna_ratio_abundance
 		# for each method
 
 	if "integration" in config_items:
@@ -146,7 +150,12 @@ def main(workflow):
 	args = workflow.parse_args()
 
 	# get configuration info
-	family_conf, domain_motif_conf, abundance_conf, integration_conf = get_method_config(args.config)
+	metawibele_install_directory = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+	default_characterization_conf = metawibele_install_directory + "/configs/characterization.cfg"
+	print(default_characterization_conf)
+	if args.characterization_config == "none":
+		args.characterization_config = default_characterization_conf
+	family_conf, domain_motif_conf, abundance_conf, integration_conf = get_method_config(args.characterization_config)
 
 	# input and output folder
 	input_dir = args.input
@@ -188,7 +197,7 @@ def main(workflow):
 		                                                                                                          gene_catalog_seq,
 		                                                                                                          args.threads,
 		                                                                                                          output_dir, uniref_taxonomy_family, uniref_taxonomy,
-		                                                                                                          protein_family_ann_list, protein_ann_list)
+		                                                                                                          protein_family_ann_list, protein_ann_list, protein_family, protein_family_seq)
 
 	### STEP #3: domain-motif annotation ###
 	# if domain-motif action is provided, then do annotations based on sequence information
@@ -197,7 +206,7 @@ def main(workflow):
 		myprotein_family_ann, myprotein_ann, sequence_output_folder = characterization.domain_motif_annotation (workflow, domain_motif_conf,
 		                                                                                                          gene_catalog_seq,
 		                                                                                                          args.split_number, args.threads,
-		                                                                                                          output_dir, protein_family_ann_list, protein_ann_list)
+		                                                                                                          output_dir, protein_family_ann_list, protein_ann_list, protein_family, protein_family_seq)
 
 
 	### STEP #4: abundance annotation ###
@@ -215,7 +224,6 @@ def main(workflow):
 	if args.integration == True:
 		print("Run integration annotation")
 		myprotein_family_ann, myprotein_family_attr, annotation_output_folder = characterization.integration_annotation (workflow, integration_conf,
-		                                                                                                               protein_family_ann_list, protein_ann_list,
 		                                                                                                               protein_family_ann_list, protein_ann_list,
 		                                                                                                               uniref_taxonomy_family, uniref_taxonomy,
 		                                                                                                               taxonomy_annotation_family, taxonomy_annotation,

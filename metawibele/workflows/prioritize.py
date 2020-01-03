@@ -32,6 +32,7 @@ THE SOFTWARE.
 import sys
 import os, fnmatch
 import logging
+import re
 
 # import the workflow class from anadama2
 from anadama2 import Workflow
@@ -42,6 +43,7 @@ from metawibele.tasks import prioritization
 # import the utilities functions and config settings from MetaWIBELE
 from metawibele import utilities, config
 
+VERSION = config.version
 
 def parse_cli_arguments ():
 	'''
@@ -51,7 +53,7 @@ def parse_cli_arguments ():
 	create a workflow instance, providing the version number and description
 	'''
 
-	workflow = Workflow(version = "0.0.1", description = "A workflow for MetaWIBELE prioritization")
+	workflow = Workflow(version = VERSION, description = "A workflow for MetaWIBELE prioritization")
 
 	# add the custom arguments to the workflow
 	workflow.add_argument("threads",
@@ -59,7 +61,7 @@ def parse_cli_arguments ():
 						default = 20)
 	workflow.add_argument("prioritization-config",
 	                    desc = "the configuration file of quantitative prioritization",
-	                    default = "prioritization.cfg"),
+	                    default = "none"),
 	workflow.add_argument("mandatory",
 	                     desc = "indicates whether or not prioritize protein families based on quantitative criteria (mandatory prioritization)",
 	                     choices=["True", "False"],
@@ -71,7 +73,7 @@ def parse_cli_arguments ():
 	workflow.add_argument("moduled",
 	                     desc = "indicates whether or not module protein families based on sequence annotation (moduling prioritization)",
 	                     choices=["True", "False"],
-						 default = True)
+						 default = False)
 	workflow.add_argument("finalized",
 	                     desc = "indicates whether or not finalize prioritized protein families",
 	                     choices=["True", "False"],
@@ -90,27 +92,33 @@ def main(workflow):
 
 	# input and output folder
 	input_dir = args.input
-	output_dir = config.priority_dir
+	priority_dir = config.priority_dir
+
+	# get config file
+	metawibele_install_directory = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+	default_prioritization_conf = metawibele_install_directory + "/configs/prioritization.cfg"
+	if args.prioritization_config == "none":
+		args.prioritization_config = default_prioritization_conf
 
 	# collect input files
 	protein_family = config.protein_family
-	protein_family_seq = config.protein_family_seq
+	protein_family_seq = config.protein_family_prot_seq
 	protein_family_relab = config.protein_family_relab
 	protein_family_ann = config.protein_family_ann
 	protein_family_attr = config.protein_family_attr
 
 	# output files
-	unsupervised_rank = priority_dir + "/" + basename + "_unsupervised_prioritization.rank.tsv"
-	supervised_rank = priority_dir + "/" + basename + "_supervised_prioritization.rank.tsv"
-	unsupervised_priority = priority_dir + "/" + basename + "_unsupervised_prioritization.priority.tsv"
-	supervised_priority = priority_dir + "/" + basename + "_supervised_prioritization.priority.tsv"
-	selected_priority = priority_dir + "/" + basename + "_unsupervised_prioritization.rank.filter.tsv" 
-	moduled_priority = priority_dir + "/" + basename + "_unsupervised_prioritization.rank.module.tsv" 
+	unsupervised_rank = priority_dir + "/" + config.basename + "_unsupervised_prioritization.rank.tsv"
+	unsupervised_priority = priority_dir + "/" + config.basename + "_unsupervised_prioritization.priority.tsv"
+	supervised_rank = priority_dir + "/" + config.basename + "_supervised_prioritization.rank.tsv"
+	supervised_priority = priority_dir + "/" + config.basename + "_supervised_prioritization.priority.tsv"
+	selected_priority = priority_dir + "/" + config.basename + "_supervised_prioritization.rank.filter.tsv" 
+	moduled_priority = priority_dir + "/" + config.basename + "_supervised_prioritization.rank.module.tsv" 
 
-	final_unsupervised_rank = priority_dir + "/" + basename + "_unsupervised_prioritization.rank.table.tsv"
-	final_supervised_rank = priority_dir + "/" + basename + "_supervised_prioritization.rank.table.tsv"
-	final_unsupervised_priority = priority_dir + "/" + basename + "_unsupervised_prioritization.priority.table.tsv"
-	final_supervised_priority = priority_dir + "/" + basename + "_supervised_prioritization.priority.table.tsv"
+	final_unsupervised_rank = priority_dir + "/" + config.basename + "_unsupervised_prioritization.rank.table.tsv"
+	final_supervised_rank = priority_dir + "/" + config.basename + "_supervised_prioritization.rank.table.tsv"
+	final_unsupervised_priority = priority_dir + "/" + config.basename + "_unsupervised_prioritization.priority.table.tsv"
+	final_supervised_priority = priority_dir + "/" + config.basename + "_supervised_prioritization.priority.table.tsv"
 	final_selected_priority = re.sub(".tsv", ".table.tsv", selected_priority)
 
 
@@ -119,7 +127,7 @@ def main(workflow):
 	if args.mandatory:
 		unsupervised_file, supervised_file = prioritization.mandatory_prioritization (workflow, args.prioritization_config,
 		                                                                        protein_family_ann, protein_family_attr,
-		                                                                        output_dir)
+		                                                                        priority_dir)
 
 
 	### STEP #2: optional prioritization: binary filtering ###
@@ -128,23 +136,23 @@ def main(workflow):
 		myselection = prioritization.optional_prioritization (workflow, args.prioritization_config,
 		                                                             protein_family_ann,
 		                                                             supervised_rank,
-		                                                             output_dir, selected_priority)
+		                                                             priority_dir, selected_priority)
 	
 	### STEP #3: moduled prioritization: category moduling ###
 	# if moduled action is provided, then cluster prioritize protein families into some modules
-	if args.optional:
+	if args.moduled:
 		mymodule = prioritization.moduled_prioritization (workflow, args.prioritization_config,
 		                                                             protein_family_ann,
 		                                                             supervised_rank,
-		                                                             output_dir, moduled_priority)
+		                                                             priority_dir, moduled_priority)
 
 	### STEP #4: finalized annotation ###
 	# if finalized action is provided, then format and fianlize prioritizations
 	if args.finalized:
-		prioritization.finalized_prioritization (workflow,
+		prioritization.finalize_prioritization (workflow,
 		                                        unsupervised_rank, unsupervised_priority,
 		                                        supervised_rank, supervised_priority, selected_priority,
-		                                        output_dir,
+		                                        priority_dir,
 		                                        final_unsupervised_rank, final_unsupervised_priority,
 		                                        final_supervised_rank, final_supervised_priority, final_selected_priority)
 
