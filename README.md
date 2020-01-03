@@ -21,25 +21,25 @@ We provide support for MetaWIBELE users via our Google group. Please feel free t
 
 * [Workflow](#workflow)
 * [Install MetaWIBELE](#install-metawibele)
-    * 1. [Requirements](#1.-requirements)
-    * 2. [Installment](#2.-Installment)
-    	* 2.1 [Download MetaWIBELE](#2.1-download-metawibele)
-    	* 2.2 [Install MetaWIBELE](#2.2-install-metawibele)
-    	* 2.3 [Download database](#2.3-download-databases)
-    * 3. [Configuration for MetaWIBELE](#3.-configuration-for-metawibele)
-    	* 3.1 [Global configration file](#3.1-global-configration-file)
-    	* 3.2 [Configuration for characterization](#3.2-configuration-for-characterization)
-    	* 3.3 [Configuration for prioritization](#3.3-configuration-for-prioritization)
-    * 4. [Test with a demo run](#4.-test-with-a-demo-run) 
+    * [Requirements](#1.-requirements)
+    * [Installment](#2.-Installment)
+    	* [Download MetaWIBELE](#download-metawibele)
+    	* [Install MetaWIBELE](#install-metawibele)
+    	* [Download database](#download-databases)
+    * [Configuration for MetaWIBELE](#configuration-for-metawibele)
+    	* [Global configration file](#global-configration-file)
+    	* [Configuration for characterization](#configuration-for-characterization)
+    	* [Configuration for prioritization](#configuration-for-prioritization)
+    * [Test with a demo run](#test-with-a-demo-run) 
 * [Quick-start Guide](#quick-start-guide)
-    * 1. [How to run](#1.-how-to-run)
-    * 2. [Standard Workflows](#2.-standard-workflows)
-    	* 2.1 [MetaWIBELE-characterize workflow](#2.1-metawibele-characterize-workflow)
+    * [How to run](#how-to-run)
+    * [Standard Workflows](#standard-workflows)
+    	* [MetaWIBELE-characterize workflow](#metawibele-characterize-workflow)
     		* [Input files for characterization](#input-files-for-characterization)
     		* [MetaWIBELE-characterize workflow](#metawibele-characterize-workflow)
     		* [To run a demo for characterization](#to-run-a-demo-for-characterization)
     		* [Output files for characterization](#output-files-for-characterization)
-    	* 2.2 [MetaWIBELE-prioritize workflow](#2.2-metawibele-prioritize-workflow)
+    	* [MetaWIBELE-prioritize workflow](#metawibele-prioritize-workflow)
     		* [Input files for prioritization](#input-files-for-prioritization)
     		* [MetaWIBELE-prioritize workflow](#metawibele-prioritize-workflow)
     		* [To run a demo for prioritization](#to-run-a-demo-for-prioritization)
@@ -68,7 +68,7 @@ We provide support for MetaWIBELE users via our Google group. Please feel free t
 
 
 ## Install MetaWIBELE
-### 1. Requirements
+### Requirements
 ```
 * Python 3+ (tested with 3.7.4)
 * Diamond (tested with v0.9.5)
@@ -93,8 +93,8 @@ We provide support for MetaWIBELE users via our Google group. Please feel free t
 
 ```
 
-### 2. Installment
-#### 2.1 Download MetaWIBELE
+### Installment
+#### Download MetaWIBELE
 You can download the latest MetaWIBELE release or the development version. The source contains example files.
 
 Option 1: Latest Release (Recommended)
@@ -108,7 +108,7 @@ Option 2: Development Version
 * You can always update to the latest version of the repository with:
 	* `$ git pull --update`
 
-#### 2.2 Install MetaWIBELE
+#### Install MetaWIBELE
 
 * Move to the MetaWIBELE directory
 	* `$ cd $MetaWIBELE_PATH`
@@ -117,7 +117,7 @@ Option 2: Development Version
 	* `$ python setup.py install`
 	* If you do not have write permissions to '/usr/lib/', then add the option --user to the install command. This will install the python package into subdirectories of '~/.local'. Please note when using the "--user" install option on some platforms, you might need to add '~/.local/bin/' to your $PATH as it might not be included by default. You will know if it needs to be added if you see the following message `metawibele_workflow: command not found` when trying to run MetaWIBELE after installing with the '--user' option. Similarly, you can also specify the installment directory using '--prefix' option which will install the python package into the directory $YOUR\_INSTALL\_DIR specified using '--prefix'. You might need to add $YOUR\_INSTALL\_DIR/bin to your $PATH as it might not be included by default.
 
-#### 2.3. Download databases
+#### Download databases
 MetaWIBELE requires several databases that are needed to put in the **MetaWIBELE directory**. The versions used in the MetaWIBELE publication are available for download here. You need to download, unpack and put these databases in `$MetaWIBELE_PATH/data`.
 
 * all databases: [metawibele_databases.tar](http://huttenhower.sph.harvard.edu/xxx) (58 GB)
@@ -154,8 +154,8 @@ MetaWIBELE requires several databases that are needed to put in the **MetaWIBELE
 		* [vignettes_proteins.tsv.gz](http://huttenhower.sph.harvard.edu/xxx) (2.7 KB)
 
 	
-### 3. Configuration for MetaWIBELE
-####3.1 Global configration file
+### Configuration for MetaWIBELE
+#### Global configration file
 When running MetaWIBELE, one global configuation file `metawibele.cfg` is required. You can copy `metawibele.cfg` file from the MetaWIBELE installment directory to your working directory, and then modify your configuration based on your datasets. You may need to specify:
 * Input files:
 
@@ -211,7 +211,7 @@ contrast_status = metadata2:contrastCategory1,contrastCategory2
 ref_status = metadata2:contrastCategory1_vs_refCategory1,contrastCategory2_vs_refCategory2
 ```
 
-####3.2 Configuration for characterization
+#### Configuration for characterization
 You can specify the characterization modules in this configuration file. Default will run all modules for characterization. 
 	
 `my_characterization.cfg`:
@@ -254,7 +254,7 @@ summary_ann = yes
 finalization = yes
 ``` 
 
-####3.3 Configuration for prioritization
+#### Configuration for prioritization
 You can specify the prioritization modules in this config file. Default will run all configurations of prioritization in MetaWIBELE installed directory. 
 
 `my_prioritization.cfg`:
@@ -345,7 +345,7 @@ MSPminer_module = required
 #clusters = structural_clusters.tsv
 ```
 
-### 4. Test with a demo run
+### Test with a demo run
 * Run with default configuration
 	* First, run MetaWIBELE for characterization:
 `$ metawibele_workflow characterize --input examples/input/ --output examples/`
@@ -364,7 +364,7 @@ MSPminer_module = required
 
 
 ## Quick-start Guide
-### 1. How to run
+### How to run
 * For a list of all available workflows, run:
 
 	`$ metawibele_workflow --help`
@@ -406,9 +406,9 @@ MSPminer_module = required
 	For additional workflow options, see the [AnADAMA2](https://github.com/biobakery/anadama2) user manual.
 
 
-### 2. Standard Workflows
-#### 2.1 MetaWIBELE-characterize workflow
-* #####Input files for for characterization
+### Standard Workflows
+#### MetaWIBELE-characterize workflow
+* ##### Input files for for characterization
 	* clustering information for non-redudant gene catalogs using extended-fasta format, e.g. [demo_genecatalogs.clstr]()
 	* nucleotide sequences for non-redudant gene catalogs, e.g. [demo_genecatalogs.centroid.fna]()
 	* protein seqeuences for non-redudant gene catalogs, e.g. [demo_genecatalogs.centroid.faa]()
@@ -417,17 +417,17 @@ MSPminer_module = required
 	* sample list, e.g. [demo\_MGX_samples.tsv]()
 	* all the above information can be specified in the `metawibele.cfg` file.
 
-* #####MetaWIBELE-characterize workflow
+* ##### MetaWIBELE-characterize workflow
 	`$ metawibele_workflow characterize --input $INPUT --output $OUTPUT`
 	* In the command replace $INPUT with the path to the folder containing your fastq input files and $OUTPUT with the path to the folder to write output files. See the section on parallelization options to optimize the workflow run based on your computing resources. 
 	* The workflow runs with the default settings to run all modules. These settings will work for most data sets. However, if you need to customize your workflow settings for the preprocessing workflow to determine the optimum seeting. You can specify which modules you want to run in your own configuration file.
 	* For example, `--characterization-config=$myconfig_file` will modify the default settings when running the characterization modules.
 	
-* #####To run a demo for characterization
+* ##### To run a demo for characterization
 
 	`$ metawibele_workflow characterize --characterization-config my_characterization.cfg --input examples/input/ --output examples/`
 
-* #####Output files for characterization
+* ##### Output files for characterization
 	**1. Annotation file**
 	
 	```
@@ -556,24 +556,24 @@ Cluster_10001   2.42532 7.18719 0       0.628126        0       0       0       
 		* All intermediate results are in the folder `$OUTPUT_DIR/characterization/abundance_annotation`.
 	
 
-#### 2.2 MetaWIBELE-prioritize workflow
-* #####Input files for prioritiztion
+#### MetaWIBELE-prioritize workflow
+* ##### Input files for prioritiztion
 	* anntation file produced by MetaWIBELE-characterize workflow, e.g. [demo_proteinfamilies_annotation.tsv]()
 	* attribute file produced by MetaWIBELE-characterize workflow, e.g. [demo_proteinfamilies_annotation.attribute.tsv]()
 	* all the above information can be specified in the `prioritization.cfg` file.
 
-* #####MetaWIBELE-prioritize workflow
+* ##### MetaWIBELE-prioritize workflow
 
 	`$ metawibele_workflow prioritize --input $INPUT --output $OUTPUT`
 	* In the command replace $INPUT with the path to the folder containing your fastq input files and $OUTPUT with the path to the folder to write output files. See the section on parallelization options to optimize the workflow run based on your computing resources. 
 	* The workflow runs with the default settings for all main tool subtasks. These settings will work for most data sets. However, if you need to customize your workflow settings for the preprocessing workflow to determine the optimum seeting. Then apply these settings by using options for each task. You can specify your own configuration file.
 	* For example, `--prioritization-config=$myconfig_file` will modify the default settings when running the prioritization tasks.
 	
-* #####To run a demo for prioritization
+* ##### To run a demo for prioritization
 
 	`$ metawibele_workflow prioritize --prioritization-config my_prioritization.cfg --input examples/characterization/ --output examples/`
 
-* #####Output files for prioritization
+* ##### Output files for prioritization
 	**1. unsupervised prioritization**
 	
 	```
@@ -652,7 +652,7 @@ Cluster_533|CD.dysbiosis_vs_CD.non_dysbiosis    222.18690086498862  0.9715208747
 
 
 ## Guides to MetaWIBELE Utilities
-###Qulity control for raw sequencing reads
+### Qulity control for raw sequencing reads
 A utitlity workflow in MetaWIBELE package for QC, which integrates KneadData quality control pipeline (http://huttenhower.sph.harvard.edu/KneadData) with additional automatic adapter detection, trimming low-quality read bases and removing potentially conmanitationed reads.
 
 #### Specific options for QC workflow
@@ -759,7 +759,7 @@ optional arguments:
 
 ---
 
-###Preprocessing sequencing reads into gene catalogs
+### Preprocessing sequencing reads into gene catalogs
 A utility workflow in MetaWIBELE package for preprocessing metagenomes reads, used for (i) metagenomic assembly, (ii) open reading frame prediction, (iii) non-redundant gene catalogs construction and (iv) gene abundance estimation.
 
 #### Specific options for preprocessing workflow
