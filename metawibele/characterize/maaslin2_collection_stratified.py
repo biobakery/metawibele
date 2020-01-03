@@ -92,6 +92,13 @@ def collect_DA_info (DA_file):
 		meta = info[titles["metadata"]]
 		value = info[titles["value"]]
 		feature = info[titles["feature"]]
+		if re.search("Cluster_[\d]+\.", feature):
+			mym = re.search("(Cluster_[\d]+)", feature)
+			myid = mym.group(1)
+			feature = re.sub(myid + "\.", myid + "|", feature)
+			feature = re.sub("\.\.", "@ ", feature)
+			feature = re.sub("\.", " ", feature)
+			feature = re.sub("\@", ".", feature)
 		coef = info[titles["coef"]]
 		stderr = info[titles["stderr"]]
 		total = info[titles["N"]]

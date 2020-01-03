@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 """
 MetaWIBELE: mspminer_protein module
@@ -97,7 +97,7 @@ def collect_taxonomy_info (ann_file, class_type):
 		if myclass != class_type:
 			continue
 		if not mymsp in anns:
-			anns[mymsp] = "num_genes=" + num_genes + "; " + "num_unclassified_genes=" + num_unclassified_genes + "; " + "num_hit_genes=" + num_hit_genes + "\t" + taxa_id + "\t" + taxa_name + "\t" + taxa_rank + "\t" + taxa_lineage
+			anns[mymsp] = "num_genes(" + num_genes + ")," + "num_unclassified_genes(" + num_unclassified_genes + ")," + "num_hit_genes(" + num_hit_genes + ")\t" + taxa_id + "\t" + taxa_name + "\t" + taxa_rank + "\t" + taxa_lineage
 	# foreach line
 	open_file.close()
 	return anns
@@ -123,8 +123,9 @@ def collect_msp_info (msp_file):
 		# title line
 		mymsp = info[titles["msp_name"]]
 		myid = info[titles["gene_name"]]
-		myclass = info[titles["class"]]
-		mymodule = info[titles["module_name"]]
+		myclass = info[titles["msp_name"]] + "__" + info[titles["class"]]
+		#myclass = info[titles["class"]]
+		mymodule = info[titles["msp_name"]] + "__" + info[titles["module_name"]]
 		msp[myid] = mymsp + "\n" + myclass + "\t" + mymodule
 	# foreach line
 	open_file.close()
@@ -155,7 +156,7 @@ def assign_msp (gene_file, msp, anns, outfile):
 	open_file.close()
 
 	open_out = open(outfile, "w")
-	open_out.write(utilities.PROTEIN_ID + "\tmsp_name\tgene_class\tmodule_name\tmsp_dec\ttaxa_id\ttaxa_name\ttaxa_rank\ttaxa_lineage\n")
+	open_out.write(utilities.PROTEIN_ID + "\tmsp_name\tgene_class\tmodule_name\tmsp_description\ttaxa_id\ttaxa_name\ttaxa_rank\ttaxa_lineage\n")
 	for myid in sorted(genes.keys()):
 		if myid in msp:	# grouped into MSP
 			mymsp, myinfo = msp[myid].split("\n")

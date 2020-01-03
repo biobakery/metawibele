@@ -326,7 +326,7 @@ def collect_abundance_info (abundance_file, DA_cluster, meta_contrast, meta_ref)
 				prevalent_mymean = 1.0 * sum(prevalent_tmp)/len(prevalent_tmp)
 			if not myclust in folds:
 				folds[myclust] = {}
-			folds[myclust][mycmp] = str(myfold) + "\t" + str(myeffect) + "\t" + str(mymean) + "\t" + str(mean_case) + "\t" + str(mean_control) + "\t" + str(prevalent_mymean) + "\t" + str(prevalent_mean_case) + "\t" + str(prevalent_mean_control)
+			folds[myclust][mycmp] = str(myvar) + "\t" + str(myfold) + "\t" + str(myeffect) + "\t" + str(mymean) + "\t" + str(mean_case) + "\t" + str(mean_control) + "\t" + str(prevalent_mymean) + "\t" + str(prevalent_mean_case) + "\t" + str(prevalent_mean_control)
 	# foreach cluster
 	total_value = {}
 	tmp1 = []
@@ -477,7 +477,7 @@ def output_abundance_info (folds, abundance, meta_ref, meta_contrast, outfile):
 	# foreach cmp type
 
 	data_file = re.sub(".tsv", ".fold.tsv", outfile)
-	title = utilities.PROTEIN_FAMILY_ID + "\tcmp_type\tfoldChange\teffectSize\tmean_abundance\tmean_abundance_case\tmean_abundance_control\tmean_prevalent_abundance\tmean_prevalent_abundance_case\tmean_prevalent_abundance_control"
+	title = utilities.PROTEIN_FAMILY_ID + "\tcmp_type\tvalueChange\tfoldChange\teffectSize\tmean_abundance\tmean_abundance_case\tmean_abundance_control\tmean_prevalent_abundance\tmean_prevalent_abundance_case\tmean_prevalent_abundance_control"
 	open_file = open(data_file, "w")
 	open_file.write(title + "\n")
 	for myid in sorted(folds.keys()):

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 """
 MetaWIBELE: maaslin2_summary module
@@ -64,6 +64,9 @@ def get_args():
 	parser.add_argument('-q', "--qvalue-cutoff",
 	                    help='cutoff for FDR adjust pvalue filtering (qvalue < cutoff), e.g. no|0.05',
 	                    default="0.05")
+	parser.add_argument('-e', "--effect-size",
+	                    help='specify the flag of effect size',
+	                    default="coef")
 	parser.add_argument('-o', "--output",
 	                    help='output DA summary file',
 	                    required=True)
@@ -140,7 +143,7 @@ def collect_DA_prevalence_info (pre_file):
 #==============================================================
 # collect fold change info 
 #==============================================================
-def collect_fold_change_info (fold_file, stat, prevalence):
+def collect_fold_change_info (fold_file, stat, prevalence, effect_size):
 	# collect fold info
 	folds = {}
 	titles = {}
@@ -163,9 +166,9 @@ def collect_fold_change_info (fold_file, stat, prevalence):
 		myabun = info[titles["mean_abundance"]]
 		myabun_case = info[titles["mean_abundance_case"]]
 		myabun_control = info[titles["mean_abundance_control"]]
-		#mydis = abs(float(fold)-1)
-		#mydis = abs(math.log(float(fold))/math.log(2))
-		mydis = abs(float(effect))
+		myabun2 = info[titles["mean_prevalent_abundance"]]
+		myabun2_case = info[titles["mean_prevalent_abundance_case"]]
+		myabun2_control = info[titles["mean_prevalent_abundance_control"]]
 		myid = myclust + "\t" + mytype
 		mypvalue = "NA\tNA\tNA\tNA"
 		mypre = "NA\tNA\tNA"
@@ -178,15 +181,15 @@ def collect_fold_change_info (fold_file, stat, prevalence):
 			if myq == "NA" or myq == "NaN" or myq == "nan":
 				continue
 			mydis = abs(float(mycoef))
-			if config.effect_size == "effectSize":
+			if effect_size == "effectSize":
 				mydis = abs(float(effect))
-			if config.effect_size == "foldChange":
+			if effect_size == "foldChange":
 				mydis = abs(float(fold))
 			if not mydis in folds:
 				folds[mydis] = {}
 			if not myq in folds[mydis]:
 				folds[mydis][myq] = {}
-			folds[mydis][myq][myid] = mypre + "\t" + mypvalue + "\t" + fold + "\t" + effect + "\t" + str(myabun) + "\t" + str(myabun_case) + "\t" + str(myabun_control)
+			folds[mydis][myq][myid] = mypre + "\t" + mypvalue + "\t" + fold + "\t" + effect + "\t" + str(myabun) + "\t" + str(myabun_case) + "\t" + str(myabun_control) + "\t" + str(myabun2) + "\t" + str(myabun2_case) + "\t" + str(myabun2_control)
 	# foreach line
 	open_file.close()
 	sys.stderr.write("Get fold change info ......done\n")
@@ -218,7 +221,7 @@ def summary_info (folds, p_cutoff, q_value_cutoff, outfile):
 	abun_all = {}
 	open_file = open(outfile, "w")
 	open_file3 = open(outfile3, "w")
-	title = utilities.PROTEIN_FAMILY_ID + "\tcmp_type\tprevalence\tprevalence_case\tprevalence_control\tcoef\tstderr\tpvalue\tqvalue\tfoldChange\teffectSize\tmean_abundance\tmean_abundance_case\tmean_abundance_control"
+	title = utilities.PROTEIN_FAMILY_ID + "\tcmp_type\tprevalence\tprevalence_case\tprevalence_control\tcoef\tstderr\tpvalue\tqvalue\tfoldChange\teffectSize\tmean_abundance\tmean_abundance_case\tmean_abundance_control\tmean_prevalent_abundance\tmean_prevalent_abundance_case\tmean_prevalent_abundance_control"
 	open_file.write(title + "\n")
 	open_file3.write(title + "\n")
 
@@ -226,7 +229,7 @@ def summary_info (folds, p_cutoff, q_value_cutoff, outfile):
 		for myq in sorted(folds[mydis].keys(), key=float):	# sort by q-value
 			for myid in sorted(folds[mydis][myq].keys()):
 				open_file3.write(myid + "\t" + folds[mydis][myq][myid] + "\n")
-				mypre, mypre_yes, mypre_no, mycoef, stderr, pvalue, qvalue, myfold, myeffect, myabun, myabun_case, myabun_control = folds[mydis][myq][myid].split("\t")
+				mypre, mypre_yes, mypre_no, mycoef, stderr, pvalue, qvalue, myfold, myeffect, myabun, myabun_case, myabun_control, myabun2, myabun2_case, myabun2_control = folds[mydis][myq][myid].split("\t")
 				myclust, mytype = myid.split("\t")
 				if not mytype in pres_all:
 					pres_all[mytype] = {}
@@ -525,7 +528,7 @@ if __name__ == '__main__':
 	sys.stderr.write("Get stat abundance and fold change info ......starting\n")
 	stat = collect_DA_stat_info (values.abundance)
 	prevalence = collect_DA_prevalence_info (values.prevalence)
-	folds = collect_fold_change_info (values.fold_change, stat, prevalence)
+	folds = collect_fold_change_info (values.fold_change, stat, prevalence, values.effect_size)
 	sys.stderr.write("Get stat abundance and fold change info ......done\n")
 	
 	### Output sample info

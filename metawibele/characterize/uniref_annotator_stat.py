@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 """
 MetaWIBELE: uniref_annotator_stat module
@@ -125,11 +125,11 @@ def stat_annotation (query, hits, identity, qcov, mcov, outfile):
 	stat_cov = {}
 	stat = {}
 	identity = float(identity) * 100
-	outfile1 = re.sub(".tsv", ".all.tsv", outfile)
+	#outfile1 = re.sub(".tsv", ".simple.tsv", outfile)
 	open_out = open(outfile, "w")
-	open_out1 = open(outfile1, "w")
-	open_out.write(utilities.PROTEIN_ID + "\tsubject\tidentity\tcoverage\tevalue\ttype\n")
-	open_out1.write(utilities.PROTEIN_ID + "\tsubject\tidentity\tquery_coverage\tmutual_coverage\tevalue\tquery_type\tmutual_type\n")
+	#open_out1 = open(outfile1, "w")
+	#open_out.write(utilities.PROTEIN_ID + "\tsubject\tidentity\tcoverage\tevalue\ttype\n")
+	open_out.write(utilities.PROTEIN_ID + "\tsubject\tidentity\tquery_coverage\tmutual_coverage\tevalue\tquery_type\tmutual_type\n")
 	for myid in sorted(query.keys()):
 		if not myid in hits:	# no hit
 			# debug
@@ -140,8 +140,8 @@ def stat_annotation (query, hits, identity, qcov, mcov, outfile):
 				stat["no_hit"] = 1
 			else:
 				stat["no_hit"] = stat["no_hit"] + 1
-			open_out.write(mystr + "\n")
-			open_out1.write(mystr1 + "\n")
+			#open_out.write(mystr + "\n")
+			open_out.write(mystr1 + "\n")
 			continue
 		myhit = hits[myid][0]	# default to select the first hit
 		myhit_flag = 0
@@ -216,11 +216,11 @@ def stat_annotation (query, hits, identity, qcov, mcov, outfile):
 		mutual_type = "low_confidence"
 		if float(myiden) >= float(identity) and float(mymcov) >= float(mcov):
 			mutual_type = "high_confidence"	
-		open_out.write(mystr + "\t" + mytype + "\n")	
-		open_out1.write(mystr1 + "\t" + mytype + "\t" + mutual_type + "\n")	
+		#open_out.write(mystr + "\t" + mytype + "\n")	
+		open_out.write(mystr1 + "\t" + mytype + "\t" + mutual_type + "\n")	
 	# foreach line
 	open_out.close()
-	open_out1.close()
+	#open_out1.close()
 
 	## output stat
 	stat_high_id = re.sub(".tsv", ".high_identity.tsv", outfile)

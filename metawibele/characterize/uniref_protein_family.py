@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 """
 MetaWIBELE: uniref_protein_family module
@@ -420,7 +420,7 @@ def assign_annotation (identity_cutoff, coverage_cutoff, cutoff, pep_cluster, an
 						outs[clust_id] = {}
 					if not clust_id in outs_info:
 						outs_info[clust_id] = {}
-					outs[clust_id][mytype + "\t" + mytype1 + "\t" + ann + "\t" + tmp_info[titles["Tax"]] + "\t" + tmp_info[titles["TaxID"]] + "\t" + tmp_info[titles["Rep_Tax"]] + "\t" + tmp_info[titles["Rep_TaxID"]] + "\t" + tmp_info[titles["Organism"]] + "\t" + tmp_info[titles["UniProtKB"]] + "\t" + tmp_info[titles["UniRefID"]]] = ""
+					outs[clust_id][mytype + "\t" + mytype1 + "\t" + ann + "\t" + tmp_info[titles["Tax"]] + "\t" + tmp_info[titles["TaxID"]] + "\t" + tmp_info[titles["Rep_Tax"]] + "\t" + tmp_info[titles["Rep_TaxID"]] + "\t" + tmp_info[titles["Organism"]] + "\t" + tmp_info[titles["UniProtKB"]] + "\t" + tmp_info[titles["Entry"]] + "\t" + tmp_info[titles["Gene_names"]] + "\t" + tmp_info[titles["UniRefID"]]] = ""
 					outs_info[clust_id][mytype + "\t" + myinfo] = ""
 					if not clust_id in anns:
 						anns[clust_id] = {}
@@ -429,7 +429,7 @@ def assign_annotation (identity_cutoff, coverage_cutoff, cutoff, pep_cluster, an
 				if not member in outs_ORF:
 					outs_ORF[member] = {}
 				#outs_ORF[member][myid + "\t" + tmp_info[1] + "\t" + tmp_info[2] + "\t" + tmp_info[5] + "\t" + tmp_info[4] + "\t" + tmp_info[0] + "\t" + tmp1] = ""
-				outs_ORF[member][mytype + "\t" + mytype1 + "\t" + ann + "\t" + tmp_info[titles["Tax"]] + "\t" + tmp_info[titles["TaxID"]] + "\t" + tmp_info[titles["Rep_Tax"]] + "\t" + tmp_info[titles["Rep_TaxID"]] + "\t" + tmp_info[titles["Organism"]] + "\t" + tmp_info[titles["UniProtKB"]] + "\t" + tmp_info[titles["UniRefID"]]] = ""
+				outs_ORF[member][mytype + "\t" + mytype1 + "\t" + ann + "\t" + tmp_info[titles["Tax"]] + "\t" + tmp_info[titles["TaxID"]] + "\t" + tmp_info[titles["Rep_Tax"]] + "\t" + tmp_info[titles["Rep_TaxID"]] + "\t" + tmp_info[titles["Organism"]] + "\t" + tmp_info[titles["UniProtKB"]] + "\t" + tmp_info[titles["Entry"]] + "\t" + tmp_info[titles["Gene_names"]] + "\t" + tmp_info[titles["UniRefID"]]] = ""
 				if tmp_info[0] != "NA":
 					mytotal = mytotal + 1
 				myuniref_id = tmp_info[0]
@@ -442,7 +442,7 @@ def assign_annotation (identity_cutoff, coverage_cutoff, cutoff, pep_cluster, an
 				detail_info[myuniref_id][member] = ""
 				if not myuniref_id in ann_info:
 					ann_info[myuniref_id] = {}
-				ann_info[myuniref_id][mytype + "\t" + mytype1 + "\t" + ann + "\t" + tmp_info[titles["Tax"]] + "\t" + tmp_info[titles["TaxID"]] + "\t" + tmp_info[titles["Rep_Tax"]] + "\t" + tmp_info[titles["Rep_TaxID"]] + "\t" + tmp_info[titles["Organism"]] + "\t" + tmp_info[titles["UniProtKB"]] + "\t" + tmp_info[titles["UniRefID"]]] = ""
+				ann_info[myuniref_id][mytype + "\t" + mytype1 + "\t" + ann + "\t" + tmp_info[titles["Tax"]] + "\t" + tmp_info[titles["TaxID"]] + "\t" + tmp_info[titles["Rep_Tax"]] + "\t" + tmp_info[titles["Rep_TaxID"]] + "\t" + tmp_info[titles["Organism"]] + "\t" + tmp_info[titles["UniProtKB"]] + "\t" + tmp_info[titles["Entry"]] + "\t" + tmp_info[titles["Gene_names"]] + "\t" + tmp_info[titles["UniRefID"]]] = ""
 			# foreach type
 		# foreach member
 		if flag == 0:
@@ -463,7 +463,7 @@ def assign_annotation (identity_cutoff, coverage_cutoff, cutoff, pep_cluster, an
 				while mynum <= item_num:
 					mystr = mystr + "\tNA"
 					mynum = mynum + 1
-				mystr2 = "NA\tNA\tNA\tNA\tNA\tNA\tNA"
+				mystr2 = "NA\tNA\tNA\tNA\tNA\tNA\tNA\tNA\tNA"
 				#mynum = 1
 				#while mynum <= item_num2:
 				#	mystr2 = mystr2 + "\tNA"
@@ -585,8 +585,8 @@ def assign_annotation (identity_cutoff, coverage_cutoff, cutoff, pep_cluster, an
 	open_out1 = open(outfile1, "w")
 	tmp1 = ann_title.split("\t")
 	tmp2 = "\t".join(tmp1[titles["Length"]:len(tmp1)])
-	open_out.write(utilities.PROTEIN_FAMILY_ID + "\ttype\tdetail\tdescription\tTax\tTaxID\tRep_Tax\tRep_TaxID\torganism\tUniProtKB\tunirefID" + "\n")
-	open_out1.write(utilities.PROTEIN_ID + "\ttype\tdetail\tdescription\tTax\tTaxID\tRep_Tax\tRep_TaxID\torganism\tUniProtKB\tunirefID" + "\n")
+	open_out.write(utilities.PROTEIN_FAMILY_ID + "\ttype\tdetail\tdescription\tTax\tTaxID\tRep_Tax\tRep_TaxID\torganism\tUniProtKB\tEntry\tGene_names\tunirefID" + "\n")
+	open_out1.write(utilities.PROTEIN_ID + "\ttype\tdetail\tdescription\tTax\tTaxID\tRep_Tax\tRep_TaxID\torganism\tUniProtKB\tEntry\tGene_names\tunirefID" + "\n")
 	for myclust in sorted(cluster.keys()):
 		if assign_flag == "centroid":  # assign annotation based on representative info
 			if myclust in outs:

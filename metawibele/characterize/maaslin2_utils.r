@@ -20,7 +20,7 @@ source(pcl_utils)
 # Prepare reference status 
 prepare_ref <- function(metafile, meta, outfile) {
   # extract metadata
-  metadata <- read.table(metafile, head = TRUE, row.names = 1, sep="\t")
+  metadata <- read.table(metafile, row.names = 1, head=TRUE, sep="\t", quote="", comment.char = "", check.names = FALSE)
   metadata$diagnosis <- as.factor(metadata$diagnosis) # convert to category
   metadata$diagnosis <- relevel(metadata$diagnosis, ref = meta) # set 'nonIBD' as reference
   
@@ -43,7 +43,7 @@ prepare_ref <- function(metafile, meta, outfile) {
 # Prepare nested/interacted effect 
 prepare_effect <- function(metafile, outfile) {
   # extract metadata
-  metadata <- read.table(metafile, head=TRUE, sep="\t")
+  metadata <- read.table(metafile, head=TRUE, sep="\t", quote="", comment.char = "", check.names = FALSE)
   attach(metadata)
   new <- interaction(metadata$diagnosis, metadata$active)
   metadata <- data.frame(metadata, diagnosis2=new)
@@ -67,7 +67,7 @@ convert_table <- function(infile, outfile) {
 ##########################################
 # split table
 split_table <- function(infile, split_num, outfile) {
-	a <- read.table(infile, head = TRUE, row.names = 1)
+	a <- read.table(infile, row.names = 1, head=TRUE, sep="\t", quote="", comment.char = "", check.names = FALSE)
 	rownum <- nrow(a)
 	split_size <- as.integer(rownum/as.numeric(split_num))
 	i <- 1
@@ -103,7 +103,7 @@ filter_feature <- function(pclfile, outfile) {
 # Combine results and Multiplicity correction
 multiplicity_correction <- function (infile, outfile) {
 	print(infile)
-	paras <- read.table(infile, header=TRUE)
+	paras <- read.table(infile, header=TRUE, sep="\t", quote="", comment.char = "", check.names = FALSE)
 	new_col_name <- c(colnames(paras), "qvalue")
 
 	# multiplicity correction based on all metadata

@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
 """
-MetaWIBELE: sum_to_protein_family_abundance module
-Sum over protein families based on reads mapped to gene catalog of nucleotide representatives
+MetaWIBELE: sum_to_protein_family_stratified_abundance module
+Sum over stratified protein families based on reads mapped to gene catalog of nucleotide representatives
 
 Copyright (c) 2019 Harvard School of Public Health
 
@@ -50,8 +50,9 @@ Sum over protein families based on reads mapped to gene catalog of nucleotide re
 def get_args ():	
 	parser = argparse.ArgumentParser()
 	parser.add_argument('-i', help='input gene catalog abundance', required=True)
-	parser.add_argument('-t', help='specify the type of data tables, e.g. count | RPK | relab | CPM', default="count")
-	parser.add_argument('-o', help='output abundance file', required=True)
+	parser.add_argument('-m', help='input taxonomy file for gene catalogs', required=True)
+	parser.add_argument('-t', help='threshold for taxon presence (e.g. >X% of genes non-zero in RNA)', default=0.5)
+	parser.add_argument('-o', help='output stratified abundance file', required=True)
 	values = parser.parse_args()
 	return values
 # get_args
@@ -60,7 +61,7 @@ def get_args ():
 #==============================================================
 # collect cluster info
 #==============================================================
-def collect_protein_cluster_info (clust_file):	# discovery_cohort.proteins.clust
+def collect_protein_cluster_info (clust_file):	
 	cluster = {}
 	open_file = open(clust_file, "r")
 	myclust = ""
@@ -85,35 +86,86 @@ def collect_protein_cluster_info (clust_file):	# discovery_cohort.proteins.clust
 # function collect_gene_cluster_info
 
 
-
 #==============================================================
-# sum up to cluster abundance
+# collect taxa info
 #==============================================================
-def assign_counts (pep_cluster, data_type, infile, outfile):
-	counts = {}
+def collect_taxa_info (taxa_file):
+	taxa_levels = ["Species"]
+	taxa = {}
+	taxa_num = {}
 	titles = {}
-	samples = {}
-	outs = {}
-	open_file = open(infile, "r")
+	open_file = open(taxa_file, "r")
+	line = open_file.readline()
+	line = line.strip()
+	info = line.split("\t")
+	for item in info:
+		titles[item] = info.index(item)
 	for line in open_file:
 		line = line.strip()
 		if not len(line):
 			continue
 		info = line.split("\t")
-		if re.search("^ID", line):
-			myindex = 1
-			while myindex < len(info):
-				item = info[myindex]
-				titles[myindex] = item
-				samples[item] = ""
-				myindex = myindex + 1
-			# foreach item
+		myid = info[0]
+		mytaxa = "NA"
+		mylevel = "NA"
+		if "taxa_name" in titles:
+			mytaxa = info[titles["taxa_name"]]
+			if "taxa_rank" in titles:
+				 mylevel = info[titles["taxa_rank"]]
+		else:
+			if "detail" in titles:
+				mytaxa = info[titles["detail"]]
+		if mylevel != "NA":
+			if not mylevel in taxa_levels:
+				continue
+		if mytaxa == "NA" or mytaxa == "Unclassified":
 			continue
-		# if title
+		taxa[myid] = mytaxa
+		if not mytaxa in taxa_num:
+			taxa_num[mytaxa] = {}
+		taxa_num[mytaxa][myid] = ""
+	# foreach line
+	open_file.close()
+
+	return taxa, taxa_num
+# collect_taxa_info
+
+
+#==============================================================
+# sum up to family abundance
+#==============================================================
+def sum_abundance (pep_cluster, taxa, taxa_num, flt_presence, infile, outfile):
+	titles = {}
+	samples = []
+	taxa_presence = {}
+	outs = {}
+	open_file = open(infile, "r")
+	line = open_file.readline()
+	line = line.strip()
+	info = line.split("\t")
+	myindex = 1
+	while myindex < len(info):
+		item = info[myindex]
+		titles[myindex] = item
+		samples.append(item)
+		myindex = myindex + 1
+	# foreach item
+	for line in open_file:
+		line = line.strip()
+		if not len(line):
+			continue
+		info = line.split("\t")
 		myid = info[0]
 		if not myid in pep_cluster:
 			continue
-		myclust = pep_cluster[myid]
+		if myid in taxa:
+			mytaxa = taxa[myid]
+		else:
+			continue
+		myclust = pep_cluster[myid] + "|" + mytaxa
+		if not mytaxa in taxa_presence:
+			taxa_presence[mytaxa] = {}
+		taxa_presence[mytaxa][myid] = ""
 		if not myclust in outs:
 			outs[myclust] = {}
 		myindex = 1
@@ -122,40 +174,36 @@ def assign_counts (pep_cluster, data_type, infile, outfile):
 			mys = titles[myindex]
 			if not mys in outs[myclust]:
 				outs[myclust][mys] = 0
-			if data_type == "count":
-				outs[myclust][mys] = outs[myclust][mys] + int(mycount)
-			else:
+			if re.search("\.", mycount):
 				outs[myclust][mys] = outs[myclust][mys] + float(mycount)
+			else:
+				outs[myclust][mys] = outs[myclust][mys] + int(mycount)
 			myindex = myindex + 1
 		# foreach sample
 	# foreach line
 	open_file.close()
 
-#	for pepid in pep_cluster.keys(): # foreach protein family
-#		for member in pep_cluster[pepid].keys():
-#			myclust = pep_cluster[pepid][member]
-#			if member in counts:
-#				for mys in counts[member].keys():
-#					if not myclust in outs:
-#						outs[myclust] = {}
-#					if not mys in outs[myclust]:
-#						outs[myclust][mys] = 0
-#					outs[myclust][mys] = outs[myclust][mys] + int(counts[member][mys])
-#					#outs[myclust][mys][member] = int(counts[member][mys])
-#				# foreach sample
-#			# if geneid
-#			#else:
-#				# debug
-#			#	print("No count info for this member\t" + member + "\t" + myclust)
-#		# foreach member
-#	# foreach protein cluster
+	# threshold for species presence (e.g. >X% of genes non-zero in RNA)
+	refined_taxa = {}
+	for mytaxa in taxa_presence:
+		mynum = len(taxa_presence[mytaxa].keys())
+		if mytaxa in taxa_num:
+			mytotal = len(taxa_num[mytaxa].keys())
+			myper = float(mynum) / float(mytotal)
+			if myper >= float(flt_presence):
+				refined_taxa[mytaxa] = ""
 
+	# output abundance
+	samples = list(set(samples)) 
 	open_out = open(outfile, "w")
-	mytitle = "ID\t" + "\t".join(sorted(samples.keys()))
+	mytitle = "ID\t" + "\t".join(samples)
 	open_out.write(mytitle + "\n")
 	for myclust in sorted(outs.keys()):
 		mystr = "Cluster_" + myclust
-		for mys in sorted(samples.keys()):
+		tmp = myclust.split("|")
+		if not tmp[1] in refined_taxa:
+			continue
+		for mys in samples:
 			mycount = 0
 			if mys in outs[myclust]:
 				mycount = outs[myclust][mys]
@@ -178,20 +226,21 @@ def main():
 	values = get_args()
 
 
-	sys.stderr.write("### Start sum_to_protein_family_abundance.py -i " + values.i + " ####\n")
+	sys.stderr.write("### Start sum_to_protein_family_stratified_abundance.py -i " + values.i + " ####\n")
 	
 
 	### collect cluster info ###
 	sys.stderr.write("Get cluster info ......starting\n")
 	pep_cluster = collect_protein_cluster_info (config.protein_family)
+	taxa, taxa_num = collect_taxa_info (values.m)
 	sys.stderr.write("Get cluster info ......done\n")
 
-	### assign counts to protein families ###
+	### sum abundance to protein families ###
 	sys.stderr.write("\nAssign counts to protein families ......starting\n")
-	assign_counts (pep_cluster, values.t, values.i, values.o)
+	sum_abundance (pep_cluster, taxa, taxa_num, values.t, values.i, values.o)
 	sys.stderr.write("\nAssign counts to protein families ......done\n")
 
-	sys.stderr.write("### Finish sum_to_protein_family_abundance.py ####\n\n\n")
+	sys.stderr.write("### Finish sum_to_protein_family_stratified_abundance.py ####\n\n\n")
 
 # end: main
 

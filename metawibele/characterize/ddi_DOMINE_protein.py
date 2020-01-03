@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 """
 MetaWIBELE: ddi_DOMINE_protein module
@@ -55,10 +55,10 @@ def get_args ():
 	                    help='input the path of annotation file',
 	                    required=True)
 	parser.add_argument('-f', "--filter",
-	                    help='whether filter for specific DDIs',
+	                    help='whether filter for human-microbiome DDIs',
 	                    choices=["yes", "no"],
 	                    required=True,
-	                    default="yes")
+	                    default="no")
 	parser.add_argument('-s', "--suffix",
 	                    help='specify the name suffix of DDI output file',
 	                    required=True,

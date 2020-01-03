@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 """
 MetaWIBELE: maaslin2 module
@@ -57,6 +57,9 @@ def get_args():
 	parser.add_argument('-n', "--split-num",
 	                    help='number of split files',
 	                    default=1)
+	parser.add_argument('-w', "--workdir",
+	                    help='workding directory',
+	                    default="none")
 	parser.add_argument('-o', "--output",
 	                    help='output file',
 	                    required=True)
@@ -98,7 +101,7 @@ def collect_metadata (meta_file, spe_type, meta, outfile):
 #==============================================================
 # run MAasLin2
 #==============================================================
-def run_maaslin2 (feature, metadata, split_num, output, outfile):
+def run_maaslin2 (feature, metadata, split_num, workdir, output, outfile):
 	myexe = config.maaslin2_cmmd
 	myopt = " ".join([str(i) for i in (config.maaslin2_cmmd_opts)])
 	mytranspos = config.transpose_cmmd
@@ -123,7 +126,7 @@ def run_maaslin2 (feature, metadata, split_num, output, outfile):
 		os.system("ls " + mybase + "*.pcl > feature.pcl.list")
 		os.system("mkdir -p " + output)
 		os.system("mv " + mybase + "*.pcl" + " " + output)
-		myout = config.maaslin2_dir + "/" + outfile
+		myout = workdir + "/" + outfile
 		os.system("rm -f " + myout)
 		open_file = open("feature.pcl.list", "r")
 		for i in open_file:
@@ -149,8 +152,8 @@ def run_maaslin2 (feature, metadata, split_num, output, outfile):
 # run_maaslin2
 
 
-def fdr_correction (outfile):
-	myin = config.maaslin2_dir + "/" + outfile
+def fdr_correction (output, outfile):
+	myin = output + "/" + outfile
 	myout = re.sub(".tsv", ".fdr_correction.tsv", myin)
 	mypcl = config.pcl_utils
 	myutils = config.maaslin2_utils
@@ -171,6 +174,8 @@ def main():
 	### get arguments ###
 
 	values = get_args()
+	if values.workdir == "none":
+		values.workdir = config.maaslin2_dir
 
 	sys.stderr.write("### Start maaslin2.py -i " + values.feature_table + " ####\n")
 	
@@ -182,22 +187,24 @@ def main():
 		mytype = tmp1[0]
 		tmp2 = tmp1[1].split(",")
 		for item in tmp2:
-			output = config.maaslin2_dir + "/" + item
+			#output = config.maaslin2_dir + "/" + item
+			output = values.workdir + "/" + item
 			mymeta_file = re.sub(".tsv", "." + item + ".tsv", values.metadata_table)
 			collect_metadata (values.metadata_table, mytype, item, mymeta_file)
 			outfile = re.sub(".tsv", "." + item + ".tsv", values.output)
 			sys.stderr.write("Run MaAsLin2 ......" + mymeta_file + "\n")
-			run_maaslin2 (values.feature_table, mymeta_file, values.split_num, output, outfile)
+			run_maaslin2 (values.feature_table, mymeta_file, values.split_num, values.workdir, output, outfile)
 			sys.stderr.write("Run MaAsLin2 ......done\n")
 			sys.stderr.write("FDR correction ......" + outfile + "\n")
-			myout1, myout2 = fdr_correction (outfile)
+			myout1, myout2 = fdr_correction (values.workdir, outfile)
 			sys.stderr.write("FDR correction ......done\n")
 			out1.append(myout1)
 			out2.append(myout2)
 		# foreach nested effect
 
 		# collect all results
-		outfile = config.maaslin2_dir + "/" + values.output
+		#outfile = config.maaslin2_dir + "/" + values.output
+		outfile = values.workdir + "/" + values.output
 		outfile1 = re.sub(".tsv", ".fdr_correction.tsv", outfile)
 		outfile2 = re.sub(".tsv", ".fdr_correction.correct_per_metadate.tsv", outfile)
 		os.system("less " + out1[0] + " > " + outfile1)
@@ -210,11 +217,11 @@ def main():
 	# if nested effect
 	else:
 		sys.stderr.write("Run MaAsLin2 ......starting\n")
-		run_maaslin2 (values.feature_table, values.metadata_table, values.split_num, config.maaslin2_dir, values.output)
+		run_maaslin2 (values.feature_table, values.metadata_table, values.split_num, values.workdir, values.workdir, values.output)
 		sys.stderr.write("Run MaAsLin2 ......done\n")
 
 		sys.stderr.write("FDR correction ......starting\n")
-		fdr_correction (values.output)
+		fdr_correction (values.workdir, values.output)
 		sys.stderr.write("FDR correction ......done\n")
 	
 	sys.stderr.write("### Finish maaslin2.py ####\n\n\n")

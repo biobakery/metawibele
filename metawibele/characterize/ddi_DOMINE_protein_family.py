@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 """
 MetaWIBELE: ddi_DOMINE_protein_family module
@@ -59,6 +59,9 @@ def get_args ():
 	                    choices=["centroid", "consistency"],
 	                    required=True,
 	                    default="consistency")
+	parser.add_argument('-l', "--label",
+	                    help='spefify the label name for DDI',
+	                    default="DOMINE_interaction")
 	parser.add_argument('-o', "--output",
 	                    help='output annotation summary file',
 	                    required=True)
@@ -103,7 +106,7 @@ def collect_cluster_info (clust_file):  # discovery_cohort.peptides.clust
 #==============================================================
 # collect DDI info
 #==============================================================
-def collect_DDI_info (cluster_mem, extension, ann_path, level, outfile):	# list.txt
+def collect_DDI_info (cluster_mem, extension, ann_path, level, label, outfile):	# list.txt
 	DDIs = {}
 	anns = {}
 	titles = {}
@@ -151,7 +154,8 @@ def collect_DDI_info (cluster_mem, extension, ann_path, level, outfile):	# list.
 		mylevel = ""
 		for item in sorted(DDIs[myid].keys()):
 			tmp = item.split("\t")
-			myt = "DOMINE_interaction"
+			#myt = "DOMINE_interaction"
+			myt = label
 			myl = tmp[0]
 			pfam1, pfam2 = tmp[1].split(":")
 			ann1 = "NA:NA"
@@ -174,7 +178,8 @@ def collect_DDI_info (cluster_mem, extension, ann_path, level, outfile):	# list.
 		mylevel = re.sub(";$", "", mylevel)
 		if mypfam == "":
 			continue
-		open_out2.write(myid + "\tDOMINE_interaction\t" + mypfam + "\t" + myann  + "\t" + mylevel + "\n")
+		#open_out2.write(myid + "\tDOMINE_interaction\t" + mypfam + "\t" + myann  + "\t" + mylevel + "\n")
+		open_out2.write(myid + "\t" + label + "\t" + mypfam + "\t" + myann  + "\t" + mylevel + "\n")
 	# foreach seqID
 	open_out1.close()
 	open_out2.close()
@@ -186,7 +191,7 @@ def collect_DDI_info (cluster_mem, extension, ann_path, level, outfile):	# list.
 #==============================================================
 # output info
 #==============================================================
-def output_info (cutoff, cluster, cluster_id, DDIs, anns, level, assign_flag, outfile):
+def output_info (cutoff, cluster, cluster_id, DDIs, anns, level, assign_flag, label, outfile):
 	details = {}
 	details_rep = {}
 	pers = {}
@@ -299,7 +304,8 @@ def output_info (cutoff, cluster, cluster_id, DDIs, anns, level, assign_flag, ou
 				myann = anns[mypfam]
 			mypfam = re.sub(":", "\t", mypfam)
 			myann = re.sub(":", "\t", myann)
-			open_file.write(clust_id + "\tDOMINE_interaction\t" + mylevel + "\t" + mypfam  + "\t" + myann + "\n")
+			#open_file.write(clust_id + "\tDOMINE_interaction\t" + mylevel + "\t" + mypfam  + "\t" + myann + "\n")
+			open_file.write(clust_id + "\t" + label + "\t" + mylevel + "\t" + mypfam  + "\t" + myann + "\n")
 	open_file.close()
 
 	outfile2 = re.sub(".tsv", ".detail.tsv", outfile)
@@ -324,12 +330,14 @@ def output_info (cutoff, cluster, cluster_id, DDIs, anns, level, assign_flag, ou
 			ddi_info = ddi_info + myitem + ";"
 			level_info = level_info + mylevel + ";"
 			score_info = score_info + str(details_flt[myclust][item]) + ";"
-			open_file1.write(clust_id + "\tDOMINE_interaction\t" + myitem + "\t" + myann + "\t" + str(details_flt[myclust][item]) + "\n")
+			#open_file1.write(clust_id + "\tDOMINE_interaction\t" + myitem + "\t" + myann + "\t" + str(details_flt[myclust][item]) + "\n")
+			open_file1.write(clust_id + "\t" + label + "\t" + myitem + "\t" + myann + "\t" + str(details_flt[myclust][item]) + "\n")
 		ddi_info = re.sub(";$", "", ddi_info)
 		ann_info = re.sub(";$", "", ann_info)
 		score_info = re.sub(";$", "", score_info)
 		level_info = re.sub(";$", "", level_info)
-		open_file.write(clust_id + "\tDOMINE_interaction\t" + ddi_info + "\t" + ann_info + "\t" + score_info + "\n")
+		#open_file.write(clust_id + "\tDOMINE_interaction\t" + ddi_info + "\t" + ann_info + "\t" + score_info + "\n")
+		open_file.write(clust_id + "\t" + label + "\t" + ddi_info + "\t" + ann_info + "\t" + score_info + "\n")
 	open_file.close()
 	open_file1.close()
 	
@@ -374,12 +382,12 @@ def main():
 
 	### collect annotation info and do stat ###
 	sys.stderr.write("Get pfam info ......starting\n")
-	DDIs, anns = collect_DDI_info (cluster_mem, values.extension, values.path, "HC", values.output)
+	DDIs, anns = collect_DDI_info (cluster_mem, values.extension, values.path, "HC", values.label, values.output)
 	sys.stderr.write("Get pfam info ......done\n")
 	
 	### Output sample info
 	sys.stderr.write("\nOutput Pfam summary info ......starting\n")
-	output_info (config.tshld_consistency, cluster, cluster_id, DDIs, anns, "HC", values.method, values.output)
+	output_info (config.tshld_consistency, cluster, cluster_id, DDIs, anns, "HC", values.method, values.label, values.output)
 	sys.stderr.write("Output Pfam summary info ......done\n")
 
 	sys.stderr.write("### Finish ddi_DOMINE_protein_family.py ####\n\n\n")

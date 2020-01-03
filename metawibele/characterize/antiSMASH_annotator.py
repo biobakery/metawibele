@@ -1,4 +1,5 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
+
 """
 MetaWIBELE: antiSMASH_annotator module
 Extract antiSMASH annotation based on UniRef ID
@@ -124,6 +125,9 @@ def collect_uniref_annotation (annfile):
 			continue
 		info = line.split("\t")
 		myid = info[0]
+		map_type = info[titles["map_type"]]
+		if map_type == "UniRef90_weak_homology" or map_type == "UniRef90_worse_homology":
+			continue
 		myuniref = info[titles["unirefID"]]
 		if myuniref == "NA":
 			continue

@@ -178,31 +178,36 @@ def output_info (cluster, sample_num, phe_category, abundance, myflag, flag, out
 	open_out.write(myID + "\ttype\tdetail\tmean_abundance\tmean_prevalent_abundance\tprevalence\ttotal_abundance\ttotal_samples\n")
 	for myid in sorted(cluster.keys()):
 		if myid in abundance:
-			maximal = -999999
+			maximal_abu = -999999
+			maximal_pre = -999999
 			hit_abundance = "NA"
 			hit_prevalence = "NA"
 			for mytype in sorted(abundance[myid].keys()):
 				mynum = len(abundance[myid][mytype])
 				mytotal = sum(abundance[myid][mytype])
-				mypre = float(mynum) / float(len(sample_num[mytype].keys()))
+				mysample_num = len(sample_num[mytype].keys())
+				mypre = float(mynum) / float(mysample_num)
 				mymean_beta = utilities.mean(abundance[myid][mytype])
-				mymean = float(mytotal) / float(len(sample_num[mytype].keys()))
+				mymean = float(mytotal) / float(mysample_num)
 				myflag1 = re.sub("_abundance", "-" + mytype + "_abundance", myflag)
 				myflag1 = re.sub("-combined_abundance", "_abundance", myflag1)
 				myflag1 = re.sub("non_", "non-", myflag1)
-				mystr = myid + "\t" + myflag1 + "\t" + str(mymean) + "\t" + str(mymean) + "\t" + str(mymean_beta) + "\t" + str(mypre) + "\t" + str(mytotal) + "\t" + str(len(sample_num[mytype].keys()))
+				mystr = myid + "\t" + myflag1 + "\t" + str(mymean) + "\t" + str(mymean) + "\t" + str(mymean_beta) + "\t" + str(mypre) + "\t" + str(mytotal) + "\t" + str(mysample_num)
 				open_out.write(mystr + "\n")
 				
 				myflag2 = re.sub("abundance", "prevalence", myflag1)
-				mystr = myid + "\t" + myflag2 + "\t" + str(mypre) + "\t" + str(mymean) + "\t" + str(mymean_beta) + "\t" + str(mypre) + "\t" + str(mytotal) + "\t" + str(len(sample_num[mytype].keys()))
+				mystr = myid + "\t" + myflag2 + "\t" + str(mypre) + "\t" + str(mymean) + "\t" + str(mymean_beta) + "\t" + str(mypre) + "\t" + str(mytotal) + "\t" + str(mysample_num)
 				open_out.write(mystr + "\n")
 				
-				if mymean > maximal:
-					maximal = mymean
-					myflag1 = re.sub("_abundance", "-" + "stratified-phenotype" + "_abundance", myflag)
-					hit_abundance = myid + "\t" + myflag1 + "\t" + str(mymean) + "\t" + str(mymean) + "\t" + str(mymean_beta) + "\t" + str(mypre) + "\t" + str(mytotal) + "\t" + str(len(sample_num[mytype].keys()))
-					myflag2 = re.sub("abundance", "prevalence", myflag1)
-					hit_prevalence = myid + "\t" + myflag2 + "\t" + str(mypre) + "\t" + str(mymean) + "\t" + str(mymean_beta) + "\t" + str(mypre) + "\t" + str(mytotal) + "\t" + str(len(sample_num[mytype].keys()))
+				if mytype in phe_category:
+					if mymean > maximal_abu:
+						maximal_abu = mymean
+						myflag1 = re.sub("_abundance", "-" + "within-phenotype" + "_abundance", myflag)
+						hit_abundance = myid + "\t" + myflag1 + "\t" + str(mymean) + "\t" + str(mymean) + "\t" + str(mymean_beta) + "\t" + str(mypre) + "\t" + str(mytotal) + "\t" + str(mysample_num)
+					if mypre > maximal_pre:
+						maximal_pre = mypre
+						myflag1 = re.sub("_abundance", "-" + "within-phenotype" + "_prevalence", myflag)
+						hit_prevalence = myid + "\t" + myflag1 + "\t" + str(mypre) + "\t" + str(mymean) + "\t" + str(mymean_beta) + "\t" + str(mypre) + "\t" + str(mytotal) + "\t" + str(mysample_num)
 			
 			if hit_abundance != "NA":
 				open_out.write(hit_abundance + "\n")
