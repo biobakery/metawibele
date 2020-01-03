@@ -82,7 +82,8 @@ def extract_subset_info (raw_file, feature_file, outfile):
 			continue
 		info = line.split("\t")
 		myid = info[0]
-		if myid in feature:
+		tmp = myid.split("|")
+		if tmp[0] in feature:
 			open_out.write(line + "\n")
 	# foreach file
 	open_file.close()

@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#from __future__ import print_function # PYTHON 2.7+ REQUIRED
+
 import os
 import sys
 import re
@@ -120,6 +120,7 @@ c_multiname_delim = ";"
 c_str_unknown     = "NO_NAME"
 c_ungrouped       = "UNGROUPED"
 c_unmapped        = "UNMAPPED"
+c_msp_unknown     = "msp_unknown"
 c_unintegrated    = "UNINTEGRATED"
 c_many_bytes      = 1e8
 c_zip_multiplier  = 10
@@ -151,10 +152,12 @@ class Table ( ):
         if path is None:
             rows = csv.reader( sys.stdin, dialect='excel-tab' )
             path = "STDIN"
-            print( "Loading table from: <STDIN>", file=sys.stderr )
+            #print( "Loading table from: <STDIN>", file=sys.stderr )
+            print( "Loading table from: <STDIN>")
         else:
             rows = [line.split("\t") for line in process_gene_table_with_header( path, True )]
-            print( "Loading table from:", path, file=sys.stderr )
+            #print( "Loading table from:", path, file=sys.stderr )
+            print( "Loading table from:" + path)
             size_warn( path )
         for row in rows:
             try:
@@ -169,8 +172,8 @@ class Table ( ):
                 pass
         for rowhead in self.rowheads:
             if c_strat_delim in rowhead:
-                print( "  Treating", path, "as stratified output, e.g.", 
-                       rowhead.split( c_strat_delim ), file=sys.stderr )
+                #print( "  Treating", path, "as stratified output, e.g.", 
+                #       rowhead.split( c_strat_delim ), file=sys.stderr )
                 self.is_stratified = True
                 break
 
@@ -256,7 +259,8 @@ class Ticker( ):
             self.report( )
     def report( self ):
         frac = self.count / float( self.total )
-        print( self.pad+"{:.1f}%".format( 100 * frac ), file=sys.stderr, end="\r" )
+        #print( self.pad+"{:.1f}%".format( 100 * frac ), file=sys.stderr, end="\r" )
+        print( self.pad+"{:.1f}%".format( 100 * frac ))
 
 # ---------------------------------------------------------------
 # helper functions
@@ -265,7 +269,8 @@ class Ticker( ):
 def size_warn( path ):
     m = 1 if ".gz" not in path else c_zip_multiplier
     if m * os.path.getsize( path ) > c_many_bytes:
-        print( "  This is a large file, one moment please...", file=sys.stderr )
+        #print( "  This is a large file, one moment please...", file=sys.stderr )
+        print( "  This is a large file, one moment please...")
 
 def try_zip_open( path, write=None ):
     """ 
@@ -340,7 +345,8 @@ def load_polymap ( path, start=0, skip=None, allowed_keys=None, allowed_values=N
     Inner values are not important (set to 1)
     """
     polymap = {}
-    print( "Loading mapping file from:", path, file=sys.stderr )
+    #print( "Loading mapping file from:", path, file=sys.stderr )
+    print( "Loading mapping file from:" + path)
     size_warn( path )
     for line in gzip_bzip2_biom_open_readlines( path ):
         row = line.split("\t")

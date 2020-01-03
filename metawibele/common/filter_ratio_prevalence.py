@@ -54,7 +54,7 @@ def get_args ():
 	parser.add_argument('-r', 
 						help='whether remove infinite values', 
 						choices=["no", "yes"], 
-						default="no")
+						default="yes")
 	parser.add_argument('-o', 
 						help='output abundance file', 
 						required=True)

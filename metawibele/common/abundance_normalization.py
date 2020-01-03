@@ -51,6 +51,14 @@ def get_args():
 	parser.add_argument('-i', help='raw abundance table (tsv format)', required=True)
 	parser.add_argument('-u', help='normalization scheme: copies per million [cpm], relative abundance [relab]; default=[cpm]',
 	                    choices=["cpm", "relab"], default="cpm", required=True)
+	parser.add_argument("-m", 
+						help="Normalize all levels by [community] total or [levelwise] total; default=[community]",
+						choices=["community", "levelwise", "taxonwise"],
+						default="community")
+	parser.add_argument("-s",
+						help="Include the special features UNMAPPED, UNINTEGRATED, and UNGROUPED; default=[y]",
+						choices=["y", "n"],
+						default="y")
 	parser.add_argument('-o', help='output normalized file', required=True)
 	values = parser.parse_args()
 	return values
@@ -58,9 +66,30 @@ def get_args():
 
 # get_args
 
+# constants
+c_special = [
+	utils.c_unmapped, 
+	utils.c_unintegrated, 
+	utils.c_ungrouped,
+	utils.c_msp_unknown,
+]
 
-def normalize(table, cpm):
-	divisor = 1e-6 if cpm else 1.0
+def normalize(table, method, levelwise=False, taxonwise=False, special=True):
+	if method == "cpm":
+		divisor = 1e-6
+	else:
+		divisor = 1.0
+	#divisor = 1e-6 if cpm else 1.0
+	
+	# remove special features?
+	if not special:
+		test = [rowhead.split( util.c_strat_delim )[0] not in c_special for rowhead in table.rowheads]
+		for flag, rowhead in zip( test, table.rowheads ):
+			if not flag:
+				print( "Excluding special feature:" + rowhead )
+		table.rowheads = [rowhead for i, rowhead in enumerate( table.rowheads ) if test[i]]
+		table.data = [row for i, row in enumerate( table.data ) if test[i]]
+	
 	# compute totals by delim level
 	totals_by_level = {}
 	for i, row in enumerate(table.data):
@@ -69,20 +98,41 @@ def normalize(table, cpm):
 			totals_by_level[level] = [0 for k in range(len(table.colheads))]
 		table.data[i] = [float(k) for k in row]
 		totals_by_level[level] = [k1 + k2 for k1, k2 in zip(totals_by_level[level], table.data[i])]
+
 	# check for sample / level combinations with zero sum
 	for level in sorted(totals_by_level):
 		totals = totals_by_level[level]
 		for j, total in enumerate(totals):
 			if total == 0:
 				totals[j] = 1
-				#print("WARNING: Column {} ({}) has zero sum at level {}".format(j + 1, table.colheads[j], level), file = sys.stderr)
-				print("WARNING: Column {} ({}) has zero sum at level {}")
+				print("WARNING: Column {} ({}) has zero sum at level {}".format(j + 1, table.colheads[j], level))
+	
+	# compute totals by delim taxon
+	totals_by_taxon = {}
+	for i, row in enumerate(table.data):
+		if not re.search(utils.c_strat_delim, table.rowheads[i]):
+			continue
+		taxon = table.rowheads[i].split(utils.c_strat_delim)[-1]
+		if taxon not in totals_by_taxon:
+			totals_by_taxon[taxon] = [0 for k in range(len(table.colheads))]
+		table.data[i] = [float(k) for k in row]
+		totals_by_taxon[taxon] = [k1 + k2 for k1, k2 in zip(totals_by_taxon[taxon], table.data[i])]
+	
 	# normalize
 	for i, row in enumerate(table.data):
 		level = len(table.rowheads[i].split(utils.c_strat_delim))
-		# level=1 corresponds to the community level (no strata)
-		#totals = totals_by_level[level] if levelwise else totals_by_level[1]
-		totals = totals_by_level[1]
+		taxon = table.rowheads[i].split(utils.c_strat_delim)[-1]
+		totals = "NA"
+		if levelwise:
+			totals = totals_by_level[level]
+		if taxonwise:
+			totals = totals_by_taxon[taxon] 
+		if totals == "NA":
+			if 1 in totals_by_level:
+				totals = totals_by_level[1]
+			else:
+				print("No unstratified data! " + i)
+				continue
 		table.data[i] = ["%.6g" % (row[j] / totals[j] / divisor) for j in range(len(totals))]
 
 
@@ -93,7 +143,7 @@ def normalize(table, cpm):
 def main():
 	args = get_args()
 	table = utils.Table(args.i)
-	normalize(table, args.u)
+	normalize(table, args.u, args.m)
 	table.write(args.o)
 
 

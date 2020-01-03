@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 """
 MetaWIBELE: abundance_smoothing module
@@ -38,6 +38,7 @@ except ImportError:
 	sys.exit("CRITICAL ERROR: Unable to find the MetaWIBELE python package." +
 	         " Please check your install.")
 
+
 # ---------------------------------------------------------------
 # Description and arguments
 # ---------------------------------------------------------------
@@ -52,8 +53,8 @@ def get_args ():
 						required=True)
 	parser.add_argument('-t', 
 						help='specify the method for smoothing: the same, small smoothing factor across samples [fixed], half the smallest non-zero value per sample[unfixed]; default=[fixed]', 
-						choices=["fixed", "unfixed"],
-						default="fixed")
+						choices=["fixed", "sample", "feature"],
+						default="feature")
 	parser.add_argument('-f', 
 						help='specify whether to do filtering based on prevalence: no prevalence filtering[no], filter out prevalence < 0.10[0.10]; default=[0.10]', 
 						required=True, 
@@ -70,7 +71,13 @@ def get_args ():
 # collect cluster abundance
 #==============================================================
 def collect_cluster_abundance (abufile):
+	'''
+	:param abufile: abundance file
+	:return: abundance table
+	'''
+
 	samples = {}
+	features = {}
 	samples_tmp = {}
 	titles = {}
 	open_file = open(abufile, "r")
@@ -86,16 +93,23 @@ def collect_cluster_abundance (abufile):
 		if not len(line):
 			continue
 		info = line.split("\t")
+		myid = info[0]
 		myindex = 1
+		feature_tmp = []
 		while myindex < len(info):
 			mys = titles[myindex]
-			if float(info[myindex]) == 0:
-				myindex = myindex + 1
-				continue
-			if not mys in samples_tmp:
-				samples_tmp[mys] = []
-			samples_tmp[mys].append(float(info[myindex]))
+			myabu = info[myindex]
+			if myabu != "NA" and myabu != "NaN" and myabu != "nan":
+				myabu = float(info[myindex])
+				if myabu > float(config.abundance_detection_level):
+					if not mys in samples_tmp:
+						samples_tmp[mys] = []
+					samples_tmp[mys].append(myabu)
+					feature_tmp.append(myabu)
 			myindex = myindex + 1
+		# foreach sample
+		if len(feature_tmp) > 0:
+			features[myid] = min(feature_tmp) * 0.5
 	# foreach line
 	open_file.close()
 
@@ -106,18 +120,27 @@ def collect_cluster_abundance (abufile):
 		samples[mys] = mymin * 0.5
 		mins.append(mymin)
 	# foreach sample
+	fixed_min = min(mins)
 
-	return samples, min(mins)
+	return  fixed_min, samples, features
 #collect_cluster_abundance
 
 
 #==============================================================
 # smooth abundance
 #==============================================================
-def smooth_abundance (smooth_method, prevalence_flt, abufile, samples, min_smooth, outfile):
-	values = {}
-	diagnosis = {}
-	types = {}
+def smooth_abundance (smooth_method, prevalence_flt, abufile, fixed_min, samples, features, outfile):
+	'''
+	:param smooth_method: smoothing method [fixed, sample, feature]
+	:param prevalence_flt: thredshold for prevalence filtering
+	:param abufile: abundance file
+	:param fixed_min: global fixed pseudocount
+	:param samples: per-sample pseudocounts
+	:param features: per-feature pseudocount
+	:param outfile: smoothed file name
+	:return: smoothed file
+	'''
+
 	outfile1 = re.sub(".tsv", ".refined.tsv", abufile)
 	outfile2 = re.sub(".tsv", ".log.tsv", outfile)
 	open_file = open(abufile, "r")
@@ -142,8 +165,9 @@ def smooth_abundance (smooth_method, prevalence_flt, abufile, samples, min_smoot
 		if not len(line):
 			continue
 		info = line.split("\t")
-		mystr = info[0]
-		mystr2 = info[0]
+		myid = info[0]
+		mystr = myid
+		mystr2 = myid
 		myindex = 1
 		mynum = 0
 		while myindex < len(info):
@@ -156,13 +180,20 @@ def smooth_abundance (smooth_method, prevalence_flt, abufile, samples, min_smoot
 					mynum = mynum + 1
 				else:
 					if smooth_method == "fixed":
-						myabu = float(min_smooth)
-					else:
+						myabu = float(fixed_min)
+					if smooth_method == "sample":
 						if mys in samples:
 							myabu = float(samples[mys])
 						else:
 							# debug
-							print("No sample smoothing value!\t" + info[0] + "\t" + mys)
+							print("Per-sample pseudocount is unavailable!\t" + myid + "\t" + mys)
+							myabu = float("NaN")
+					if smooth_method == "feature":
+						if myid in features:
+							myabu = float(features[myid])
+						else:
+							# debug
+							print("Per-feature pseudocount is unavailable!\t" + myid)
 							myabu = float("NaN")
 				if not math.isnan(myabu):
 					myabu2 = math.log(myabu)
@@ -170,10 +201,15 @@ def smooth_abundance (smooth_method, prevalence_flt, abufile, samples, min_smoot
 			mystr2 = mystr2 + "\t" + str(myabu2)
 			myindex = myindex + 1
 		# foreach sample
-		if prevalence_flt != "no":
+
+		# if prevalence_flt != "no"
+		try:
+			prevalence_flt = float(prevalence_flt)
 			mypre = float(mynum) / float(sample_num)
-			if mypre < float(prevalence_flt):
+			if mypre < prevalence_flt:
 				continue
+		except:
+			mypre = float(mynum) / float(sample_num)
 		open_out.write(mystr + "\n")
 		open_out2.write(mystr2 + "\n")
 		open_out1.write(line + "\n")
@@ -199,13 +235,13 @@ def main():
 
 	### collect info ###
 	sys.stderr.write("Get info ......starting\n")
-	samples, min_smooth = collect_cluster_abundance (values.i)
+	fixed_min, samples, features = collect_cluster_abundance (values.i)
 	sys.stderr.write("Get info ......done\n")
 	
-	### convert info ###
-	sys.stderr.write("Convert info ......starting\n")
-	smooth_abundance (values.t, values.f, values.i, samples, min_smooth, values.o)
-	sys.stderr.write("Output info ......done\n")
+	### smooth info ###
+	sys.stderr.write("Smooth info ......starting\n")
+	smooth_abundance (values.t, values.f, values.i, fixed_min, samples, features, values.o)
+	sys.stderr.write("Smooth info ......done\n")
 
 
 	sys.stderr.write("### Finish abundance_smoothing.py ####\n\n\n")

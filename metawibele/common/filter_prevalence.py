@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
 """
-MetaWIBELE: format_mgx module
-Format MGX table for raw sequences
+MetaWIBELE: filter_prevalence module
+Filtering features based on prevalence 
 
 Copyright (c) 2019 Harvard School of Public Health
 
@@ -30,80 +30,96 @@ import os
 import os.path
 import re
 import argparse
-
+import math
 
 # ---------------------------------------------------------------
 # Description and arguments
 # ---------------------------------------------------------------
 description = """
-Format MGX table for raw sequences
+Filtering features based on prevalence 
 """
 
 def get_args (): 
 	parser = argparse.ArgumentParser(description=description)
-	parser.add_argument('-s', help='input sample list', required=True)
-	parser.add_argument('-b', help='input basic sequence info', required=True)
-	parser.add_argument('-o', help='output formated table', required=True)    
+	parser.add_argument('-a', 
+						help='input raw abundance file', 
+						required=True)
+	parser.add_argument('-f', 
+						help='specify whether to do filtering based on prevalence: no prevalence filtering[none], filter out prevalence < 0.10[0.10]; default=[0.10]', 
+						required=True,
+						default="0.10")	
+	parser.add_argument('-o', 
+						help='output abundance file', 
+						required=True)
 	values = parser.parse_args()
 	return values
 # get_args
 
 
-
 #==============================================================
-# format squences info for MGX samples
+# filtering features
 #==============================================================
-def format_mgx_info (sample_file, base_file,outfile):	
-	samples = {}
-	open_file = open(sample_file, "r")
+def filter_feature (prevalence_flt, rawfile, outfile):
+	open_file = open(rawfile, "r")
+	open_out = open(outfile, "w")
+	line = open_file.readline()
+	line = line.strip()
+	info = line.split("\t")
+	sample_num = len(info) - 1
+	titles = {}
+	myindex = 0
+	open_out.write(line + "\n")
+	while myindex < len(info):
+		item = info[myindex]
+		titles[myindex] = item
+		myindex = myindex + 1
 	for line in open_file:
 		line = line.strip()
 		if not len(line):
 			continue
 		info = line.split("\t")
-		samples[info[0]] = ""
+		myid = info[0]
+		myindex = 1
+		mynum = 0
+		while myindex < len(info):
+			myabu = info[myindex]
+			if myabu != "NA" and myabu != "NaN" and myabu != "nan":
+				myabu = float(info[myindex])
+				if float(myabu) != 0:
+					mynum = mynum + 1
+			myindex = myindex + 1
+		# foreach sample
+		if prevalence_flt != "no":
+			mypre = float(mynum) / float(sample_num)
+			if mypre < float(prevalence_flt):
+				continue
+		open_out.write(line + "\n")
 	# foreach line
 	open_file.close()
-
-	open_out = open(outfile, "w")
-	open_file = open(base_file, "r")
-	line = open_file.readline()
-	line = line.strip()
-	open_out.write("SID\t" + line + "\tfile_name\n")
-	for line in open_file:
-		line = line.strip()
-		if not len(line):
-			continue
-		for mys in sorted(samples.keys()):
-			myfile = mys + ".tar"
-			if re.search("_P$", mys):
-				myfile = mys + ".fastq.gz"
-			open_out.write(mys + "\t" + line + "\t" + myfile + "\n")
-	# foreach line
-	open_out.close()
-	open_file.close()
-
-# format_mgx_info
+	
+# filter_feature
 
 
 #==============================================================
 ###########  Main processing ############
 #==============================================================
-if __name__ == '__main__':
-	
+def main():
 	### get arguments ###
 	values = get_args ()
 
 
-	sys.stderr.write("### Start format_mgx.py -s " + values.s + " ####\n")
+	sys.stderr.write("### Start filter_prevalence.py -a " + values.a + " ####\n")
 	
-
-	### format info ###
-	sys.stderr.write("Format info ......starting\n")
-	format_mgx_info (values.s, values.b, values.o)
-	sys.stderr.write("Format info ......done\n")
 	
+	### filter info ###
+	sys.stderr.write("Filter info ......starting\n")
+	filter_feature (values.f, values.a, values.o)
+	sys.stderr.write("Filter info ......done\n")
 
-	sys.stderr.write("### Finish format_mgx.py ####\n\n\n")
+
+	sys.stderr.write("### Finish filter_prevalence.py ####\n\n\n")
 
 # end: main
+
+if __name__ == '__main__':
+	main()

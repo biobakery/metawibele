@@ -56,7 +56,7 @@ def get_args ():
 #==============================================================
 def collect_metadata_info (study, raw_file):
 	name_mapping = {"ID":"SID", "Patient":"subject", "Location":"baseline_montreal_location",
-	                "age":"consent_age", "HBI":"hbi", "SCCAI":"sccai", "Fecal.Calprotectin":"fecalcal"}
+	                "Age":"consent_age", "age":"consent_age", "Location":"site_name", "HBI":"hbi", "SCCAI":"sccai", "Fecal.Calprotectin":"fecalcal"}
 	meta_raw = {}
 	titles = {}
 	open_file = open(raw_file, "r")
@@ -71,9 +71,15 @@ def collect_metadata_info (study, raw_file):
 			continue
 		info = line.split("\t")
 		myid = info[0]
+		if study == "PRISM":
+			if re.search("^[\d]+", myid):
+				myid = study + "_" + myid
 		myindex = 0
 		while myindex < len(info):
 			myitem = info[myindex]
+			if myindex == 0 and study == "PRISM":
+				if re.search("^[\d]+", myitem):
+					myitem = study + "_" + myitem
 			myname = titles[myindex]
 			if myname in name_mapping:
 				myname = name_mapping[myname]
@@ -97,18 +103,23 @@ def collect_sequence_info (study, seq_file):
 	name_mapping = {"SampleName":"SID", "download_path":"data_path", "LibrarySource":"data_modality", "Run":"file_name"}
 	seq = {}
 	titles = {}
+	title_name = {}
 	open_file = open(seq_file, "r")
 	line = open_file.readline()
 	line = line.strip()
 	info = line.split("\t")
 	for item in info:
+		title_name[item] = info.index(item)
 		titles[info.index(item)] = item
 	for line in open_file:
 		line = line.strip()
 		if not len(line):
 			continue
 		info = line.split("\t")
-		myid = info[0]
+		if "SampleName" in title_name:
+			myid = info[title_name["SampleName"]]
+		if "SID" in title_name:
+			myid = info[title_name["SID"]]
 		myindex = 0
 		while myindex < len(info):
 			myitem = info[myindex]
@@ -144,6 +155,8 @@ def format_info (meta_raw, seq, vocal_file, outfile):
 	for line in open_file:
 		line = line.strip()
 		if not len(line):
+			continue
+		if re.search("^#", line):
 			continue
 		info = line.split(",")
 		myid = info[0]

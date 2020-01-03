@@ -31,6 +31,8 @@ import os.path
 import re
 import argparse
 import math
+import statistics
+import numpy as np
 
 try:
 	from metawibele import config
@@ -54,10 +56,6 @@ def get_args ():
 	parser.add_argument('-r', 
 						help='input relative abundance file for RNA', 
 						required=True)
-	parser.add_argument('-t', 
-						help='specify the method for smoothing: the same, small smoothing factor across samples [fixed], half the smallest non-zero value per sample[unfixed]; default=[fixed]', 
-						choices=["fixed", "unfixed"],
-						default="fixed")	
 	parser.add_argument('-o', 
 						help='output ratio table', 
 						required=True)    
@@ -98,6 +96,11 @@ def stddev(data, ddof=0):
 # collect cluster abundance
 #==============================================================
 def collect_cluster_abundance (abufile):
+	'''
+	:param abufile: abundance file
+	:return: abundance table
+	'''
+
 	abundance = {}
 	titles = {}
 	ids = []
@@ -148,10 +151,19 @@ def collect_cluster_abundance (abufile):
 
 
 #==============================================================
-# calculate ratio value
+# calculate ratio value and smooth with pseudocount
 #==============================================================
-def convert_abundance_info (abundance_dna, smooth_dna, smooth_rna, min_rna, rna_file, smooth_flag, outfile): 
+def calculate_ratio (abundance_dna, rna_file, outfile):
+	'''
+	:param abundance_dna: DNA abundance desc
+	:param rna_file: RNA abundance file
+	:outfile: ratio file name
+	:return: RNA-DNA ratio file and corresponding log transformed files
+	'''
+
 	samples = {}
+	infs = {}
+	zeros = {}
 	open_file = open(rna_file, "r")
 	line = open_file.readline()
 	line = line.strip()
@@ -162,13 +174,10 @@ def convert_abundance_info (abundance_dna, smooth_dna, smooth_rna, min_rna, rna_
 		samples[myindex] = mys
 		myindex = myindex + 1
 	# foreach sample
-	outfile1 = re.sub(".tsv", ".smooth.log.tsv", outfile)
 	outfile2 = re.sub(".tsv", ".log.tsv", outfile)
 	open_out = open(outfile, "w")
-	open_out1 = open(outfile1, "w")
 	open_out2 = open(outfile2, "w")
 	open_out.write(line + "\n")
-	open_out1.write(line + "\n")
 	open_out2.write(line + "\n")
 	for line in open_file:
 		line = line.strip()
@@ -179,74 +188,224 @@ def convert_abundance_info (abundance_dna, smooth_dna, smooth_rna, min_rna, rna_
 		if not myid in abundance_dna:
 			continue
 		mystr = myid
-		mystr1 = myid
 		mystr2 = myid
 		myindex = 1
 		myna = 0
 		while myindex < len(info):
-			myrna = float(info[myindex])
+			myrna = info[myindex]
 			mys = samples[myindex]
 			if not mys in abundance_dna[myid]:
 				# debug
 				print("No DNA info!\t" + myid + "\t" + mys)
 				myvalue = "NaN"
 				mystr = mystr + "\t" + myvalue
-				mystr1 = mystr1 + "\t" + myvalue
 				mystr2 = mystr2 + "\t" + myvalue
 				myna = myna + 1
+				myindex = myindex + 1
 				continue
-			mydna = float(abundance_dna[myid][mys])
+			mydna = abundance_dna[myid][mys]
+			if myrna == "NA" or myrna == "NaN" or myrna == "nan":
+				myvalue = "NaN"
+				mystr = mystr + "\t" + myvalue
+				mystr2 = mystr2 + "\t" + myvalue
+				myna = myna + 1
+				myindex = myindex + 1
+				continue
+			if mydna == "NA" or mydna == "NaN" or mydna == "nan":
+				myvalue = "NaN"
+				mystr = mystr + "\t" + myvalue
+				mystr2 = mystr2 + "\t" + myvalue
+				myna = myna + 1
+				myindex = myindex + 1
+				continue
+			myrna = float(myrna)
+			mydna = float(mydna)
 			if myrna == 0 and mydna == 0:
 				myvalue = "NaN"
 				mystr = mystr + "\t" + myvalue
-				mystr1 = mystr1 + "\t" + myvalue
 				mystr2 = mystr2 + "\t" + myvalue
 				myna = myna + 1
 			if myrna == 0 and mydna != 0:
 				mystr = mystr + "\t0" 
 				mystr2 = mystr2 + "\tNaN"
-				if smooth_flag == "fixed":
-					myvalue = math.log(float(min_rna) / mydna)
-					#myvalue = math.log(float(min_rna))
-				else:
-					if mys in smooth_rna:
-						myvalue = math.log(smooth_rna[mys] / mydna)
-					else:
-						# debug
-						print("No smoothed RNA info!\t" + mys)
-						myvalue = "NaN"
-				mystr1 = mystr1 + "\t" + str(myvalue)
 				myna = myna + 1
+				zeros[mys + "\t" + myid] = mydna
 			if myrna != 0 and mydna == 0:
-				#if mys in smooth_dna:
-				#	mysmall = smooth_dna[mys]
-				#	myvalue = myrna / mysmall
-				#	if trans_flag != "no":
-				#		if trans_flag == "log":
-				#			myvalue = math.log(myvalue)
-				#else:
 				myvalue = "inf"
 				mystr = mystr + "\t" + myvalue
-				mystr1 = mystr1 + "\t" + myvalue
 				mystr2 = mystr2 + "\t" + myvalue
+				infs[mys + "\t" + myid] = myrna
 			if myrna != 0 and mydna != 0:
 				myvalue = myrna / mydna
 				mystr = mystr + "\t" + str(myvalue)
-				mystr1 = mystr1 + "\t" +  str(math.log(myvalue))
 				mystr2 = mystr2 + "\t" +  str(math.log(myvalue))
 			myindex = myindex + 1
 		# foreach sample
 		if myna == len(samples.keys()):
 			continue
 		open_out.write(mystr + "\n")
+		open_out2.write(mystr2 + "\n")
+	# foreach line
+	open_file.close()
+	open_out.close()
+	open_out2.close()
+
+	return infs, zeros
+# calculate_ratio
+
+
+def calculate_smoothing_value (abu_file):
+	'''
+	:param abu_file:
+	:return: smoothed values
+	'''
+
+	# collect info
+	samples = {}
+	samples_tmp = {}
+	features_min = {}
+	features_max = {}
+	features_quantile = {}
+	titles = {}
+	open_file = open(abu_file, "r")
+	line = open_file.readline()
+	line = line.strip()
+	info = line.split("\t")
+	myindex = 1
+	while myindex < len(info):
+		titles[myindex] = info[myindex]
+		myindex = myindex + 1
+	for line in open_file:
+		line = line.strip()
+		if not len(line):
+			continue
+		info = line.split("\t")
+		myid = info[0]
+		myindex = 1
+		feature_tmp = []
+		while myindex < len(info):
+			mys = titles[myindex]
+			myabu = info[myindex]
+			if myabu != "NA" and myabu != "NaN" and myabu != "nan" and myabu != "inf":
+				myabu = float(info[myindex])
+				if myabu != 0:
+					if not mys in samples_tmp:
+						samples_tmp[mys] = []
+					samples_tmp[mys].append(myabu)
+					feature_tmp.append(myabu)
+			myindex = myindex + 1
+		# foreach sample
+		if len(feature_tmp) > 0:
+			features_min[myid] = min(feature_tmp) * 0.5
+			features_max[myid] = max(feature_tmp) * 0.99
+			feature_tmp.sort()
+			#features_quantile[myid] = statistics.median(feature_tmp)
+			features_quantile[myid] = np.percentile(feature_tmp, 10)
+	# foreach line
+	open_file.close()
+
+	# the smallest non-zero ratio per sample
+	mins = []
+	for mys in samples_tmp:
+		mymin = min(samples_tmp[mys])
+		samples[mys] = mymin * 0.5
+		mins.append(mymin)
+	# foreach sample
+	fixed_min = min(mins)
+
+	return features_min, features_max, features_quantile
+
+# calculate_smoothing_value
+
+
+def smooth_zero (dna_features_min, dna_features_quantile, rna_features_min, rna_features_quantile, infs, zero, ratio_file):
+	outfile1 = re.sub(".tsv", ".smooth.tsv", ratio_file)
+	outfile2 = re.sub(".tsv", ".smooth.log.tsv", ratio_file)
+	open_file = open(ratio_file, "r")
+	open_out1 = open(outfile1, "w")
+	open_out2 = open(outfile2, "w")
+	line = open_file.readline()
+	open_out1.write(line)
+	open_out2.write(line)
+	line = line.strip()
+	info = line.split("\t")
+	sample_num = len(info) - 1
+	titles = {}
+	myindex = 0
+	while myindex < len(info):
+		item = info[myindex]
+		titles[myindex] = item
+		myindex = myindex + 1
+	for line in open_file:
+		line = line.strip()
+		if not len(line):
+			continue
+		info = line.split("\t")
+		myid = info[0]
+		mystr1 = myid
+		mystr2 = myid
+		myindex = 1
+		mynum = 0
+		while myindex < len(info):
+			myabu = info[myindex]
+			myabu2 = info[myindex]
+			if myabu != "NA" and myabu != "NaN" and myabu != "nan":
+				myabu = float(info[myindex])
+				mys = titles[myindex]
+				if myabu > 0:
+					mynum = mynum + 1
+					if str(myabu) == "inf":
+						myrna = "NA"
+						mydna = "NA"
+						mytmp = mys + "\t" + myid
+						if mytmp in infs:
+							myrna = infs[mytmp]
+							if myid in rna_features_quantile: # require max(rna, dna) > median values
+								if float(myrna) < float(rna_features_quantile[myid]):
+									myrna = "NA"
+							else:
+								myrna = "NA"
+						if myid in dna_features_min:
+							mydna = dna_features_min[myid]
+						if myrna != "NA" and mydna != "NA":
+							myabu = float(myrna) / float(mydna)
+						else:
+							myabu = "NaN"
+							myabu2 = "NaN"
+				else:
+					# rna == 0
+					myrna = "NA"
+					mydna = "NA"
+					mytmp = mys + "\t" + myid
+					if mytmp in zeros:
+						mydna = zeros[mytmp]
+						if myid in dna_features_quantile: # require max(rna, dna) > median values
+							if float(mydna) < float(dna_features_quantile[myid]):
+								mydna = "NA"
+						else:
+							mydna = "NA"
+					if myid in rna_features_min:
+						myrna = rna_features_min[myid]
+					if myrna != "NA" and mydna != "NA":
+						myabu = float(myrna) / float(mydna)
+					else:
+						myabu = "NaN"
+						myabu2 = "NaN"
+				if not math.isnan(float(myabu)):
+					if float(myabu) != 0:
+						myabu2 = math.log(myabu)
+			mystr1 = mystr1 + "\t" + str(myabu)
+			mystr2 = mystr2 + "\t" + str(myabu2)
+			myindex = myindex + 1
+		# foreach sample
 		open_out1.write(mystr1 + "\n")
 		open_out2.write(mystr2 + "\n")
 	# foreach line
-	open_out.close()
+	open_file.close()
 	open_out1.close()
 	open_out2.close()
-	open_file.close()
-# convert_abundance_info
+
+# smooth_zero
 
 
 #==============================================================
@@ -264,15 +423,16 @@ if __name__ == '__main__':
 	### collect info ###
 	sys.stderr.write("Get info ......starting\n")
 	title_dna, ids_dna, abundance_dna, smooth_dna, min_dna, max_dna = collect_cluster_abundance (values.d)
-	title_rna, ids_rna, abundance_rna, smooth_rna, min_rna, max_rna = collect_cluster_abundance (values.r)
-	abundance_rna = {}
+	infs, zeros = calculate_ratio (abundance_dna, values.r, values.o)
+	dna_features_min, dna_features_max, dna_features_quantile = calculate_smoothing_value (values.d)
+	rna_features_min, rna_features_max, rna_features_quantile = calculate_smoothing_value (values.r)
+	#ratio_features_min, ratio_features_max, ratio_features_quantile = calculate_smoothing_value (values.o)
 	sys.stderr.write("Get info ......done\n")
 	
-	### convert info ###
-	sys.stderr.write("Convert info ......starting\n")
-	#mysmooth = float(min_rna) / float(max_dna)
-	convert_abundance_info (abundance_dna, smooth_dna, smooth_rna, min_rna, values.r, values.t, values.o)
-	sys.stderr.write("Output info ......done\n")
+	### smooth zero ###
+	sys.stderr.write("Smooth info ......starting\n")
+	smooth_zero (dna_features_min, dna_features_quantile, rna_features_min, rna_features_quantile, infs, zeros, values.o)
+	sys.stderr.write("Smooth info ......done\n")
 
 
 	sys.stderr.write("### Finish rna_dna_ratio.py ####\n\n\n")
