@@ -21,8 +21,8 @@ We provide support for MetaWIBELE users via our Google group. Please feel free t
 
 * [Workflow](#workflow)
 * [Install MetaWIBELE](#install-metawibele)
-    * [Requirements](#1.-requirements)
-    * [Installment](#2.-Installment)
+    * [Requirements](#requirements)
+    * [Installment](#Installment)
     	* [Download MetaWIBELE](#download-metawibele)
     	* [Install MetaWIBELE](#install-metawibele)
     	* [Download database](#download-databases)
