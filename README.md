@@ -19,45 +19,45 @@ We provide support for MetaWIBELE users via our Google group. Please feel free t
 
 ## Contents ##
 
-* [Workflow](#markdown-header-workflow)
-* [Install MetaWIBELE](#markdown-header-install-metawibele)
-    * 1. [Requirements](#markdown-header-1.-requirements)
-    * 2. [Installment](#markdown-header-2.-Installment)
-    	* 2.1 [Download MetaWIBELE](#markdown-header-2.1-download-metawibele)
-    	* 2.2 [Install MetaWIBELE](#markdown-header-2.2-install-metawibele)
-    	* 2.3 [Download database](#markdown-header-2.3-download-databases)
-    * 3. [Configuration for MetaWIBELE](#markdown-header-3.-configuration-for-metawibele)
-    	* 3.1 [Global configration file](#markdown-header-3.1-global-configration-file)
-    	* 3.2 [Configuration for characterization](#markdown-header-3.2-configuration-for-characterization)
-    	* 3.3 [Configuration for prioritization](#markdown-header-3.3-configuration-for-prioritization)
-    * 4. [Test with a demo run](#markdown-header-4.-test-with-a-demo-run) 
-* [Quick-start Guide](#markdown-header-quick-start-guide)
-    * 1. [How to run](#markdown-header-1.-how-to-run)
-    * 2. [Standard Workflows](#markdown-header-2.-standard-workflows)
-    	* 2.1 [MetaWIBELE-characterize workflow](#markdown-header-2.1-metawibele-characterize-workflow)
-    		* [Input files for characterization](#markdown-header-input-files-for-characterization)
-    		* [MetaWIBELE-characterize workflow](#markdown-header-to-run-metawibele-characterize-workflow)
-    		* [To run a demo for characterization](#markdown-header-to-run-a-demo-for-characterization)
-    		* [Output files for characterization](#markdown-header-output-files-for-characterization)
-    	* 2.2 [MetaWIBELE-prioritize workflow](#markdown-header-2.2-metawibele-prioritize-workflow)
-    		* [Input files for prioritization](#markdown-header-input-files-for-prioritization)
-    		* [MetaWIBELE-prioritize workflow](#markdown-header-to-run-metawibele-prioritize-workflow)
-    		* [To run a demo for prioritization](#markdown-header-to-run-a-demo-for-prioritization)
-    		* [Output files for prioritization](#markdown-header-output-files-for-prioritization)
-* [Guides to MetaWIBELE Utilities](#markdown-header-guides-to-metawibele-utilities)
-	* [Qulity control for raw sequencing reads](#markdown-header-qulity-control-for-raw-sequencing-reads)
-		* [Specific options for QC workflow](#markdown-header-specific-options-for-qc-workflow)
-		* [How to run QC workflow](#markdown-header-how-to-run-qc-workflow)
-		* [Example for running QC workflow](#markdown-header-example-for-running-qc-workflow) 
-	* [Preprocessing sequencing reads into gene catalogs](#markdown-header-preprocessing-sequencing-reads-into-gene-catalogs)
-		* [Specific options for preprocessing workflow](#markdown-header-specific-options-for-preprocessing-workflow)
-		* [How to run preprocessing workflow](#markdown-header-how-to-run-preprocessing-workflow)
-		* [Example for running preprocessing workflow](#markdown-header-example-for-running-preprocessing-workflow) 
-		* [Output files of preprocessing workflow](#markdown-header-output-files-of-preprocessing-workflow)
-* [Download MetaWIBELE resources](#markdown-header-download-metawibele-resources)
-	* [Information of gene catalogs](#markdown-header-information-of-gene-catalogs)
-	* [Characterization of protein families](#markdown-header-characterization-of-protein-families)
-	* [Prioritization of protein families](#markdown-header-prioritization-of-protein-families)
+* [Workflow](#workflow)
+* [Install MetaWIBELE](#install-metawibele)
+    * 1. [Requirements](#1.-requirements)
+    * 2. [Installment](#2.-Installment)
+    	* 2.1 [Download MetaWIBELE](#2.1-download-metawibele)
+    	* 2.2 [Install MetaWIBELE](#2.2-install-metawibele)
+    	* 2.3 [Download database](#2.3-download-databases)
+    * 3. [Configuration for MetaWIBELE](#3.-configuration-for-metawibele)
+    	* 3.1 [Global configration file](#3.1-global-configration-file)
+    	* 3.2 [Configuration for characterization](#3.2-configuration-for-characterization)
+    	* 3.3 [Configuration for prioritization](#3.3-configuration-for-prioritization)
+    * 4. [Test with a demo run](#4.-test-with-a-demo-run) 
+* [Quick-start Guide](#quick-start-guide)
+    * 1. [How to run](#1.-how-to-run)
+    * 2. [Standard Workflows](#2.-standard-workflows)
+    	* 2.1 [MetaWIBELE-characterize workflow](#2.1-metawibele-characterize-workflow)
+    		* [Input files for characterization](#input-files-for-characterization)
+    		* [MetaWIBELE-characterize workflow](#metawibele-characterize-workflow)
+    		* [To run a demo for characterization](#to-run-a-demo-for-characterization)
+    		* [Output files for characterization](#output-files-for-characterization)
+    	* 2.2 [MetaWIBELE-prioritize workflow](#2.2-metawibele-prioritize-workflow)
+    		* [Input files for prioritization](#input-files-for-prioritization)
+    		* [MetaWIBELE-prioritize workflow](#metawibele-prioritize-workflow)
+    		* [To run a demo for prioritization](#to-run-a-demo-for-prioritization)
+    		* [Output files for prioritization](#output-files-for-prioritization)
+* [Guides to MetaWIBELE Utilities](#guides-to-metawibele-utilities)
+	* [Qulity control for raw sequencing reads](#qulity-control-for-raw-sequencing-reads)
+		* [Specific options for QC workflow](#specific-options-for-qc-workflow)
+		* [How to run QC workflow](#how-to-run-qc-workflow)
+		* [Example for running QC workflow](#example-for-running-qc-workflow) 
+	* [Preprocessing sequencing reads into gene catalogs](#preprocessing-sequencing-reads-into-gene-catalogs)
+		* [Specific options for preprocessing workflow](#specific-options-for-preprocessing-workflow)
+		* [How to run preprocessing workflow](#how-to-run-preprocessing-workflow)
+		* [Example for running preprocessing workflow](#example-for-running-preprocessing-workflow) 
+		* [Output files of preprocessing workflow](#output-files-of-preprocessing-workflow)
+* [Download MetaWIBELE resources](#download-metawibele-resources)
+	* [Information of gene catalogs](#information-of-gene-catalogs)
+	* [Characterization of protein families](#characterization-of-protein-families)
+	* [Prioritization of protein families](#prioritization-of-protein-families)
     	
 ***
 
@@ -417,7 +417,7 @@ MSPminer_module = required
 	* sample list, e.g. [demo\_MGX_samples.tsv]()
 	* all the above information can be specified in the `metawibele.cfg` file.
 
-* #####To run MetaWIBELE-characterize workflow
+* #####MetaWIBELE-characterize workflow
 	`$ metawibele_workflow characterize --input $INPUT --output $OUTPUT`
 	* In the command replace $INPUT with the path to the folder containing your fastq input files and $OUTPUT with the path to the folder to write output files. See the section on parallelization options to optimize the workflow run based on your computing resources. 
 	* The workflow runs with the default settings to run all modules. These settings will work for most data sets. However, if you need to customize your workflow settings for the preprocessing workflow to determine the optimum seeting. You can specify which modules you want to run in your own configuration file.
@@ -562,7 +562,7 @@ Cluster_10001   2.42532 7.18719 0       0.628126        0       0       0       
 	* attribute file produced by MetaWIBELE-characterize workflow, e.g. [demo_proteinfamilies_annotation.attribute.tsv]()
 	* all the above information can be specified in the `prioritization.cfg` file.
 
-* #####To run MetaWIBELE-prioritize workflow
+* #####MetaWIBELE-prioritize workflow
 
 	`$ metawibele_workflow prioritize --input $INPUT --output $OUTPUT`
 	* In the command replace $INPUT with the path to the folder containing your fastq input files and $OUTPUT with the path to the folder to write output files. See the section on parallelization options to optimize the workflow run based on your computing resources. 
