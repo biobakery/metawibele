@@ -481,11 +481,14 @@ def get_rank_score (evidence_table, evidence_row, metawibele_row, weight_conf, r
 		for mytype in evidence_row:
 			summary_table[mytype + "__value"] = evidence_table[mytype]
 			summary_table[mytype + "__percentile"] = scipy.stats.rankdata(pd.to_numeric(summary_table[mytype + "__value"], errors='coerce'), method='average')
-			if re.search(config.effect_size, mytype):
+			if mytype == "coef":
 				summary_table[mytype + "__percentile"] = scipy.stats.rankdata(abs(pd.to_numeric(summary_table[mytype + "__value"], errors='coerce')), method='average')
-			else:
-				if re.search("qvalue", mytype) or re.search("q-value", mytype) or re.search("pvalue", mytype) or re.search("p-value", mytype):
-					summary_table[mytype + "__percentile"] = scipy.stats.rankdata(-pd.to_numeric(summary_table[mytype + "__value"], errors='coerce'), method='average')
+			if mytype == "foldChange":
+				pd = pd.to_numeric(summary_table[mytype + "__value"], errors='coerce')
+				pd = math.log(pd, 2)
+				summary_table[mytype + "__percentile"] = scipy.stats.rankdata(abs(pd), method='average')
+			if re.search("qvalue", mytype) or re.search("q-value", mytype) or re.search("pvalue", mytype) or re.search("p-value", mytype):
+				summary_table[mytype + "__percentile"] = scipy.stats.rankdata(-pd.to_numeric(summary_table[mytype + "__value"], errors='coerce'), method='average')
 			summary_table[mytype + "__percentile"] = summary_table[mytype + "__percentile"] / summary_table[mytype + "__percentile"].max()
 			rank_name.append(mytype + "__percentile")
 

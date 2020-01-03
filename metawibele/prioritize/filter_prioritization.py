@@ -105,6 +105,8 @@ def read_config_file (conf_file):
 		for name in config_items["filtering"].keys():
 			myvalue = config_items["filtering"][name]
 			if name == "vignettes" or name == "clusters":
+				print("Required filtering item: " + name + "\t" + myvalue)
+				required_conf[name] = myvalue
 				if name == "vignettes":
 					specific_annotation[myvalue] = ""
 				if name == "clusters":
@@ -142,14 +144,14 @@ def read_vignettes_file (vignettes_file, specific_annotation):
 	for item in info:
 		titles[item] = info.index(item)
 	for line in open_file:
-		line = re.sub("\n$", "", line)
+		line = line.strip() 
 		if not len(line):
 			continue
 		if re.search("^#", line):
 			continue
 		info = line.split("\t")
 		mytype = info[titles["type"]]
-		if not mytype.lower() in specific_annotation:
+		if not mytype.lower() in specific_annotation and not mytype in specific_annotation:
 			continue
 		if not "accession" in titles:
 			# debug
@@ -256,7 +258,7 @@ def read_annotation_file (ann_file, required_conf, optional_conf, specific_ann, 
 					ann[myid]["clusters"] = 1
 	# foreach line
 	open_file.close()
-
+	
 	# check required and optional annotation
 	cluster1 = {}
 	for myid in ann.keys():

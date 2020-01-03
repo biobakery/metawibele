@@ -62,7 +62,7 @@ def get_args ():
 # collect prioritization info
 #==============================================================
 def finalize_prioritization (input_file, output_file):
-	title = "TID\tPID\tevidence\tvalue\trank\tdescription\tnote"
+	title = "TID\tfamilyID\tevidence\tvalue\trank\tdescription\tnote"
 	open_out = open(output_file, "w")
 	open_out.write(title + "\n")
 
@@ -105,8 +105,8 @@ def finalize_prioritization (input_file, output_file):
 			myrank = "NaN"
 			if mytype in ranks:
 				myrank = ranks[mytype]
-			mystr = mystr + "\t" + myrank + "ranking based on single evidence"
-			if mynote == "NA"
+			mystr = mystr + "\t" + myrank + "\tranking based on single evidence"
+			if mynote == "NA":
 				mystr = mystr + "\t"
 			else:
 				mystr = mystr + "\t" + mynote
