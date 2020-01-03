@@ -1,8 +1,8 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 """
-MetaWIBELE: extract_non_redundance_AA_seq module
-Extract representative amino acid sequences from the clusters based on nucleotide sequences
+MetaWIBELE: extract_non_redundance_seq module
+Extract representative sequences from the clusters based on representative IDs
 
 Copyright (c) 2019 Harvard School of Public Health
 
@@ -78,7 +78,7 @@ def output_info (AA_seq, seqid, outfile):
 	# check sequences
 	for myid in seqid.keys():
 		if not myid in flags:
-			print("No AA sequences for gene_id\t" + myid)
+			print("No sequences for gene_id\t" + myid)
 # output_info
 
 
@@ -89,24 +89,24 @@ if __name__ == '__main__':
 	
 	### get arguments ###
 	parser=argparse.ArgumentParser()
-	parser.add_argument('-n', help='input nr nucleotide file', required=True)
-	parser.add_argument('-f', help='input original AA file', required=True)
-	parser.add_argument('-o', help='output non-redundance AA sequence file', required=True)
+	parser.add_argument('-r', help='input reference sequences file', required=True)
+	parser.add_argument('-i', help='input total sequences file', required=True)
+	parser.add_argument('-o', help='output specific sequences file', required=True)
 	values=parser.parse_args()
 
 
-	sys.stderr.write("### Start extract_non_redundance_AA_seq.py -n " + values.n + " ####\n")
+	sys.stderr.write("### Start extract_non_redundance_seq.py -i " + values.i + " ####\n")
 	
 	### collect cluster id info ###
 	sys.stderr.write("Get clustering info ......starting\n")
-	seqid = collect_seq_id (values.n)
+	seqid = collect_seq_id (values.r)
 	sys.stderr.write("Get clustering info ......done\n")
 	
-	### Output non-redundance AA sequence
+	### Output non-redundance protein sequence
 	sys.stderr.write("\nOutput sequence info ......starting\n")
-	output_info (values.f, seqid, values.o)
+	output_info (values.i, seqid, values.o)
 	sys.stderr.write("Output sequence info ......done\n")
 
-	sys.stderr.write("### Finish extract_non_redundance_AA_seq.py ####\n\n\n")
+	sys.stderr.write("### Finish extract_non_redundance_seq.py ####\n\n\n")
 
 # end: main

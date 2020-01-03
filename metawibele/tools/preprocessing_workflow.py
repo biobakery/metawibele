@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 """
 Preprocessing workflow:
@@ -39,6 +39,7 @@ from metawibele import utilities, config
 # import the library of MetaWIBELE tasks for characterization
 from metawibele.tools import preprocessing_tasks
 
+VERSION = config.version
 
 def parse_cli_arguments():
 	'''
@@ -48,7 +49,9 @@ def parse_cli_arguments():
 	create a workflow instance, providing the version number and description
 	'''
 
-	workflow = Workflow(version="0.0.1", description="A workflow for preprocessing MGX")
+	workflow = Workflow(version=VERSION, description="A workflow to preprocess shotgun sequencing reads of metagenomes " 
+													"with tasks of metagenomic assembly, gene calling, " 
+												"building gene catalogs and generating gene abundance for each sample.")
 
 	# add the custom arguments to the workflow
 	workflow.add_argument("threads",
@@ -56,25 +59,25 @@ def parse_cli_arguments():
 	                      default=20)
 	workflow.add_argument("sample-file",
 	                      desc=" the list file of samples",
-	                      require=True)
+	                      required=True)
+	workflow.add_argument("extension-paired",
+	                      desc="indicates the extension for paired fastq files, e.g. _1.fastq.gz,_2.fastq.gz",
+	                      required=True)
+	workflow.add_argument("extension-orphan",
+	                      desc="indicates the extension for orphan fastq files",
+	                      default="none")
 	workflow.add_argument("assembly",
 	                      desc="indicates whether or not do assembly",
-	                      default=True,
-	                      action="store_true")
-	workflow.add_argument("extension-balanced",
-	                      desc="indicates the extention for paired fastq files",
-	                      default="_1.fastq.gz,_2.fastq.gz")
-	workflow.add_argument("extension-orphan",
-	                      desc="indicates the extention for orphan fastq files",
-	                      default="none")
+	                      default=True)
 	workflow.add_argument("gene-calling",
 	                      desc="indicates whether or not call ORFs",
-	                      default=True,
-	                      action="store_true")
+	                      default=True)
 	workflow.add_argument("gene-catalog",
 	                      desc="indicates whether or not build gene catalogs",
-	                      default=True,
-	                      action="store_true")
+	                      default=True)
+	workflow.add_argument("output-basename",
+	                      desc="specify the basename for output files",
+	                      default="metawibele")
 
 	return workflow
 
@@ -88,43 +91,55 @@ def main(workflow):
 	args = workflow.parse_args()
 
 	# input and output folder
-	input_dir = args.input  # reads fastq files
+	input_dir = args.input # reads fastq files
 	output_dir = args.output
+	extension_paired = args.extension_paired
+	extension_orphan = args.extension_orphan
+	file_extension = "none"
+	if extension_paired != "none":
+		file_extension = extension_paired
+	if extension_orphan != "none":
+		if file_extension != "none":
+			file_extension = file_extension + "," + extension_orphan
+		else:
+			file_extension = extension_orphan
 
 	# get all output files
 	assembly_dir = output_dir + "/assembly/"
-	contigs = output_dir + "/" + config.basename + "_contig_sequence.fasta"
+	contigs = output_dir + "/" + args.basename + "_contig_sequence.fasta"
+	assembly_extentsion = ".contigs.fa"
 
 	prokka_dir = output_dir + "/gene_annotation/"
 	prodigal_dir = output_dir + "/gene_calls/"
-	gene_file = output_dir + "/" + config.basename + "_combined_gene.fna"
-	gene_PC_file = output_dir + "/" + config.basename + "_combined_gene_protein_coding.sorted.fna"
-	protein_file = output_dir + "/" + config.basename + "_combined_protein.faa"
-	protein_sort = output_dir + "/" + config.basename + "_combined_protein.sorted.faa"
-	gene_info = output_dir + "/" + config.basename + "_gene_info.tsv"
-	complete_gene = output_dir + "/" + config.basename + "_combined_gene_protein_coding.complete.sorted.fna"
-	complete_protein = output_dir + "/" + config.basename + "_combined_protein.complete.sorted.faa"
+	gene_file = output_dir + "/" + args.basename + "_combined_gene.fna"
+	gene_PC_file = output_dir + "/" + args.basename + "_combined_gene_protein_coding.sorted.fna"
+	protein_file = output_dir + "/" + args.basename + "_combined_protein.faa"
+	protein_sort = output_dir + "/" + args.basename + "_combined_protein.sorted.faa"
+	gene_info = output_dir + "/" + args.basename + "_gene_info.tsv"
+	complete_gene = output_dir + "/" + args.basename + "_combined_gene_protein_coding.complete.sorted.fna"
+	complete_protein = output_dir + "/" + args.basename + "_combined_protein.complete.sorted.faa"
 
 	mapping_dir = output_dir + "/mapping/"
-	prefix_gene_catalog = output_dir + "/" + config.basename + "_genecatalogs"
-	gene_catalog = output_dir + "/" + config.basename + "_genecatalogs.clstr"
-	gene_catalog_nuc = output_dir + "/" + config.basename + "_genecatalogs.centroid.fna"
-	gene_catalog_prot = output_dir + "/" + config.basename + "_genecatalogs.centroid.faa"
-	gene_catalog_saf = output_dir + "/" + config.basename + "_genecatalogs.centroid.saf.gtf"
-	gene_catalog_count = output_dir + "/" + config.basename + "_genecatalogs_counts.all.tsv"
+	prefix_gene_catalog = output_dir + "/" + args.basename + "_genecatalogs.centroid"
+	gene_catalog = output_dir + "/" + args.basename + "_genecatalogs.clstr"
+	gene_catalog_nuc = output_dir + "/" + args.basename + "_genecatalogs.centroid.fna"
+	gene_catalog_prot = output_dir + "/" + args.basename + "_genecatalogs.centroid.faa"
+	gene_catalog_saf = output_dir + "/" + args.basename + "_genecatalogs.centroid.saf.gtf"
+	gene_catalog_count = output_dir + "/" + args.basename + "_genecatalogs_counts.all.tsv"
 
+	
 	### STEP #1: assembly ###
 	# if assembly action is provided, then assembly MGX reads
-	if args.clustering:
-		mycontigs = preprocessing_tasks.assembly(workflow, input_dir, args.sample_file,
-		                                         args.extension_balanced, args.extension_orphan,
+	if args.assembly == True:
+		mycontigs = preprocessing_tasks.assembly (workflow, input_dir, args.sample_file,
+		                                         extension_paired, extension_orphan,
 		                                         args.threads,
 		                                         assembly_dir, contigs)
 
 	### STEP #2: gene calling ###
 	# if gene-calling action is provided, then identify ORFs
-	if args.homology_based:
-		mygene, myprotein = preprocessing_tasks.gene_calling(workflow, assembly_dir, assembly_extentsion,
+	if args.gene_calling == True:
+		mygene, myprotein = preprocessing_tasks.gene_calling (workflow, assembly_dir, assembly_extentsion,
 		                                                     args.sample_file,
 		                                                     prokka_dir, prodigal_dir,
 		                                                     args.threads,
@@ -133,10 +148,10 @@ def main(workflow):
 
 	### STEP #3: gene-catalog  ###
 	# if gene-catalog action is provided, then build gene catalogs and calculate abundance per gene catalogs across samples
-	if args.gene_catalog:
-		mygene_catalog, mycounts = preprocessing_tasks.gene_catalogs(workflow, complete_gene, complete_protein,
+	if args.gene_catalog == True:
+		mygene_catalog, mycounts = preprocessing_tasks.gene_catalog (workflow, complete_gene, complete_protein,
 		                                                             input_dir, args.sample_file, file_extension,
-		                                                             threads,
+		                                                             args.threads,
 		                                                             prefix_gene_catalog, gene_catalog,
 		                                                             gene_catalog_nuc, gene_catalog_prot,
 		                                                             mapping_dir, gene_catalog_saf, gene_catalog_count)

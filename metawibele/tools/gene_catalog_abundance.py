@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 """
 MetaWIBELE: gene_catalog_abundance module
@@ -105,9 +105,7 @@ def collect_counts(sample_file, map_path, extension, gene_cluster):
 		if not sample in samples:
 			continue
 		mysample[sample] = ""
-		print(sample)
 		open_file = open(myfile, "r")
-		#samples[sample] = ""
 		for line in open_file:
 			line = line.strip()
 			if not len(line):

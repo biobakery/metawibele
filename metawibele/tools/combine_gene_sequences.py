@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 """
 MetaWIBELE: combine_gene_sequences module
@@ -112,6 +112,7 @@ def collect_sequence (gene_path, extension, outfile):
 	# foeach sample
 	open_out.close()
 	#open_out1.close()
+	
 	return sampleid
 # function collect_sequence
 
