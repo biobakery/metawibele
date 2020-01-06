@@ -160,9 +160,9 @@ def collect_fold_change_info (fold_file, stat, prevalence, effect_size):
 			continue
 		myclust = info[titles[utilities.PROTEIN_FAMILY_ID]]
 		mytype = info[titles["cmp_type"]]
-		fold = info[titles["foldChange"]]
-		#var = info[titles["valueChange"]]
-		effect = info[titles["effectSize"]]
+		fold = info[titles["log2(foldChange)"]]
+		var = info[titles["valueChange"]]
+		effect = info[titles["Cohen's_d"]]
 		myabun = info[titles["mean_abundance"]]
 		myabun_case = info[titles["mean_abundance_case"]]
 		myabun_control = info[titles["mean_abundance_control"]]
@@ -181,7 +181,7 @@ def collect_fold_change_info (fold_file, stat, prevalence, effect_size):
 			if myq == "NA" or myq == "NaN" or myq == "nan":
 				continue
 			mydis = abs(float(mycoef))
-			if effect_size == "effectSize":
+			if effect_size == "Cohen's_d":
 				mydis = abs(float(effect))
 			if effect_size == "foldChange":
 				mydis = abs(float(fold))
@@ -189,7 +189,7 @@ def collect_fold_change_info (fold_file, stat, prevalence, effect_size):
 				folds[mydis] = {}
 			if not myq in folds[mydis]:
 				folds[mydis][myq] = {}
-			folds[mydis][myq][myid] = mypre + "\t" + mypvalue + "\t" + fold + "\t" + effect + "\t" + str(myabun) + "\t" + str(myabun_case) + "\t" + str(myabun_control) + "\t" + str(myabun2) + "\t" + str(myabun2_case) + "\t" + str(myabun2_control)
+			folds[mydis][myq][myid] = mypre + "\t" + mypvalue + "\t" + fold + "\t" + effect + "\t" + var + "\t" + str(myabun) + "\t" + str(myabun_case) + "\t" + str(myabun_control) + "\t" + str(myabun2) + "\t" + str(myabun2_case) + "\t" + str(myabun2_control)
 	# foreach line
 	open_file.close()
 	sys.stderr.write("Get fold change info ......done\n")
@@ -221,7 +221,7 @@ def summary_info (folds, p_cutoff, q_value_cutoff, outfile):
 	abun_all = {}
 	open_file = open(outfile, "w")
 	open_file3 = open(outfile3, "w")
-	title = utilities.PROTEIN_FAMILY_ID + "\tcmp_type\tprevalence\tprevalence_case\tprevalence_control\tcoef\tstderr\tpvalue\tqvalue\tfoldChange\teffectSize\tmean_abundance\tmean_abundance_case\tmean_abundance_control\tmean_prevalent_abundance\tmean_prevalent_abundance_case\tmean_prevalent_abundance_control"
+	title = utilities.PROTEIN_FAMILY_ID + "\tcmp_type\tprevalence\tprevalence_case\tprevalence_control\tcoef\tstderr\tpvalue\tqvalue\tlog2(foldChange)\tCohen's_d\tvalueChange\tmean_abundance\tmean_abundance_case\tmean_abundance_control\tmean_prevalent_abundance\tmean_prevalent_abundance_case\tmean_prevalent_abundance_control"
 	open_file.write(title + "\n")
 	open_file3.write(title + "\n")
 
@@ -229,7 +229,7 @@ def summary_info (folds, p_cutoff, q_value_cutoff, outfile):
 		for myq in sorted(folds[mydis].keys(), key=float):	# sort by q-value
 			for myid in sorted(folds[mydis][myq].keys()):
 				open_file3.write(myid + "\t" + folds[mydis][myq][myid] + "\n")
-				mypre, mypre_yes, mypre_no, mycoef, stderr, pvalue, qvalue, myfold, myeffect, myabun, myabun_case, myabun_control, myabun2, myabun2_case, myabun2_control = folds[mydis][myq][myid].split("\t")
+				mypre, mypre_yes, mypre_no, mycoef, stderr, pvalue, qvalue, myfold, myeffect, myvar, myabun, myabun_case, myabun_control, myabun2, myabun2_case, myabun2_control = folds[mydis][myq][myid].split("\t")
 				myclust, mytype = myid.split("\t")
 				if not mytype in pres_all:
 					pres_all[mytype] = {}
@@ -311,10 +311,8 @@ def summary_info (folds, p_cutoff, q_value_cutoff, outfile):
 					if not myclust in diff:
 						diff[myclust] = {}
 					if not mytype in diff[myclust]:
-						#diff[myclust][mytype] = str(mypre) + "\t" + str(qvalue) + "\t" + str(myfold) + "\t" + str(myabun)
 						diff[myclust][mytype] = folds[mydis][myq][myid] 
 					types[mytype] = ""
-					#open_file.write(myclust + "\t" + mytype + "\t" + str(mypre) + "\t" + str(qvalue) + "\t" + str(myfold) + "\t" + str(myabun) + "\n")
 					open_file.write(myclust + "\t" + mytype + "\t" + folds[mydis][myq][myid] + "\n")
 			# foreach cluster
 		# foreach abundance
