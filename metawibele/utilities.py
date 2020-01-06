@@ -291,8 +291,257 @@ def collect_GO_info(gofile):  # go.obo
 	open_file.close()
 	return gos
 
-
 # collect_GO_info
+
+
+def sample_names(files, extension, pair_identifier=None):
+	""" Return the basenames of the files, without any extensions, as the sample names
+
+	Args:
+		files (list): A list of files (with or without the full paths)
+		extension (string): The extension for all files.
+		pair_identifier (string): The string in the file basename to identify
+			the first pair in the set (optional).
+
+	Requires:
+		None
+
+	Returns:
+		list: A list of sample names (file basenames)
+
+	Example:
+		names = sample_names(["1.R1.fq", "1.R2.fq"],".fq")
+
+	"""
+
+	# add period to extension if not included
+	if not extension.startswith("."):
+		extension = "." + extension
+
+	# if files is a string, convert to a list
+	convert = False
+	if isinstance(files, str):
+		files = [files]
+		convert = True
+
+	samples = [os.path.basename(file).replace(extension, "") for file in files]
+
+	# remove the pair_idenifier from the sample name, if provided
+	if pair_identifier:
+		# only remove the last instance of the pair identifier
+		samples = [pair_identifier.join(sample.split(pair_identifier)[:-1]) if pair_identifier in sample else sample for
+		           sample in samples]
+
+	if convert:
+		samples = samples[0]
+
+	return samples
+
+
+def paired_reads (files, extension, pair_identifier=None):
+	""" Select aired-end reads from input files
+
+	This function will select paired end reads from a list of files.
+
+	Args:
+		files (list): A list of paired files (with or without the full paths)
+		extension (string): The extension for all files.
+		pair_identifier (string): The string in the file basename to identify
+			the first pair in the set (optional).
+
+	Requires:
+		None
+
+	Returns:
+		list: A list of paired files.
+
+	Example:
+		paired_set = paired_files (["1.R1.fq", "1.R2.fq"], ".fq")
+
+	"""
+
+	# add period to extension if not included
+	if not extension.startswith("."):
+		extension = "." + extension
+
+	if pair_identifier is None:
+		pair_identifier = ".R1"
+
+	# check for the one in the pair identifier
+	if not "1" in pair_identifier:
+		sys.exit("Please provide the identifier for the first pair set (ie R1).")
+
+	pair_identifier2 = pair_identifier.replace("1", "2", 1)
+
+	# collect sequences
+	pair1 = {}
+	input_pair1 = files[0]
+	input_pair2 = files[1]
+	if input_pair1.endswith(".gz"):
+		os.system("gunzip " + input_pair1)
+		input_pair1 = input_pair1.replace(".gz", "")
+		output_pair1 = input_pair1.replace(".fastq", pair_identifier + ".fastq")
+	if input_pair2.endswith(".gz"):
+		os.system("gunzip " + input_pair2)
+		input_pair2 = input_pair2.replace(".gz", "")
+		output_pair2 = input_pair2.replace(".fastq", pair_identifier2 + ".fastq")
+	open_file1 = open(input_pair1, "r")
+	tmp = []
+	myid = "NA"
+	for line in open_file1:
+		line = line.strip()
+		if not len(line):
+			continue
+		if len(tmp) == 0:
+			myid = line.replace("/1$", "")
+			tmp.append(line)
+		elif len(tmp) < 3:
+			tmp.append(line)
+		elif len(tmp) == 3:
+			tmp.append(line)
+			if myid != "NA":
+				pair1[myid] = "\n".join(tmp)
+			tmp = []
+		else:
+			pass
+	# foreach line
+	open_file1.close()
+
+	open_file2 = open(input_pair2, "r")
+	open_out1 = open(output_pair1, "w") 
+	open_out2 = open(output_pair2, "w") 
+	tmp = []
+	myid = "NA"
+	for line in open_file2:
+		line = line.strip()
+		if not len(line):
+			continue
+		if len(tmp) == 0:
+			myid = line.replace("/2$", "")
+			tmp.append(line)
+		elif len(tmp) < 3:
+			tmp.append(line)
+		elif len(tmp) == 3:
+			tmp.append(line)
+			if myid in pair1:
+				open_out1.write(pair1[myid])
+				open_out2.write("\n".join(tmp))
+			tmp = []
+	# foreach line
+	open_file2.close()
+	open_out1.close()
+	open_out2.close()
+
+	# only return matching pairs of files in the same order
+	paired_file_set = []
+	os.system("gzip " + output_pair1)
+	os.system("gzip " + output_pair2)
+	os.system("gzip " + input_pair1)
+	os.system("gzip " + input_pair2)
+	open_out1 = output_pair1.replace(".fastq", ".fastq.gz")
+	open_out2 = output_pair2.replace(".fastq", ".fastq.gz")
+	paired_file_set.append(open_out1)
+	paired_file_set.append(open_out2)
+
+	return paired_file_set
+
+
+def split_paired_reads (infile, extension, pair_identifier=None):
+	""" Select aired-end reads from input interleaved files
+
+	This function will select paired end reads from the interleaved files
+
+	Args:
+		infile (string): A interleaved read file (with or without the full paths)
+		extension (string): The extension for input file.
+		pair_identifier (string): The string in the file basename to identify
+			the first pair in the set (optional).
+
+	Requires:
+		None
+
+	Returns:
+		list: A list of paired files.
+
+	Example:
+		paired_set = split_paired_files (["myfile.fq"], ".fq", ".R1")
+
+	"""
+
+	# add period to extension if not included
+	if not extension.startswith("."):
+		extension = "." + extension
+
+	if pair_identifier is None:
+		pair_identifier = ".R1"
+
+	# check for the one in the pair identifier
+	if not "1" in pair_identifier:
+		sys.exit("Please provide the identifier for the first pair set (ie R1).")
+
+	pair_identifier2 = pair_identifier.replace("1", "2", 1)
+
+	# collect sequences
+	pair1 = {}
+	pair2 = {}
+	input_pair = infile
+	if input_pair.endswith(".gz"):
+		os.system("gunzip " + input_pair)
+		input_pair = input_pair.replace(".gz", "")
+		output_pair1 = input_pair.replace(".fastq", pair_identifier + ".fastq")
+		output_pair2 = input_pair.replace(".fastq", pair_identifier2 + ".fastq")
+	open_file = open(input_pair, "r")
+	tmp = []
+	flag = 0
+	myid = "NA"
+	for line in open_file:
+		line = line.strip()
+		if not len(line):
+			continue
+		if len(tmp) == 0:
+			if line.endswith("/1"):
+				flag = 1
+			if line.endswith("/2"):
+				flag = 2
+			myid = line.replace("/1$", "")
+			myid = line.replace("/2$", "")
+			tmp.append(line)
+		elif len(tmp) < 3:
+			tmp.append(line)
+		elif len(tmp) == 3:
+			tmp.append(line)
+			if myid != "NA":
+				if flag == 1:
+					pair1[myid] = "\n".join(tmp)
+				if flag == 2:
+					pair2[myid] = "\n".join(tmp)
+			tmp = []
+		else:
+			pass
+	# foreach line
+	open_file.close()
+
+	open_out1 = open(output_pair1, "w") 
+	open_out2 = open(output_pair2, "w") 
+	for myid in pair1.keys():
+		if myid in pair2:
+			open_out1.write(pair1[myid])
+			open_out2.write(pair2[myid])
+	# foreach reads
+	open_out1.close()
+	open_out2.close()
+
+	# only return matching pairs of files in the same order
+	paired_file_set = []
+	os.system("gzip " + output_pair1)
+	os.system("gzip " + output_pair2)
+	open_out1 = output_pair1.replace(".fastq", ".fastq.gz")
+	open_out2 = output_pair2.replace(".fastq", ".fastq.gz")
+	paired_file_set.append(open_out1)
+	paired_file_set.append(open_out2)
+
+	return paired_file_set
+
 
 
 #==============================================================
