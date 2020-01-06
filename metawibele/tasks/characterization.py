@@ -105,7 +105,7 @@ def clustering (workflow, gene_catalog_seq, threads, output_folder, protein_fami
 	myraw_cluster = clustering_output_seq + ".clstr"
 	workflow.add_task(
 			"cd-hit -i [depends[0]] " + optional_arguments + " -o [targets[0]] > [args[0]] 2>&1",
-			depends = [gene_catalog_seq, TrackedExecutable("CD-hit")],
+			depends = [gene_catalog_seq, TrackedExecutable("cd-hit")],
 			targets = [clustering_output_seq, myraw_cluster],
 			args = [clustering_output_logs],
 			cores = threads,
