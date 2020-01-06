@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
 """
 mgx_QC_workflow.py
@@ -35,6 +35,7 @@ import tempfile
 from anadama2 import Workflow
 from glob2 import glob
 from itertools import chain
+from anadama2.tracked import TrackedExecutable, TrackedDirectory
 
 # import the utilities functions and config settings from MetaWIBELE
 from metawibele import utilities, config
@@ -129,15 +130,15 @@ def main(workflow):
 		if paired == "True":
 			f_seq = os.path.join(split_dir, sample + extension[0])
 			r_seq = os.path.join(split_dir, sample + extension[1])
-			f_seq_cleaned = os.path.join(output_dir, sample, '%s_kneaddata_paired_1.fastq' % sample)
-			r_seq_cleaned = os.path.join(output_dir, sample, '%s_kneaddata_paired_2.fastq' % sample)
-			f_seq_unmatched = os.path.join(output_dir, sample, '%s_kneaddata_unmatched_1.fastq' % sample)
-			r_seq_unmatched = os.path.join(output_dir, sample, '%s_kneaddata_unmatched_2.fastq' % sample)
+			f_seq_cleaned = os.path.join(output_dir, '%s.repeats.removed.1.fastq' % sample)
+			r_seq_cleaned = os.path.join(output_dir, '%s.repeats.removed.2.fastq' % sample)
+			f_seq_unmatched = os.path.join(output_dir, '%s.repeats.removed.unmatched.1.fastq' % sample)
+			r_seq_unmatched = os.path.join(output_dir, '%s.repeats.removed.unmatched.2.fastq' % sample)
 			# reorder the input files so they are a set of paired files
-			input_files = zip(f_seq, r_seq)
+			input_files = [f_seq, r_seq]
 			# output files
-			output_log = os.path.join(output_dir, sample, "%s_kneaddata.log" %sample)
-			output_files = zip(f_seq_cleaned, r_seq_cleaned, f_seq_unmatched, r_seq_unmatched)
+			output_log = os.path.join(output_dir, "%s_kneaddata.log" %sample)
+			output_files = [f_seq_cleaned, r_seq_cleaned, f_seq_unmatched, r_seq_unmatched]
 			kneaddata_output_repeats_removed_fastq = utilities.name_files(sample, output_dir, extension="repeats.removed.fastq")
 			# add the second input file to the kneaddata arguments
 			second_input_option=" --input [depends[1]] "
@@ -147,12 +148,12 @@ def main(workflow):
 			rename_final_output = ""	
 		else:
 			f_seq = os.path.join(split_dir, sample + extension[0])
-			f_seq_cleaned = os.path.join(output_dir, sample, '%s_kneaddata.fastq' % sample)
+			f_seq_cleaned = os.path.join(output_dir, '%s.repeats.removed.fastq' % sample)
 			# input file
-			input_files = f_seq
+			input_files = [f_seq]
 			# output file
-			output_log = os.path.join(output_dir, sample, "%s_kneaddata.log" %sample)
-			output_files = zip(f_seq_cleaned)
+			output_log = os.path.join(output_dir, "%s_kneaddata.log" %sample)
+			output_files = [f_seq_cleaned]
 			kneaddata_output_repeats_removed_fastq = utilities.name_files(sample, output_dir, extension="repeats.removed.fastq")
 			# the second input option is not used since these are single-end input files
 			second_input_option=" "
@@ -161,8 +162,9 @@ def main(workflow):
 			mem_equation="3*12*1024 if file_size('[depends[0]]') < 10 else 6*12*1024"
 			# need to rename the final output file here to the sample name
 			rename_final_output = " && mv [args[3]] [targets[0]]"
-
-		split_files.append((sample, input_files, output_log, output_files, kneaddata_output_repeats_removed_fastq))
+		
+		outstr = " ".join(output_files)
+		split_files.append((sample, input_files, output_log, outstr, output_files, kneaddata_output_repeats_removed_fastq))
 
 	
 	# set additional options to empty string if not provided
@@ -184,7 +186,6 @@ def main(workflow):
 	else:
 		trimmomatic_options = " --trimmomatic-options  "  + args.trimmomatic_options
 	
-	
     # create the database command option string to provide zero or more databases to kneaddata
 	if args.contaminant_db == "none":
 		optional_arguments = ""
@@ -199,24 +200,29 @@ def main(workflow):
 	else:
 		optional_arguments=" --reference-db " + args.contaminant_db
         
-    # add option to remove intermediate output, if set
-	if remove_intermediate_output:
-		additional_options+=" --remove-intermediate-output "
+	
+	# gzip fastq files
+	rename_final_output = rename_final_output + " && gzip [args[4]]"
 
 	# create a task for each set of input and output files to run kneaddata
 	# rename file with repeats in name to only sample name
 	os.system("mkdir -p " + output_dir)
-	for (sample, depends, output_log, targets, intermediate_file) in split_files: 
+	for (sample, depends, output_log, target_str, targets, intermediate_file) in split_files:
+		gzipout = []
+		for item in targets:
+			myitem = re.sub(".fastq", ".fastq.gz", item)
+			gzipout.append(myitem)
 		seq_base = sample
 		workflow.add_task_gridable(
-            "kneaddata --input [depends[0]] --output [args[0]] --threads [args[1]] --output-prefix [args[2]] " + second_input_option + optional_arguments + " " + additional_options + " " + trimmomatic_options + rename_final_output,
-			depends = utilities.add_to_list(depends,TrackedExecutable("kneaddata")),
-			targets = targets,
-			args = [output_dir, threads, sample, intermediate_file],
+            "kneaddata --input [depends[0]] --output [args[0]] --threads [args[1]] --output-prefix [args[2]] " + second_input_option + optional_arguments + " " + additional_options + " " + trimmomatic_options + " > [args[5]] 2>&1 " + rename_final_output + " >> [args[5]] 2>&1 ",
+			depends = utilities.add_to_list(depends, TrackedExecutable("kneaddata")),
+			targets = gzipout,
+			args = [output_dir, threads, sample, intermediate_file, target_str, output_log],
 			time = time_equation, # 6 hours or more depending on file size
 			mem = mem_equation, # 12 GB or more depending on file size
 			cores = threads, # time/mem based on 8 cores
-			name = utilities.name_task(sample,"kneaddata")) # name task based on sample name
+			name = utilities.name_task(sample, "kneaddata")) # name task based on sample name
+
 
 	workflow.go()
 

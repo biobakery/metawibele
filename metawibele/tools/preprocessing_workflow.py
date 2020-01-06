@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
 """
 Preprocessing workflow:
@@ -106,26 +106,26 @@ def main(workflow):
 
 	# get all output files
 	assembly_dir = output_dir + "/assembly/"
-	contigs = output_dir + "/" + args.basename + "_contig_sequence.fasta"
+	contigs = output_dir + "/" + args.output_basename + "_contig_sequence.fasta"
 	assembly_extentsion = ".contigs.fa"
 
 	prokka_dir = output_dir + "/gene_annotation/"
 	prodigal_dir = output_dir + "/gene_calls/"
-	gene_file = output_dir + "/" + args.basename + "_combined_gene.fna"
-	gene_PC_file = output_dir + "/" + args.basename + "_combined_gene_protein_coding.sorted.fna"
-	protein_file = output_dir + "/" + args.basename + "_combined_protein.faa"
-	protein_sort = output_dir + "/" + args.basename + "_combined_protein.sorted.faa"
-	gene_info = output_dir + "/" + args.basename + "_gene_info.tsv"
-	complete_gene = output_dir + "/" + args.basename + "_combined_gene_protein_coding.complete.sorted.fna"
-	complete_protein = output_dir + "/" + args.basename + "_combined_protein.complete.sorted.faa"
+	gene_file = output_dir + "/" + args.output_basename + "_combined_gene.fna"
+	gene_PC_file = output_dir + "/" + args.output_basename + "_combined_gene_protein_coding.sorted.fna"
+	protein_file = output_dir + "/" + args.output_basename + "_combined_protein.faa"
+	protein_sort = output_dir + "/" + args.output_basename + "_combined_protein.sorted.faa"
+	gene_info = output_dir + "/" + args.output_basename + "_gene_info.tsv"
+	complete_gene = output_dir + "/" + args.output_basename + "_combined_gene_protein_coding.complete.sorted.fna"
+	complete_protein = output_dir + "/" + args.output_basename + "_combined_protein.complete.sorted.faa"
 
 	mapping_dir = output_dir + "/mapping/"
-	prefix_gene_catalog = output_dir + "/" + args.basename + "_genecatalogs.centroid"
-	gene_catalog = output_dir + "/" + args.basename + "_genecatalogs.clstr"
-	gene_catalog_nuc = output_dir + "/" + args.basename + "_genecatalogs.centroid.fna"
-	gene_catalog_prot = output_dir + "/" + args.basename + "_genecatalogs.centroid.faa"
-	gene_catalog_saf = output_dir + "/" + args.basename + "_genecatalogs.centroid.saf.gtf"
-	gene_catalog_count = output_dir + "/" + args.basename + "_genecatalogs_counts.all.tsv"
+	prefix_gene_catalog = output_dir + "/" + args.output_basename + "_genecatalogs.centroid"
+	gene_catalog = output_dir + "/" + args.output_basename + "_genecatalogs.clstr"
+	gene_catalog_nuc = output_dir + "/" + args.output_basename + "_genecatalogs.centroid.fna"
+	gene_catalog_prot = output_dir + "/" + args.output_basename + "_genecatalogs.centroid.faa"
+	gene_catalog_saf = output_dir + "/" + args.output_basename + "_genecatalogs.centroid.saf.gtf"
+	gene_catalog_count = output_dir + "/" + args.output_basename + "_genecatalogs_counts.all.tsv"
 
 	
 	### STEP #1: assembly ###

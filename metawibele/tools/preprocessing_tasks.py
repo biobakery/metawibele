@@ -99,13 +99,14 @@ def assembly (workflow, input_dir, sample_file, extension_paired, extension_orph
 		#f_seq = os.path.join(split_dir, sample + tmp1[0])
 		#r_seq = os.path.join(split_dir, sample + tmp1[1])
 		mypair = "none"
+		mypair_tmp = []
 		for item in tmp1:
 			if item == "none":
 				continue
-			if mypair == "none":
-				mypair =  os.path.join(split_dir, sample + item)
-			else:
-				mypair = mypair + "," + os.path.join(split_dir, sample + item)
+			mypair_tmp.append(os.path.join(split_dir, sample + item))
+		if len(mypair_tmp) > 0:
+			mypair_tmp = utilities.paired_reads(mypair_tmp, "fastq.gz", pair_identifier=".R1")
+			mypair = ",".join(mypair_tmp)	
 		myorphan = "none"
 		for item in tmp2:
 			if item == "none":
@@ -385,7 +386,7 @@ def gene_calling (workflow, assembly_dir, assembly_extentsion, sample_file,
 	mylog = re.sub(".faa", ".log", protein_file)
 	workflow.add_task('format_protein_sequences.py -p [args[0]] -q [args[1]] -e faa -o [targets[0]] '
 	                  '-m [targets[1]] >[args[2]] 2>&1 ',
-	                  depends=utilities.add_to_list(faa_file,TrackedExecutable("combine_protein_sequences.py")),
+	                  depends=utilities.add_to_list(faa_file,TrackedExecutable("format_protein_sequences.py")),
 	                  targets=[protein_file, gene_info],
 	                  args=[prokka_dir, prodigal_dir, mylog],
 	                  name="format_protein_sequences")
@@ -586,3 +587,4 @@ def gene_catalog (workflow, complete_gene, complete_protein,
 		name = "gene_catalog_abundance")
 
 	return gene_catalog, gene_catalog_count
+
