@@ -205,9 +205,9 @@ def protein_family_annotation (workflow, family_conf, gene_catalog_seq,
 		myname = re.search("([^\/]+)$", gene_catalog_seq)
 		myname = myname.group(1)
 		myhit = re.sub(".uniref90.stat.tsv", ".uniref90.hits", annotation_stat)
-		os.system("ln -fs " + gene_catalog_seq + " " + main_folder + "/" + myname)
+		link_cmd = "ln -fs " + gene_catalog_seq + " " + main_folder + "/" + myname
 		workflow.add_task(
-				"uniref_annotator.py [depends[0]] --seqtype prot --uniref90db [depends[1]] --uniref50db [depends[2]] --diamond-options \"--threads [args[0]]\" --temp [args[1]] --transitive-map [depends[3]] >[args[2]] 2>&1",
+				link_cmd + " && " + "uniref_annotator.py [depends[0]] --seqtype prot --uniref90db [depends[1]] --uniref50db [depends[2]] --diamond-options \"--threads [args[0]]\" --temp [args[1]] --transitive-map [depends[3]] >[args[2]] 2>&1",
 				depends = [main_folder + "/" + myname, config.uniref_dmnd, config.uniref50_dmnd, config.uniref_map, TrackedExecutable("uniref_annotator.py")],
 				targets = [myhit],
 				args = [threads, main_folder, uniref_log0],
@@ -1411,19 +1411,19 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog, gene_catalog_c
 		## summary DA results ##
 		mylog = re.sub(".tsv", ".tsv.log", summary_stat)
 		workflow.add_task(
-				"maaslin2_summary.py -a [depends[0]] -b [depends[1]] -c [depends[2]] -p [args[0]] -q [args[1]] -o [targets[0]] > [args[2]] 2>&1",
+				"maaslin2_summary.py -a [depends[0]] -b [depends[1]] -c [depends[2]] -p [args[0]] -q [args[1]] -e [args[2]] -o [targets[0]] > [args[3]] 2>&1",
 				depends = [stat_results, fold_results, pre_results, TrackedExecutable("maaslin2_summary.py")],
 				targets = [summary_stat],
-				args = [config.tshld_prevalence, config.tshld_qvalue, mylog],
+				args = [config.tshld_prevalence, config.tshld_qvalue, config.effect_size, mylog],
 				cores = threads,
 				name = "maaslin2_summary")
 
 		mylog = re.sub(".tsv", ".tsv.log", DA_detail)
 		workflow.add_task(
-				"maaslin2_annotator.py -s [depends[0]] -t [args[0]] -o [targets[0]] > [args[1]] 2>&1",
+				"maaslin2_annotator.py -s [depends[0]] -t [args[0]] -e [args[1]] -o [targets[0]] > [args[2]] 2>&1",
 				depends = [summary_stat, TrackedExecutable("maaslin2_annotator.py")],
 				targets = [DA_detail],
-				args = [abundance_conf["dna_da"], mylog],
+				args = [abundance_conf["dna_da"], config.effect_size, mylog],
 				cores = threads,
 				name = "maaslin2_annotator")
 		myprotein_family_ann[DA_detail] = ""
@@ -1575,19 +1575,19 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog, gene_catalog_c
 		## summary DA results ##
 		mylog = re.sub(".tsv", ".tsv.log", DE_summary_stat)
 		workflow.add_task(
-				"maaslin2_summary.py -a [depends[0]] -b [depends[1]] -c [depends[2]] -p [args[0]] -q [args[1]] -o [targets[0]] > [args[2]] 2>&1",
+				"maaslin2_summary.py -a [depends[0]] -b [depends[1]] -c [depends[2]] -p [args[0]] -q [args[1]] -e [args[2]] -o [targets[0]] > [args[3]] 2>&1",
 				depends = [DE_stat_results, DE_fold_results, DE_pre_results, TrackedExecutable("maaslin2_summary.py")],
 				targets = [DE_summary_stat],
-				args = [config.tshld_prevalence, config.tshld_qvalue, mylog],
+				args = [config.tshld_prevalence, config.tshld_qvalue, config.effect_size, mylog],
 				cores = threads,
 				name = "maaslin2_summary")
 
 		mylog = re.sub(".tsv", ".tsv.log", DE_detail)
 		workflow.add_task(
-				"maaslin2_annotator.py -s [depends[0]] -t [args[0]] -o [targets[0]] > [args[1]] 2>&1",
+				"maaslin2_annotator.py -s [depends[0]] -t [args[0]] -e [args[1]] -o [targets[0]] > [args[2]] 2>&1",
 				depends = [DE_summary_stat, TrackedExecutable("maaslin2_annotator.py")],
 				targets = [DE_detail],
-				args = [abundance_conf["rna_de"], mylog],
+				args = [abundance_conf["rna_de"], config.effect_size, mylog],
 				cores = threads,
 				name = "maaslin2_annotator")
 
