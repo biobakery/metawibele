@@ -238,7 +238,10 @@ def collect_annotation (list_file, source):
 				else:
 					mystr = mystr + "\n" + myname + "=" + info[myindex]
 				myindex = myindex + 1
-			annotation[myid + "\t" + method + "\t" + mytype] = detail + "\t" + mytype + "\t" + mystr
+			mykey = myid + "\t" + method + "\t" + mytype
+			if not mykey in annotation:
+				annotation[mykey] = []
+			annotation[mykey].append(detail + "\t" + mytype + "\t" + mystr)
 		# foreach line
 		open_file.close()
 	# foreach annotation file
@@ -287,9 +290,10 @@ def finalize_annotation (source, pep_cluster, annotation, taxonomy, mapping, ann
 				mynote = "no_abundance"
 			else:
 				mynote = mynote + ";no_abundance"
-
+		if myid in flags:
+			continue
 		if not myclust in flags:
-			flags[myclust] = ""
+			flags[myid] = ""
 			# note info: clarify the quality of the protein family: non-fungal Euk protein? unclassified_MSP (human-contaminated)?
 			if not myorder in outs_note:
 				outs_note[myorder] = myclust_new + "\t" + mynote + "\t" + "quality" + "\t" + "note" + "\t" + "Quality_control\tNA"
@@ -342,18 +346,19 @@ def finalize_annotation (source, pep_cluster, annotation, taxonomy, mapping, ann
 			# uniref90 annotation
 			if re.search("UniRef90", mytype):
 				mysource = "UniRef90_characterization" + "\t" + "UniRef90"
-				tmp1 = annotation[myid].split("\t")
-				if not myorder in outs_uniref:
-					outs_uniref[myorder] = []
-				if mytype == "UniRef90_unknown":
-					outs_uniref[myorder].append(myclust_new + "\t" + tmp1[0] + "\t" + tmp1[1] + "\t" + mysource + "\tNA")
-				else:
-					if tmp1[2] != "NA":
-						myattr = myclust_new + "__" + tmp1[1]
-						outs_uniref[myorder].append(myclust_new + "\t" + tmp1[0] + "\t" + tmp1[1] + "\t" + mysource + "\t" + myattr)
-						attributes.append(myattr + "\n\n" + tmp1[2])
+				for tmp0 in annotation[myid]:
+					tmp1 = tmp0.split("\t")
+					if not myorder in outs_uniref:
+						outs_uniref[myorder] = []
+					if mytype == "UniRef90_unknown":
+						outs_uniref[myorder].append(myclust_new + "\t" + tmp1[0] + "\t" + tmp1[1] + "\t" + mysource + "\tNA")
 					else:
-						outs_uniref[myorder].append(myclust_new + "\t" + tmp1[0] + "\t" + tmp1[1] + "\t" + mysource + "\t" + "NA")
+						if tmp1[2] != "NA":
+							myattr = myclust_new + "__" + tmp1[1]
+							outs_uniref[myorder].append(myclust_new + "\t" + tmp1[0] + "\t" + tmp1[1] + "\t" + mysource + "\t" + myattr)
+							attributes.append(myattr + "\n\n" + tmp1[2])
+						else:
+							outs_uniref[myorder].append(myclust_new + "\t" + tmp1[0] + "\t" + tmp1[1] + "\t" + mysource + "\t" + "NA")
 
 			else: # Denovo annotation
 				if mytype == "Denovo_signaling":
@@ -361,15 +366,16 @@ def finalize_annotation (source, pep_cluster, annotation, taxonomy, mapping, ann
 				if mytype == "Denovo_transmembrane":
 					method = "TMHMM/Phobius"
 				mysource = "Denovo_characterization" + "\t" + method
-				tmp1 = annotation[myid].split("\t")
-				if not myorder in outs_denovo:
-					outs_denovo[myorder] = []
-				if tmp1[2] != "NA":
-					myattr = myclust_new + "__" + tmp1[1]
-					outs_denovo[myorder].append(myclust_new + "\t" + tmp1[0] + "\t" + tmp1[1] + "\t" + mysource + "\t" + myattr)
-					attributes.append(myattr + "\n\n" + tmp1[2])
-				else:
-					outs_denovo[myorder].append(myclust_new + "\t" + tmp1[0] + "\t" + tmp1[1] + "\t" + mysource + "\t" + "NA")
+				for tmp0 in annotation[myid]:
+					tmp1 = tmp0.split("\t")
+					if not myorder in outs_denovo:
+						outs_denovo[myorder] = []
+					if tmp1[2] != "NA":
+						myattr = myclust_new + "__" + tmp1[1]
+						outs_denovo[myorder].append(myclust_new + "\t" + tmp1[0] + "\t" + tmp1[1] + "\t" + mysource + "\t" + myattr)
+						attributes.append(myattr + "\n\n" + tmp1[2])
+					else:
+						outs_denovo[myorder].append(myclust_new + "\t" + tmp1[0] + "\t" + tmp1[1] + "\t" + mysource + "\t" + "NA")
 	# foreach line 
 	
 	#outs_other = remove_duplicate(outs_other)
