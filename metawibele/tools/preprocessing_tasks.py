@@ -30,6 +30,7 @@ import os
 import subprocess
 import itertools
 import re
+import collections
 
 from anadama2.tracked import TrackedExecutable, TrackedDirectory
 
@@ -37,17 +38,15 @@ from anadama2.tracked import TrackedExecutable, TrackedDirectory
 from metawibele import utilities, config, files
 
 
-def assembly (workflow, input_dir, sample_file, extension_paired, extension_orphan,
-             threads, output_folder, contigs):
+def assembly (workflow, input_dir, extension, extension_paired, threads, output_folder, contigs):
 	"""
 	This set of tasks will run assembly on the input files provided.
 
 	Args:
 		workflow (anadama2.workflow): An instance of the workflow class.
 		input_dir: The direcory path of fastq files.
-		sample_file: The sample list file.
-		extension_paired: The extension for paired reads.
-		extension_orphan: The extension for arphan reads.
+		extension: The extension for all reads files, e.g. .fastq.gz
+		extension_paired: The extension for paired reads, e.g. _R1.fastq.gz,_R2.fastq.gz
 		threads (int): The number of threads/cores for clustering to use.
 		output_folder (string): The path of the output folder.
 		contigs: The summarized contig file.
@@ -78,44 +77,43 @@ def assembly (workflow, input_dir, sample_file, extension_paired, extension_orph
 	# ================================================
 	# collect sequences
 	# ================================================
-	samples = []
-	open_file = open(sample_file, "r")
-	for line in open_file.readlines():
-		line = line.strip()
-		if not len(line):
-			continue
-		info = line.split("\t")
-		samples.append(info[0])
-	# foreach sample
-	open_file.close()
+	pair_identifier = None
+	if extension_paired:
+		extension_paireds = extension_paired.split(",")
+		pair_identifier = re.sub(extension, "", extension_paireds[0])
+	else:
+		extension_paired = [extension]
+	sample_files = utilities.find_files(input_dir, extension, None)
+	samples = sample_names(files, extension, pair_identifier)
 	split_dir = input_dir
 	assembly_dir = output_folder
 
 	split_files = []
 	contigs_list = []
-	tmp1 = extension_paired.split(",")
-	tmp2 = extension_orphan.split(",")
 	for sample in samples:
-		#f_seq = os.path.join(split_dir, sample + tmp1[0])
-		#r_seq = os.path.join(split_dir, sample + tmp1[1])
 		mypair = "none"
+		myorphan == "none"
 		mypair_tmp = []
-		for item in tmp1:
+		for item in extension_paireds:
 			if item == "none":
 				continue
-			mypair_tmp.append(os.path.join(split_dir, sample + item))
-		if len(mypair_tmp) > 0:
-			mypair_tmp = utilities.paired_reads(mypair_tmp, "fastq.gz", pair_identifier=".R1")
-			mypair = ",".join(mypair_tmp)	
-		myorphan = "none"
-		for item in tmp2:
-			if item == "none":
-				continue
-			if myorphan == "none":
-				myorphan = os.path.join(split_dir, sample + item)
+			myfile = os.path.join(split_dir, sample + item)
+			if os.path.isfile(myfile):
+				mypair_tmp.append(myfile)
 			else:
-				myorphan = myorphan + "," + os.path.join(split_dir, sample + item)
-		#split_files.append((sample, f_seq, r_seq, myorphan))
+				sys.exit("File not exist! " + myfile)
+		if len(mypair_tmp) == 1:
+			# split into paired reads files
+			mypair_tmp = utilities.split_paired_reads(mypair_tmp[0], "fastq.gz", pair_identifier=".R1")
+			if len(mypair_tmp) == 1:
+				myorphan = mypair_tmp[0]
+			if len(mypair_tmp) == 2:
+				mypair = ",".join(mypair_tmp)
+			if len(mypair_tmp) == 3:
+				mypair = ",".join(mypair_tmp[0:2])
+				myorphan = mypair_tmp[2]
+		else:
+			mypair = mypair = ",".join(mypair_tmp)
 		split_files.append((sample, mypair, myorphan))
 		
 		seq_base = sample
@@ -134,13 +132,15 @@ def assembly (workflow, input_dir, sample_file, extension_paired, extension_orph
 		time_equation = "24*60 if file_size('[depends[0]]') < 25 else 6*24*60" # 24 hours or more depending on file size
 		mem_equation = "32*1024 if file_size('[depends[0]]') < 25 else 3*32*1024" # 32 GB or more depending on file size
 		mylog = os.path.join(assembly_dir, '%s.log' % seq_base)
-		tmp = mypair.split(",")
-	
-		if len(tmp) == 2:	# paired reads:		
-			f_seq = tmp[0]
-			r_seq = tmp[1]
-			if myorphan != "none":
-				workflow.add_task_gridable("megahit -1 [depends[0]] -2 [depends[1]] -r [args[2]] -t [args[0]] -o [args[3]] --out-prefix [args[1]] >[args[4]] 2>&1",
+		
+		if mypair != "none":
+			tmp = mypair.split(",")
+			if len(tmp) == 2:	# paired reads:		
+				tmp = mypair.split(",")
+				f_seq = tmp[0]
+				r_seq = tmp[1]
+				if myorphan != "none":
+					workflow.add_task_gridable("rm -rf " + megahit_contig_dir + " && " + "megahit -1 [depends[0]] -2 [depends[1]] -r [args[2]] -t [args[0]] -o [args[3]] --out-prefix [args[1]] >[args[4]] 2>&1",
 									depends = [f_seq, r_seq, TrackedExecutable("megahit")],
 									targets = [megahit_contig],
 									args = [threads, seq_base, myorphan, megahit_contig_dir, mylog],
@@ -148,22 +148,29 @@ def assembly (workflow, input_dir, sample_file, extension_paired, extension_orph
 									mem = mem_equation,
 									time = time_equation,
 									name = sample + "__megahit")
-			else:
-				workflow.add_task_gridable("megahit -1 [depends[0]] -2 [depends[1]] -t [args[0]] -o [args[2]] --out-prefix [args[1]] >[args[3]] 2>&1",
+				else:
+					workflow.add_task_gridable("rm -rf " + megahit_contig_dir + " && " + "megahit -1 [depends[0]] -2 [depends[1]] -t [args[0]] -o [args[2]] --out-prefix [args[1]] >[args[3]] 2>&1",
 									depends = [f_seq, r_seq, TrackedExecutable("megahit")],
 									targets = [megahit_contig],
 									args = [threads, seq_base, megahit_contig_dir, mylog],
 									cores = threads,
 									name = sample + "__megahit")
-		else:
-			workflow.add_task_gridable("megahit -r [depends[0]] -t [args[0]] -o [args[2]] --out-prefix [args[1]] >[args[3]] 2>&1",
+			else:
+				workflow.add_task_gridable("rm -rf " + megahit_contig_dir + " && " + "megahit -r [depends[0]] -t [args[0]] -o [args[2]] --out-prefix [args[1]] >[args[3]] 2>&1",
 									depends = [mypair, TrackedExecutable("megahit")],
 									targets = [megahit_contig],
 									args = [threads, seq_base, megahit_contig_dir, mylog],
 									cores = threads,
 									name = sample + "__megahit")
+		else:
+			if myorphan != "none":	
+				workflow.add_task_gridable("rm -rf " + megahit_contig_dir + " && " + "megahit -r [depends[0]] -t [args[0]] -o [args[2]] --out-prefix [args[1]] >[args[3]] 2>&1",
+								depends = [myorphan, TrackedExecutable("megahit")],
+								targets = [megahit_contig],
+								args = [threads, seq_base, megahit_contig_dir, mylog],
+								cores = threads,
+								name = sample + "__megahit")
 			
-		
 	for myfile in contigs_list:
 		mym = re.search("([^\/]+)$", myfile)
 		myname = mym.group(1)
