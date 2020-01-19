@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 """
 MetaWIBELE: rna_dna_ratio module
@@ -417,7 +417,7 @@ if __name__ == '__main__':
 	values = get_args ()
 
 
-	sys.stderr.write("### Start rna_dna_ratio.py -d " + values.d + " ####\n")
+	sys.stderr.write("### Start rna_dna_ratio_percentile.py -d " + values.d + " ####\n")
 	
 
 	### collect info ###
@@ -435,6 +435,6 @@ if __name__ == '__main__':
 	sys.stderr.write("Smooth info ......done\n")
 
 
-	sys.stderr.write("### Finish rna_dna_ratio.py ####\n\n\n")
+	sys.stderr.write("### Finish rna_dna_ratio_percentile.py ####\n\n\n")
 
 # end: main
