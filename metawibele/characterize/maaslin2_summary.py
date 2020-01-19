@@ -65,8 +65,9 @@ def get_args():
 	                    help='cutoff for FDR adjust pvalue filtering (qvalue < cutoff), e.g. no|0.05',
 	                    default="0.05")
 	parser.add_argument('-e', "--effect-size",
-	                    help='specify the flag of effect size',
-	                    default="coef")
+	                    help='specify the item name indicating effect size',
+	                    choices = ["coef", "mean(log)", "log(FC)"],
+						required=True)
 	parser.add_argument('-o', "--output",
 	                    help='output DA summary file',
 	                    required=True)
@@ -160,8 +161,8 @@ def collect_fold_change_info (fold_file, stat, prevalence, effect_size):
 			continue
 		myclust = info[titles[utilities.PROTEIN_FAMILY_ID]]
 		mytype = info[titles["cmp_type"]]
-		fold = info[titles["log2(foldChange)"]]
-		var = info[titles["valueChange"]]
+		fold = info[titles["log(FC)"]]
+		var = info[titles["mean(log)"]]
 		effect = info[titles["Cohen's_d"]]
 		myabun = info[titles["mean_abundance"]]
 		myabun_case = info[titles["mean_abundance_case"]]
@@ -183,8 +184,10 @@ def collect_fold_change_info (fold_file, stat, prevalence, effect_size):
 			mydis = abs(float(mycoef))
 			if effect_size == "Cohen's_d":
 				mydis = abs(float(effect))
-			if effect_size == "foldChange":
+			if effect_size == "log(FC)":
 				mydis = abs(float(fold))
+			if effect_size == "mean(log)":
+				mydis = abs(float(var))
 			if not mydis in folds:
 				folds[mydis] = {}
 			if not myq in folds[mydis]:
@@ -221,7 +224,7 @@ def summary_info (folds, p_cutoff, q_value_cutoff, outfile):
 	abun_all = {}
 	open_file = open(outfile, "w")
 	open_file3 = open(outfile3, "w")
-	title = utilities.PROTEIN_FAMILY_ID + "\tcmp_type\tprevalence\tprevalence_case\tprevalence_control\tcoef\tstderr\tpvalue\tqvalue\tlog2(foldChange)\tCohen's_d\tvalueChange\tmean_abundance\tmean_abundance_case\tmean_abundance_control\tmean_prevalent_abundance\tmean_prevalent_abundance_case\tmean_prevalent_abundance_control"
+	title = utilities.PROTEIN_FAMILY_ID + "\tcmp_type\tprevalence\tprevalence_case\tprevalence_control\tcoef\tstderr\tpvalue\tqvalue\tlog(FC)\tCohen's_d\tmean(log)\tmean_abundance\tmean_abundance_case\tmean_abundance_control\tmean_prevalent_abundance\tmean_prevalent_abundance_case\tmean_prevalent_abundance_control"
 	open_file.write(title + "\n")
 	open_file3.write(title + "\n")
 

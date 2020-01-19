@@ -55,6 +55,10 @@ def get_args():
 	parser.add_argument('-t', "--type",
 	                    help='specify the type of abundance table, e.g. MaAsLin2_DA',
 	                    required=True)
+	parser.add_argument('-e', "--effect-size",
+	                    help='specify the item name indicating effect size', 
+	                    choices = ["coef", "mean(log)", "log(FC)"],
+						required=True)
 	parser.add_argument('-o', "--output",
 	                    help='output annotated file',
 	                    required=True)
@@ -67,7 +71,7 @@ def get_args():
 #==============================================================
 # get annotation about differential abundance info
 #==============================================================
-def stat_annotation (statfile, mytype, outfile):
+def stat_annotation (statfile, mytype, effect_name, outfile):
 	titles = {}
 	stat = []
 	open_file = open(statfile, "r")
@@ -84,16 +88,23 @@ def stat_annotation (statfile, mytype, outfile):
 			open_out.write(utilities.PROTEIN_FAMILY_ID + "\ttype\tdetail\t" + mytitle + "\n")
 			continue
 		myid = info[titles[utilities.PROTEIN_FAMILY_ID]]
-		mycoef = info[titles["coef"]]
+		myeffect = info[titles["coef"]]
+		if effect_name in titles:
+			myeffect = info[titles[effect_name]]
+		mycmp = "NA"
+		if "cmp_type" in titles:
+			mycmp = info[titles["cmp_type"]]
 		mydetail = "NA"
-		if mycoef != "NA" and mycoef != "NaN" and mycoef != "nan":
-			if float(mycoef) < 0:
+		if myeffect != "NA" and myeffect != "NaN" and myeffect != "nan":
+			if float(myeffect) < 0:
 				mydetail = "down"
 			else:
-				if float(mycoef) > 0:
+				if float(myeffect) > 0:
 					mydetail = "up"
 				else:
 					mydetail = "NA"
+		if mycmp != "NA":
+			mydetail = mydetail + "(" + mycmp + ")"
 		mystat = "\t".join(info[1:])
 		open_out.write (myid + "\t" + mytype + "\t" + mydetail + "\t" + mystat + "\n")
 	# foreach line
@@ -116,7 +127,7 @@ if __name__ == '__main__':
 
 	### get info
 	sys.stderr.write("\nGet DA annotation info ......starting\n")
-	stat_annotation (values.stat, values.type, values.output)
+	stat_annotation (values.stat, values.type, values.effect_size, values.output)
 	sys.stderr.write("Get DA annotation info ......done\n")
 
 	sys.stderr.write("### Finish maaslin2_annotator.py ####\n\n\n")

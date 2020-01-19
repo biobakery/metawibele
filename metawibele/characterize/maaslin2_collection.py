@@ -264,18 +264,24 @@ def collect_abundance_info (abundance_file, DA_cluster, meta_case, meta_control)
 		for mycmp in total_value[myclust].keys():
 			myyes = 0
 			myno = 0
+			logyes = 0
+			logno = 0
 			myyes_sd = 0
 			myno_sd = 0
 			if "yes" in total_value[myclust][mycmp]:
 				if len(total_value[myclust][mycmp]["yes"]) > 0:
 					#myyes = utilities.mean(total_value[myclust][mycmp]["yes"])
 					myyes = 1.0 * sum(total_value[myclust][mycmp]["yes"]) / len(total_value[myclust][mycmp]["yes"])
+					logyes = [math.log(k) for k in total_value[myclust][mycmp]["yes"]]
+					logyes = 1.0 * sum(logyes) / len(total_value[myclust][mycmp]["yes"])
 				if len(total_value[myclust][mycmp]["yes"]) > 1:
 					myyes_sd = utilities.stddev(total_value[myclust][mycmp]["yes"], ddof=1)
 			if "no" in total_value[myclust][mycmp]:
 				if len(total_value[myclust][mycmp]["no"]) > 0:
 					#myno = utilities.mean(total_value[myclust][mycmp]["no"])
 					myno = 1.0 * sum(total_value[myclust][mycmp]["no"]) / len(total_value[myclust][mycmp]["no"])
+					logno = [math.log(k) for k in total_value[myclust][mycmp]["no"]]
+					logno = 1.0 * sum(logno) / len(total_value[myclust][mycmp]["no"])
 				if len(total_value[myclust][mycmp]["no"]) > 1:
 					myno_sd = utilities.stddev(total_value[myclust][mycmp]["no"], ddof=1)
 			myyes_real = myyes
@@ -288,8 +294,8 @@ def collect_abundance_info (abundance_file, DA_cluster, meta_case, meta_control)
 				else:
 					myfold = "Inf"
 			else:
-				myfold = math.log(myyes / (myno * 1.0), 2)
-			myvar = myyes_real - myno_real
+				myfold = math.log(myyes / (myno * 1.0))
+			myvar = logyes - logno
 			if myyes_sd == 0 and myno_sd == 0:
 				# debug
 				print("SD is zero!\t" + mycmp + "\t" + myclust + "\t" + str(myyes_real) + "\t" + str(myno_real))
@@ -480,7 +486,7 @@ def output_abundance_info (folds, abundance, meta_control, meta_case, outfile):
 	'''
 
 	data_file = re.sub(".tsv", ".fold.tsv", outfile)
-	title = utilities.PROTEIN_FAMILY_ID + "\tcmp_type\tlog2(foldChange)\tCohen's_d\tvalueChange\tmean_abundance\tmean_abundance_case\tmean_abundance_control\tmean_prevalent_abundance\tmean_prevalent_abundance_case\tmean_prevalent_abundance_control"
+	title = utilities.PROTEIN_FAMILY_ID + "\tcmp_type\tlog(FC)\tCohen's_d\tmean(log)\tmean_abundance\tmean_abundance_case\tmean_abundance_control\tmean_prevalent_abundance\tmean_prevalent_abundance_case\tmean_prevalent_abundance_control"
 	open_file = open(data_file, "w")
 	open_file.write(title + "\n")
 	for myid in sorted(folds.keys()):
