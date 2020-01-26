@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
 """
 MeteWIBELE workflow: MeteWIBELE prioritization workflow
@@ -62,22 +62,18 @@ def parse_cli_arguments ():
 	workflow.add_argument("prioritization-config",
 	                    desc = "the configuration file of quantitative prioritization",
 	                    default = "none"),
-	workflow.add_argument("mandatory",
-	                     desc = "indicates whether or not prioritize protein families based on quantitative criteria (mandatory prioritization)",
-	                     choices=["True", "False"],
-						 default = True)
-	workflow.add_argument("optional",
-	                     desc = "indicates whether or not prioritize protein families based on sequence annotation (optional prioritization)",
-	                     choices=["True", "False"],
-						 default = True)
-	workflow.add_argument("moduled",
-	                     desc = "indicates whether or not module protein families based on sequence annotation (moduling prioritization)",
-	                     choices=["True", "False"],
-						 default = False)
-	workflow.add_argument("finalized",
-	                     desc = "indicates whether or not finalize prioritized protein families",
-	                     choices=["True", "False"],
-						 default = True)
+	workflow.add_argument("bypass-mandatory",
+	                     desc = "do not prioritize protein families based on quantitative criteria (mandatory prioritization)",
+						 action = "store_true")
+	workflow.add_argument("bypass-optional",
+	                     desc = "do not prioritize protein families based on sequence annotation (optional prioritization)",
+	                     action = "store_true")
+	workflow.add_argument("module",
+	                     desc = "cluster protein families into potential functional modules (moduling prioritization)",
+						 action = "store_true")
+	workflow.add_argument("bypass-finalized",
+	                     desc = "do not finalize prioritized protein families",
+						 action = "store_true")
 
 	return workflow
 
@@ -124,7 +120,7 @@ def main(workflow):
 
 	### STEP #1: mandatory prioritization: quantification-based ranking ###
 	# if mandatory action is provided, then prioritize protein families using quantitative criteria
-	if args.mandatory:
+	if not args.bypass_mandatory:
 		unsupervised_file, supervised_file = prioritization.mandatory_prioritization (workflow, args.prioritization_config,
 		                                                                        protein_family_ann, protein_family_attr,
 		                                                                        priority_dir)
@@ -132,7 +128,7 @@ def main(workflow):
 
 	### STEP #2: optional prioritization: binary filtering ###
 	# if optional action is provided, then prioritize protein families based on sequence annotations (selection factor)
-	if args.optional:
+	if not args.bypass_optional:
 		myselection = prioritization.optional_prioritization (workflow, args.prioritization_config,
 		                                                             protein_family_ann,
 		                                                             supervised_rank,
@@ -140,7 +136,7 @@ def main(workflow):
 	
 	### STEP #3: moduled prioritization: category moduling ###
 	# if moduled action is provided, then cluster prioritize protein families into some modules
-	if args.moduled:
+	if args.module:
 		mymodule = prioritization.moduled_prioritization (workflow, args.prioritization_config,
 		                                                             protein_family_ann,
 		                                                             supervised_rank,
@@ -148,7 +144,7 @@ def main(workflow):
 
 	### STEP #4: finalized annotation ###
 	# if finalized action is provided, then format and fianlize prioritizations
-	if args.finalized:
+	if not args.bypass_finalized:
 		prioritization.finalize_prioritization (workflow,
 		                                        unsupervised_rank, unsupervised_priority,
 		                                        supervised_rank, supervised_priority, selected_priority,
