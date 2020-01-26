@@ -140,8 +140,11 @@ def smooth_abundance (smooth_method, prevalence_flt, abufile, fixed_min, samples
 	:param outfile: smoothed file name
 	:return: smoothed file
 	'''
-
-	outfile1 = re.sub(".tsv", ".refined.tsv", abufile)
+	
+	myname = os.path.basename(abufile)
+	mydir = os.path.dirname(outfile)
+	outfile1 = re.sub(".tsv", ".refined.tsv", myname)
+	outfile1 = os.path.join(mydir, outfile1)
 	outfile2 = re.sub(".tsv", ".log.tsv", outfile)
 	open_file = open(abufile, "r")
 	open_out = open(outfile, "w")
