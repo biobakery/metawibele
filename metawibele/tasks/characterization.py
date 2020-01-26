@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 """
 MetaWIBELE Workflow: characterization module
 A collection of tasks for workflows with characterization
