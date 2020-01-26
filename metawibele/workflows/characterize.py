@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
 """
 MeteWIBELE workflow: MeteWIBELE characterization workflow
@@ -62,27 +62,27 @@ def parse_cli_arguments ():
 	workflow.add_argument("characterization-config",
 	                      desc = "the configuration file of characterization analysis",
 	                      default = "none")
-	workflow.add_argument("clustering",
-	                      desc = "indicates whether or not cluster proteins into protein families",
-	                      default = True)
-	workflow.add_argument("protein-family",
-	                      desc = "indicates whether or not annotate protein families based on global homology  information",
-	                      default = True)
-	workflow.add_argument("domain-motif",
-	                      desc = "indicates whether or not annotate protein families based on local homology information",
-	                      default = True)
-	workflow.add_argument("abundance",
-	                      desc = "indicates whether or not annotate protein families based on abundance information",
-	                      default = True)
+	workflow.add_argument("bypass-clustering",
+	                      desc = "do not cluster proteins into protein families",
+	                      action = "store_true")
+	workflow.add_argument("bypass-protein-family",
+	                      desc = "do not annotate protein families based on global homology  information",
+	                      action = "store_true")
+	workflow.add_argument("bypass-domain-motif",
+	                      desc = "do not annotate protein families based on local homology information",
+	                      action = "store_true")
+	workflow.add_argument("bypass-abundance",
+	                      desc = "do not annotate protein families based on abundance information",
+	                      action = "store_true")
 	workflow.add_argument("split-number",
 	                      desc="indicates number of spliting files for annotation based on sequence information",
 	                      default = 10)
 	workflow.add_argument("rna-count",
 	                      desc = "indicates RNA count tables if is available",
 	                      default = "none")
-	workflow.add_argument("integration",
-	                      desc = "indicates whether or not integrate annotations for protein families",
-	                      default = True)
+	workflow.add_argument("bypass-integration",
+	                      desc = "do not integrate annotations for protein families",
+	                      action = "store_true")
 
 	return workflow
 
@@ -183,7 +183,7 @@ def main(workflow):
 
 	### STEP #1: clustering ###
 	# if clustering action is provided, then cluster proteins into protein families
-	if args.clustering == True:
+	if not args.bypass_clustering:
 		print("Run clustering")
 		myprotein_family, myprotein_family_output_folder = characterization.clustering (workflow, gene_catalog_seq,
 		                                                                                args.threads,
@@ -191,7 +191,7 @@ def main(workflow):
 
 	### STEP #2: protein-family annotation ###
 	# if protein-family action is provided, then directly extract annotations from database (UniProt)
-	if args.protein_family == True:
+	if not args.bypass_protein_family:
 		print("Run protein_family annotation")
 		myprotein_family_ann, myprotein_ann, homology_output_folder = characterization.protein_family_annotation (workflow, family_conf,
 		                                                                                                          gene_catalog_seq,
@@ -201,7 +201,7 @@ def main(workflow):
 
 	### STEP #3: domain-motif annotation ###
 	# if domain-motif action is provided, then do annotations based on sequence information
-	if args.domain_motif == True:
+	if not args.bypass_domain_motif:
 		print("Run domain_motif annotation")
 		myprotein_family_ann, myprotein_ann, sequence_output_folder = characterization.domain_motif_annotation (workflow, domain_motif_conf,
 		                                                                                                          gene_catalog_seq,
@@ -211,7 +211,7 @@ def main(workflow):
 
 	### STEP #4: abundance annotation ###
 	# if abundance action is provided, then do annotations based on abundance information
-	if args.abundance == True:
+	if not args.bypass_abundance:
 		print("Run abundance annotation")
 		myprotein_family_ann, myprotein_ann, abundance_output_folder = characterization.abundance_annotation (workflow, abundance_conf,
 		                                                                                                            gene_catalog, gene_catalog_count, gene_catalog_rna_count,
@@ -221,7 +221,7 @@ def main(workflow):
 		                                                                                                            protein_family_ann_list, protein_ann_list)
 
 	### STEP #4: integrate annotations ###
-	if args.integration == True:
+	if not args.bypass_integration:
 		print("Run integration annotation")
 		myprotein_family_ann, myprotein_family_attr, annotation_output_folder = characterization.integration_annotation (workflow, integration_conf,
 		                                                                                                               protein_family_ann_list, protein_ann_list,
