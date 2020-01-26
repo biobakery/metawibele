@@ -253,15 +253,39 @@ def collect_annotation (list_file, source):
 #==============================================================
 # finalize annotation 
 #==============================================================
+def output_attributes (line, mynum, output_fh):	
+	tmp = line.split("\n\n")
+	myattr = tmp[0]
+	tmp2 = tmp[1].split("\n")
+	for item in tmp2:
+		if not re.search("([^=]+)=([^=]+)", item):
+			# debug
+			print("Item with format error!\t" + myattr + "\t" + item)
+			continue
+		mym = re.search("([^=]+)=([^=]+)", item)
+		mykey = mym.group(1)
+		myvalue = mym.group(2)
+		mynum = mynum + 1
+		output_fh.write(str(mynum) + "\t" + myattr + "\t" + mykey + "\t" + myvalue + "\n")
+	# foreach attribute
+	
+	return mynum
+
 def finalize_annotation (source, pep_cluster, annotation, taxonomy, mapping, annfile, outfile):
 	titles = {}
-	attributes = []
-	outs_other = {}
-	outs_denovo = {}
-	outs_uniref = {}
-	outs_note = {}
-	flags = {}
+	flag_type = {}
+	flag_clust = {}
 	open_in = open(annfile, "r")
+	open_out = open(outfile, "w")
+	if source == "protein_family":
+		open_out.write(utilities.PROTEIN_FAMILY_ID + "\tannotation\tfeature\tcategory\tmethod\tAID\n")
+	else:
+		open_out.write(utilities.PROTEIN_ID + "\tannotation\tfeature\tcategory\tmethod\tAID\n")
+	outfile1 = re.sub(".tsv", ".attribute.tsv", outfile)
+	open_out1 = open(outfile1, "w")
+	open_out1.write("TID\t" + "AID" + "\t" + "key" + "\t" + "value" + "\n")
+	mynum = 0
+	
 	for line in open_in:
 		line = line.strip()
 		if not len(line):
@@ -273,10 +297,8 @@ def finalize_annotation (source, pep_cluster, annotation, taxonomy, mapping, ann
 			continue
 		if source == "protein_family":
 			myclust = info[titles[utilities.PROTEIN_FAMILY_ID]]
-			myorder = re.sub("Cluster_", "", myclust)
 		else:
 			myclust = info[titles[utilities.PROTEIN_ID]]
-			myorder = myclust
 		method = info[titles["method"]]
 		study = info[titles["study"]]
 		category = info[titles["category"]]
@@ -290,75 +312,91 @@ def finalize_annotation (source, pep_cluster, annotation, taxonomy, mapping, ann
 				mynote = "no_abundance"
 			else:
 				mynote = mynote + ";no_abundance"
-		if myid in flags:
-			continue
-		if not myclust in flags:
-			flags[myid] = ""
+		
+		# cluster info
+		if not myclust in flag_clust:
+			flag_clust[myclust] = ""
 			# note info: clarify the quality of the protein family: non-fungal Euk protein? unclassified_MSP (human-contaminated)?
-			if not myorder in outs_note:
-				outs_note[myorder] = myclust_new + "\t" + mynote + "\t" + "quality" + "\t" + "note" + "\t" + "Quality_control\tNA"
+			mystr = myclust_new + "\t" + mynote + "\t" + "quality" + "\t" + "note" + "\t" + "Quality_control\tNA"
+			open_out.write(mystr + "\n")
 
-			if not myorder in outs_other:
-				outs_other[myorder] = []
 			# cluster info
-			outs_other[myorder].append(myclust_new + "\t" + study + "\t" + "study" + "\t" + "project" + "\t" + "Shotgun\tNA")
-
+			mystr = myclust_new + "\t" + study + "\t" + "study" + "\t" + "project" + "\t" + "Shotgun\tNA"
+			open_out.write(mystr + "\n")
+			
 			if not myclust in pep_cluster:
 				# debug
 				print("No cluster information!\t" + myclust)
-				outs_other[myorder].append(myclust_new + "\t" + "NA" + "\t" + "protein_family" + "\t" + "Denovo_clustering" + "\t" + "CD-hit\tNA")
+				mystr = myclust_new + "\t" + "NA" + "\t" + "protein_family" + "\t" + "Denovo_clustering" + "\t" + "CD-hit\tNA"
+				open_out.write(mystr + "\n")
 			else:
 				tmp1 = pep_cluster[myclust].split("\t")
 				if tmp1[2] != "NA":
 					myattr = myclust_new + "__" + "Denovo_clustering"
-					outs_other[myorder].append(myclust_new  + "\t"  + tmp1[0]+ "\t" + tmp1[1] + "\t" + "Denovo_clustering" + "\t" + "CD-hit\t" + myattr)
-					attributes.append(myattr + "\n\n" + tmp1[2])
+					mystr = myclust_new  + "\t"  + tmp1[0]+ "\t" + tmp1[1] + "\t" + "Denovo_clustering" + "\t" + "CD-hit\t" + myattr
+					open_out.write(mystr + "\n")
+					myline = myattr + "\n\n" + tmp1[2]
+					mynum = output_attributes(myline, mynum, open_out1)
 				else:
-					outs_other[myorder].append(myclust_new + "\t" + tmp1[0] + "\t" + tmp1[1] + "\t" + "Denovo_clustering" + "\t" + "CD-hit\t" + "NA")
+					mystr = myclust_new + "\t" + tmp1[0] + "\t" + tmp1[1] + "\t" + "Denovo_clustering" + "\t" + "CD-hit\t" + "NA"
+					open_out.write(mystr + "\n")
 
 			# mapping info
 			if not myclust in mapping:
 				# debug
 				print("No taxonomy information!\t" + myclust)
-				outs_other[myorder].append(myclust_new + "\t" + "NA" + "\t" + "worse_homology" + "\t" + "UniRef90_homology" + "\t" + "UniRef90" + "\tNA")
+				mystr = myclust_new + "\t" + "NA" + "\t" + "worse_homology" + "\t" + "UniRef90_homology" + "\t" + "UniRef90" + "\tNA"
+				open_out.write(mystr + "\n")
 			else:
 				tmp1 = mapping[myclust].split("\t")
 				if tmp1[2] != "NA":
 					myattr = myclust_new + "__" + "UniRef90_homology"
-					outs_other[myorder].append(myclust_new + "\t" + tmp1[0] + "\t" + tmp1[1] + "\t" + "UniRef90_homology" + "\t" + "UniRef90" + "\t" + myattr)
-					attributes.append(myattr + "\n\n" + tmp1[2])
+					mystr = myclust_new + "\t" + tmp1[0] + "\t" + tmp1[1] + "\t" + "UniRef90_homology" + "\t" + "UniRef90" + "\t" + myattr
+					open_out.write(mystr + "\n")
+					myline = myattr + "\n\n" + tmp1[2]
+					mynum = output_attributes(myline, mynum, open_out1)
 				else:
-					outs_other[myorder].append(myclust_new + "\t" + tmp1[0] + "\t" + tmp1[1] + "\t" + "UniRef90_homology" + "\t" + "UniRef90" + "\t" + "NA")
+					mystr = myclust_new + "\t" + tmp1[0] + "\t" + tmp1[1] + "\t" + "UniRef90_homology" + "\t" + "UniRef90" + "\t" + "NA"
+					open_out.write(mystr + "\n")
 
 			if not myclust in taxonomy:
-				outs_other[myorder].append(myclust_new + "\t" + "NA" + "\t" + "NA" + "\t" + "Taxonomy_characterization" + "\t" + "Taxonomy_annotation" + "\tNA")
+				mystr = myclust_new + "\t" + "NA" + "\t" + "NA" + "\t" + "Taxonomy_characterization" + "\t" + "Taxonomy_annotation" + "\tNA"
+				open_out.write(mystr + "\n")
 			else:
 				tmp1 = taxonomy[myclust].split("\t")
 				if tmp1[2] != "NA":
 					myattr = myclust_new + "__" + "Taxonomy_characterization"
-					outs_other[myorder].append(myclust_new + "\t"  + tmp1[0] + "\t" + tmp1[1] + "\t" + "Taxonomy_characterization" + "\t" + "Taxonomy_annotation" + "\t" + myattr)
-					attributes.append(myattr + "\n\n" + tmp1[2])
+					mystr = myclust_new + "\t"  + tmp1[0] + "\t" + tmp1[1] + "\t" + "Taxonomy_characterization" + "\t" + "Taxonomy_annotation" + "\t" + myattr
+					open_out.write(mystr + "\n")
+					myline = myattr + "\n\n" + tmp1[2]
+					mynum = output_attributes(myline, mynum, open_out1)
 				else:
-					outs_other[myorder].append(myclust_new + "\t" + tmp1[0] + "\t" + tmp1[1] + "\t" + "Taxonomy_characterization" + "\t" + "Taxonomy_annotation" + "\t" + "NA")
+					mystr = myclust_new + "\t" + tmp1[0] + "\t" + tmp1[1] + "\t" + "Taxonomy_characterization" + "\t" + "Taxonomy_annotation" + "\t" + "NA"
+					open_out.write(mystr + "\n")
 
 		# annotation info
+		if myid in flag_type:
+			continue
+		flag_type[myid] = ""
 		if myid in annotation:
 			# uniref90 annotation
 			if re.search("UniRef90", mytype):
 				mysource = "UniRef90_characterization" + "\t" + "UniRef90"
 				for tmp0 in annotation[myid]:
 					tmp1 = tmp0.split("\t")
-					if not myorder in outs_uniref:
-						outs_uniref[myorder] = []
 					if mytype == "UniRef90_unknown":
-						outs_uniref[myorder].append(myclust_new + "\t" + tmp1[0] + "\t" + tmp1[1] + "\t" + mysource + "\tNA")
+						mystr = myclust_new + "\t" + tmp1[0] + "\t" + tmp1[1] + "\t" + mysource + "\tNA"
+						open_out.write(mystr + "\n")
 					else:
 						if tmp1[2] != "NA":
 							myattr = myclust_new + "__" + tmp1[1]
-							outs_uniref[myorder].append(myclust_new + "\t" + tmp1[0] + "\t" + tmp1[1] + "\t" + mysource + "\t" + myattr)
-							attributes.append(myattr + "\n\n" + tmp1[2])
+							mystr = myclust_new + "\t" + tmp1[0] + "\t" + tmp1[1] + "\t" + mysource + "\t" + myattr
+							open_out.write(mystr + "\n")
+							myline = myattr + "\n\n" + tmp1[2]
+							mynum = output_attributes(myline, mynum, open_out1)
 						else:
-							outs_uniref[myorder].append(myclust_new + "\t" + tmp1[0] + "\t" + tmp1[1] + "\t" + mysource + "\t" + "NA")
+							mystr = myclust_new + "\t" + tmp1[0] + "\t" + tmp1[1] + "\t" + mysource + "\t" + "NA"
+							open_out.write(mystr + "\n")
 
 			else: # Denovo annotation
 				if mytype == "Denovo_signaling":
@@ -368,66 +406,17 @@ def finalize_annotation (source, pep_cluster, annotation, taxonomy, mapping, ann
 				mysource = "Denovo_characterization" + "\t" + method
 				for tmp0 in annotation[myid]:
 					tmp1 = tmp0.split("\t")
-					if not myorder in outs_denovo:
-						outs_denovo[myorder] = []
 					if tmp1[2] != "NA":
 						myattr = myclust_new + "__" + tmp1[1]
-						outs_denovo[myorder].append(myclust_new + "\t" + tmp1[0] + "\t" + tmp1[1] + "\t" + mysource + "\t" + myattr)
-						attributes.append(myattr + "\n\n" + tmp1[2])
+						mystr = myclust_new + "\t" + tmp1[0] + "\t" + tmp1[1] + "\t" + mysource + "\t" + myattr
+						open_out.write(mystr + "\n")
+						myline = myattr + "\n\n" + tmp1[2]
+						mynum = output_attributes(myline, mynum, open_out1)
 					else:
-						outs_denovo[myorder].append(myclust_new + "\t" + tmp1[0] + "\t" + tmp1[1] + "\t" + mysource + "\t" + "NA")
+						mystr = myclust_new + "\t" + tmp1[0] + "\t" + tmp1[1] + "\t" + mysource + "\t" + "NA"
+						open_out.write(mystr + "\n")
 	# foreach line 
-	
-	#outs_other = remove_duplicate(outs_other)
-	open_out = open(outfile, "w")
-	if source == "protein_family":
-		open_out.write(utilities.PROTEIN_FAMILY_ID + "\tannotation\tfeature\tcategory\tmethod\tAID\n")
-		for myorder in sorted(outs_other.keys(), key=int):
-			for item in outs_other[myorder]:
-				open_out.write(item + "\n")
-			if myorder in outs_uniref:
-				for item in outs_uniref[myorder]:
-					open_out.write(item + "\n")
-			if myorder in outs_denovo:
-				for item in outs_denovo[myorder]:
-					open_out.write(item + "\n")
-			if myorder in outs_note:
-				open_out.write(outs_note[myorder] + "\n")
-	else:
-		open_out.write(utilities.PROTEIN_ID + "\tannotation\tfeature\tcategory\tmethod\tAID\n")
-		for myorder in sorted(outs_other.keys()):
-			for item in outs_other[myorder]:
-				open_out.write(item + "\n")
-			if myorder in outs_uniref:
-				for item in outs_uniref[myorder]:
-					open_out.write(item + "\n")
-			if myorder in outs_denovo:
-				for item in outs_denovo[myorder]:
-					open_out.write(item + "\n")
-			if myorder in outs_note:
-				open_out.write(outs_note[myorder] + "\n")
 	open_out.close()
-
-	outfile1 = re.sub(".tsv", ".attribute.tsv", outfile)
-	open_out = open(outfile1, "w")
-	open_out.write("TID\t" + "AID" + "\t" + "key" + "\t" + "value" + "\n")
-	mynum = 0
-	for line in attributes:
-		tmp = line.split("\n\n")
-		myattr = tmp[0]
-		tmp2 = tmp[1].split("\n")
-		for item in tmp2:
-			if not re.search("([^=]+)=([^=]+)", item):
-				# debug
-				print("Item with format error!\t" + myattr + "\t" + item)
-				continue
-			mym = re.search("([^=]+)=([^=]+)", item)
-			mykey = mym.group(1)
-			myvalue = mym.group(2)
-			mynum = mynum + 1
-			open_out.write(str(mynum) + "\t" + myattr + "\t" + mykey + "\t" + myvalue + "\n")
-		# foreach attribute
-	# foreach AID
 
 # finalize_annotation
 
