@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 """
 MetaWIBELE: config module
@@ -239,7 +239,7 @@ log_level = 'DEBUG'
 verbose = 'DEBUG'
 
 # name global logging instance
-loggeri = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 ## constant values ##
 PROTEIN_FAMILY_ID = "familyID"
@@ -439,7 +439,7 @@ mspminer = get_item(config_items, "abundance", "mspminer", "string")
 normalize = "cpm"		# # the method for normalization: [cpm]:copies per million units (sum to 1 million); [relab]: relative abundance (sum to 1)
 #normalize = get_item(config_items, "abundance", "normalize", "string") 		# the method for abundance normalization
 rna_ratio_abundance = get_item(config_items, "abundance", "rna_ratio_abundance", "string") 
-
+abundance_detection_level = 0	# cutoff for abundance detection
 
 # maaslin2
 maaslin2_dir = get_item(config_items, "maaslin2", "maaslin2_output", "string")
@@ -469,6 +469,8 @@ tshld_prevalence = get_item(config_items, "maaslin2", "tshld_prevalence", "float
 tshld_qvalue = get_item(config_items, "maaslin2", "tshld_qvalue", "float")
 #effect_size = 'coef'			# the source of effect size, coef vs. Cohen's d
 effect_size = get_item(config_items, "maaslin2", "effect_size", "string")
+if effect_size == "log(fc)":
+	effect_size = "log(FC)"
 #maaslin2_cores = 25			# the number of threads used by maaslin2
 maaslin2_cores = get_item(config_items, "maaslin2", "maaslin2_cores", "int")
 #maaslin2_cmmd = "~/usr/Maaslin2/R/Maaslin2.R"
