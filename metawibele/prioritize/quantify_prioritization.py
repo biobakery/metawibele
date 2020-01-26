@@ -131,11 +131,19 @@ def read_config_file (conf_file, method):
 				if re.search("__", name):
 					name = re.sub("-", "_", name)
 					name = re.sub("\.", "_", name)
+					name = re.sub("(", "_", name)
+					name = re.sub(")", "", name)
 					attr_conf[name] = myvalue
 				else:
 					name = re.sub("-", "_", name)
 					name = re.sub("\.", "_", name)
+					name = re.sub("(", "_", name)
+					name = re.sub(")", "", name)
 					ann_conf[name] = myvalue
+				if myvalue == "required":
+					print("Required ranking item: " + name + "\t" + myvalue)
+				if myvalue == "optional":
+					print("Optional ranking item: " + name + "\t" + myvalue)
 
 	if method == "supervised":
 		if "supervised" in config_items:
@@ -151,19 +159,23 @@ def read_config_file (conf_file, method):
 					if not myvalue in values:
 						print("Please use valid value for the config item " + name + ": e.g. required | optional | none")
 						continue
-					if myvalue == "required":
-						print("Required ranking item: " + name + "\t" + myvalue)
-					if myvalue == "optional":
-						print("Optional ranking item: " + name + "\t" + myvalue)
 				if re.search("__", name):
 					name = re.sub("-", "_", name)
 					name = re.sub("\.", "_", name)
+					name = re.sub("\(", "_", name)
+					name = re.sub("\)", "", name)
 					attr_conf[name] = myvalue
 				else:
 					name = re.sub("-", "_", name)
 					name = re.sub("\.", "_", name)
+					name = re.sub("\(", "_", name)
+					name = re.sub("\)", "", name)
 					ann_conf[name] = myvalue
-	
+				if myvalue == "required":
+					print("Required ranking item: " + name + "\t" + myvalue)
+				if myvalue == "optional":
+					print("Optional ranking item: " + name + "\t" + myvalue)
+
 	return ann_conf, attr_conf
 
 
@@ -191,12 +203,14 @@ def read_attribute_file (attr_file, attr_conf):
 			continue
 		info = line.split("\t")
 		myid = info[titles["AID"]]
-		myclust, mytype = myid.split("__")
+		myclust, mytype = myid.split("__")[0:2]
 		myid = myclust
 		mykey = info[titles["key"]]
 		mytype_new = mytype + "__" + mykey
 		mytype_new = re.sub("-", "_", mytype_new)
 		mytype_new = re.sub("\.", "_", mytype_new)
+		mytype_new = re.sub("\(", "_", mytype_new)
+		mytype_new = re.sub("\)", "", mytype_new)
 		myvalue = info[titles["value"]]
 		if mykey == "cmp_type":
 			flags[myid] = myvalue
@@ -247,6 +261,8 @@ def read_annotation_file (ann_file, ann_conf):
 		myf = info[titles["feature"]]
 		myf = re.sub("-", "_", myf)
 		myf = re.sub("\.", "_", myf)
+		myf = re.sub("\(", "_", myf)
+		myf = re.sub("\)", "", myf)
 		if myann == "NA" or myann == "NaN" or myann == "nan" or myann == "Nan":
 			continue
 		if myf.lower() in ann_conf:
@@ -481,13 +497,19 @@ def get_rank_score (evidence_table, evidence_row, metawibele_row, weight_conf, r
 		for mytype in evidence_row:
 			summary_table[mytype + "__value"] = evidence_table[mytype]
 			summary_table[mytype + "__percentile"] = scipy.stats.rankdata(pd.to_numeric(summary_table[mytype + "__value"], errors='coerce'), method='average')
-			if mytype == "coef":
+			if re.search("\_coef", mytype) or re.search("\_log\_FC", mytype) or re.search("\_mean_log", mytype):
+				# debug
+				print("Sorting by abs(effect size), e.g. abs(coef), abs(log_FC), abs(mean_log)")
 				summary_table[mytype + "__percentile"] = scipy.stats.rankdata(abs(pd.to_numeric(summary_table[mytype + "__value"], errors='coerce')), method='average')
-			if mytype == "foldChange":
-				pd = pd.to_numeric(summary_table[mytype + "__value"], errors='coerce')
-				pd = math.log(pd, 2)
-				summary_table[mytype + "__percentile"] = scipy.stats.rankdata(abs(pd), method='average')
+			if re.search("_foldChange", mytype):
+				# debug
+				print("Soring by abs(log2(FC))")
+				mytable = pd.to_numeric(summary_table[mytype + "__value"], errors='coerce')
+				mytable = math.log(mytable, 2)
+				summary_table[mytype + "__percentile"] = scipy.stats.rankdata(abs(mytable), method='average')
 			if re.search("qvalue", mytype) or re.search("q-value", mytype) or re.search("pvalue", mytype) or re.search("p-value", mytype):
+				# debug
+				print("Sorting by negative qvalue")
 				summary_table[mytype + "__percentile"] = scipy.stats.rankdata(-pd.to_numeric(summary_table[mytype + "__value"], errors='coerce'), method='average')
 			summary_table[mytype + "__percentile"] = summary_table[mytype + "__percentile"] / summary_table[mytype + "__percentile"].max()
 			rank_name.append(mytype + "__percentile")
