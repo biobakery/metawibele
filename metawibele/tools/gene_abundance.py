@@ -60,12 +60,12 @@ def bowtie2_mapping (work_dir, ref_seq, input_file, thread, sample):
 	os.chdir(work_dir)
 
 	# Index reference sequences
-	ref_index = re.sub(".fasta$", "", ref_seq)
-	ref_index = re.sub(".fna$", "", ref_seq)
-	mym = re.search("([^\/]+)$", ref_seq)
-	base_name = mym.group(1)
-	base_name = re.sub(".fasta$", "", base_name)
-	base_name = re.sub(".fna$", "", base_name)
+	base_name = os.path.basename(ref_seq)
+	dir_name = os.path.dirname(ref_seq)
+	extension = re.search("\.([^\.]+)$", base_name)
+	extension = extension.group(1)
+	base_name = re.sub("." + extension + "$", "", base_name)
+	ref_index = os.path.join(dir_name, base_name)
 	os.system("ln -s " + ref_index + "*" + "  .")
 
 	# Mapping
