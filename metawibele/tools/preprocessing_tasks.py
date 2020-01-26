@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 """
 Preprocessing Workflow: assembly metagenomic shotgun sequencing reads and build gene catalogs
 A collection of tasks for workflows with gene catalogs
@@ -78,13 +76,15 @@ def assembly (workflow, input_dir, extension, extension_paired, threads, output_
 	# collect sequences
 	# ================================================
 	pair_identifier = None
+	pair_identifier2 = None
 	if extension_paired:
 		extension_paireds = extension_paired.split(",")
 		pair_identifier = re.sub(extension, "", extension_paireds[0])
+		pair_identifier2 = re.sub("1", "2", pair_identifier)
 	else:
-		extension_paired = [extension]
+		extension_paireds = [extension]
 	sample_files = utilities.find_files(input_dir, extension, None)
-	samples = sample_names(files, extension, pair_identifier)
+	samples = utilities.sample_names(sample_files, extension, None)
 	split_dir = input_dir
 	assembly_dir = output_folder
 
@@ -92,7 +92,7 @@ def assembly (workflow, input_dir, extension, extension_paired, threads, output_
 	contigs_list = []
 	for sample in samples:
 		mypair = "none"
-		myorphan == "none"
+		myorphan = "none"
 		mypair_tmp = []
 		for item in extension_paireds:
 			if item == "none":
@@ -104,7 +104,7 @@ def assembly (workflow, input_dir, extension, extension_paired, threads, output_
 				sys.exit("File not exist! " + myfile)
 		if len(mypair_tmp) == 1:
 			# split into paired reads files
-			mypair_tmp = utilities.split_paired_reads(mypair_tmp[0], "fastq.gz", pair_identifier=".R1")
+			mypair_tmp = utilities.split_paired_reads(mypair_tmp[0], extension, pair_identifier=".R1")
 			if len(mypair_tmp) == 1:
 				myorphan = mypair_tmp[0]
 			if len(mypair_tmp) == 2:
@@ -113,7 +113,22 @@ def assembly (workflow, input_dir, extension, extension_paired, threads, output_
 				mypair = ",".join(mypair_tmp[0:2])
 				myorphan = mypair_tmp[2]
 		else:
-			mypair = mypair = ",".join(mypair_tmp)
+			if len(mypair_tmp) == 2:
+				mypair = ",".join(mypair_tmp)
+			if len(mypair_tmp) == 3:
+				tmp1 = []
+				tmp2 = []
+				for i in mypair_tmp:	
+					if re.search(pair_identifier, i):
+						tmp1.append(i)
+					elif re.search(pair_identifier2, i):
+						tmp1.append(i)
+					else:
+						tmp2.append(i)
+				if len(tmp1) > 0:
+					mypair  = ",".join(tmp1)
+				if len(tmp2) > 0:
+					myorphan = ",".join(tmp2)
 		split_files.append((sample, mypair, myorphan))
 		
 		seq_base = sample
@@ -140,6 +155,7 @@ def assembly (workflow, input_dir, extension, extension_paired, threads, output_
 				f_seq = tmp[0]
 				r_seq = tmp[1]
 				if myorphan != "none":
+					print(sample + " megahit: " + mypair + "\t" + myorphan)
 					workflow.add_task_gridable("rm -rf " + megahit_contig_dir + " && " + "megahit -1 [depends[0]] -2 [depends[1]] -r [args[2]] -t [args[0]] -o [args[3]] --out-prefix [args[1]] >[args[4]] 2>&1",
 									depends = [f_seq, r_seq, TrackedExecutable("megahit")],
 									targets = [megahit_contig],
@@ -149,6 +165,7 @@ def assembly (workflow, input_dir, extension, extension_paired, threads, output_
 									time = time_equation,
 									name = sample + "__megahit")
 				else:
+					print(sample + " megahit: " + "\t" + mypair)
 					workflow.add_task_gridable("rm -rf " + megahit_contig_dir + " && " + "megahit -1 [depends[0]] -2 [depends[1]] -t [args[0]] -o [args[2]] --out-prefix [args[1]] >[args[3]] 2>&1",
 									depends = [f_seq, r_seq, TrackedExecutable("megahit")],
 									targets = [megahit_contig],
@@ -156,6 +173,7 @@ def assembly (workflow, input_dir, extension, extension_paired, threads, output_
 									cores = threads,
 									name = sample + "__megahit")
 			else:
+				print(sample + " megahit: " + "\t" + mypair)
 				workflow.add_task_gridable("rm -rf " + megahit_contig_dir + " && " + "megahit -r [depends[0]] -t [args[0]] -o [args[2]] --out-prefix [args[1]] >[args[3]] 2>&1",
 									depends = [mypair, TrackedExecutable("megahit")],
 									targets = [megahit_contig],
@@ -164,6 +182,7 @@ def assembly (workflow, input_dir, extension, extension_paired, threads, output_
 									name = sample + "__megahit")
 		else:
 			if myorphan != "none":	
+				print(sample + " megahit: " + "\t" + myorphan)
 				workflow.add_task_gridable("rm -rf " + megahit_contig_dir + " && " + "megahit -r [depends[0]] -t [args[0]] -o [args[2]] --out-prefix [args[1]] >[args[3]] 2>&1",
 								depends = [myorphan, TrackedExecutable("megahit")],
 								targets = [megahit_contig],
@@ -194,7 +213,7 @@ def assembly (workflow, input_dir, extension, extension_paired, threads, output_
 	return contigs_list
 
 
-def gene_calling (workflow, assembly_dir, assembly_extentsion, sample_file,
+def gene_calling (workflow, assembly_dir, assembly_extentsion, input_dir, extension,
                  prokka_dir, prodigal_dir,
                  threads,
                  gene_file, gene_PC_file, protein_file, protein_sort,
@@ -244,19 +263,13 @@ def gene_calling (workflow, assembly_dir, assembly_extentsion, sample_file,
 	# ================================================
 	# collect sequences
 	# ================================================
-	samples = []
+	sample_files = utilities.find_files(input_dir, extension, None)
+	samples = utilities.sample_names(sample_files, extension, None)
 	sequence_files = []
-	open_file = open(sample_file, "r")
-	for line in open_file.readlines():
-		line = line.strip()
-		if not len(line):
-			continue
-		info = line.split("\t")
-		myfile = os.path.join(assembly_dir, info[0], info[0] + "%s" % assembly_extentsion)
-		samples.append(info[0])
+	for mysample in samples:
+		myfile = os.path.join(assembly_dir, mysample, mysample + "%s" % assembly_extentsion)
 		sequence_files.append(myfile)
 	# foreach sample
-	open_file.close()
 
 	filtered_contigs = sequence_files
 
@@ -268,8 +281,10 @@ def gene_calling (workflow, assembly_dir, assembly_extentsion, sample_file,
 	mem_equation = "32*1024 if file_size('[depends[0]]') < 25 else 3*32*1024" # 32 GB or more depending on file size
 	fna_file = []
 	faa_file = []
+	gff_files = []
 	fna_file_tmp = []
 	faa_file_tmp = []
+	gff_files_tmp = []
 
 	## Using Prodigal
 	for contig in filtered_contigs:
@@ -296,9 +311,10 @@ def gene_calling (workflow, assembly_dir, assembly_extentsion, sample_file,
 								   name = contig_base + "__prodigal")
 	
 	for myfile in faa_file_tmp:
-		mym = re.search("([^\/]+)$", myfile)
-		myname = mym.group(1)
-		myfile_new = prodigal_dir + "/" + myname
+		#mym = re.search("([^\/]+)$", myfile)
+		#myname = mym.group(1)
+		myname = os.path.basename(myfile)
+		myfile_new = os.path.join(prodigal_dir, myname)
 		faa_file.append(myfile_new)
 		workflow.add_task(
 			"ln -fs [depends[0]] [targets[0]]",
@@ -337,6 +353,7 @@ def gene_calling (workflow, assembly_dir, assembly_extentsion, sample_file,
 		gene_aa = os.path.join(annotation_dir, '%s.faa' % contig_base)
 		gff_file = os.path.join(annotation_dir, '%s.gff' % contig_base)
 		fna_file_tmp.append(gene_nuc)
+		gff_files_tmp.append(gff_file)
 
 		workflow.add_task_gridable('prokka --prefix [args[0]] --addgenes --addmrna --force --metagenome '
 		                           '--cpus [args[2]] '
@@ -350,10 +367,15 @@ def gene_calling (workflow, assembly_dir, assembly_extentsion, sample_file,
 		                           time = time_equation,
 								   name = contig_base + "__prokka")
 	
+	for myfile in gff_files_tmp:
+		myname = os.path.basename(myfile)
+		myfile_new = os.path.join(prokka_dir, myname)
+		gff_files.append(myfile_new)
 	for myfile in fna_file_tmp:
-		mym = re.search("([^\/]+)$", myfile)
-		myname = mym.group(1)
-		myfile_new = prokka_dir + "/" + myname
+		#mym = re.search("([^\/]+)$", myfile)
+		#myname = mym.group(1)
+		myname = os.path.basename(myfile)
+		myfile_new = os.path.join(prokka_dir, myname)
 		fna_file.append(myfile_new)
 		workflow.add_task(
 			"ln -fs [depends[0]] [targets[0]]",
@@ -393,7 +415,7 @@ def gene_calling (workflow, assembly_dir, assembly_extentsion, sample_file,
 	mylog = re.sub(".faa", ".log", protein_file)
 	workflow.add_task('format_protein_sequences.py -p [args[0]] -q [args[1]] -e faa -o [targets[0]] '
 	                  '-m [targets[1]] >[args[2]] 2>&1 ',
-	                  depends=utilities.add_to_list(faa_file,TrackedExecutable("format_protein_sequences.py")),
+	                  depends=utilities.add_to_list(faa_file, TrackedExecutable("format_protein_sequences.py")) + gff_files,
 	                  targets=[protein_file, gene_info],
 	                  args=[prokka_dir, prodigal_dir, mylog],
 	                  name="format_protein_sequences")
@@ -436,7 +458,7 @@ def gene_calling (workflow, assembly_dir, assembly_extentsion, sample_file,
 
 
 def gene_catalog (workflow, complete_gene, complete_protein,
-                  input_dir, sample_file, file_extension, threads,
+                  input_dir, extension, threads,
                   prefix_gene_catalog, gene_catalog, gene_catalog_nuc, gene_catalog_prot,
                   mapping_dir, gene_catalog_saf, gene_catalog_count):
 	"""
@@ -523,23 +545,15 @@ def gene_catalog (workflow, complete_gene, complete_protein,
 		name = "gene_abundance_indexRef")
 
 	## collect sequences
-	samples = []
-	open_file = open(sample_file, "r")
-	for line in open_file.readlines():
-		line = line.strip()
-		if not len(line):
-			continue
-		info = line.split("\t")
-		samples.append(info[0])
-	# foreach sample
-	open_file.close()
+	sample_files = utilities.find_files(input_dir, extension, None)
+	samples = utilities.sample_names(sample_files, extension, None)
 
 	## bowtie2 will map reads to gene categories
 	flt_seqs = []
 	for sample in samples:
 		seq_file = "NA"
-		if file_extension != "none":
-			tmp = file_extension.split(",")
+		if extension != "none":
+			tmp = extension.split(",")
 			for item in tmp:
 				if seq_file == "NA":
 					seq_file = os.path.join(input_dir, sample + '%s' % item)
@@ -565,7 +579,7 @@ def gene_catalog (workflow, complete_gene, complete_protein,
 		workflow.add_task_gridable(
 			'gene_abundance.py -r [depends[0]] -u [args[0]] -t [args[1]] -s [args[2]] -w [args[3]] '
 			'> [args[4]] 2>&1 ',
-			depends = [gene_catalog_nuc, TrackedExecutable("gene_abundance.py")],
+			depends = [gene_catalog_nuc, gene_catalog_saf, TrackedExecutable("gene_abundance.py")],
 			targets = [sample_counts],
 			args = [seq_file, threads, seq_base, mydir, stdout_log],
 			cores = threads,
