@@ -45,10 +45,6 @@ We provide support for MetaWIBELE users via our Google group. Please feel free t
     		* [To run a demo for prioritization](#to-run-a-demo-for-prioritization)
     		* [Output files for prioritization](#output-files-for-prioritization)
 * [Guides to MetaWIBELE Utilities](#guides-to-metawibele-utilities)
-	* [Qulity control for raw sequencing reads](#qulity-control-for-raw-sequencing-reads)
-		* [Specific options for QC workflow](#specific-options-for-qc-workflow)
-		* [How to run QC workflow](#how-to-run-qc-workflow)
-		* [Example for running QC workflow](#example-for-running-qc-workflow) 
 	* [Preprocessing sequencing reads into gene catalogs](#preprocessing-sequencing-reads-into-gene-catalogs)
 		* [Specific options for preprocessing workflow](#specific-options-for-preprocessing-workflow)
 		* [How to run preprocessing workflow](#how-to-run-preprocessing-workflow)
@@ -660,125 +656,19 @@ MSPminer_module = required
 
 
 ## Guides to MetaWIBELE Utilities
-### Qulity control for raw sequencing reads
-A utitlity workflow in MetaWIBELE package for QC, which integrates KneadData quality control pipeline (http://huttenhower.sph.harvard.edu/KneadData) with additional automatic adapter detection, trimming low-quality read bases and removing potentially conmanitationed reads.
-
-#### Specific options for QC workflow
-```
-usage: metawibele_qc_workflow [-h] [--version] --sample-file SAMPLE_FILE
-                      [--trimmomatic-options TRIMMOMATIC_OPTIONS]
-                      [--additional-options ADDITIONAL_OPTIONS]
-                      [--remove-intermediate-output REMOVE_INTERMEDIATE_OUTPUT]
-                      [--contaminant-db CONTAMINANT_DB]
-                      [--file-extension FILE_EXTENSION] [--threads THREADS] -o
-                      OUTPUT [-i INPUT] [--local-jobs JOBS]
-                      [--grid-jobs GRID_JOBS] [--grid GRID]
-                      [--grid-partition GRID_PARTITION]
-                      [--grid-benchmark {on,off}]
-                      [--grid-options GRID_OPTIONS]
-                      [--grid-environment GRID_ENVIRONMENT] [--dry-run]
-                      [--skip-nothing] [--quit-early]
-                      [--until-task UNTIL_TASK] [--exclude-task EXCLUDE_TASK]
-                      [--target TARGET] [--exclude-target EXCLUDE_TARGET]
-                      [--log-level {DEBUG,INFO,WARNING,ERROR,CRITICAL}]
-
-A workflow to run kneaddata on the input files provided to perform quality control.
-
-optional arguments:
-  -h, --help            show this help message and exit
-  --version             show program's version number and exit
-  --sample-file SAMPLE_FILE
-                        Sample files including sample names (string).
-  --trimmomatic-options TRIMMOMATIC_OPTIONS
-                        options for trimmomatic (string): ILLUMINACLIP:/TruSeq3-SE.fa:2:30:10 SLIDINGWINDOW:4:20 MINLEN:50 (optional)
-                        [default: none]
-  --additional-options ADDITIONAL_OPTIONS
-                        additional_options (string): Additional options when running kneaddata (optional)
-                        [default: none]
-  --remove-intermediate-output REMOVE_INTERMEDIATE_OUTPUT
-                        remove_intermediate_output (bool): Remove intermediate output files.
-                        [default: True]
-  --contaminant-db CONTAMINANT_DB
-                        Select reference sequences for the contamination you are trying to remove. It is KneadData databases including the indexed redernece sequences.
-                        [default: none]
-  --file-extension FILE_EXTENSION
-                        Extension of input fastq files (string)
-                        [default: .R1.fastq.gz,.R2.fastq.gz]
-  --threads THREADS     number of threads/cores for each task to use
-                        [default: 6]
-  -o OUTPUT, --output OUTPUT
-                        Write output to this directory
-  -i INPUT, --input INPUT
-                        Find inputs in this directory 
-                        [default: /n/home00/yancong/projects/R24_HMBR/src/assembly-based/metawibele/tools]
-  --local-jobs JOBS     Number of tasks to execute in parallel locally 
-                        [default: 1]
-  --grid-jobs GRID_JOBS
-                        Number of tasks to execute in parallel on the grid 
-                        [default: 0]
-  --grid GRID           Run gridable tasks on this grid type 
-                        [default: slurm]
-  --grid-partition GRID_PARTITION
-                        Partition/queue used for gridable tasks.
-                        Provide a single partition or a comma-delimited list
-                        of short/long partitions with a cutoff.
-                        [default: serial_requeue,general,240]
-  --grid-benchmark {on,off}
-                        Benchmark gridable tasks 
-                        [default: on]
-  --grid-options GRID_OPTIONS
-                        Grid specific options that will be applied to each grid task
-  --grid-environment GRID_ENVIRONMENT
-                        Commands that will be run before each grid task to set up environment
-  --dry-run             Print tasks to be run but don't execute their actions 
-  --skip-nothing        Run all tasks. Rerun tasks that have already been run.
-  --quit-early          Stop if a task fails. By default,
-                        all tasks (except sub-tasks of failed tasks) will run.
-  --until-task UNTIL_TASK
-                        Stop after running this task. Use task name or number.
-  --exclude-task EXCLUDE_TASK
-                        Don't run these tasks. Add multiple times to append.
-  --target TARGET       Only run tasks that generate these targets.
-                        Add multiple times to append.
-                        Patterns with ? and * are allowed.
-  --exclude-target EXCLUDE_TARGET
-                        Don't run tasks that generate these targets.
-                        Add multiple times to append.
-                        Patterns with ? and * are allowed.
-  --log-level {DEBUG,INFO,WARNING,ERROR,CRITICAL}
-                        Set the level of output for the log 
-                        [default: INFO]
-```
-
-* `--sample-file`: a txt file listing sample names or identifiers corresponding to sequences, e.g. [sample.txt]()
-* `--input`: the input directory where a set of fastq (or fastq.gz) files (single-end or paired-end) are stored. The files are expected to be named `$SAMPLE.fastq.gz`,`$SAMPLE.R1.fastq.gz`, or `$SAMPLE.R2.fastq.gz` where `$SAMPLE` is the sample name or identifier corresponding to the sequences. `$SAMPLE` can contain any characters except spaces or periods.
-* `--contaminant-db`: select reference sequences for the contamination you are trying to remove. It is KneadData databases including the indexed redernece sequences. See more details in [KneadData muanual](https://github.com/biobakery/kneaddata).
-* `--file-extension`: the extension for fastq (or fastq.gz) files. It will be specified as **".R1.fastq.gz,R2.fastq.gz"** if the files named as `$SAMPLE.R1.fastq.gz` and `$SAMPLE.R2.fastq.gz`.
-* `--output`: the ouput directory. QC'ed reads will generated into the subfolder `$OUTPUT_DIR/kneaddata/`
-
-#### How to run QC workflow
-* See the section on parallelization options to optimize the workflow run based on your computing resources. 
-* The workflow runs with the default settings for all main tool subtasks. If you need to customize your workflow settings for the preprocessing workflow to determine the optimum seeting, you can change the parameter settings.
-* For example, `--file-extension="$R1_suffix,$R2_suffix"` (what are the follwong part after `$SAMPLE` in the input file names) will modify the default settings when running the assembly task.
-
-#### Example for running QC workflow
-
-`$ metawibele_qc_workflow --thread 10 --sample-file sample.txt --input examples/paired/ --output examples/cleaned_reads/ --grid-jobs 10 --grid-partition serial_requeue`
-
----
 
 ### Preprocessing sequencing reads into gene catalogs
 A utility workflow in MetaWIBELE package for preprocessing metagenomes reads, used for (i) metagenomic assembly, (ii) open reading frame prediction, (iii) non-redundant gene catalogs construction and (iv) gene abundance estimation.
 
 #### Specific options for preprocessing workflow
 ```
-usage: metawibele_preprocessing_workflow [-h] [--version] [--threads THREADS]
-                                 --sample-file SAMPLE_FILE --extension-paired
-                                 EXTENSION_PAIRED
-                                 [--extension-orphan EXTENSION_ORPHAN]
-                                 [--assembly ASSEMBLY]
-                                 [--gene-calling GENE_CALLING]
-                                 [--gene-catalog GENE_CATALOG] -o OUTPUT
+usage: metawibele_preprocessing_workflow [-h] [--version] [--threads 
+THREADS]
+                                 [--extension-paired EXTENSION_PAIRED]
+                                 [--extension {.fastq.gz,.fastq}]
+                                 [--bypass-assembly] [--bypass-gene-calling]
+                                 [--bypass-gene-catalog]
+                                 [--output-basename OUTPUT_BASENAME] -o OUTPUT
                                  [-i INPUT] [--local-jobs JOBS]
                                  [--grid-jobs GRID_JOBS] [--grid GRID]
                                  [--grid-partition GRID_PARTITION]
@@ -799,26 +689,24 @@ optional arguments:
   --version             show program's version number and exit
   --threads THREADS     number of threads/cores for each task to use
                         [default: 20]
-  --sample-file SAMPLE_FILE
-                         the list file of samples
   --extension-paired EXTENSION_PAIRED
-                        indicates the extension for paired fastq files, e.g. R1.fastq.gz,R2.fastq.gz
-  --extension-orphan EXTENSION_ORPHAN
-                        indicates the extension for orphan fastq files
-                        [default: none]
-  --assembly ASSEMBLY   indicates whether or not do assembly
-                        [default: True]
-  --gene-calling GENE_CALLING
-                        indicates whether or not call ORFs
-                        [default: True]
-  --gene-catalog GENE_CATALOG
-                        indicates whether or not build gene catalogs
-                        [default: True]
+                        provide the extension for paired fastq files using comma to seperate, e.g. _R1.fastq.gz,_R2.fastq.gz | _R1.fastq,_R2.fastq
+  --extension {.fastq.gz,.fastq}
+                        provide the extension for all fastq files
+                        [default: .fastq.gz]
+  --bypass-assembly     do not run assembly
+  --bypass-gene-calling
+                        do not call ORFs
+  --bypass-gene-catalog
+                        do not build gene catalogs
+  --output-basename OUTPUT_BASENAME
+                        provide the basename for output files
+                        [default: metawibele]
   -o OUTPUT, --output OUTPUT
                         Write output to this directory
   -i INPUT, --input INPUT
                         Find inputs in this directory 
-                        [default: /n/home00/yancong/projects/R24_HMBR/src/assembly-based/metawibele/tools]
+                        [default: /n/home00/yancong/projects/R24_HMBR/src/assembly-based/metawibele]
   --local-jobs JOBS     Number of tasks to execute in parallel locally 
                         [default: 1]
   --grid-jobs GRID_JOBS
@@ -858,20 +746,19 @@ optional arguments:
                         [default: INFO]
 ```
 
-* `--sample-file`: a txt file listing sample names or identifiers corresponding to sequences, e.g. [sample.txt]()
 * `--input`: the input directory where a set of fastq (or fastq.gz) files (single-end or paired-end) passing through QC are stored. The files are expected to be named `$SAMPLE.paired_R1.gz`, `$SAMPLE.paired_R2.gz`, `$SAMPLE.orphan_R1.gz` and `$SAMPLE.orphan_R2.gz` where `$SAMPLE` is the sample name or identifier corresponding to the sequences. `$SAMPLE` can contain any characters except spaces or periods.
-* `--extension-paired` indicates the extension for paired fastq files. It should be specified as **".paired_R1.fastq.gz,.paired_R2.fastq.gz"** if the paired fastq files are `$SAMPLE.paired_R1.gz` and `$SAMPLE.paired_R2.gz`  
-* `--extension-orphan` indicates the extension for orphan fastq files. It should be specified as **".orphan_R1.fastq.gz,.orphan_R2.fastq.gz"** if the orphan fastq files are `$SAMPLE.orphan_R1.gz` and `$SAMPLE.orphan_R2.gz`  
+* `--extension-paired` indicates the extension for paired fastq files using comma to seperate. It should be specified as **"_R1.fastq.gz,_R2.fastq.gz "** if the paired fastq files are `$SAMPLE_R1.fastq.gz` and `$SAMPLE_R2.fastq.gz`  
+* `--extension` indicates the extension for all fastq files. It should be specified as **".fastq.gz"** if the fastq files are `$SAMPLE.fastq.gz` 
 * `--output`: the ouput directory. 
 
 #### How to run preprocessing workflow
 * See the section on parallelization options to optimize the workflow run based on your computing resources. 
 * The workflow runs with the default settings for all main tool subtasks. If you need to customize your workflow settings for the preprocessing workflow to determine the optimum seeting, you can change the parameter settings.
-* For example, `--extension-paried="$R1_suffix,$R2_suffix"`, `--extension-orphan="$orphan_suffix"` (what are the follwong part after `$SAMPLE` in the input file names) will modify the default settings when running the assembly task.
+* For example, `--extension-paried="$R1_suffix,$R2_suffix"`, `--extension="$orphan_suffix"` (what are the follwong part after `$SAMPLE` in the input file names) will modify the default settings when running the assembly task.
 
 #### Example for running preprocessing workflow
 
-`$ preprocessing_workflow --thread 10 --sample-file sample.txt --input examples/paired/ --output examples/preprocessing/ --extension-paired ".paired_R1.fastq.gz,.paired_R2.fastq.gz" --extension-orphan ".orphan_R1.fastq.gz,.orphan_R2.fastq.gz" --grid-jobs 10 --grid-partition serial_requeue`
+`$ preprocessing_workflow --input /my/path/preprocessing/cleaned_reads/ --output /my/path/preprocessing/ --extension ".fastq" --output-basename demo --local-jobs 10`
 
 #### Output files of preprocessing workflow
 **1. assembly results**
