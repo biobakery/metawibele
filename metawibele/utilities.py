@@ -380,11 +380,11 @@ def paired_reads (files, extension, pair_identifier=None):
 	if input_pair1.endswith(".gz"):
 		os.system("gunzip " + input_pair1)
 		input_pair1 = input_pair1.replace(".gz", "")
-		output_pair1 = input_pair1.replace(".fastq", pair_identifier + ".refined.fastq")
+	output_pair1 = input_pair1.replace(".fastq", pair_identifier + ".refined.fastq")
 	if input_pair2.endswith(".gz"):
 		os.system("gunzip " + input_pair2)
 		input_pair2 = input_pair2.replace(".gz", "")
-		output_pair2 = input_pair2.replace(".fastq", pair_identifier2 + ".refined.fastq")
+	output_pair2 = input_pair2.replace(".fastq", pair_identifier2 + ".refined.fastq")
 	open_file1 = open(input_pair1, "r")
 	tmp = []
 	myid = "NA"
@@ -489,9 +489,9 @@ def split_paired_reads (infile, extension, pair_identifier=None):
 	if input_pair.endswith(".gz"):
 		os.system("gunzip " + input_pair)
 		input_pair = input_pair.replace(".gz", "")
-		output_pair1 = input_pair.replace(".fastq", pair_identifier + ".fastq")
-		output_pair2 = input_pair.replace(".fastq", pair_identifier2 + ".fastq")
-		output_orphan = input_pair.replace(".fastq",".orphan.fastq")
+	output_pair1 = input_pair.replace(".fastq", pair_identifier + ".fastq")
+	output_pair2 = input_pair.replace(".fastq", pair_identifier2 + ".fastq")
+	output_orphan = input_pair.replace(".fastq",".orphan.fastq")
 	open_file = open(input_pair, "r")
 	tmp = []
 	flag = 0
@@ -503,10 +503,10 @@ def split_paired_reads (infile, extension, pair_identifier=None):
 		if len(tmp) == 0:
 			if line.endswith("/1"):
 				flag = 1
+				myid = re.sub("/1", "", line)
 			if line.endswith("/2"):
 				flag = 2
-			myid = line.replace("/1$", "")
-			myid = line.replace("/2$", "")
+				myid = re.sub("/2", "", line)
 			tmp.append(line)
 		elif len(tmp) < 3:
 			tmp.append(line)
@@ -531,15 +531,15 @@ def split_paired_reads (infile, extension, pair_identifier=None):
 	for myid in pair1.keys():
 		if myid in pair2:
 			pair_flag = 1
-			open_out1.write(pair1[myid])
-			open_out2.write(pair2[myid])
+			open_out1.write(pair1[myid] + "\n")
+			open_out2.write(pair2[myid] + "\n")
 		else:
 			orphan_flag = 1
-			open_out3.write(pair1[myid])
+			open_out3.write(pair1[myid] + "\n")
 	for myid in pair2.keys():
 		if not myid in pair1:
 			orphan_flag = 1
-			open_out3.write(pair2[myid])
+			open_out3.write(pair2[myid] + "\n")
 
 	# foreach reads
 	open_out1.close()
@@ -549,14 +549,14 @@ def split_paired_reads (infile, extension, pair_identifier=None):
 	# only return matching pairs of files in the same order
 	files_set = []
 	if pair_flag == 1:
-		os.system("gzip " + output_pair1)
-		os.system("gzip " + output_pair2)
+		os.system("gzip -f " + output_pair1)
+		os.system("gzip -f " + output_pair2)
 		open_out1 = output_pair1.replace(".fastq", ".fastq.gz")
 		open_out2 = output_pair2.replace(".fastq", ".fastq.gz")
 		files_set.append(open_out1)
 		files_set.append(open_out2)
 	if orphan_flag == 1:
-		os.system("gzip " + output_orphan)
+		os.system("gzip -f " + output_orphan)
 		open_out1 = output_orphan.replace(".fastq", ".fastq.gz")
 		files_set.append(open_out1)
 
