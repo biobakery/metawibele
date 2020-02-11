@@ -318,7 +318,7 @@ def calculate_smoothing_value (abu_file):
 # calculate_smoothing_value
 
 
-def smooth_zero (dna_features_min, dna_features_quantile, rna_features_min, rna_features_quantile, infs, zero, ratio_file):
+def smooth_zero (dna_features_min, dna_features_quantile, rna_features_min, rna_features_quantile, infs, zeros, ratio_file):
 	outfile1 = re.sub(".tsv", ".smooth.tsv", ratio_file)
 	outfile2 = re.sub(".tsv", ".smooth.log.tsv", ratio_file)
 	open_file = open(ratio_file, "r")
@@ -411,8 +411,7 @@ def smooth_zero (dna_features_min, dna_features_quantile, rna_features_min, rna_
 #==============================================================
 ###########  Main processing ############
 #==============================================================
-if __name__ == '__main__':
-	
+def main():	
 	### get arguments ###
 	values = get_args ()
 
@@ -438,3 +437,6 @@ if __name__ == '__main__':
 	sys.stderr.write("### Finish rna_dna_ratio_percentile.py ####\n\n\n")
 
 # end: main
+
+if __name__ == '__main__':
+	main()

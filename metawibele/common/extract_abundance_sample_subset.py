@@ -118,8 +118,7 @@ def extract_subset_info (raw_file, sample_file, outfile):
 #==============================================================
 ###########  Main processing ############
 #==============================================================
-if __name__ == '__main__':
-	
+def main():
 	### get arguments ###
 	values = get_args()
 
@@ -135,3 +134,6 @@ if __name__ == '__main__':
 	sys.stderr.write("### Finish extract_abundance_sample_subset.py ####\n\n\n")
 
 # end: main
+
+if __name__ == '__main__':
+	main()

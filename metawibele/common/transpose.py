@@ -78,9 +78,9 @@ argp = argparse.ArgumentParser( prog = "transpose.py",
 The transposition process is robust to missing elements and rows of differing lengths.""" )
 __doc__ = "::\n\n\t" + argp.format_help( ).replace( "\n", "\n\t" ) + __doc__
 
-def _main( ):
+def main( ):
 	args = argp.parse_args( )
 	transpose( csv.reader( sys.stdin, csv.excel_tab ), sys.stdout )
 
 if __name__ == "__main__":
-	_main( )
+	main( )

@@ -75,8 +75,7 @@ def join_abundance_info (abundance_list, outfile):
 #==============================================================
 ###########  Main processing ############
 #==============================================================
-if __name__ == '__main__':
-	
+def main():	
 	### get arguments ###
 	parser=argparse.ArgumentParser()
 	parser.add_argument('-l', help='input the list of abundance info for families', required=True)
@@ -96,3 +95,6 @@ if __name__ == '__main__':
 	sys.stderr.write("### Finish join_family_abundance.py ####\n\n\n")
 
 # end: main
+
+if __name__ == '__main__':
+	main()

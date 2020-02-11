@@ -94,8 +94,7 @@ def split_abundance_info (abundance_file, sample_num):	# summary_peptide_family_
 #==============================================================
 ###########  Main processing ############
 #==============================================================
-if __name__ == '__main__':
-	
+def main():	
 	### get arguments ###
 	parser=argparse.ArgumentParser()
 	parser.add_argument('-a', help='input the abundance info for families', required=True)
@@ -115,3 +114,6 @@ if __name__ == '__main__':
 	sys.stderr.write("### Finish split_family_abundance.py ####\n\n\n")
 
 # end: main
+
+if __name__ == '__main__':
+	main()

@@ -97,8 +97,7 @@ def collect_seq_info (list_file, seq_file, outfile):
 #==============================================================
 ###########  Main processing ############
 #==============================================================
-if __name__ == '__main__':
-	
+def main():	
 	### get arguments ###
 	values = get_args ()
 
@@ -108,3 +107,6 @@ if __name__ == '__main__':
 	sys.stderr.write("\n### Finish extract_sequences.list.py ####\n\n")
 
 # end: main
+
+if __name__ == '__main__':
+	main()

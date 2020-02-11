@@ -129,8 +129,7 @@ def combine_info (dna_abu, rna_abu, ratio_abu, feature_file, outfile):
 #==============================================================
 ###########  Main processing ############
 #==============================================================
-if __name__ == '__main__':
-	
+def main():	
 	### get arguments ###
 	values = get_args()
 
@@ -148,3 +147,6 @@ if __name__ == '__main__':
 	sys.stderr.write("### Finish combine_abundance_annotation.py ####\n\n\n")
 
 # end: main
+
+if __name__ == '__main__':
+	main()

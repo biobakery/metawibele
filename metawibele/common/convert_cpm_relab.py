@@ -1,8 +1,8 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 """
-MetaWIBELE: filter_clusters module
-Filter out specific clusters
+MetaWIBELE: convert_cpm_relab module
+Convert CPM to relative abundance [0,1]
 
 Copyright (c) 2019 Harvard School of Public Health
 
@@ -30,41 +30,48 @@ import os
 import os.path
 import re
 import argparse
+import math
+
+try:
+	from metawibele import config
+except ImportError:
+	sys.exit("CRITICAL ERROR: Unable to find the MetaWIBELE python package." +
+	         " Please check your install.")
 
 
 # ---------------------------------------------------------------
 # Description and arguments
 # ---------------------------------------------------------------
 description = """
-Filter out specific clusters 
+Zero values were additively smoothed by half the smallest non-zero measurement on a per-sample basis and log transform
 """
 
-def get_args ():
+def get_args (): 
 	parser = argparse.ArgumentParser(description=description)
-	parser.add_argument('-l', help='input cluster ID info file', required=True)
-	parser.add_argument('-i', help='input raw file', required=True)
-	parser.add_argument('-o', help='output refined file', required=True)
+	parser.add_argument('-i', 
+						help='input abundance file', 
+						required=True)
+	parser.add_argument('-t', 
+						help='specify data type, e.g. log | cpm', 
+						default="cpm")
+	parser.add_argument('-o', 
+						help='output smoothed abundance file', 
+						required=True)
 	values = parser.parse_args()
 	return values
 # get_args
 
 
 #==============================================================
-# collect info 
+# convert abundance
 #==============================================================
-def collect_info (list_file, info_file, outfile):
-	ids = {}
-	open_file = open(list_file, "r")
-	for line in open_file:
-		line = line.strip()
-		if not len(line):
-			continue
-		info = line.split("\t")
-		ids[info[0]] = ""
-	# foreach line
-	open_file.close()
+def convert_abundance (abufile, data_type, outfile):
+	'''
+	:param abufile: abundance file
+	:return: abundance table
+	'''
 
-	open_file = open(info_file, "r")
+	open_file = open(abufile, "r")
 	open_out = open(outfile, "w")
 	line = open_file.readline()
 	open_out.write(line)
@@ -74,28 +81,45 @@ def collect_info (list_file, info_file, outfile):
 			continue
 		info = line.split("\t")
 		myid = info[0]
-		tmp = myid.split("|")
-		if tmp[0] in ids:
-			continue
-		open_out.write(line + "\n")
+		mystr = myid 
+		myindex = 1
+		while myindex < len(info):
+			myabu = info[myindex]
+			if myabu != "NA" and myabu != "NaN" and myabu != "nan":
+				if data_type == "cpm":
+					myabu = float(info[myindex]) / 1000000
+				if data_type == "log":
+					a = math.exp(float(myabu))
+					a = a / 1000000
+					myabu = math.log(a)
+			mystr = mystr + "\t" + str(myabu)
+			myindex = myindex + 1
+		open_out.write (mystr + "\n")
 	# foreach line
 	open_file.close()
 	open_out.close()
 
-# collect_info
+# convert_abundance
 
 
 #==============================================================
 ###########  Main processing ############
 #==============================================================
-def main():	
+def main():
 	### get arguments ###
 	values = get_args ()
 
 
-	sys.stderr.write("### Start filter_clusters.py -l " + values.l + " ####\n")
-	collect_info (values.l, values.i, values.o)
-	sys.stderr.write("\n### Finish filter_clusters.py ####\n\n")
+	sys.stderr.write("### Start convert_cpm_relab.py -i " + values.i + " ####\n")
+	
+
+	### collect info ###
+	sys.stderr.write("Get info ......starting\n")
+	convert_abundance (values.i, values.t, values.o)
+	sys.stderr.write("Get info ......done\n")
+	
+
+	sys.stderr.write("### Finish convert_cpm_relab.py ####\n\n\n")
 
 # end: main
 
