@@ -38,6 +38,7 @@ import time
 import math
 
 #from anadama2.tracked import TrackedDirectory
+from metawibele import config
 
 # constants
 c_strat_delim = "|"
@@ -82,9 +83,10 @@ def sample_info (sampleinfo, study):
 			sample = info[title["ID"]]
 		if "SID" in title:
 			sample = info[title["SID"]]
-		disease = info[title["diagnosis"]]
-		if study == "HMP2":
-			disease = info[title["diagnosis2"]]
+		if not config.meta_type in title:
+			print("Metadata doesn't exist!\t" + config.meta_type)
+			continue
+		disease = info[title[config.meta_type]]
 		if re.search("^[\d]+$", sample):
 			sample = study + "_" + sample
 		sample = re.sub("^" + disease + "_", "", sample)
