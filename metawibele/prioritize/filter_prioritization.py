@@ -191,6 +191,8 @@ def read_cluster_file (specific_cluster):
 			line = re.sub("\n$", "", line)
 			if not len(line):
 				continue
+			if re.search("^#", line):
+				continue
 			info = line.split("\t")
 			myid = info[titles[utilities.PROTEIN_FAMILY_ID]]
 			cluster[myid] = ""
