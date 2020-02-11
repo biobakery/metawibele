@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 """
 MetaWIBELE: check module
 Check settings
