@@ -115,8 +115,8 @@ def clustering (workflow, gene_catalog_seq, threads, output_folder, protein_fami
 	                  name = "clustering-proteins")
 
 	workflow.add_task(
-		"extract_cluster_CD-hit.py -c [depends[0]] -o [targets[0]] >> [args[0]] 2>&1",
-		depends=[myraw_cluster, TrackedExecutable("extract_cluster_CD-hit.py")],
+		"etawibele_extract_cluster -c [depends[0]] -o [targets[0]] >> [args[0]] 2>&1",
+		depends=[myraw_cluster, TrackedExecutable("etawibele_extract_cluster")],
 		targets=[clustering_output_cluster],
 		args=[clustering_output_logs],
 		cores=threads,
@@ -205,8 +205,8 @@ def protein_family_annotation (workflow, family_conf, gene_catalog_seq,
 		myhit = re.sub(".uniref90.stat.tsv", ".uniref90.hits", annotation_stat)
 		link_cmd = "ln -fs " + gene_catalog_seq + " " + main_folder + "/" + myname
 		workflow.add_task(
-				link_cmd + " && " + "uniref_annotator.py [depends[0]] --seqtype prot --uniref90db [depends[1]] --uniref50db [depends[2]] --diamond-options \"--threads [args[0]]\" --temp [args[1]] --transitive-map [depends[3]] >[args[2]] 2>&1",
-				depends = [main_folder + "/" + myname, config.uniref_dmnd, config.uniref50_dmnd, config.uniref_map, TrackedExecutable("uniref_annotator.py")],
+				link_cmd + " && " + "metawibele_uniref_annotator [depends[0]] --seqtype prot --uniref90db [depends[1]] --uniref50db [depends[2]] --diamond-options \"--threads [args[0]]\" --temp [args[1]] --transitive-map [depends[3]] >[args[2]] 2>&1",
+				depends = [main_folder + "/" + myname, config.uniref_dmnd, config.uniref50_dmnd, config.uniref_map, TrackedExecutable("metawibele_uniref_annotator")],
 				targets = [myhit],
 				args = [threads, main_folder, uniref_log0],
 				cores = threads,
@@ -214,9 +214,9 @@ def protein_family_annotation (workflow, family_conf, gene_catalog_seq,
 
 		# extract mapping info
 		workflow.add_task(
-				"uniref_annotator_stat.py -s [depends[0]] -d [depends[1]] "
+				"metawibele_uniref_annotator_stat -s [depends[0]] -d [depends[1]] "
 				"-o [targets[0]] >[args[0]] 2>&1",
-				depends = [gene_catalog_seq, myhit, TrackedExecutable("uniref_annotator_stat.py")],
+				depends = [gene_catalog_seq, myhit, TrackedExecutable("metawibele_uniref_annotator_stat")],
 				targets = [annotation_stat],
 				args = [uniref_log1],
 				cores = threads,
@@ -224,8 +224,8 @@ def protein_family_annotation (workflow, family_conf, gene_catalog_seq,
 
 		# uniRef annotation for each ORF
 		workflow.add_task(
-				"uniref_protein.py -m [depends[0]] -o [targets[0]] >[args[0]] 2>&1",
-				depends = [annotation_stat, protein_family, protein_family_seq, TrackedExecutable("uniref_protein.py")],
+				"metawibele_uniref_protein -m [depends[0]] -o [targets[0]] >[args[0]] 2>&1",
+				depends = [annotation_stat, protein_family, protein_family_seq, TrackedExecutable("metawibele_uniref_protein")],
 				targets = [uniref_ann_protein],
 				args = [uniref_log2],
 				cores = threads,
@@ -233,8 +233,8 @@ def protein_family_annotation (workflow, family_conf, gene_catalog_seq,
 
 		# uniRef annotation for each protein family
 		workflow.add_task(
-				"uniref_protein_family.py -u [depends[0]] -m [depends[1]] -f centroid -o [targets[0]] >[args[0]] 2>&1",
-				depends = [uniref_ann_protein, annotation_stat, protein_family, protein_family_seq, TrackedExecutable("uniref_protein_family.py")],
+				"metawibele_uniref_protein_family -u [depends[0]] -m [depends[1]] -f centroid -o [targets[0]] >[args[0]] 2>&1",
+				depends = [uniref_ann_protein, annotation_stat, protein_family, protein_family_seq, TrackedExecutable("metawibele_uniref_protein_family")],
 				targets = [uniref_ann_family, uniref_ann],
 				args = [uniref_log3],
 				cores = threads,
@@ -243,16 +243,16 @@ def protein_family_annotation (workflow, family_conf, gene_catalog_seq,
 
 		# uniref annotation for homology and taxonomy
 		workflow.add_task(
-				"summary_protein_uniref_annotation.py -a [depends[0]] -m [depends[1]] -t Rep -o [targets[0]] >[args[0]] 2>&1",
-				depends = [uniref_ann, annotation_stat, TrackedExecutable("summary_protein_uniref_annotation.py")],
+				"metawibele_summary_protein_uniref_annotation -a [depends[0]] -m [depends[1]] -t Rep -o [targets[0]] >[args[0]] 2>&1",
+				depends = [uniref_ann, annotation_stat, TrackedExecutable("metawibele_summary_protein_uniref_annotation")],
 				targets = [uniref_taxa],
 				args = [uniref_log4],
 				cores = threads,
 				name = "summary_protein_uniref_annotation")
 
 		workflow.add_task(
-				"summary_protein_family_uniref_annotation.py -a [depends[0]] -m [depends[1]] -t Rep -o [targets[0]] >>[args[0]] 2>&1",
-				depends = [uniref_ann_family, annotation_stat, TrackedExecutable("summary_protein_family_uniref_annotation.py")],
+				"metawibele_summary_protein_family_uniref_annotation -a [depends[0]] -m [depends[1]] -t Rep -o [targets[0]] >>[args[0]] 2>&1",
+				depends = [uniref_ann_family, annotation_stat, TrackedExecutable("metawibele_summary_protein_family_uniref_annotation")],
 				targets = [uniref_taxa_family],
 				args = [uniref_log4],
 				cores = threads,
@@ -274,16 +274,16 @@ def protein_family_annotation (workflow, family_conf, gene_catalog_seq,
 	## antiSMASH for biosynthesis gene clusters ##
 	if family_conf["antismash"] == "yes" or family_conf["antismash"] == "Yes":
 		workflow.add_task(
-				"antiSMASH_annotator.py -a [depends[0]] -o [targets[0]] >[args[0]] 2>&1",
-				depends = [uniref_taxa, TrackedExecutable("antiSMASH_annotator.py")],
+				"metawibele_antiSMASH_annotator -a [depends[0]] -o [targets[0]] >[args[0]] 2>&1",
+				depends = [uniref_taxa, TrackedExecutable("metawibele_antiSMASH_annotator")],
 				targets = [antiSMASH_ann],
 				args = [uniref_log5],
 				cores = threads,
 				name = "antiSMASH_annotator")
 
 		workflow.add_task(
-				"antiSMASH_annotator.py -a [depends[0]] -o [targets[0]] >>[args[0]] 2>&1",
-				depends = [uniref_taxa_family, TrackedExecutable("antiSMASH_annotator.py")],
+				"metawibele_antiSMASH_annotator -a [depends[0]] -o [targets[0]] >>[args[0]] 2>&1",
+				depends = [uniref_taxa_family, TrackedExecutable("metawibele_antiSMASH_annotator")],
 				targets = [antiSMASH_ann_family],
 				args = [uniref_log5],
 				cores = threads,
@@ -436,8 +436,8 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 			mymem = "32*1024 if file_size('[depends[0]]') < 25 else 3*32*1024" # 32 GB or more depending on file size
 
 			workflow.add_task_gridable(
-					"interproscan_annotator.py --split-file [args[0]] --threads [args[1]] -o [args[2]] -i [args[5]] > [args[3]] 2> [args[4]] ",
-					depends = [myfile, protein_family, protein_family_seq, TrackedExecutable("interproscan_annotator.py")],
+					"metawibele_interproscan_annotator --split-file [args[0]] --threads [args[1]] -o [args[2]] -i [args[5]] > [args[3]] 2> [args[4]] ",
+					depends = [myfile, protein_family, protein_family_seq, TrackedExecutable("metawibele_interproscan_annotator")],
 					targets = [myout],
 					args = [mysplit, threads, myout_dir, mylog, myerr, myfile],
 					cores = threads,   
@@ -471,8 +471,8 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 			myfile1 = re.sub("interproscan.txt", "interpro.PfamDomain.tsv", myfile)
 			myout.append(myfile1)
 		workflow.add_task(
-				"interproscan_protein.py -e [args[0]] -p [args[1]] >[args[2]] 2>&1",
-				depends = utilities.add_to_list(interpro_list, TrackedExecutable("interproscan_protein.py")),
+				"metawibele_interproscan_protein -e [args[0]] -p [args[1]] >[args[2]] 2>&1",
+				depends = utilities.add_to_list(interpro_list, TrackedExecutable("metawibele_interproscan_protein")),
 				targets = myout,
 				args = ["interproscan.txt", interpro, mylog],
 				cores = threads,
@@ -481,8 +481,8 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 		## InterProScan annotation for each family
 		mylog = re.sub(".tsv", ".log", signalp_ann_family)
 		workflow.add_task(
-				"interproscan_signalp_protein_family.py -e [args[0]] -p [args[1]] -a consistency -o [targets[0]] >[args[2]] 2>&1",
-				depends = utilities.add_to_list(myout, TrackedExecutable("interproscan_signalp_protein_family.py")), 
+				"metawibele_interproscan_signalp_protein_family -e [args[0]] -p [args[1]] -a consistency -o [targets[0]] >[args[2]] 2>&1",
+				depends = utilities.add_to_list(myout, TrackedExecutable("metawibele_interproscan_signalp_protein_family")), 
 				targets = [signalp_ann_family, signalp_ann],
 				args = ["signalp.signaling.tsv", interpro, mylog],
 				cores = threads,
@@ -490,8 +490,8 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 
 		mylog = re.sub(".tsv", ".log", tmhmm_ann_family)
 		workflow.add_task(
-				"interproscan_tmhmm_protein_family.py -e [args[0]] -p [args[1]] -a consistency -o [targets[0]] >[args[2]] 2>&1",
-				depends = utilities.add_to_list(myout, TrackedExecutable("interproscan_tmhmm_protein_family.py")),
+				"metawibele_interproscan_tmhmm_protein_family -e [args[0]] -p [args[1]] -a consistency -o [targets[0]] >[args[2]] 2>&1",
+				depends = utilities.add_to_list(myout, TrackedExecutable("metawibele_interproscan_tmhmm_protein_family")),
 				targets = [tmhmm_ann_family, tmhmm_ann],
 				args = ["tmhmm.transmembrane.tsv", interpro, mylog],
 				cores = threads,
@@ -503,8 +503,8 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 		myfile4 = re.sub(".detail.tsv", ".transmembrane.detail.tsv", phobius_ann)
 		mylog = re.sub(".tsv", ".log", phobius_ann_family)
 		workflow.add_task(
-				"interproscan_phobius_protein_family.py -e [args[1]] -p [args[2]] -a consistency -o [args[0]] >[args[3]] 2>&1",
-				depends = utilities.add_to_list(myout, TrackedExecutable("interproscan_phobius_protein_family.py")),
+				"metawibele_interproscan_phobius_protein_family -e [args[1]] -p [args[2]] -a consistency -o [args[0]] >[args[3]] 2>&1",
+				depends = utilities.add_to_list(myout, TrackedExecutable("metawibele_interproscan_phobius_protein_family")),
 				targets = [myfile1, myfile2, myfile3, myfile4],
 				args = [phobius_ann_family, "phobius.signaling.tsv", interpro, mylog],
 				cores = threads,
@@ -512,8 +512,8 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 
 		mylog = re.sub(".tsv", ".log", pfam_ann_family)
 		workflow.add_task(
-				"interproscan_pfam_protein_family.py -e [args[0]] -p [args[1]] -a consistency -o [targets[0]] >[args[2]] 2>&1",
-				depends = utilities.add_to_list(myout, TrackedExecutable("interproscan_pfam_protein_family.py")),
+				"metawibele_interproscan_pfam_protein_family -e [args[0]] -p [args[1]] -a consistency -o [targets[0]] >[args[2]] 2>&1",
+				depends = utilities.add_to_list(myout, TrackedExecutable("metawibele_interproscan_pfam_protein_family")),
 				targets = [pfam_ann_family, pfam_ann],
 				args = ["interpro.PfamDomain.tsv", interpro, mylog],
 				cores = threads,
@@ -521,8 +521,8 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 
 		mylog = re.sub(".tsv", ".log", interProScan_ann_family)
 		workflow.add_task(
-				"interproscan_protein_family.py -e [args[0]] -p [args[1]] -a consistency -o [targets[0]] >[args[2]] 2>&1",
-				depends = utilities.add_to_list(myout, TrackedExecutable("interproscan_protein_family.py")),
+				"metawibele_interproscan_protein_family -e [args[0]] -p [args[1]] -a consistency -o [targets[0]] >[args[2]] 2>&1",
+				depends = utilities.add_to_list(myout, TrackedExecutable("metawibele_interproscan_protein_family")),
 				targets = [interProScan_ann_family, interProScan_ann],
 				args = ["interproscan.txt", interpro, mylog],
 				cores = threads,
@@ -533,8 +533,8 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 		myfile1 = re.sub(".detail.tsv", ".signaling.detail.tsv", phobius_ann_family)
 		myfile2 = re.sub(".detail.tsv", ".transmembrane.detail.tsv", phobius_ann_family)
 		workflow.add_task(
-				"denovo_TM_SP.py -a [depends[0]] -b [depends[1]] -c [depends[2]] -d [depends[3]] -o [args[0]] >[args[1]] 2>&1",
-				depends = [myfile1, myfile2, signalp_ann_family, tmhmm_ann_family, TrackedExecutable("denovo_TM_SP.py")],
+				"metawibele_denovo_TM_SP -a [depends[0]] -b [depends[1]] -c [depends[2]] -d [depends[3]] -o [args[0]] >[args[1]] 2>&1",
+				depends = [myfile1, myfile2, signalp_ann_family, tmhmm_ann_family, TrackedExecutable("metawibele_denovo_TM_SP")],
 				targets = [denovo_signal_ann_family, denovo_trans_ann_family],
 				args = [denovo_ann_family, mylog],
 				cores = threads,
@@ -544,8 +544,8 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 		myfile1 = re.sub(".detail.tsv", ".signaling.detail.tsv", phobius_ann)
 		myfile2 = re.sub(".detail.tsv", ".transmembrane.detail.tsv", phobius_ann)
 		workflow.add_task(
-				"denovo_TM_SP.py -a [depends[0]] -b [depends[1]] -c [depends[2]] -d [depends[3]] -o [args[0]] > [args[1]] 2>&1",
-				depends = [myfile1, myfile2, signalp_ann, tmhmm_ann, TrackedExecutable("denovo_TM_SP.py")],
+				"metawibele_denovo_TM_SP -a [depends[0]] -b [depends[1]] -c [depends[2]] -d [depends[3]] -o [args[0]] > [args[1]] 2>&1",
+				depends = [myfile1, myfile2, signalp_ann, tmhmm_ann, TrackedExecutable("metawibele_denovo_TM_SP")],
 				targets = [denovo_signal_ann, denovo_trans_ann],
 				args = [denovo_ann, mylog],
 				cores = threads,
@@ -563,8 +563,8 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 	if domain_motif_conf["pfam2go"] == "yes" or domain_motif_conf["pfam2go"] == "Yes":
 		mylog = re.sub(".tsv", ".log", pfam2go_ann_family)
 		workflow.add_task(
-				"pfam2go.py -i [depends[0]] -o [targets[0]] > [args[0]] 2>&1",
-				depends = [pfam_ann_family, TrackedExecutable("pfam2go.py")],
+				"metawibele_pfam2go -i [depends[0]] -o [targets[0]] > [args[0]] 2>&1",
+				depends = [pfam_ann_family, TrackedExecutable("metawibele_pfam2go")],
 				targets = [pfam2go_ann_family],
 				args = [mylog],
 				cores = threads,
@@ -572,8 +572,8 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 
 		mylog = re.sub(".tsv", ".log", pfam2go_ann)
 		workflow.add_task(
-				"pfam2go.py -i [depends[0]] -o [targets[0]] >[args[0]] 2>&1 ",
-				depends = [pfam_ann, TrackedExecutable("pfam2go.py")],
+				"metawibele_pfam2go -i [depends[0]] -o [targets[0]] >[args[0]] 2>&1 ",
+				depends = [pfam_ann, TrackedExecutable("metawibele_pfam2go")],
 				targets = [pfam2go_ann],
 				args = [mylog],
 				cores = threads,
@@ -596,8 +596,8 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 			myout_all.append(myfile)
 		
 		workflow.add_task(
-				"ddi_DOMINE_protein.py -e [args[0]] -p [args[2]] -f [args[3]] -s [args[1]] >[args[4]] 2>&1 ",
-				depends = utilities.add_to_list(pfam_list, TrackedExecutable("ddi_DOMINE_protein.py")),
+				"metawibele_ddi_DOMINE_protein -e [args[0]] -p [args[2]] -f [args[3]] -s [args[1]] >[args[4]] 2>&1 ",
+				depends = utilities.add_to_list(pfam_list, TrackedExecutable("metawibele_ddi_DOMINE_protein")),
 				targets = myout,
 				#args = ["interpro.PfamDomain.tsv", "interpro.DDI.tsv", interpro, config.human_microbiome_ddi, mylog],
 				args = ["interpro.PfamDomain.tsv", "interpro.DDI.tsv", interpro, "yes", mylog],
@@ -605,8 +605,8 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 				name = "ddi_DOMINE_protein")
 		
 		workflow.add_task(
-				"ddi_DOMINE_protein.py -e [args[0]] -p [args[2]] -f [args[3]] -s [args[1]] >[args[4]] 2>&1 ",
-				depends = utilities.add_to_list(pfam_list, TrackedExecutable("ddi_DOMINE_protein.py")),
+				"metawibele_ddi_DOMINE_protein -e [args[0]] -p [args[2]] -f [args[3]] -s [args[1]] >[args[4]] 2>&1 ",
+				depends = utilities.add_to_list(pfam_list, TrackedExecutable("metawibele_ddi_DOMINE_protein")),
 				targets = myout,
 				args = ["interpro.PfamDomain.tsv", "interpro.all.DDI.tsv", interpro, "no", mylog],
 				cores = threads,
@@ -616,8 +616,8 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 		domine_ann_family_raw = re.sub(".detail", "", domine_ann_family)
 		domine_ann_raw = re.sub(".detail", "", domine_ann)
 		workflow.add_task(
-				"ddi_DOMINE_protein_family.py -e [args[0]] -p [args[1]] -a consistency -o [targets[0]] >[args[2]] 2>&1 ",
-				depends = utilities.add_to_list(myout, TrackedExecutable("ddi_DOMINE_protein_family.py")),
+				"metawibele_ddi_DOMINE_protein_family -e [args[0]] -p [args[1]] -a consistency -o [targets[0]] >[args[2]] 2>&1 ",
+				depends = utilities.add_to_list(myout, TrackedExecutable("metawibele_ddi_DOMINE_protein_family")),
 				targets = [domine_ann_family_raw, domine_ann_raw, domine_ann_family, domine_ann],
 				args = ["interpro.DDI.tsv", interpro, mylog],
 				cores = threads,
@@ -627,8 +627,8 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 		domine_ann_family_all_raw = re.sub(".detail", "", domine_ann_family_all)
 		domine_ann_all_raw = re.sub(".detail", "", domine_ann_all)
 		workflow.add_task(
-				"ddi_DOMINE_protein_family.py -e [args[0]] -p [args[1]] -a consistency -o [targets[0]] >[args[2]] 2>&1 ",
-				depends = utilities.add_to_list(myout_all, TrackedExecutable("ddi_DOMINE_protein_family.py")),
+				"metawibele_ddi_DOMINE_protein_family -e [args[0]] -p [args[1]] -a consistency -o [targets[0]] >[args[2]] 2>&1 ",
+				depends = utilities.add_to_list(myout_all, TrackedExecutable("metawibele_ddi_DOMINE_protein_family")),
 				targets = [domine_ann_family_all_raw, domine_ann_all_raw, domine_ann_family_all, domine_ann_all],
 				args = ["interpro.all.DDI.tsv", interpro, mylog],
 				cores = threads,
@@ -638,8 +638,8 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 		myout1 = re.sub(".tsv", ".ann.tsv", domine_ann_family)
 		mylog = re.sub(".tsv", ".log", myout1)
 		workflow.add_task(
-				"ddi_DOMINE_ann.py -i [depends[0]] -o [targets[0]] >[args[0]] 2>&1",
-				depends = [domine_ann_family_raw, TrackedExecutable("ddi_DOMINE_ann.py")],
+				"metawibele_ddi_DOMINE_ann -i [depends[0]] -o [targets[0]] >[args[0]] 2>&1",
+				depends = [domine_ann_family_raw, TrackedExecutable("metawibele_ddi_DOMINE_ann")],
 				targets = [myout1],
 				args = [mylog],
 				cores = threads,
@@ -648,8 +648,8 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 		myout2 = re.sub(".tsv", ".ann.tsv", domine_ann)
 		mylog = re.sub(".tsv", ".log", myout2)
 		workflow.add_task(
-				"ddi_DOMINE_ann.py -i [depends[0]] -o [targets[0]] >[args[0]] 2>&1",
-				depends = [domine_ann_raw, TrackedExecutable("ddi_DOMINE_ann.py")],
+				"metawibele_ddi_DOMINE_ann -i [depends[0]] -o [targets[0]] >[args[0]] 2>&1",
+				depends = [domine_ann_raw, TrackedExecutable("metawibele_ddi_DOMINE_ann")],
 				targets = [myout2],
 				args = [mylog],
 				cores = threads,
@@ -667,8 +667,8 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 		myout1 = re.sub(".tsv", ".ann.tsv", domine_ann_family)
 		myout2 = re.sub(".tsv", ".ann.tsv", domine_ann)
 		workflow.add_task(
-				"ddi_DOMINE_SIFTS.py -i [depends[0]] -o [targets[0]] >[args[0]] 2>&1",
-				depends = [myout1, TrackedExecutable("ddi_DOMINE_SIFTS.py")],
+				"metawibele_ddi_DOMINE_SIFTS -i [depends[0]] -o [targets[0]] >[args[0]] 2>&1",
+				depends = [myout1, TrackedExecutable("metawibele_ddi_DOMINE_SIFTS")],
 				targets = [SIFTS_ann_family],
 				args = [mylog],
 				cores = threads,
@@ -676,8 +676,8 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 
 		mylog = re.sub(".tsv", ".log", SIFTS_ann)
 		workflow.add_task(
-				"ddi_DOMINE_SIFTS.py -i [depends[0]] -o [targets[0]] >[args[0]] 2>&1",
-				depends = [myout2, TrackedExecutable("ddi_DOMINE_SIFTS.py")],
+				"metawibele_ddi_DOMINE_SIFTS -i [depends[0]] -o [targets[0]] >[args[0]] 2>&1",
+				depends = [myout2, TrackedExecutable("metawibele_ddi_DOMINE_SIFTS")],
 				targets = [SIFTS_ann],
 				args = [mylog],
 				cores = threads,
@@ -693,8 +693,8 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 		myout1 = re.sub(".tsv", ".ann.tsv", domine_ann_family)
 		myout2 = re.sub(".tsv", ".ann.tsv", domine_ann)
 		workflow.add_task(
-				"ddi_DOMINE_ExpAtlas.py -i [depends[0]] -o [targets[0]] >[args[0]] 2>&1",
-				depends = [myout1, TrackedExecutable("ddi_DOMINE_ExpAtlas.py")],
+				"metawibele_ddi_DOMINE_ExpAtlas -i [depends[0]] -o [targets[0]] >[args[0]] 2>&1",
+				depends = [myout1, TrackedExecutable("metawibele_ddi_DOMINE_ExpAtlas")],
 				targets = [ExpAtlas_ann_family],
 				args = [mylog],
 				cores = threads,
@@ -702,8 +702,8 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 
 		mylog = re.sub(".tsv", ".log", ExpAtlas_ann)
 		workflow.add_task(
-				"ddi_DOMINE_ExpAtlas.py -i [depends[0]] -o [targets[0]] >[args[0]] 2>&1",
-				depends = [myout2, TrackedExecutable("ddi_DOMINE_ExpAtlas.py")],
+				"metawibele_ddi_DOMINE_ExpAtlas -i [depends[0]] -o [targets[0]] >[args[0]] 2>&1",
+				depends = [myout2, TrackedExecutable("metawibele_ddi_DOMINE_ExpAtlas")],
 				targets = [ExpAtlas_ann],
 				args = [mylog],
 				cores = threads,
@@ -746,8 +746,8 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 			mymem = "32*1024 if file_size('[depends[0]]') < 25 else 3*32*1024" # 32 GB or more depending on file size
 			
 			workflow.add_task_gridable(
-					"psortb_annotator.py --split-file [args[0]] --threads [args[1]] -o [args[2]] -i [args[5]] > [args[3]] 2> [args[4]] ",
-					depends = [myfile, protein_family, protein_family_seq, TrackedExecutable("psortb_annotator.py")],
+					"metawibele_psortb_annotator --split-file [args[0]] --threads [args[1]] -o [args[2]] -i [args[5]] > [args[3]] 2> [args[4]] ",
+					depends = [myfile, protein_family, protein_family_seq, TrackedExecutable("metawibele_psortb_annotator")],
 					targets = [myout1, myout2, myout3],
 					args = [mysplit, threads, myout_dir, mylog, myerr, myfile],
 					cores = threads,
@@ -778,8 +778,8 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 		mylog = psortb + "/psortb.extract.log"
 		#filelist = utilities.find_files(psortb, "psortb.gram_positive.out.txt", None)
 		workflow.add_task(
-				"psortb_protein.py -e [args[0]] -p [args[1]] >[args[2]] 2>&1",
-				depends = utilities.add_to_list(psortb_list, TrackedExecutable("psortb_protein.py")),	
+				"metawibele_psortb_protein -e [args[0]] -p [args[1]] >[args[2]] 2>&1",
+				depends = utilities.add_to_list(psortb_list, TrackedExecutable("metawibele_psortb_protein")),	
 				targets = myout,
 				args = ["psortb.gram_positive.out.txt", psortb, mylog],
 				cores = threads,
@@ -788,8 +788,8 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 		## PSORTb annotation for each family
 		mylog = re.sub(".tsv", ".log", psortb_ann_family)
 		workflow.add_task(
-				"psortb_protein_family.py -e [args[0]] -p [args[1]] -a consistency -o [targets[0]] >[args[2]] 2>&1",
-				depends = utilities.add_to_list(myout, TrackedExecutable("psortb_protein_family.py")),
+				"metawibele_psortb_protein_family -e [args[0]] -p [args[1]] -a consistency -o [targets[0]] >[args[2]] 2>&1",
+				depends = utilities.add_to_list(myout, TrackedExecutable("metawibele_psortb_protein_family")),
 				targets = [psortb_ann_family, psortb_ann],
 				args = ["psortb.gram_positive.out.location.tsv", psortb, mylog],
 				cores = threads,
@@ -951,8 +951,8 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog, gene_catalog_c
 		# remove eukaryotic contamination
 		mylog = re.sub(".tsv", ".log", count_file)
 		workflow.add_task(
-				"abundance_filtering.py -a [depends[0]] -f good -i [depends[1]] -o [targets[0]] >[args[0]] 2>&1",
-				depends = [gene_catalog_count, uniref_taxonomy, TrackedExecutable("abundance_filtering.py")],
+				"metawibele_abundance_filtering -a [depends[0]] -f good -i [depends[1]] -o [targets[0]] >[args[0]] 2>&1",
+				depends = [gene_catalog_count, uniref_taxonomy, TrackedExecutable("metawibele_abundance_filtering")],
 				targets = [count_file],
 				args = [mylog],
 				cores = threads,
@@ -996,8 +996,8 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog, gene_catalog_c
 		# summary MSPs
 		mylog = re.sub(".tsv", ".log", mymsp)
 		workflow.add_task(
-				"mspminer_msp.py -a [depends[0]] -p [args[0]] -o [targets[0]] >[args[1]] 2>&1",
-				depends = [uniref_taxonomy, myoutfile, TrackedExecutable("mspminer_msp.py")],
+				"metawibele_mspminer_msp -a [depends[0]] -p [args[0]] -o [targets[0]] >[args[1]] 2>&1",
+				depends = [uniref_taxonomy, myoutfile, TrackedExecutable("metawibele_mspminer_msp")],
 				targets = [mymsp],
 				args = [msp_output, mylog],
 				cores = threads,
@@ -1007,8 +1007,8 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog, gene_catalog_c
 		# summary taxon for each gene
 		mylog = re.sub(".tsv", ".log", mymsp_uniref)
 		workflow.add_task(
-				"mspminer_msp_uniref_annotation.py -a [depends[0]] -i [depends[1]] -o [targets[0]] >[args[0]] 2>&1",
-				depends = [uniref_taxonomy, mymsp, TrackedExecutable("mspminer_msp_uniref_annotation.py")],
+				"metawibele_mspminer_msp_uniref_annotation -a [depends[0]] -i [depends[1]] -o [targets[0]] >[args[0]] 2>&1",
+				depends = [uniref_taxonomy, mymsp, TrackedExecutable("metawibele_mspminer_msp_uniref_annotation")],
 				targets = [mymsp_uniref],
 				args = [mylog],
 				cores = threads,
@@ -1017,8 +1017,8 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog, gene_catalog_c
 		# annotate taxon for each MSP
 		mylog = re.sub(".tsv", ".log", mymsp_taxa)
 		workflow.add_task(
-			"mspminer_msp_taxonomy_annotation.py -a [depends[0]] -t UniRef90_homology -o [targets[0]] >[args[0]] 2>&1",
-			depends = [mymsp_uniref, TrackedExecutable("mspminer_msp_taxonomy_annotation.py")],
+			"metawibele_mspminer_msp_taxonomy_annotation -a [depends[0]] -t UniRef90_homology -o [targets[0]] >[args[0]] 2>&1",
+			depends = [mymsp_uniref, TrackedExecutable("metawibele_mspminer_msp_taxonomy_annotation")],
 			targets = [mymsp_taxa],
 			args = [mylog],
 			cores = threads,
@@ -1027,8 +1027,8 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog, gene_catalog_c
 		# summary MSP annotation for each gene
 		mylog = re.sub(".tsv", ".log", mymsp_ann)
 		workflow.add_task(
-			"mspminer_protein.py -a [depends[0]] -m [depends[1]] -g [depends[2]] -o [targets[0]] >[args[0]] 2>&1",
-			depends = [mymsp_taxa, mymsp, uniref_taxonomy, TrackedExecutable("mspminer_protein.py")],
+			"metawibele_mspminer_protein -a [depends[0]] -m [depends[1]] -g [depends[2]] -o [targets[0]] >[args[0]] 2>&1",
+			depends = [mymsp_taxa, mymsp, uniref_taxonomy, TrackedExecutable("metawibele_mspminer_protein")],
 			targets = [mymsp_ann, mymsp_ann_taxa],
 			args = [mylog],
 			cores = threads,
@@ -1037,8 +1037,8 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog, gene_catalog_c
 		# summary annotation for protein family
 		mylog = re.sub(".tsv", ".log", mymsp_detail_family)
 		workflow.add_task(
-			"mspminer_protein_family.py -f centroid -m [depends[0]] -o [targets[0]] >[args[0]] 2>&1",
-			depends = [mymsp_ann, TrackedExecutable("mspminer_protein_family.py")],
+			"metawibele_mspminer_protein_family -f centroid -m [depends[0]] -o [targets[0]] >[args[0]] 2>&1",
+			depends = [mymsp_ann, TrackedExecutable("metawibele_mspminer_protein_family")],
 			targets = [mymsp_detail_family, mymsp_detail],
 			args = [mylog],
 			cores = threads,
@@ -1046,8 +1046,8 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog, gene_catalog_c
 		
 		mylog = re.sub(".tsv", ".log", msp_detail_family)
 		workflow.add_task(
-			"msp_protein_family.py -m [depends[0]] -o [targets[0]] >[args[0]] 2>&1",
-			depends = [mymsp_ann_taxa, TrackedExecutable("msp_protein_family.py")],
+			"metawibele_msp_protein_family -m [depends[0]] -o [targets[0]] >[args[0]] 2>&1",
+			depends = [mymsp_ann_taxa, TrackedExecutable("metawibele_msp_protein_family")],
 			targets = [msp_detail_family, msp_detail],
 			args = [mylog],
 			cores = threads,
@@ -1055,8 +1055,8 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog, gene_catalog_c
 
 		mylog = re.sub(".tsv", ".log", mymsp_detail_taxa_family)
 		workflow.add_task(
-			"mspminer_protein_family_taxonomy.py -a [depends[0]] -s [args[0]] -o [targets[0]] >[args[1]] 2>&1",
-			depends = [mymsp_ann_taxa, TrackedExecutable("mspminer_protein_family_taxonomy.py")],
+			"metawibele_mspminer_protein_family_taxonomy -a [depends[0]] -s [args[0]] -o [targets[0]] >[args[1]] 2>&1",
+			depends = [mymsp_ann_taxa, TrackedExecutable("metawibele_mspminer_protein_family_taxonomy")],
 			targets = [mymsp_detail_taxa_family, mymsp_detail_taxa],
 			args = [config.taxa_final, mylog],
 			cores = threads,
@@ -1080,8 +1080,8 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog, gene_catalog_c
 		# get raw counts for protein families
 		mylog = re.sub(".tsv", ".log", family_count_all)
 		workflow.add_task(
-			"sum_to_protein_family_abundance.py -i [depends[0]] -o [targets[0]] >[args[0]] 2>&1",
-			depends = [count_file, TrackedExecutable("sum_to_protein_family_abundance.py")],
+			"metawibele_sum_to_protein_family_abundance -i [depends[0]] -o [targets[0]] >[args[0]] 2>&1",
+			depends = [count_file, TrackedExecutable("metawibele_sum_to_protein_family_abundance")],
 			targets = [family_count_all],
 			args = [mylog],
 			cores = threads,
@@ -1090,8 +1090,8 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog, gene_catalog_c
 		# filter out bad protein
 		mylog = re.sub(".tsv", ".log", family_count)
 		workflow.add_task(
-			"abundance_filtering.py -i [depends[0]] -f good -a [depends[1]] -o [targets[0]] >[args[0]] 2>&1",
-			depends = [uniref_taxonomy_family, family_count_all, TrackedExecutable("abundance_filtering.py")],
+			"metawibele_abundance_filtering -i [depends[0]] -f good -a [depends[1]] -o [targets[0]] >[args[0]] 2>&1",
+			depends = [uniref_taxonomy_family, family_count_all, TrackedExecutable("metawibele_abundance_filtering")],
 			targets = [family_count],
 			args = [mylog],
 			cores = threads,
@@ -1100,8 +1100,8 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog, gene_catalog_c
 		# normalized to RPK and relative abundance
 		mylog = re.sub(".tsv", ".log", family_rpk)
 		workflow.add_task(
-			"abundance_RPK.py -i [depends[0]] -o [targets[0]] >[args[0]] 2>&1",
-			depends = [family_count, TrackedExecutable("abundance_RPK.py")],
+			"metawibele_abundance_RPK -i [depends[0]] -o [targets[0]] >[args[0]] 2>&1",
+			depends = [family_count, TrackedExecutable("metawibele_abundance_RPK")],
 			targets = [family_rpk],
 			args = [mylog],
 			cores = threads,
@@ -1109,8 +1109,8 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog, gene_catalog_c
 
 		mylog = re.sub(".tsv", ".log", family_relab)
 		workflow.add_task(
-			"abundance_normalization.py -i [depends[0]] -u [args[0]] -o [targets[0]] >[args[1]] 2>&1",
-			depends = [family_rpk, TrackedExecutable("abundance_normalization.py")],
+			"metawibele_abundance_normalization -i [depends[0]] -u [args[0]] -o [targets[0]] >[args[1]] 2>&1",
+			depends = [family_rpk, TrackedExecutable("metawibele_abundance_normalization")],
 			targets = [family_relab],
 			args = [config.normalize, mylog],
 			cores = threads,
@@ -1118,8 +1118,8 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog, gene_catalog_c
 
 		mylog = re.sub(".tsv", ".log", gene_rpk)
 		workflow.add_task(
-			"abundance_RPK_gene.py -i [depends[0]] -o [targets[0]] >[args[0]] 2>&1",
-			depends = [count_file, TrackedExecutable("abundance_RPK_gene.py")],
+			"metawibele_abundance_RPK_gene -i [depends[0]] -o [targets[0]] >[args[0]] 2>&1",
+			depends = [count_file, TrackedExecutable("metawibele_abundance_RPK_gene")],
 			targets = [gene_rpk],
 			args = [mylog],
 			cores = threads,
@@ -1127,8 +1127,8 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog, gene_catalog_c
 
 		mylog = re.sub(".tsv", ".log", gene_relab)
 		workflow.add_task(
-			"abundance_normalization.py -i [depends[0]] -u [args[0]] -o [targets[0]] >[args[1]] 2>&1",
-			depends = [gene_rpk, TrackedExecutable("abundance_normalization.py")],
+			"metawibele_abundance_normalization -i [depends[0]] -u [args[0]] -o [targets[0]] >[args[1]] 2>&1",
+			depends = [gene_rpk, TrackedExecutable("metawibele_abundance_normalization")],
 			targets = [gene_relab],
 			args = [config.normalize, mylog],
 			cores = threads,
@@ -1137,8 +1137,8 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog, gene_catalog_c
 		# format abundance annotation
 		mylog = re.sub(".tsv", ".log", abundance_ann_family)
 		workflow.add_task(
-			"abundance_annotator.py -a [depends[0]] -f protein_family -t [args[0]] -o [targets[0]] >[args[1]] 2>&1",
-			depends = [family_relab, TrackedExecutable("abundance_annotator.py")],
+			"metawibele_abundance_annotator -a [depends[0]] -f protein_family -t [args[0]] -o [targets[0]] >[args[1]] 2>&1",
+			depends = [family_relab, TrackedExecutable("metawibele_abundance_annotator")],
 			targets = [abundance_ann_family],
 			args = [abundance_conf["dna_abundance"], mylog],
 			cores = threads,
@@ -1146,8 +1146,8 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog, gene_catalog_c
 
 		mylog = re.sub(".tsv", ".log", abundance_ann)
 		workflow.add_task(
-			"abundance_annotator.py -a [depends[0]] -f protein -t [args[0]] -o [targets[0]] >[args[1]] 2>&1",
-			depends = [gene_relab, TrackedExecutable("abundance_annotator.py")],
+			"metawibele_abundance_annotator -a [depends[0]] -f protein -t [args[0]] -o [targets[0]] >[args[1]] 2>&1",
+			depends = [gene_relab, TrackedExecutable("metawibele_abundance_annotator")],
 			targets = [abundance_ann],
 			args = [abundance_conf["dna_abundance"], mylog],
 			cores = threads,
@@ -1167,8 +1167,8 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog, gene_catalog_c
 		## summary gene catalog abundance ##
 		mylog = re.sub(".tsv", ".log", rna_count_file)
 		workflow.add_task(
-				"abundance_filtering.py -a [depends[0]] -f good -i [depends[1]] -o [targets[0]] >[args[0]] 2>&1",
-				depends = [gene_catalog_rna_count, uniref_taxonomy, TrackedExecutable("abundance_filtering.py")],
+				"metawibele_abundance_filtering -a [depends[0]] -f good -i [depends[1]] -o [targets[0]] >[args[0]] 2>&1",
+				depends = [gene_catalog_rna_count, uniref_taxonomy, TrackedExecutable("metawibele_abundance_filtering")],
 				targets = [rna_count_file],
 				args = [mylog],
 				cores = threads,
@@ -1177,8 +1177,8 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog, gene_catalog_c
 		# get raw counts for protein families
 		mylog = re.sub(".tsv", ".log", rna_family_count_all)
 		workflow.add_task(
-			"sum_to_protein_family_abundance.py -i [depends[0]] -o [targets[0]] >[args[0]] 2>&1",
-			depends = [rna_count_file, TrackedExecutable("sum_to_protein_family_abundance.py")],
+			"metawibele_sum_to_protein_family_abundance -i [depends[0]] -o [targets[0]] >[args[0]] 2>&1",
+			depends = [rna_count_file, TrackedExecutable("metawibele_sum_to_protein_family_abundance")],
 			targets = [rna_family_count_all],
 			args = [mylog],
 			cores = threads,
@@ -1187,8 +1187,8 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog, gene_catalog_c
 		# filter out bad protein
 		mylog = re.sub(".tsv", ".log", rna_family_count)
 		workflow.add_task(
-			"abundance_filtering.py -i [depends[0]] -f good -a [depends[1]] -o [targets[0]] >[args[0]] 2>&1",
-			depends = [uniref_taxonomy_family, rna_family_count_all, TrackedExecutable("abundance_filtering.py")],
+			"metawibele_abundance_filtering -i [depends[0]] -f good -a [depends[1]] -o [targets[0]] >[args[0]] 2>&1",
+			depends = [uniref_taxonomy_family, rna_family_count_all, TrackedExecutable("metawibele_abundance_filtering")],
 			targets = [rna_family_count],
 			args = [mylog],
 			cores = threads,
@@ -1197,8 +1197,8 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog, gene_catalog_c
 		# normalized to RPK and relative abundance
 		mylog = re.sub(".tsv", ".log", rna_family_rpk)
 		workflow.add_task(
-			"abundance_RPK.py -i [depends[0]] -o [targets[0]] >[args[0]] 2>&1",
-			depends = [rna_family_count, TrackedExecutable("abundance_RPK.py")],
+			"metawibele_abundance_RPK -i [depends[0]] -o [targets[0]] >[args[0]] 2>&1",
+			depends = [rna_family_count, TrackedExecutable("metawibele_abundance_RPK")],
 			targets = [rna_family_rpk],
 			args = [mylog],
 			cores = threads,
@@ -1206,8 +1206,8 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog, gene_catalog_c
 
 		mylog = re.sub(".tsv", ".log", rna_family_relab)
 		workflow.add_task(
-			"abundance_normalization.py -i [depends[0]] -u [args[0]] -o [targets[0]] >[args[1]] 2>&1",
-			depends = [rna_family_rpk, TrackedExecutable("abundance_normalization.py")],
+			"metawibele_abundance_normalization -i [depends[0]] -u [args[0]] -o [targets[0]] >[args[1]] 2>&1",
+			depends = [rna_family_rpk, TrackedExecutable("metawibele_abundance_normalization")],
 			targets = [rna_family_relab],
 			args = [config.normalize, mylog],
 			cores = threads,
@@ -1215,8 +1215,8 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog, gene_catalog_c
 
 		mylog = re.sub(".tsv", ".log", rna_gene_rpk)
 		workflow.add_task(
-			"abundance_RPK_gene.py -i [depends[0]] -o [targets[0]] >[args[0]] 2>&1",
-			depends = [rna_count_file, TrackedExecutable("abundance_RPK_gene.py")],
+			"metawibele_abundance_RPK_gene -i [depends[0]] -o [targets[0]] >[args[0]] 2>&1",
+			depends = [rna_count_file, TrackedExecutable("metawibele_abundance_RPK_gene")],
 			targets = [rna_gene_rpk],
 			args = [mylog],
 			cores = threads,
@@ -1224,8 +1224,8 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog, gene_catalog_c
 
 		mylog = re.sub(".tsv", ".log", rna_gene_relab)
 		workflow.add_task(
-			"abundance_normalization.py -i [depends[0]] -u [args[0]] -o [targets[0]] >[args[1]] 2>&1",
-			depends = [rna_gene_rpk, TrackedExecutable("abundance_normalization.py")],
+			"metawibele_abundance_normalization -i [depends[0]] -u [args[0]] -o [targets[0]] >[args[1]] 2>&1",
+			depends = [rna_gene_rpk, TrackedExecutable("metawibele_abundance_normalization")],
 			targets = [rna_gene_relab],
 			args = [config.normalize, mylog],
 			cores = threads,
@@ -1234,8 +1234,8 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog, gene_catalog_c
 		# format abundance annotation
 		mylog = re.sub(".tsv", ".log", rna_abundance_ann_family)
 		workflow.add_task(
-			"abundance_annotator.py -a [depends[0]] -f protein_family -t [args[0]] -o [targets[0]] >[args[1]] 2>&1",
-			depends = [rna_family_relab, TrackedExecutable("abundance_annotator.py")],
+			"metawibele_abundance_annotator -a [depends[0]] -f protein_family -t [args[0]] -o [targets[0]] >[args[1]] 2>&1",
+			depends = [rna_family_relab, TrackedExecutable("metawibele_abundance_annotator")],
 			targets = [rna_abundance_ann_family],
 			args = [abundance_conf["rna_abundance"], mylog],
 			cores = threads,
@@ -1243,8 +1243,8 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog, gene_catalog_c
 
 		mylog = re.sub(".tsv", ".log", rna_abundance_ann)
 		workflow.add_task(
-			"abundance_annotator.py -a [depends[0]] -f protein -t [args[0]] -o [targets[0]] >[args[1]] 2>&1",
-			depends = [rna_gene_relab, TrackedExecutable("abundance_annotator.py")],
+			"metawibele_abundance_annotator -a [depends[0]] -f protein -t [args[0]] -o [targets[0]] >[args[1]] 2>&1",
+			depends = [rna_gene_relab, TrackedExecutable("metawibele_abundance_annotator")],
 			targets = [rna_abundance_ann],
 			args = [abundance_conf["rna_abundance"], mylog],
 			cores = threads,
@@ -1265,8 +1265,8 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog, gene_catalog_c
 		matched_dna_family = re.sub(".tsv", ".matched_dna.tsv", family_relab)
 		mylog = re.sub(".tsv", ".log", matched_dna_family)
 		workflow.add_task(
-				"extract_abundance_sample_subset.py -i [depends[0]] -s [depends[1]] -o [targets[0]] >[args[0]] 2>&1",
-				depends = [family_relab, mysample, TrackedExecutable("extract_abundance_sample_subset.py")],
+				"metawibele_extract_abundance_sample_subset -i [depends[0]] -s [depends[1]] -o [targets[0]] >[args[0]] 2>&1",
+				depends = [family_relab, mysample, TrackedExecutable("metawibele_extract_abundance_sample_subset")],
 				targets = [matched_dna_family],
 				args = [mylog],
 				cores = threads,
@@ -1275,8 +1275,8 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog, gene_catalog_c
 		matched_rna_family = re.sub(".tsv", ".matched_rna.tsv", rna_family_relab)
 		mylog = re.sub(".tsv", ".log", matched_rna_family)
 		workflow.add_task(
-				"extract_abundance_sample_subset.py -i [depends[0]] -s [depends[1]] -o [targets[0]] >[args[0]] 2>&1",
-				depends = [rna_family_relab, mysample, TrackedExecutable("extract_abundance_sample_subset.py")],
+				"metawibele_extract_abundance_sample_subset -i [depends[0]] -s [depends[1]] -o [targets[0]] >[args[0]] 2>&1",
+				depends = [rna_family_relab, mysample, TrackedExecutable("metawibele_extract_abundance_sample_subset")],
 				targets = [matched_rna_family],
 				args = [mylog],
 				cores = threads,
@@ -1285,8 +1285,8 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog, gene_catalog_c
 		matched_dna = re.sub(".tsv", ".matched_dna.tsv", gene_relab)
 		mylog = re.sub(".tsv", ".log", matched_dna)
 		workflow.add_task(
-				"extract_abundance_sample_subset.py -i [depends[0]] -s [depends[1]] -o [targets[0]] >[args[0]] 2>&1",
-				depends = [gene_relab, mysample, TrackedExecutable("extract_abundance_sample_subset.py")],
+				"metawibele_extract_abundance_sample_subset -i [depends[0]] -s [depends[1]] -o [targets[0]] >[args[0]] 2>&1",
+				depends = [gene_relab, mysample, TrackedExecutable("metawibele_extract_abundance_sample_subset")],
 				targets = [matched_dna],
 				args = [mylog],
 				cores = threads,
@@ -1295,8 +1295,8 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog, gene_catalog_c
 		matched_rna = re.sub(".tsv", ".matched_rna.tsv", rna_gene_relab)
 		mylog = re.sub(".tsv", ".log", matched_rna)
 		workflow.add_task(
-				"extract_abundance_sample_subset.py -i [depends[0]] -s [depends[1]] -o [targets[0]] >[args[0]] 2>&1",
-				depends = [rna_gene_relab, mysample, TrackedExecutable("extract_abundance_sample_subset.py")],
+				"extract_abundance_sample_subset -i [depends[0]] -s [depends[1]] -o [targets[0]] >[args[0]] 2>&1",
+				depends = [rna_gene_relab, mysample, TrackedExecutable("extract_abundance_sample_subset")],
 				targets = [matched_rna],
 				args = [mylog],
 				cores = threads,
@@ -1306,8 +1306,8 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog, gene_catalog_c
 		mylog = re.sub(".tsv", ".log", ratio_family_relab)
 		ratio_log = re.sub(".tsv", ".smooth.log.tsv", ratio_family_relab)
 		workflow.add_task(
-				"rna_dna_ratio.py -d [depends[0]] -r [depends[1]] -o [targets[0]] > [args[0]] 2>&1",
-				depends = [matched_dna_family, matched_rna_family, TrackedExecutable("rna_dna_ratio.py")],
+				"metawibele_rna_dna_ratio -d [depends[0]] -r [depends[1]] -o [targets[0]] > [args[0]] 2>&1",
+				depends = [matched_dna_family, matched_rna_family, TrackedExecutable("metawibele_rna_dna_ratio")],
 				targets = [ratio_family_relab, ratio_log],
 				args = [mylog],
 				cores = threads,
@@ -1316,8 +1316,8 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog, gene_catalog_c
 		mylog = re.sub(".tsv", ".log", ratio_gene_relab)
 		ratio_log = re.sub(".tsv", ".smooth.log.tsv", ratio_gene_relab)
 		workflow.add_task(
-				"rna_dna_ratio.py -d [depends[0]] -r [depends[1]] -o [targets[0]] >[args[0]] 2>&1",
-				depends = [matched_dna, matched_rna, TrackedExecutable("rna_dna_ratio.py")],
+				"metawibele_rna_dna_ratio -d [depends[0]] -r [depends[1]] -o [targets[0]] >[args[0]] 2>&1",
+				depends = [matched_dna, matched_rna, TrackedExecutable("metawibele_rna_dna_ratio")],
 				targets = [ratio_gene_relab, ratio_log],
 				args = [mylog],
 				cores = threads,
@@ -1326,8 +1326,8 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog, gene_catalog_c
 		# format abundance annotation
 		mylog = re.sub(".tsv", ".log", ratio_abundance_ann_family)
 		workflow.add_task(
-				"abundance_annotator.py -a [depends[0]] -f protein_family -t RNA-ratio_abundance -o [targets[0]] >[args[0]] 2>&1",
-				depends = [ratio_family_relab, TrackedExecutable("abundance_annotator.py")],
+				"metawibele_abundance_annotator -a [depends[0]] -f protein_family -t RNA-ratio_abundance -o [targets[0]] >[args[0]] 2>&1",
+				depends = [ratio_family_relab, TrackedExecutable("metawibele_abundance_annotator")],
 				targets = [ratio_abundance_ann_family],
 				args = [mylog],
 				cores = threads,
@@ -1335,8 +1335,8 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog, gene_catalog_c
 
 		mylog = re.sub(".tsv", ".log", ratio_abundance_ann)
 		workflow.add_task(
-				"abundance_annotator.py -a [depends[0]] -f protein -t RNA-ratio_abundance -o [targets[0]] >[args[0]] 2>&1",
-				depends = [ratio_gene_relab, TrackedExecutable("abundance_annotator.py")],
+				"metawibele_abundance_annotator -a [depends[0]] -f protein -t RNA-ratio_abundance -o [targets[0]] >[args[0]] 2>&1",
+				depends = [ratio_gene_relab, TrackedExecutable("metawibele_abundance_annotator")],
 				targets = [ratio_abundance_ann],
 				args = [mylog],
 				cores = threads,
@@ -1353,8 +1353,8 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog, gene_catalog_c
 		## prepare data for maaslin2 ##
 		mylog = re.sub(".tsv", ".log", family_smooth)
 		workflow.add_task(
-				"abundance_smoothing.py -i [depends[0]] -t fixed -f [args[0]] -o [targets[0]] >[args[1]] 2>&1",
-				depends = [family_relab, TrackedExecutable("abundance_smoothing.py")],
+				"metawibele_abundance_smoothing -i [depends[0]] -f [args[0]] -o [targets[0]] >[args[1]] 2>&1",
+				depends = [family_relab, TrackedExecutable("metawibele_abundance_smoothing")],
 				targets = [family_smooth],
 				args = [config.tshld_prevalence, mylog],
 				cores = threads,
@@ -1369,8 +1369,8 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog, gene_catalog_c
 		feature_tsv = re.sub(".pcl", ".tsv", feature_pcl)
 		mylog = re.sub(".pcl", ".pcl.log", feature_tsv)
 		workflow.add_task(
-				"transpose.py < [depends[0]] > [targets[0]] 2> [args[0]]",
-				depends = [feature_pcl, TrackedExecutable("transpose.py")],
+				"metawibele_transpose < [depends[0]] > [targets[0]] 2> [args[0]]",
+				depends = [feature_pcl, TrackedExecutable("metawibele_transpose")],
 				targets = [feature_tsv],
 				args = [mylog],
 				cores = threads,
@@ -1378,8 +1378,8 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog, gene_catalog_c
 
 		mylog = re.sub(".tsv", ".log", DA_metadata)
 		workflow.add_task(
-				"metadata_format.py -i [depends[0]] -o [targets[0]] >[args[0]] 2>&1 ",
-				depends = [config.metadata, TrackedExecutable("metadata_format.py")],
+				"metawibele_metadata_format -i [depends[0]] -o [targets[0]] >[args[0]] 2>&1 ",
+				depends = [config.metadata, TrackedExecutable("metawibele_metadata_format")],
 				targets = [DA_metadata],
 				args = [mylog],
 				cores = threads,
@@ -1389,8 +1389,8 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog, gene_catalog_c
 		mylog = re.sub(".tsv", ".results.log", DA_metadata)
 		myresults = re.sub(".tsv", ".fdr_correction.correct_per_metadate.tsv", DA_results)
 		workflow.add_task(
-				"maaslin2.py -i [depends[0]] -m [depends[1]] -n [args[2]] -w [args[0]] -o [args[1]] > [args[3]] 2>&1",
-				depends = [feature_tsv, DA_metadata, TrackedExecutable("maaslin2.py")],
+				"metawibele_maaslin2 -i [depends[0]] -m [depends[1]] -n [args[2]] -w [args[0]] -o [args[1]] > [args[3]] 2>&1",
+				depends = [feature_tsv, DA_metadata, TrackedExecutable("metawibele_maaslin2")],
 				targets = [myresults],
 				args = [DA + "/" + "maaslin2_output", "all_results.tsv", threads, mylog],
 				cores = threads,
@@ -1399,8 +1399,8 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog, gene_catalog_c
 		## collect results info ##
 		mylog = re.sub(".tsv", ".tsv.log", stat_results)
 		workflow.add_task(
-				"maaslin2_collection.py -a [depends[0]] -i [depends[1]] -o [args[0]] > [args[1]] 2>&1",
-				depends = [family_relab, myresults, TrackedExecutable("maaslin2_collection.py")],
+				"metawibele_maaslin2_collection -a [depends[0]] -s [depends[1]] -i [depends[2]] -o [args[0]] > [args[1]] 2>&1",
+				depends = [family_relab, family_smooth, myresults, TrackedExecutable("metawibele_maaslin2_collection")],
 				targets = [stat_results, fold_results, pre_results],
 				args = [DA_prefix, mylog],
 				cores = threads,
@@ -1409,8 +1409,8 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog, gene_catalog_c
 		## summary DA results ##
 		mylog = re.sub(".tsv", ".tsv.log", summary_stat)
 		workflow.add_task(
-				"maaslin2_summary.py -a [depends[0]] -b [depends[1]] -c [depends[2]] -p [args[0]] -q [args[1]] -e [args[2]] -o [targets[0]] > [args[3]] 2>&1",
-				depends = [stat_results, fold_results, pre_results, TrackedExecutable("maaslin2_summary.py")],
+				"metawibele_maaslin2_summary -a [depends[0]] -b [depends[1]] -c [depends[2]] -p [args[0]] -q [args[1]] -e [args[2]] -o [targets[0]] > [args[3]] 2>&1",
+				depends = [stat_results, fold_results, pre_results, TrackedExecutable("metawibele_maaslin2_summary")],
 				targets = [summary_stat],
 				args = [config.tshld_prevalence, config.tshld_qvalue, config.effect_size, mylog],
 				cores = threads,
@@ -1418,8 +1418,8 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog, gene_catalog_c
 
 		mylog = re.sub(".tsv", ".tsv.log", DA_detail)
 		workflow.add_task(
-				"maaslin2_annotator.py -s [depends[0]] -t [args[0]] -e [args[1]] -o [targets[0]] > [args[2]] 2>&1",
-				depends = [summary_stat, TrackedExecutable("maaslin2_annotator.py")],
+				"metawibele_maaslin2_annotator -s [depends[0]] -t [args[0]] -e [args[1]] -o [targets[0]] > [args[2]] 2>&1",
+				depends = [summary_stat, TrackedExecutable("metawibele_maaslin2_annotator")],
 				targets = [DA_detail],
 				args = [abundance_conf["dna_da"], config.effect_size, mylog],
 				cores = threads,
@@ -1517,8 +1517,8 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog, gene_catalog_c
 		ratio_log = re.sub(".tsv", ".smooth.log.tsv", ratio_family_relab)
 		mylog = re.sub(".tsv", ".log", DE_family)
 		workflow.add_task(
-				"filter_ratio_prevalence.py -a [depends[0]] -b [depends[1]] -f [args[0]] -r yes -o [targets[0]] >[args[1]] 2>&1",
-				depends = [ratio_family_relab, ratio_log, TrackedExecutable("filter_ratio_prevalence.py")],
+				"metawibele_filter_ratio_prevalence -a [depends[0]] -b [depends[1]] -f [args[0]] -r yes -o [targets[0]] >[args[1]] 2>&1",
+				depends = [ratio_family_relab, ratio_log, TrackedExecutable("metawibele_filter_ratio_prevalence")],
 				targets = [DE_family],
 				args = [config.tshld_prevalence, mylog],
 				cores = threads,
@@ -1533,8 +1533,8 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog, gene_catalog_c
 		feature_tsv = re.sub(".pcl", ".tsv", feature_pcl)
 		mylog = re.sub(".pcl", ".pcl.log", feature_tsv)
 		workflow.add_task(
-					"transpose.py < [depends[0]] > [targets[0]] 2> [args[0]]",
-					depends = [feature_pcl, TrackedExecutable("transpose.py")],
+					"metawibele_transpose < [depends[0]] > [targets[0]] 2> [args[0]]",
+					depends = [feature_pcl, TrackedExecutable("metawibele_transpose")],
 					targets = [feature_tsv],
 					args = [mylog],
 					cores = threads,
@@ -1542,8 +1542,8 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog, gene_catalog_c
 
 		mylog = re.sub(".tsv", ".log", DE_metadata)
 		workflow.add_task(
-				"metadata_format.py -i [depends[0]] -o [targets[0]] >[args[0]] 2>&1 ",
-				depends = [config.rna_metadata, TrackedExecutable("metadata_format.py")],
+				"metawibele_metadata_format -i [depends[0]] -o [targets[0]] >[args[0]] 2>&1 ",
+				depends = [config.rna_metadata, TrackedExecutable("metawibele_metadata_format")],
 				targets = [DE_metadata],
 				args = [mylog],
 				cores = threads,
@@ -1553,8 +1553,8 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog, gene_catalog_c
 		mylog = re.sub(".tsv", ".results.log", DE_metadata)
 		myresults = re.sub(".tsv", ".fdr_correction.correct_per_metadate.tsv", DE_results)
 		workflow.add_task(
-				"maaslin2.py -i [depends[0]] -m [depends[1]] -n [args[2]] -w [args[0]] -o [args[1]] > [args[3]] 2>&1",
-				depends = [feature_tsv, DE_metadata, TrackedExecutable("maaslin2.py")],
+				"metawibele_maaslin2 -i [depends[0]] -m [depends[1]] -n [args[2]] -w [args[0]] -o [args[1]] > [args[3]] 2>&1",
+				depends = [feature_tsv, DE_metadata, TrackedExecutable("metawibele_maaslin2")],
 				targets = [myresults],
 				args = [DE + "/" + "maaslin2_output", "all_results.tsv", threads, mylog],
 				cores = threads,
@@ -1563,8 +1563,8 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog, gene_catalog_c
 		## collect results info ##
 		mylog = re.sub(".tsv", ".tsv.log", DE_stat_results)
 		workflow.add_task(
-				"maaslin2_collection.py -a [depends[0]] -i [depends[1]] -o [args[0]] > [args[1]] 2>&1",
-				depends = [ratio_family_relab, myresults, TrackedExecutable("maaslin2_collection.py")],
+				"metawibele_maaslin2_collection -a [depends[0]] -s [depends[1]] -i [depends[2]] -o [args[0]] > [args[1]] 2>&1",
+				depends = [ratio_family_relab, DE_family, myresults, TrackedExecutable("metawibele_maaslin2_collection")],
 				targets = [DE_stat_results, DE_fold_results, DE_pre_results],
 				args = [DE_prefix, mylog],
 				cores = threads,
@@ -1573,8 +1573,8 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog, gene_catalog_c
 		## summary DA results ##
 		mylog = re.sub(".tsv", ".tsv.log", DE_summary_stat)
 		workflow.add_task(
-				"maaslin2_summary.py -a [depends[0]] -b [depends[1]] -c [depends[2]] -p [args[0]] -q [args[1]] -e [args[2]] -o [targets[0]] > [args[3]] 2>&1",
-				depends = [DE_stat_results, DE_fold_results, DE_pre_results, TrackedExecutable("maaslin2_summary.py")],
+				"metawibele_maaslin2_summary -a [depends[0]] -b [depends[1]] -c [depends[2]] -p [args[0]] -q [args[1]] -e [args[2]] -o [targets[0]] > [args[3]] 2>&1",
+				depends = [DE_stat_results, DE_fold_results, DE_pre_results, TrackedExecutable("metawibele_maaslin2_summary")],
 				targets = [DE_summary_stat],
 				args = [config.tshld_prevalence, config.tshld_qvalue, config.effect_size, mylog],
 				cores = threads,
@@ -1582,8 +1582,8 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog, gene_catalog_c
 
 		mylog = re.sub(".tsv", ".tsv.log", DE_detail)
 		workflow.add_task(
-				"maaslin2_annotator.py -s [depends[0]] -t [args[0]] -e [args[1]] -o [targets[0]] > [args[2]] 2>&1",
-				depends = [DE_summary_stat, TrackedExecutable("maaslin2_annotator.py")],
+				"metawibele_maaslin2_annotator -s [depends[0]] -t [args[0]] -e [args[1]] -o [targets[0]] > [args[2]] 2>&1",
+				depends = [DE_summary_stat, TrackedExecutable("metawibele_maaslin2_annotator")],
 				targets = [DE_detail],
 				args = [abundance_conf["rna_de"], config.effect_size, mylog],
 				cores = threads,
@@ -1686,8 +1686,8 @@ def integration_annotation (workflow, integration_conf,
 		myinputs.extend(proteinfamily_list)
 		mylog = re.sub(".tsv", ".tsv.log", summary_ann_family)
 		workflow.add_task(
-				"summary_function_annotation.py -l [depends[0]] -a [depends[1]] -o [targets[0]] > [args[0]] 2>&1",
-				depends = utilities.add_to_list(myinputs, TrackedExecutable("summary_function_annotation.py")),
+				"metawibele_summary_function_annotation -l [depends[0]] -a [depends[1]] -o [targets[0]] > [args[0]] 2>&1",
+				depends = utilities.add_to_list(myinputs, TrackedExecutable("metawibele_summary_function_annotation")),
 				targets = [summary_ann_family],
 				args = [mylog],
 				cores = threads,
@@ -1699,8 +1699,8 @@ def integration_annotation (workflow, integration_conf,
 		myinputs.append(uniref_annotation)
 		myinputs.extend(protein_list)
 		workflow.add_task(
-				"summary_function_annotation.py -l [depends[0]] -a [depends[1]] -o [targets[0]] > [args[0]] 2>&1",
-				depends = utilities.add_to_list(myinputs, TrackedExecutable("summary_function_annotation.py")),
+				"metawibele_summary_function_annotation -l [depends[0]] -a [depends[1]] -o [targets[0]] > [args[0]] 2>&1",
+				depends = utilities.add_to_list(myinputs, TrackedExecutable("metawibele_summary_function_annotation")),
 				targets = [summary_ann],
 				args = [mylog],
 				cores = threads,
@@ -1708,8 +1708,8 @@ def integration_annotation (workflow, integration_conf,
 
 		mylog = re.sub(".tsv", ".tsv.log", all_ann_family)
 		workflow.add_task(
-				"summary_all_annotation.py -a [depends[0]] -t [depends[1]] -o [targets[0]] > [args[0]] 2>&1",
-				depends = [summary_ann_family, taxonomy_annotation_family, TrackedExecutable("summary_all_annotation.py")],
+				"metawibele_summary_all_annotation -a [depends[0]] -t [depends[1]] -o [targets[0]] > [args[0]] 2>&1",
+				depends = [summary_ann_family, taxonomy_annotation_family, TrackedExecutable("metawibele_summary_all_annotation")],
 				targets = [all_ann_family],
 				args = [mylog],
 				cores = threads,
@@ -1717,8 +1717,8 @@ def integration_annotation (workflow, integration_conf,
 
 		mylog = re.sub(".tsv", ".tsv.log", all_ann)
 		workflow.add_task(
-				"summary_all_annotation.py -a [depends[0]] -t [depends[1]] -o [targets[0]] > [args[0]] 2>&1",
-				depends = [summary_ann, taxonomy_annotation, TrackedExecutable("summary_all_annotation.py")],
+				"metawibele_summary_all_annotation -a [depends[0]] -t [depends[1]] -o [targets[0]] > [args[0]] 2>&1",
+				depends = [summary_ann, taxonomy_annotation, TrackedExecutable("metawibele_summary_all_annotation")],
 				targets = [all_ann],
 				args = [mylog],
 				cores = threads,
@@ -1734,8 +1734,8 @@ def integration_annotation (workflow, integration_conf,
 		myinputs.append(uniref_annotation_family)
 		myinputs.extend(proteinfamily_list)
 		workflow.add_task(
-				"finalize_annotation.py -l [depends[0]] -a [depends[1]] -t [depends[2]] -u [depends[3]] -s protein_family -o [targets[0]] > [args[0]] 2>&1",
-				depends = utilities.add_to_list(myinputs, TrackedExecutable("finalize_annotation.py")),
+				"metawibele_finalize_annotation -l [depends[0]] -a [depends[1]] -t [depends[2]] -u [depends[3]] -s protein_family -o [targets[0]] > [args[0]] 2>&1",
+				depends = utilities.add_to_list(myinputs, TrackedExecutable("metawibele_finalize_annotation")),
 				targets = [final_ann_family, final_attr_family],
 				args = [mylog],
 				cores = threads,
@@ -1749,8 +1749,8 @@ def integration_annotation (workflow, integration_conf,
 		myinputs.append(uniref_annotation)
 		myinputs.extend(protein_list)
 		workflow.add_task(
-				"finalize_annotation.py -l [depends[0]] -a [depends[1]] -t [depends[2]] -u [depends[3]] -s protein -o [targets[0]] > [args[0]] 2>&1",
-				depends = utilities.add_to_list(myinputs, TrackedExecutable("finalize_annotation.py")),
+				"metawibele_finalize_annotation -l [depends[0]] -a [depends[1]] -t [depends[2]] -u [depends[3]] -s protein -o [targets[0]] > [args[0]] 2>&1",
+				depends = utilities.add_to_list(myinputs, TrackedExecutable("metawibele_finalize_annotation")),
 				targets = [final_ann, final_attr],
 				args = [mylog],
 				cores = threads,
