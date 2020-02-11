@@ -28,6 +28,7 @@ THE SOFTWARE.
 import os
 import sys
 import argparse
+import re
 
 # try to import the python2 ConfigParser
 # if unable to import, then try to import the python3 configparser
@@ -445,14 +446,17 @@ abundance_detection_level = 0	# cutoff for abundance detection
 maaslin2_dir = get_item(config_items, "maaslin2", "maaslin2_output", "string")
 maaslin2_dir = abundance_dir + "/" + maaslin2_dir + "/maaslin2_output/" 
 #maaslin2_dir = "/n/scratchlfs/huttenhower_lab/yancong/assembly-based/HMP2/combined/HUMAnN2/maaslin2_output/"
+meta_type = get_item(config_items, "maaslin2", "meta_type", "string")
 contrast_status = get_item(config_items, "maaslin2", "contrast_status", "string")
-tmp = contrast_status.split("|")
+contrast_status = re.sub("\"", "", contrast_status)
+tmp = contrast_status.split(";")
 contrast_status = {}
 for item in tmp:
 	tmp1 = item.split(":")
 	contrast_status[tmp1[0]] = tmp1[1]
 ref_status = get_item(config_items, "maaslin2", "ref_status", "string")
-tmp = ref_status.split("|")
+ref_status = re.sub("\"", "", ref_status)
+tmp = ref_status.split(";")
 ref_status = {}
 for item in tmp:
 	tmp1 = item.split(":")
