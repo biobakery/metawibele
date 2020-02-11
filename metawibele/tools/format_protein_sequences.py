@@ -227,7 +227,7 @@ def output_info (gff, types, partial, outfile):
 # ==============================================================
 ###########  Main processing ############
 # ==============================================================
-if __name__ == '__main__':
+def main():	
 	### get arguments ###
 
 	values = get_args()
@@ -247,3 +247,6 @@ if __name__ == '__main__':
 	sys.stderr.write("### Finish format_protein_sequences.py ####\n\n\n")
 
 # end: main
+
+if __name__ == '__main__':
+	main()

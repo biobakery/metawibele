@@ -133,8 +133,7 @@ def output_info (sampleid, outfile):
 #==============================================================
 ###########  Main processing ############
 #==============================================================
-if __name__ == '__main__':
-	
+def main():
 	### get arguments ###
 	values = get_args()
 
@@ -149,3 +148,6 @@ if __name__ == '__main__':
 	sys.stderr.write("### Finish combine_gene_sequences.py ####\n\n\n")
 
 # end: main
+
+if __name__ == '__main__':
+	main()

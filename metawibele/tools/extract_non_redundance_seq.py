@@ -85,8 +85,7 @@ def output_info (AA_seq, seqid, outfile):
 #==============================================================
 ###########  Main processing ############
 #==============================================================
-if __name__ == '__main__':
-	
+def main():	
 	### get arguments ###
 	parser=argparse.ArgumentParser()
 	parser.add_argument('-r', help='input reference sequences file', required=True)
@@ -110,3 +109,6 @@ if __name__ == '__main__':
 	sys.stderr.write("### Finish extract_non_redundance_seq.py ####\n\n\n")
 
 # end: main
+
+if __name__ == '__main__':
+	main()

@@ -80,8 +80,7 @@ def output_info (fna_seq, seqid, outfile):
 #==============================================================
 ###########  Main processing ############
 #==============================================================
-if __name__ == '__main__':
-	
+def main():	
 	### get arguments ###
 	parser=argparse.ArgumentParser()
 	parser.add_argument('-g', help='input total gene nucleotide sequences file', required=True)
@@ -105,3 +104,6 @@ if __name__ == '__main__':
 	sys.stderr.write("### Finish extract_protein_coding_genes.py ####\n\n\n")
 
 # end: main
+
+if __name__ == '__main__':
+	main()

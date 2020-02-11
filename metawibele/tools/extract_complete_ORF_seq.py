@@ -97,8 +97,7 @@ def output_info (genes, infile, outfile):
 #==============================================================
 ###########  Main processing ############
 #==============================================================
-if __name__ == '__main__':
-	
+def main():	
 	### get arguments ###
 	parser=argparse.ArgumentParser()
 	parser.add_argument('-t', help='specify gene type, e.g. complete', required=True)
@@ -124,3 +123,6 @@ if __name__ == '__main__':
 	sys.stderr.write("### Finish extract_complete_ORF_seq.py ####\n\n\n")
 
 # end: main
+
+if __name__ == '__main__':
+	main()

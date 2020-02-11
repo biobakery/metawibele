@@ -155,8 +155,7 @@ def assign_counts (counts, samples, outfile):
 #==============================================================
 ###########  Main processing ############
 #==============================================================
-if __name__ == '__main__':
-	
+def main():
 	### get arguments ###
 	values = get_args()
 
@@ -182,3 +181,6 @@ if __name__ == '__main__':
 	sys.stderr.write("### Finish gene_catalog_abundance.py ####\n\n\n")
 
 # end: main
+
+if __name__ == '__main__':
+	main()

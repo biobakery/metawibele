@@ -114,8 +114,7 @@ def extract_count_info (work_dir, sam_file, ref_seq, thread):
 #==============================================================
 ###########  Main processing ############
 #==============================================================
-if __name__ == '__main__':
-	
+def main():	
 	### get arguments ###
 	values = get_args()
 
@@ -134,3 +133,7 @@ if __name__ == '__main__':
 	sys.stderr.write("### Finish gene_abundance.py ####\n\n\n")
 
 # end: main
+
+if __name__ == '__main__':
+	main()
+	
