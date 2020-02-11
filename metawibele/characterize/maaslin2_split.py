@@ -30,6 +30,7 @@ import os
 import os.path
 import re
 import argparse
+import multiprocessing as mp
 
 try:
 	from metawibele import config
@@ -101,19 +102,33 @@ def collect_metadata (meta_file, spe_type, meta, outfile):
 #==============================================================
 # run MAasLin2
 #==============================================================
-def run_maaslin2 (feature, metadata, split_num, workdir, output, outfile):
+def run_maaslin2 (feature, metadata, output):
 	myexe = config.maaslin2_cmmd
-	myopt = " ".join([str(i) for i in (config.maaslin2_cmmd_opts)])
+	#myopt = " ".join([str(i) for i in (config.maaslin2_cmmd_opts)])
 	mytranspos = config.transpose_cmmd
 	mypcl = config.pcl_utils
 	myutils = config.maaslin2_utils
+	prefix = re.sub(".tsv", "", os.path.basename(feature))
+	myoutput = os.path.join(output, prefix)
 
-	if split_num == 1:
-		mycmd = "Rscript " + myexe + " " + feature + " " + metadata + " " + ouput + " " + myopt
-		print(mycmd)
-		os.system(mycmd)
-	else:
-		mytrans = re.sub(".tsv", ".pcl", feature)
+	# collect features:
+	features = {}
+	open_file = open(feature, "r")
+	title = open_file.readline()
+	for line in open_file:
+		line = line.strip()
+		if not len(line):
+			continue
+		info = line.split("\t")
+		myid = info[0]
+		features[myid] = line
+	# foreach line
+	open_file.close()
+
+	for myf in features.keys():
+		myfile = os.path.join(output, myf + ".tsv") 
+		mytrans = re.sub(".tsv", ".pcl", myfile)
+
 		mym = re.search("([^\/]+)$", mytrans)
 		mybase = mym.group(1)
 		mybase = re.sub(".pcl", ".split", mybase)
@@ -156,6 +171,69 @@ def run_maaslin2 (feature, metadata, split_num, workdir, output, outfile):
 		open_file.close()
 	# if split files
 
+# run_maaslin2
+
+def start_maaslin2 (feature, metadata, split_num, workdir, output, outfile):
+	myexe = config.maaslin2_cmmd
+	myopt = " ".join([str(i) for i in (config.maaslin2_cmmd_opts)])
+	mytranspos = config.transpose_cmmd
+	mypcl = config.pcl_utils
+	myutils = config.maaslin2_utils
+
+	# Step 1: Init multiprocessing.Pool()
+	pool = mp.Pool(mp.cpu_count())
+
+	# Step 2: pool.apply
+	results = [pool.apply(howmany_within_range, args=(row, 4, 8)) for row in data]
+
+	# Step3: close processes
+	pool.close() 
+
+	# Step4: collect results
+
+
+	if split_num == 1:
+		mycmd = "Rscript " + myexe + " " + feature + " " + metadata + " " + ouput + " " + myopt
+		print(mycmd)
+		os.system(mycmd)
+	else:
+		mytrans = re.sub(".tsv", ".pcl", feature)
+		mym = re.search("([^\/]+)$", mytrans)
+		mybase = mym.group(1)
+		mybase = re.sub(".pcl", ".split", mybase)
+		if not os.path.isfile(mytrans):
+			os.system(mytranspos + " < " + feature + " > " + mytrans)
+		# split files
+		mycmd = "Rscript " + myutils + " " + "split" + " " + mytrans + " " + mybase + " " + mypcl + " " + split_num
+		print(mycmd)
+		os.system(mycmd)
+		os.system("ls " + mybase + "*.pcl > feature.pcl.list")
+		os.system("mkdir -p " + output)
+		os.system("mv " + mybase + "*.pcl" + " " + output)
+		myout = workdir + "/" + outfile
+		os.system("rm -f " + myout)
+		open_file = open("feature.pcl.list", "r")
+		for i in open_file:
+			i = i.strip()
+			if not len(i):
+				continue
+			myfeature = re.sub(".pcl", ".tsv", i)
+			myinput = output + "/" + myfeature
+			mycmd = mytranspos + " < " + output + "/" + i + " > " + myinput
+			print(mycmd)
+			os.system(mycmd)
+			myoutput = re.sub(".pcl", "", i)
+			myoutput = output + "/" + myoutput
+			mycmd = "Rscript " + myexe + " " + myinput + " " + metadata + " " + myoutput + " " + myopt
+			print(mycmd)
+			os.system(mycmd)
+			if not os.path.isfile(myout):
+				os.system("less " + myoutput + "/all_results.tsv > " + myout)
+			else:
+				os.system("sed -e 1d " + myoutput + "/all_results.tsv >> " + myout)
+		# foreach split file
+		open_file.close()
+	# if split files
 # run_maaslin2
 
 

@@ -517,8 +517,7 @@ def summary_info (folds, p_cutoff, q_value_cutoff, outfile):
 #==============================================================
 ###########  Main processing ############
 #==============================================================
-if __name__ == '__main__':
-	
+def main():	
 	### get arguments ###
 	values = get_args()
 
@@ -540,3 +539,6 @@ if __name__ == '__main__':
 	sys.stderr.write("### Finish maaslin2_summary.py ####\n\n\n")
 
 # end: main
+
+if __name__ == '__main__':
+	main()

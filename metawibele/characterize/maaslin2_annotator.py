@@ -118,8 +118,7 @@ def stat_annotation (statfile, mytype, effect_name, outfile):
 #==============================================================
 ###########  Main processing ############
 #==============================================================
-if __name__ == '__main__':
-	
+def main():	
 	### get arguments ###
 	values = get_args()
 
@@ -133,3 +132,6 @@ if __name__ == '__main__':
 	sys.stderr.write("### Finish maaslin2_annotator.py ####\n\n\n")
 
 # end: main
+
+if __name__ == '__main__':
+	main()

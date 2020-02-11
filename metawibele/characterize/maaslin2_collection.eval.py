@@ -53,9 +53,6 @@ def get_args():
 	parser.add_argument('-a', "--abundance-table",
 	                    help='input abundance table, features as rows and samples as columns',
 	                    required=True)
-	parser.add_argument('-s', "--smoothed-abundance",
-	                    help='input smoothed abundance table, features as rows and samples as columns',
-	                    required=True)
 	parser.add_argument('-i', "--maaslin2-results",
 	                    help='input the statistics results',
 	                    required=True)
@@ -95,13 +92,6 @@ def collect_DA_info (DA_file):
 		meta = info[titles["metadata"]]
 		value = info[titles["value"]]
 		feature = info[titles["feature"]]
-		if re.search("Cluster_[\d]+\.", feature):
-			mym = re.search("(Cluster_[\d]+)", feature)
-			myid = mym.group(1)
-			feature = re.sub(myid + "\.", myid + "|", feature)
-			feature = re.sub("\.\.", "@ ", feature)
-			feature = re.sub("\.", " ", feature)
-			feature = re.sub("\@", ".", feature)
 		coef = info[titles["coef"]]
 		stderr = info[titles["stderr"]]
 		total = info[titles["N"]]
@@ -140,8 +130,8 @@ def collect_DA_info (DA_file):
 # collect metadata for each sample
 #==============================================================
 def collect_meta_info (meta_file):
-	meta_case = {}
-	meta_control = {}
+	meta_contrast = {}
+	meta_ref = {}
 	titles = {}
 	open_file = open(meta_file, "r")
 	line = open_file.readline()
@@ -179,30 +169,30 @@ def collect_meta_info (meta_file):
 			mycontrast = config.contrast_status[item].split(",")
 			if myitem in myrefs:  # ref sample
 				for mycmp in myrefs[myitem]:
-					if not mycmp in meta_control:
-						meta_control[mycmp] = {}
-					meta_control[mycmp][sample] = ""
+					if not mycmp in meta_ref:
+						meta_ref[mycmp] = {}
+					meta_ref[mycmp][sample] = ""
 			if myitem in mycons: # contrast sample
 				for mycmp in mycons[myitem]:
-					if not mycmp in meta_case:
-						meta_case[mycmp] = {}
-					meta_case[mycmp][sample] = ""
+					if not mycmp in meta_contrast:
+						meta_contrast[mycmp] = {}
+					meta_contrast[mycmp][sample] = ""
 	# foreach line
 	open_file.close()
 	sys.stderr.write("Collect metadata info......done\n")
-	return meta_case, meta_control
+	return meta_contrast, meta_ref
 # collect_meta_info
 
 
 # ==============================================================
 # collect abundance info and fold change
 # ============================ =================================
-def collect_abundance_info (abundance_file, DA_cluster, meta_case, meta_control):
+def collect_abundance_info (abundance_file, DA_cluster, meta_contrast, meta_ref):
 	samples = {}
 	total_value = {}
 	abundance = {}
-	meta_case_new = {}
-	meta_control_new = {}
+	meta_contrast_new = {}
+	meta_ref_new = {}
 	open_file = open(abundance_file, "r")
 	line = open_file.readline()
 	line = line.strip()
@@ -227,8 +217,8 @@ def collect_abundance_info (abundance_file, DA_cluster, meta_case, meta_control)
 			item = info[myindex]
 			mys = samples[myindex]
 			for mycmp in cmp_types:
-				if mycmp in meta_case:
-					if mys in meta_case[mycmp]:
+				if mycmp in meta_contrast:
+					if mys in meta_contrast[mycmp]:
 						if not cluster in total_value:
 							total_value[cluster] = {}
 						if not mycmp in total_value[cluster]:
@@ -240,11 +230,11 @@ def collect_abundance_info (abundance_file, DA_cluster, meta_case, meta_control)
 						if not cluster in abundance:
 							abundance[cluster] = {}
 						abundance[cluster][mys] = item
-						if not mycmp in meta_case_new:
-							meta_case_new[mycmp] = {}
-						meta_case_new[mycmp][mys] = ""
-				if mycmp in meta_control:
-					if mys in meta_control[mycmp]:
+						if not mycmp in meta_contrast_new:
+							meta_contrast_new[mycmp] = {}
+						meta_contrast_new[mycmp][mys] = ""
+				if mycmp in meta_ref:
+					if mys in meta_ref[mycmp]:
 						if not cluster in total_value:
 							total_value[cluster] = {}
 						if not mycmp in total_value[cluster]:
@@ -256,9 +246,9 @@ def collect_abundance_info (abundance_file, DA_cluster, meta_case, meta_control)
 						if not cluster in abundance:
 							abundance[cluster] = {}
 						abundance[cluster][mys] = item
-						if not mycmp in meta_control_new:
-							meta_control_new[mycmp] = {}
-						meta_control_new[mycmp][mys] = ""
+						if not mycmp in meta_ref_new:
+							meta_ref_new[mycmp] = {}
+						meta_ref_new[mycmp][mys] = ""
 			myindex = myindex + 1
 	# foreah sample
 	open_file.close()
@@ -269,26 +259,22 @@ def collect_abundance_info (abundance_file, DA_cluster, meta_case, meta_control)
 	folds = {}
 	for myclust in total_value.keys():
 		for mycmp in total_value[myclust].keys():
+			#myyes = 0.000001
+			#myno = 0.000001
 			myyes = 0
 			myno = 0
-			logyes = 0
-			logno = 0
 			myyes_sd = 0
 			myno_sd = 0
 			if "yes" in total_value[myclust][mycmp]:
 				if len(total_value[myclust][mycmp]["yes"]) > 0:
 					#myyes = utilities.mean(total_value[myclust][mycmp]["yes"])
 					myyes = 1.0 * sum(total_value[myclust][mycmp]["yes"]) / len(total_value[myclust][mycmp]["yes"])
-					logyes = [math.log(k) for k in total_value[myclust][mycmp]["yes"]]
-					logyes = 1.0 * sum(logyes) / len(total_value[myclust][mycmp]["yes"])
 				if len(total_value[myclust][mycmp]["yes"]) > 1:
 					myyes_sd = utilities.stddev(total_value[myclust][mycmp]["yes"], ddof=1)
 			if "no" in total_value[myclust][mycmp]:
 				if len(total_value[myclust][mycmp]["no"]) > 0:
 					#myno = utilities.mean(total_value[myclust][mycmp]["no"])
 					myno = 1.0 * sum(total_value[myclust][mycmp]["no"]) / len(total_value[myclust][mycmp]["no"])
-					logno = [math.log(k) for k in total_value[myclust][mycmp]["no"]]
-					logno = 1.0 * sum(logno) / len(total_value[myclust][mycmp]["no"])
 				if len(total_value[myclust][mycmp]["no"]) > 1:
 					myno_sd = utilities.stddev(total_value[myclust][mycmp]["no"], ddof=1)
 			myyes_real = myyes
@@ -301,8 +287,8 @@ def collect_abundance_info (abundance_file, DA_cluster, meta_case, meta_control)
 				else:
 					myfold = "Inf"
 			else:
-				myfold = math.log(myyes / (myno * 1.0))
-			myvar = logyes - logno
+				myfold = myyes / (myno * 1.0)
+			myvar = myyes_real - myno_real
 			if myyes_sd == 0 and myno_sd == 0:
 				# debug
 				print("SD is zero!\t" + mycmp + "\t" + myclust + "\t" + str(myyes_real) + "\t" + str(myno_real))
@@ -340,7 +326,7 @@ def collect_abundance_info (abundance_file, DA_cluster, meta_case, meta_control)
 				prevalent_mymean = 1.0 * sum(prevalent_tmp)/len(prevalent_tmp)
 			if not myclust in folds:
 				folds[myclust] = {}
-			folds[myclust][mycmp] = str(myfold) + "\t" + str(myeffect) + "\t" + str(myvar) + "\t" + str(mymean) + "\t" + str(mean_case) + "\t" + str(mean_control) + "\t" + str(prevalent_mymean) + "\t" + str(prevalent_mean_case) + "\t" + str(prevalent_mean_control)
+			folds[myclust][mycmp] = str(myvar) + "\t" + str(myfold) + "\t" + str(myeffect) + "\t" + str(mymean) + "\t" + str(mean_case) + "\t" + str(mean_control) + "\t" + str(prevalent_mymean) + "\t" + str(prevalent_mean_case) + "\t" + str(prevalent_mean_control)
 	# foreach cluster
 	total_value = {}
 	tmp1 = []
@@ -348,7 +334,7 @@ def collect_abundance_info (abundance_file, DA_cluster, meta_case, meta_control)
 	tmp = []
 	sample = {}
 	sys.stderr.write("Collect abundance fold change......done\n")
-	return folds, abundance, meta_case_new, meta_control_new
+	return folds, abundance, meta_contrast_new, meta_ref_new
 
 # function collect_abundance_info_fold
 
@@ -356,9 +342,9 @@ def collect_abundance_info (abundance_file, DA_cluster, meta_case, meta_control)
 # ==============================================================
 # collect prevalence
 # ==============================================================
-def collect_prevalence_info (abundance_file, DA_cluster, meta_case, meta_control):  # summary_peptide_family_abundance.tsv
-	pre_meta_case = {}
-	pre_meta_control = {}
+def collect_prevalence_info (abundance_file, DA_cluster, meta_contrast, meta_ref):  # summary_peptide_family_abundance.tsv
+	pre_meta_contrast = {}
+	pre_meta_ref = {}
 	samples = {}
 	open_file = open(abundance_file, "r")
 	sys.stderr.write("Collect prevalence info......starting\n")
@@ -384,28 +370,28 @@ def collect_prevalence_info (abundance_file, DA_cluster, meta_case, meta_control
 			item = info[myindex]
 			mys = samples[myindex]
 			for mycmp in cmp_types:
-				if mycmp in meta_case:
-					if mys in meta_case[mycmp]:
+				if mycmp in meta_contrast:
+					if mys in meta_contrast[mycmp]:
 						if item != "NA" and item != "NaN" and item != "nan" and item != "Inf" and item != "inf":
 							count = float(item)
 							#if count > float(config.abundance_detection_level):
 							if count != 0:
-								if not cluster in pre_meta_case:
-									pre_meta_case[cluster] = {}
-								if not mycmp in pre_meta_case[cluster]:
-									pre_meta_case[cluster][mycmp] = {}
-								pre_meta_case[cluster][mycmp][mys] = ""
-				if mycmp in meta_control:
-					if mys in meta_control[mycmp]:
+								if not cluster in pre_meta_contrast:
+									pre_meta_contrast[cluster] = {}
+								if not mycmp in pre_meta_contrast[cluster]:
+									pre_meta_contrast[cluster][mycmp] = {}
+								pre_meta_contrast[cluster][mycmp][mys] = ""
+				if mycmp in meta_ref:
+					if mys in meta_ref[mycmp]:
 						if item != "NA" and item != "NaN" and item != "nan" and item != "Inf" and item != "inf":
 							count = float(item)
 							#if count > float(config.abundance_detection_level):
 							if count != 0:
-								if not cluster in pre_meta_control:
-									pre_meta_control[cluster] = {}
-								if not mycmp in pre_meta_control[cluster]:
-									pre_meta_control[cluster][mycmp] = {}
-								pre_meta_control[cluster][mycmp][mys] = ""
+								if not cluster in pre_meta_ref:
+									pre_meta_ref[cluster] = {}
+								if not mycmp in pre_meta_ref[cluster]:
+									pre_meta_ref[cluster][mycmp] = {}
+								pre_meta_ref[cluster][mycmp][mys] = ""
 			myindex = myindex + 1
 	# foreach family
 	open_file.close()
@@ -414,21 +400,21 @@ def collect_prevalence_info (abundance_file, DA_cluster, meta_case, meta_control
 	# get prevalence
 	prevalence = {}
 	sys.stderr.write("Calculate prevalence info......starting\n")
-	for mycmp in sorted(meta_control.keys()):
-		meta_yes_num = len(meta_case[mycmp].keys())
-		meta_no_num = len(meta_control[mycmp].keys())
+	for mycmp in sorted(meta_ref.keys()):
+		meta_yes_num = len(meta_contrast[mycmp].keys())
+		meta_no_num = len(meta_ref[mycmp].keys())
 		total_num = meta_yes_num + meta_no_num
 		#print(">>" + mycmp + "\t" + str(meta_yes_num) + "\t" + str(meta_no_num) + "\t" + str(total_num))
 
 		for myclust in DA_cluster.keys():
 			mymeta_yes = 0
 			mymeta_no = 0
-			if myclust in pre_meta_case:
-				if mycmp in pre_meta_case[myclust]:
-					mymeta_yes = len(pre_meta_case[myclust][mycmp].keys())
-			if myclust in pre_meta_control:
-				if mycmp in pre_meta_control[myclust]:
-					mymeta_no = len(pre_meta_control[myclust][mycmp].keys())
+			if myclust in pre_meta_contrast:
+				if mycmp in pre_meta_contrast[myclust]:
+					mymeta_yes = len(pre_meta_contrast[myclust][mycmp].keys())
+			if myclust in pre_meta_ref:
+				if mycmp in pre_meta_ref[myclust]:
+					mymeta_no = len(pre_meta_ref[myclust][mycmp].keys())
 			#print(myclust + "\t" + str(mymeta_yes) + "\t" + str(mymeta_no))
 			pre_yes = 1.0 * mymeta_yes / meta_yes_num
 			pre_no = 1.0 * mymeta_no / meta_no_num
@@ -438,8 +424,8 @@ def collect_prevalence_info (abundance_file, DA_cluster, meta_case, meta_control
 			prevalence[myclust][mycmp] = str(pre) + "\t" + str(pre_yes) + "\t" + str(pre_no)
 	# foreach cluster
 	sys.stderr.write("Calculate prevalence info......done\n")
-	pre_meta_case = {}
-	pre_meta_control = {}
+	pre_meta_contrast = {}
+	pre_meta_ref = {}
 	samples = {}
 	return prevalence
 
@@ -461,26 +447,25 @@ def output_DA_info (stats, outfile):
 	open_file.close()
 # output_info
 
-# output abundance
-def output_abundance_info (folds, abundance, meta_control, meta_case, outfile):
-	'''
-	for mycmp in sorted(meta_control.keys()):
+def output_abundance_info (folds, abundance, meta_ref, meta_contrast, outfile):
+	#### output abundance ####
+	for mycmp in sorted(meta_ref.keys()):
 		title = "ID"
-		title = title + "\t" + "\t".join(meta_case[mycmp].keys())
-		title = title + "\t" + "\t".join(meta_control[mycmp].keys())
+		title = title + "\t" + "\t".join(meta_contrast[mycmp].keys())
+		title = title + "\t" + "\t".join(meta_ref[mycmp].keys())
 		outfile1 = re.sub(".tsv", "." + mycmp + ".abundance.tsv", outfile)
 		open_file = open(outfile1, "w")
 		open_file.write(title + "\n")
 		for myclust in sorted(abundance.keys()):
 			mystr = myclust
-			for mys in sorted(meta_case[mycmp].keys()):
+			for mys in sorted(meta_contrast[mycmp].keys()):
 				if mys in abundance[myclust]:
 					mystr = mystr + "\t" + str(abundance[myclust][mys])
 				else:
 					# debug
 					#print("Contrast sample abundance not exist!\t" + myclust + "\t" + mys)
 					mystr = mystr + "\t0"
-			for mys in sorted(meta_control[mycmp].keys()):
+			for mys in sorted(meta_ref[mycmp].keys()):
 				if mys in abundance[myclust]:
 					mystr = mystr + "\t" + str(abundance[myclust][mys])
 				else:
@@ -490,10 +475,9 @@ def output_abundance_info (folds, abundance, meta_control, meta_case, outfile):
 			open_file.write(mystr + "\n")
 		open_file.close()
 	# foreach cmp type
-	'''
 
 	data_file = re.sub(".tsv", ".fold.tsv", outfile)
-	title = utilities.PROTEIN_FAMILY_ID + "\tcmp_type\tlog(FC)\tCohen's_d\tmean(log)\tmean_abundance\tmean_abundance_case\tmean_abundance_control\tmean_prevalent_abundance\tmean_prevalent_abundance_case\tmean_prevalent_abundance_control"
+	title = utilities.PROTEIN_FAMILY_ID + "\tcmp_type\tvalueChange\tfoldChange\teffectSize\tmean_abundance\tmean_abundance_case\tmean_abundance_control\tmean_prevalent_abundance\tmean_prevalent_abundance_case\tmean_prevalent_abundance_control"
 	open_file = open(data_file, "w")
 	open_file.write(title + "\n")
 	for myid in sorted(folds.keys()):
@@ -502,8 +486,8 @@ def output_abundance_info (folds, abundance, meta_control, meta_case, outfile):
 	open_file.close()
 # output_abundance_info
 
-# output prevalence
 def output_prevalence_info (prevalence, outfile):
+	#### output prevalence ####
 	outfile = re.sub(".tsv", ".prevalence.tsv", outfile)
 	title = utilities.PROTEIN_FAMILY_ID + "\tcmp_type\tprevalence\tprevalence_case\tprevalence_control"
 	open_file = open(outfile, "w")
@@ -519,8 +503,7 @@ def output_prevalence_info (prevalence, outfile):
 #==============================================================
 ###########  Main processing ############
 #==============================================================
-if __name__ == '__main__':
-	
+def main():
 	### get arguments ###
 	values = get_args()
 
@@ -532,17 +515,17 @@ if __name__ == '__main__':
 	sys.stderr.write("Get stat info......starting\n")
 	DA_cluster = collect_DA_info (values.maaslin2_results)
 	if values.metadata == "none":
-		meta_case, meta_control = collect_meta_info (config.metadata)
+		meta_contrast, meta_ref = collect_meta_info (config.metadata)
 	else:
-		meta_case, meta_control = collect_meta_info (values.metadata)
-	folds, abundance, meta_case, meta_control = collect_abundance_info (values.smoothed_abundance, DA_cluster, meta_case, meta_control)
-	prevalence = collect_prevalence_info (values.abundance_table, DA_cluster, meta_case, meta_control)
+		meta_contrast, meta_ref = collect_meta_info (values.metadata)
+	folds, abundance, meta_contrast, meta_ref = collect_abundance_info (values.abundance_table, DA_cluster, meta_contrast, meta_ref)
+	prevalence = collect_prevalence_info (values.abundance_table, DA_cluster, meta_contrast, meta_ref)
 	sys.stderr.write("Get stat info......done\n")
 
 	### output info ###
 	sys.stderr.write("Output stat file......starting\n")
 	output_DA_info (DA_cluster, values.output)
-	output_abundance_info(folds, abundance, meta_control, meta_case, values.output)
+	output_abundance_info(folds, abundance, meta_ref, meta_contrast, values.output)
 	output_prevalence_info(prevalence, values.output)
 	sys.stderr.write("Output stat file......done\n")
 	
@@ -550,3 +533,7 @@ if __name__ == '__main__':
 	sys.stderr.write("### Finish maaslin2_collection.py ####\n\n\n")
 
 # end: main
+
+
+if __name__ == '__main__':
+	main()
