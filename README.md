@@ -1,6 +1,6 @@
 # MetaWIBELE User Manual
 
-**MetaWIBELE** (**W**orkflow to **I**dentify novel **B**ioactive **Ele**ments in the microbiome) is a computational pipeline that identifies novel bioactive microbial gene products from metagenomes and finds new immunomodulatory gene families, especially targeting secreted/extracellular proteins to enrich for likely host interactors. The prioritized list of gene products can be further used for downstream experimental validation. MetaWIBELE is available as module of bioBakery [bioBakery repository](https://github.com/biobakery/metawibele).
+**MetaWIBELE** (**W**orkflow to **I**dentify novel **B**ioactive **Ele**ments in the microbiome) is a computational pipeline that identifies novel bioactive microbial gene products from metagenomes and finds new immunomodulatory gene families, especially targeting secreted/extracellular proteins to enrich for likely host interactors. The prioritized list of gene products can be further used for downstream experimental validation. MetaWIBELE is available as module of bioBakery [bioBakery repository](https://github.com/biobakery).
 
 ## Citing MetaWIBELE
 
