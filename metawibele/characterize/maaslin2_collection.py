@@ -77,21 +77,20 @@ def get_args():
 def collect_DA_info (DA_file):
 	stats = {}
 	titles = {}
-	if config.meta_type in config.contrast_status:
-		contrasts = config.contrast_status[config.meta_type].split(",")
-	else:
-		sys.exit("No contrast status for the specified metadata!\t" + config.meta_type)
-	if config.meta_type in config.ref_status:
-		ref_status = config.ref_status[config.meta_type].split(",")
-	else:
-		sys.exit("No reference status for the specified metadata!\t" + config.meta_type)
 	cons = {}
-	for item in ref_status:
-		mym = re.search("([\S]+)_vs_([\S]+)", item)
-		mycon = mym.group(1)
-		myref = mym.group(2)
-		if mycon in contrasts:
-			cons[mycon] = item
+	for myphe in config.phenotype:
+		if myphe in config.contrast_status:
+			tmp = config.contrast_status[myphe].split(",")
+			for item in tmp:
+				if re.search("|", item): 
+					print(item)
+					mym = re.search("([\S]+)\|([\S]+)", item)
+					mycon = mym.group(1)
+					item = re.sub("\|", "_vs_", item)
+					cons[mycon] = item
+				else:
+					sys.exit("Not correct format for case-control paris for the specified metadata!\t" + myphe + "\t" + item)
+
 	open_file = open(DA_file, "r")
 	line = open_file.readline()
 	line = line.strip()
@@ -135,7 +134,22 @@ def collect_DA_info (DA_file):
 	open_file.close()
 	sys.stderr.write("Collect DA info......done\n")
 
-	return stats
+	# select ovalapped features based on minimum q-value
+	qvalues = {}
+	stats_flt = {}
+	for myf in stats.keys():
+		myq_min = 10
+		mycmp_min = "NA"
+		for mycmp in stats[myf].keys():
+			myq = float(stats[myf][mycmp].split("\t")[-1])
+			if myq < myq_min:
+				myq_min = myq
+				mycmp_min = mycmp
+		if not myf in stats_flt:
+			stats_flt[myf] = {}
+		stats_flt[myf][mycmp_min] = stats[myf][mycmp_min]
+
+	return stats, stats_flt
 # collect_DA_info
 
 
@@ -147,14 +161,39 @@ def collect_meta_info (meta_file):
 	meta_case = {}
 	meta_control = {}
 	titles = {}
+	titles2 = {}
 	open_file = open(meta_file, "r")
 	line = open_file.readline()
 	line = line.strip()
 	info = line.split("\t")
-	#metas = config.ref_status.keys()
 	sys.stderr.write("Collect metadata info......starting\n")
 	for item in info:
 		titles[item] = info.index(item)
+		titles2[info.index(item)] = item
+	myrefs = {}
+	mycons = {}
+	for myphe in config.phenotype:
+		if myphe in titles:
+			item = myphe
+			myindex = titles[item]
+			if not item in config.contrast_status:
+				sys.exit("No metadata variable in contrast status!\t" + item)
+			mycontrast = config.contrast_status[item].split(",")
+			for x in mycontrast:
+				if re.search("|", x):
+					mym = re.search("([\S]+)\|([\S]+)", x)
+					mycon_tmp = mym.group(1)
+					myref_tmp = mym.group(2)
+					x = re.sub("\|", "_vs_", x)
+					if not myref_tmp in myrefs:
+						myrefs[myref_tmp] = []
+					myrefs[myref_tmp].append(x)
+					if not mycon_tmp in mycons:
+						mycons[mycon_tmp] = []
+					mycons[mycon_tmp].append(x)
+				else:
+					sys.exit("Not correct format for case-control paris for the specified metadata!\t" + config.phenotype + "\t" + item)
+	
 	for line in open_file:
 		line = line.strip()
 		if not len(line):
@@ -164,34 +203,22 @@ def collect_meta_info (meta_file):
 		if re.search("^[\d]+$", sample):
 			sample = config.study + "_" + sample
 		mymeta = ""
-		if config.meta_type in titles:
-			item = config.meta_type
-			myindex = titles[item]
+		myindex = 1
+		while myindex < len(info):
+			myphe = titles2[myindex]
 			myitem = info[myindex]
-			myref = config.ref_status[item].split(",")
-			myrefs = {}
-			mycons = {}
-			for x in myref:
-				mym = re.search("([\S]+)_vs_([\S]+)", x)
-				mycon_tmp = mym.group(1)
-				myref_tmp = mym.group(2)
-				if not myref_tmp in myrefs:
-					myrefs[myref_tmp] = []
-				myrefs[myref_tmp].append(x)
-				if not mycon_tmp in mycons:
-					mycons[mycon_tmp] = []
-				mycons[mycon_tmp].append(x)
-			mycontrast = config.contrast_status[item].split(",")
-			if myitem in myrefs:  # ref sample
-				for mycmp in myrefs[myitem]:
-					if not mycmp in meta_control:
-						meta_control[mycmp] = {}
-					meta_control[mycmp][sample] = ""
-			if myitem in mycons: # contrast sample
-				for mycmp in mycons[myitem]:
-					if not mycmp in meta_case:
-						meta_case[mycmp] = {}
-					meta_case[mycmp][sample] = ""
+			if myphe in config.phenotype:
+				if myitem in myrefs:  # ref sample
+					for mycmp in myrefs[myitem]:
+						if not mycmp in meta_control:
+							meta_control[mycmp] = {}
+						meta_control[mycmp][sample] = ""
+				if myitem in mycons: # contrast sample
+					for mycmp in mycons[myitem]:
+						if not mycmp in meta_case:
+							meta_case[mycmp] = {}
+						meta_case[mycmp][sample] = ""
+			myindex = myindex + 1
 	# foreach line
 	open_file.close()
 	sys.stderr.write("Collect metadata info......done\n")
@@ -569,24 +596,37 @@ def main():
 	
 	### collect abundance info ###
 	sys.stderr.write("Get stat info......starting\n")
-	DA_cluster = collect_DA_info (values.maaslin2_results)
+	DA_cluster, DA_cluster_minQ = collect_DA_info (values.maaslin2_results)
 	if values.metadata == "none":
 		meta_case, meta_control = collect_meta_info (config.metadata)
 	else:
 		meta_case, meta_control = collect_meta_info (values.metadata)
 	sys.stderr.write("Get stat info......done\n")
+
+	# stat all info
 	sys.stderr.write("Get abundance info......starting\n")
 	folds, meta_case, meta_control = collect_abundance_info (values.abundance_table, values.smoothed_abundance, DA_cluster, meta_case, meta_control)
 	prevalence = collect_prevalence_info (values.abundance_table, DA_cluster, meta_case, meta_control)
 	sys.stderr.write("Get abundance info......done\n")
 
-	### output info ###
 	sys.stderr.write("Output stat file......starting\n")
 	output_DA_info (DA_cluster, values.output)
 	output_abundance_info(folds, meta_control, meta_case, values.output)
 	output_prevalence_info(prevalence, values.output)
 	sys.stderr.write("Output stat file......done\n")
 	
+	# stat unique features selected by minimum q-values
+	outfile = re.sub(".tsv", ".minQ.tsv", values.output)
+	sys.stderr.write("Get abundance info......starting\n")
+	folds, meta_case, meta_control = collect_abundance_info (values.abundance_table, values.smoothed_abundance, DA_cluster_minQ, meta_case, meta_control)
+	prevalence = collect_prevalence_info (values.abundance_table, DA_cluster_minQ, meta_case, meta_control)
+	sys.stderr.write("Get abundance info......done\n")
+
+	sys.stderr.write("Output stat file......starting\n")
+	output_DA_info (DA_cluster_minQ, outfile)
+	output_abundance_info(folds, meta_control, meta_case, outfile)
+	output_prevalence_info(prevalence, outfile)
+
 
 	sys.stderr.write("### Finish maaslin2_collection.py ####\n\n\n")
 
