@@ -909,10 +909,15 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog, gene_catalog_c
 	DA_results = config.maaslin2_dir + "/all_results.tsv"
 	DA_prefix = DA + "/" + config.basename + "_stat_diff_family_abundance.tsv"
 	stat_results = DA + "/" + config.basename + "_stat_diff_family_abundance.stat.tsv"
+	stat_results_minq = DA + "/" + config.basename + "_stat_diff_family_abundance.minQ.stat.tsv"
 	fold_results = DA + "/" + config.basename + "_stat_diff_family_abundance.fold.tsv"
+	fold_results_minq = DA + "/" + config.basename + "_stat_diff_family_abundance.minQ.fold.tsv"
 	pre_results = DA + "/" + config.basename + "_stat_diff_family_abundance.prevalence.tsv"
+	pre_results_minq = DA + "/" + config.basename + "_stat_diff_family_abundance.minQ.prevalence.tsv"
 	summary_stat = DA + "/" + config.basename + "_diff_family_abundance.stat.tsv"
+	summary_stat_minq = DA + "/" + config.basename + "_diff_family_abundance.minQ.stat.tsv"
 	DA_detail =  main_folder + "/" + config.basename + "_MaAsLin2_proteinfamilies.DA.detail.tsv"
+	DA_detail_minq =  main_folder + "/" + config.basename + "_MaAsLin2_proteinfamilies.DA-minQ.detail.tsv"
 
 	'''
 	DA_rna = main_folder + "/" + "DA-RNA"
@@ -1387,7 +1392,7 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog, gene_catalog_c
 
 		## run DA  ##
 		mylog = re.sub(".tsv", ".results.log", DA_metadata)
-		myresults = re.sub(".tsv", ".fdr_correction.correct_per_metadate.tsv", DA_results)
+		myresults = re.sub(".tsv", ".fdr_correction.correct_per_level.tsv", DA_results)
 		workflow.add_task(
 				"metawibele_maaslin2 -i [depends[0]] -m [depends[1]] -n [args[2]] -w [args[0]] -o [args[1]] > [args[3]] 2>&1",
 				depends = [feature_tsv, DA_metadata, TrackedExecutable("metawibele_maaslin2")],
@@ -1401,7 +1406,7 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog, gene_catalog_c
 		workflow.add_task(
 				"metawibele_maaslin2_collection -a [depends[0]] -s [depends[1]] -i [depends[2]] -o [args[0]] > [args[1]] 2>&1",
 				depends = [family_relab, family_smooth, myresults, TrackedExecutable("metawibele_maaslin2_collection")],
-				targets = [stat_results, fold_results, pre_results],
+				targets = [stat_results, fold_results, pre_results, stat_results_minq, fold_results_minq, pre_results_minq],
 				args = [DA_prefix, mylog],
 				cores = threads,
 				name = "maaslin2_collection")
@@ -1415,16 +1420,36 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog, gene_catalog_c
 				args = [config.tshld_prevalence, config.tshld_qvalue, config.effect_size, mylog],
 				cores = threads,
 				name = "maaslin2_summary")
+		
+		mylog = re.sub(".tsv", ".tsv.log", summary_stat_minq)
+		workflow.add_task(
+				"metawibele_maaslin2_summary -a [depends[0]] -b [depends[1]] -c [depends[2]] -p [args[0]] -q [args[1]] -e [args[2]] -o [targets[0]] > [args[3]] 2>&1",
+				depends = [stat_results_minq, fold_results_minq, pre_results_minq, TrackedExecutable("metawibele_maaslin2_summary")],
+				targets = [summary_stat_minq],
+				args = [config.tshld_prevalence, config.tshld_qvalue, config.effect_size, mylog],
+				cores = threads,
+				name = "maaslin2_summary")
 
 		mylog = re.sub(".tsv", ".tsv.log", DA_detail)
 		workflow.add_task(
-				"metawibele_maaslin2_annotator -s [depends[0]] -t [args[0]] -e [args[1]] -o [targets[0]] > [args[2]] 2>&1",
+				"metawibele_maaslin2_annotator -s [depends[0]] -t [args[0]] -o [targets[0]] > [args[2]] 2>&1",
 				depends = [summary_stat, TrackedExecutable("metawibele_maaslin2_annotator")],
 				targets = [DA_detail],
 				args = [abundance_conf["dna_da"], config.effect_size, mylog],
 				cores = threads,
 				name = "maaslin2_annotator")
 		myprotein_family_ann[DA_detail] = ""
+		
+		mylog = re.sub(".tsv", ".tsv.log", DA_detail_minq)
+		myflag = abundance_conf["dna_da"] + "-minQ"
+		workflow.add_task(
+				"metawibele_maaslin2_annotator -s [depends[0]] -t [args[0]] -o [targets[0]] > [args[2]] 2>&1",
+				depends = [summary_stat_minq, TrackedExecutable("metawibele_maaslin2_annotator")],
+				targets = [DA_detail_minq],
+				args = [myflag, config.effect_size, mylog],
+				cores = threads,
+				name = "maaslin2_annotator")
+		myprotein_family_ann[DA_detail_minq] = ""
 	# if DA for DNA abundance
 
 	'''
@@ -1476,7 +1501,7 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog, gene_catalog_c
 				name = "maaslin2")
 
 		## collect results info ##
-		myresults = re.sub(".tsv", ".fdr_correction.correct_per_metadate.tsv", DA_rna_results)
+		myresults = re.sub(".tsv", ".fdr_correction.correct_per_level.tsv", DA_rna_results)
 		mylog = re.sub(".tsv", ".tsv.log", rna_stat_results)
 		workflow.add_task(
 				"maaslin2_collection.py -a [depends[0]] -i [depends[1]] -o [targets[0]] > [args[0]] 2>&1",
@@ -1551,7 +1576,7 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog, gene_catalog_c
 
 		## run DA  ##
 		mylog = re.sub(".tsv", ".results.log", DE_metadata)
-		myresults = re.sub(".tsv", ".fdr_correction.correct_per_metadate.tsv", DE_results)
+		myresults = re.sub(".tsv", ".fdr_correction.correct_per_level.tsv", DE_results)
 		workflow.add_task(
 				"metawibele_maaslin2 -i [depends[0]] -m [depends[1]] -n [args[2]] -w [args[0]] -o [args[1]] > [args[3]] 2>&1",
 				depends = [feature_tsv, DE_metadata, TrackedExecutable("metawibele_maaslin2")],
@@ -1755,15 +1780,5 @@ def integration_annotation (workflow, integration_conf,
 				args = [mylog],
 				cores = threads,
 				name = "finalize_annotation")
-
-	#	if final_ann_family != protein_family_ann:
-	#		workflow.add_task("ln -fs [depends[0]] [targets[0]]",
-	#	                  depends = [final_ann_family],
-	#	                  targets = [protein_family_ann],
-	#	                  name = "proteinfamilies_annotation")
-	#		workflow.add_task("ln -fs [depends[0]] [targets[0]]",
-	#	                  depends = [final_attr_family],
-	#	                  targets = [protein_family_attr],
-	#	                  name = "proteinfamilies_annotation_attribution")
 
 	return final_ann_family, final_attr_family, main_folder
