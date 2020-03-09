@@ -100,21 +100,26 @@ filter_feature <- function(pclfile, outfile) {
 
 
 ##########################################
-# Combine results and Multiplicity correction
+# Combine results and multiplicity correction
 multiplicity_correction <- function (infile, outfile) {
 	print(infile)
 	paras <- read.table(infile, header=TRUE, sep="\t", quote="", comment.char = "", check.names = FALSE)
 	new_col_name <- c(colnames(paras), "qvalue")
 
 	# multiplicity correction based on all metadata
-	paras$qvalue <- as.numeric(p.adjust(as.numeric(paras$pval), "fdr"))
+	paras$qvalue <- as.numeric(p.adjust(as.numeric(paras$pval), "BH"))
 	write.table(t(new_col_name), file = outfile, append = FALSE, sep = "\t", eol = "\n", na = "NA", row.names = FALSE, col.names = FALSE, quote=FALSE)
 	write.table(paras, file = outfile, append = TRUE, sep = "\t", eol = "\n", na = "NA", row.names = FALSE, col.names = FALSE, quote=FALSE)
 	
-	# multiplicity correction based on each metadata
-	outfile_per <- gsub(".tsv", ".correct_per_metadate.tsv", outfile)
-	paras_per <- ddply(paras, .(metadata), transform, qvalue=as.numeric(p.adjust(as.numeric(pval), "fdr")))
-	#paras_per <- ddply(paras, .(metadata, value), transform, qvalue=as.numeric(p.adjust(as.numeric(pval), "fdr")))
+	# multiplicity correction based on each variable
+	outfile_per <- gsub(".tsv", ".correct_per_variable.tsv", outfile)
+	paras_per <- ddply(paras, .(metadata), transform, qvalue=as.numeric(p.adjust(as.numeric(pval), "BH")))
+	write.table(t(new_col_name), file = outfile_per, append = FALSE, sep = "\t", eol = "\n", na = "NA", row.names = FALSE, col.names = FALSE, quote=FALSE)
+	write.table(paras_per, file = outfile_per, append = TRUE, sep = "\t", eol = "\n", na = "NA", row.names = FALSE, col.names = FALSE, quote=FALSE)
+	
+	# multiplicity correction based on each level
+	outfile_per <- gsub(".tsv", ".correct_per_level.tsv", outfile)
+	paras_per <- ddply(paras, .(metadata, value), transform, qvalue=as.numeric(p.adjust(as.numeric(pval), "BH")))
 	write.table(t(new_col_name), file = outfile_per, append = FALSE, sep = "\t", eol = "\n", na = "NA", row.names = FALSE, col.names = FALSE, quote=FALSE)
 	write.table(paras_per, file = outfile_per, append = TRUE, sep = "\t", eol = "\n", na = "NA", row.names = FALSE, col.names = FALSE, quote=FALSE)
 }
