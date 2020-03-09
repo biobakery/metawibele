@@ -360,11 +360,11 @@ def smooth_zero (dna_features_min, dna_features_quantile, rna_features_min, rna_
 						mytmp = mys + "\t" + myid
 						if mytmp in infs:
 							myrna = infs[mytmp]
-							if myid in rna_features_quantile: # require max(rna, dna) > median values
-								if float(myrna) < float(rna_features_quantile[myid]):
-									myrna = "NA"
-							else:
-								myrna = "NA"
+							#if myid in rna_features_quantile: # skip extremely small values for both DNA and RNA
+							#	if float(myrna) < float(rna_features_quantile[myid]):
+							#		myrna = "NA"
+							#else:
+							#	myrna = "NA"
 						if myid in dna_features_min:
 							mydna = dna_features_min[myid]
 						if myrna != "NA" and mydna != "NA":
@@ -379,11 +379,11 @@ def smooth_zero (dna_features_min, dna_features_quantile, rna_features_min, rna_
 					mytmp = mys + "\t" + myid
 					if mytmp in zeros:
 						mydna = zeros[mytmp]
-						if myid in dna_features_quantile: # require max(rna, dna) > median values
-							if float(mydna) < float(dna_features_quantile[myid]):
-								mydna = "NA"
-						else:
-							mydna = "NA"
+						#if myid in dna_features_quantile: # skip extremely small values for both DNA and RNA
+						#	if float(mydna) < float(dna_features_quantile[myid]):
+						#		mydna = "NA"
+						#else:
+						#	mydna = "NA"
 					if myid in rna_features_min:
 						myrna = rna_features_min[myid]
 					if myrna != "NA" and mydna != "NA":
