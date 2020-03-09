@@ -130,7 +130,8 @@ def collect_cluster_abundance (abufile, sample_info):
 			mytype = "NA"
 			if mys in sample_info:
 				mytype = sample_info[mys]
-			type_split = mytype.split(config.c_metedata_delim)
+			#type_split = mytype.split(config.c_metedata_delim)
+			type_split = []
 			if mytype != "NA":
 				if not mytype in sample_num:
 					sample_num[mytype] = {}
@@ -189,9 +190,9 @@ def output_info (cluster, sample_num, phe_category, abundance, myflag, flag, out
 				mypre = float(mynum) / float(mysample_num)
 				mymean_beta = utilities.mean(abundance[myid][mytype])
 				mymean = float(mytotal) / float(mysample_num)
+				mytype = re.sub("_", "-", mytype)
 				myflag1 = re.sub("_abundance", "-" + mytype + "_abundance", myflag)
 				myflag1 = re.sub("-combined_abundance", "_abundance", myflag1)
-				myflag1 = re.sub("non_", "non-", myflag1)
 				mystr = myid + "\t" + myflag1 + "\t" + str(mymean) + "\t" + str(mymean) + "\t" + str(mymean_beta) + "\t" + str(mypre) + "\t" + str(mytotal) + "\t" + str(mysample_num)
 				open_out.write(mystr + "\n")
 				
