@@ -109,7 +109,7 @@ def run_maaslin2 (feature, metadata, split_num, workdir, output, outfile):
 	myutils = config.maaslin2_utils
 
 	if split_num == 1:
-		mycmd = "Rscript " + myexe + " " + feature + " " + metadata + " " + ouput + " " + myopt
+		mycmd = "Rscript " + myexe + " " + feature + " " + metadata + " " + output + " " + myopt
 		print(mycmd)
 		os.system(mycmd)
 	else:
@@ -120,15 +120,16 @@ def run_maaslin2 (feature, metadata, split_num, workdir, output, outfile):
 		if not os.path.isfile(mytrans):
 			os.system(mytranspos + " < " + feature + " > " + mytrans)
 		# split files
-		mycmd = "Rscript " + myutils + " " + "split" + " " + mytrans + " " + mybase + " " + mypcl + " " + split_num
+		mycmd = "Rscript " + myutils + " " + "split" + " " + mytrans + " " + mybase + " " + mypcl + " " + str(split_num)
 		print(mycmd)
 		os.system(mycmd)
-		os.system("ls " + mybase + "*.pcl > feature.pcl.list")
+		mylist = re.sub(".tsv", ".pcl.list", feature)
+		os.system("ls " + mybase + "*.pcl > " + mylist)
 		os.system("mkdir -p " + output)
 		os.system("mv " + mybase + "*.pcl" + " " + output)
 		myout = workdir + "/" + outfile
 		os.system("rm -f " + myout)
-		open_file = open("feature.pcl.list", "r")
+		open_file = open(mylist, "r")
 		for i in open_file:
 			i = i.strip()
 			if not len(i):
@@ -149,9 +150,9 @@ def run_maaslin2 (feature, metadata, split_num, workdir, output, outfile):
 				os.system("sed -e 1d " + myoutput + "/all_results.tsv >> " + myout)
 			
 			# delete intermediate split files
-			#mypcl = output + "/" + i
-			#os.system("rm -f " + mypcl)
-			#os.system("rm -f " + myinput)
+			mypcl = output + "/" + i
+			os.system("rm -f " + mypcl)
+			os.system("rm -f " + myinput)
 		# foreach split file
 		open_file.close()
 	# if split files
@@ -168,8 +169,9 @@ def fdr_correction (output, outfile):
 	print(mycmd)
 	os.system(mycmd)
 	myout1 = myout
-	myout2 = re.sub(".tsv", ".correct_per_metadate.tsv", myout)
-	return myout1, myout2
+	myout2 = re.sub(".tsv", ".correct_per_variable.tsv", myout)
+	myout3 = re.sub(".tsv", ".correct_per_level.tsv", myout)
+	return myout1, myout2, myout3
 # fdr_correction
 
 
@@ -184,12 +186,18 @@ def main():
 	if values.workdir == "none":
 		values.workdir = config.maaslin2_dir
 
+	try: 
+		values.split_num = int(values.split_num)
+	except ValueError:
+		sys.exit("Please specify valid number for spliting file")
+
 	sys.stderr.write("### Start maaslin2.py -i " + values.feature_table + " ####\n")
 	
 	### Run MaAsLin2 info ###
 	if config.nested_effects != "none":
 		out1 = []
 		out2 = []
+		out3 = []
 		tmp1 = config.nested_effects.split(":")
 		mytype = tmp1[0]
 		tmp2 = tmp1[1].split(",")
@@ -203,23 +211,27 @@ def main():
 			run_maaslin2 (values.feature_table, mymeta_file, values.split_num, values.workdir, output, outfile)
 			sys.stderr.write("Run MaAsLin2 ......done\n")
 			sys.stderr.write("FDR correction ......" + outfile + "\n")
-			myout1, myout2 = fdr_correction (values.workdir, outfile)
+			myout1, myout2, myout3 = fdr_correction (values.workdir, outfile)
 			sys.stderr.write("FDR correction ......done\n")
 			out1.append(myout1)
 			out2.append(myout2)
+			out3.append(myout3)
 		# foreach nested effect
 
 		# collect all results
 		#outfile = config.maaslin2_dir + "/" + values.output
 		outfile = values.workdir + "/" + values.output
 		outfile1 = re.sub(".tsv", ".fdr_correction.tsv", outfile)
-		outfile2 = re.sub(".tsv", ".fdr_correction.correct_per_metadate.tsv", outfile)
+		outfile2 = re.sub(".tsv", ".fdr_correction.correct_per_variable.tsv", outfile)
+		outfile3 = re.sub(".tsv", ".fdr_correction.correct_per_level.tsv", outfile)
 		os.system("less " + out1[0] + " > " + outfile1)
 		os.system("less " + out2[0] + " > " + outfile2)
+		os.system("less " + out3[0] + " > " + outfile3)
 		myindex = 1
 		while myindex < len(out1):
 			os.system("sed -e 1d " + out1[myindex] + " >> " + outfile1)	
 			os.system("sed -e 1d " + out2[myindex] + " >> " + outfile2)	
+			os.system("sed -e 1d " + out3[myindex] + " >> " + outfile3)	
 			myindex = myindex + 1
 	# if nested effect
 	else:
