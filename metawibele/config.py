@@ -445,16 +445,17 @@ abundance_detection_level = 0	# cutoff for abundance detection
 # maaslin2
 maaslin2_dir = get_item(config_items, "maaslin2", "maaslin2_output", "string")
 maaslin2_dir = abundance_dir + "/" + maaslin2_dir + "/maaslin2_output/" 
-#maaslin2_dir = "/n/scratchlfs/huttenhower_lab/yancong/assembly-based/HMP2/combined/HUMAnN2/maaslin2_output/"
-meta_type = get_item(config_items, "maaslin2", "meta_type", "string")
-contrast_status = get_item(config_items, "maaslin2", "contrast_status", "string")
+phenotype = get_item(config_items, "maaslin2", "phenotype", "string")
+phenotype = re.sub("\"", "", phenotype)
+phenotype = phenotype.split(";")
+contrast_status = get_item(config_items, "maaslin2", "case_control_status", "string")
 contrast_status = re.sub("\"", "", contrast_status)
 tmp = contrast_status.split(";")
 contrast_status = {}
 for item in tmp:
 	tmp1 = item.split(":")
 	contrast_status[tmp1[0]] = tmp1[1]
-ref_status = get_item(config_items, "maaslin2", "ref_status", "string")
+ref_status = get_item(config_items, "maaslin2", "flag_ref", "string")
 ref_status = re.sub("\"", "", ref_status)
 tmp = ref_status.split(";")
 ref_status = {}
@@ -464,7 +465,8 @@ for item in tmp:
 #fixed_effect = "diagnosis,age,antibiotic,immunosuppressant,mesalamine,steroids"
 fixed_effects = get_item(config_items, "maaslin2", "fixed_effects", "string")
 random_effects = get_item(config_items, "maaslin2", "random_effects", "string")
-nested_effects = get_item(config_items, "maaslin2", "nested_effects", "string")
+#nested_effects = get_item(config_items, "maaslin2", "nested_effects", "string")
+nested_effects = "none"
 #abundance_detection_level = 0	# the detectable level of abundance
 abundance_detection_level = get_item(config_items, "maaslin2", "abundance_detection_level", "float")
 #tshld_prevalence = 0.10		# the minimum prevalence of protein family abundance across samples
