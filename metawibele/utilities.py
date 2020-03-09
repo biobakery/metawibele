@@ -83,10 +83,10 @@ def sample_info (sampleinfo, study):
 			sample = info[title["ID"]]
 		if "SID" in title:
 			sample = info[title["SID"]]
-		if not config.meta_type in title:
-			print("Metadata doesn't exist!\t" + config.meta_type)
+		if not config.phenotype[0] in title:
+			print("Metadata doesn't exist!\t" + config.phenotype[0])
 			continue
-		disease = info[title[config.meta_type]]
+		disease = info[title[config.phenotype[0]]]
 		if re.search("^[\d]+$", sample):
 			sample = study + "_" + sample
 		sample = re.sub("^" + disease + "_", "", sample)
