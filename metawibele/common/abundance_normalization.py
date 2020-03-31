@@ -52,7 +52,7 @@ def get_args():
 	parser.add_argument('-u', help='normalization scheme: copies per million [cpm], relative abundance [relab]; default=[cpm]',
 	                    choices=["cpm", "relab"], default="cpm", required=True)
 	parser.add_argument("-m", 
-						help="Normalize all levels by [community] total or [levelwise] total; default=[community]",
+						help="Normalize all levels by [community] total or [levelwise] total or [taxonwise] within taxon; default=[community]",
 						choices=["community", "levelwise", "taxonwise"],
 						default="community")
 	parser.add_argument("-s",
@@ -74,7 +74,16 @@ c_special = [
 	utils.c_msp_unknown,
 ]
 
-def normalize(table, method, levelwise=False, taxonwise=False, special=True):
+def normalize(table, method, levelwise, special=True):
+	if levelwise == 'levelwise':
+		levelwise = True
+		taxonwise = False
+	if levelwise == 'community':
+		levelwise = False
+		taxonwise = False
+	if levelwise == "taxonwise":
+		taxonwise = True
+		levelwise = False
 	if method == "cpm":
 		divisor = 1e-6
 	else:
@@ -104,7 +113,8 @@ def normalize(table, method, levelwise=False, taxonwise=False, special=True):
 		totals = totals_by_level[level]
 		for j, total in enumerate(totals):
 			if total == 0:
-				totals[j] = 1
+				#totals[j] = 1
+				totals_by_level[level][j] = 1
 				print("WARNING: Column {} ({}) has zero sum at level {}".format(j + 1, table.colheads[j], level))
 	
 	# compute totals by delim taxon
@@ -117,22 +127,23 @@ def normalize(table, method, levelwise=False, taxonwise=False, special=True):
 			totals_by_taxon[taxon] = [0 for k in range(len(table.colheads))]
 		table.data[i] = [float(k) for k in row]
 		totals_by_taxon[taxon] = [k1 + k2 for k1, k2 in zip(totals_by_taxon[taxon], table.data[i])]
-	
+	# check for sample / taxon combinations with zero sum
+	for taxon in totals_by_taxon:
+		for j in range(len(totals_by_taxon[taxon])):
+			if totals_by_taxon[taxon][j] == 0:
+				totals_by_taxon[taxon][j] = 1
+
 	# normalize
 	for i, row in enumerate(table.data):
-		level = len(table.rowheads[i].split(utils.c_strat_delim))
 		taxon = table.rowheads[i].split(utils.c_strat_delim)[-1]
-		totals = "NA"
-		if levelwise:
-			totals = totals_by_level[level]
 		if taxonwise:
-			totals = totals_by_taxon[taxon] 
-		if totals == "NA":
-			if 1 in totals_by_level:
-				totals = totals_by_level[1]
-			else:
-				print("No unstratified data! " + i)
-				continue
+			#print("Within-taxon level normalization")
+			totals = totals_by_taxon 
+			table.data[i] = ["%.6g" % (row[j] / totals[taxon][j] / divisor) for j in range(len(totals[taxon]))]
+			continue
+		
+		level = len(table.rowheads[i].split(utils.c_strat_delim))
+		totals = totals_by_level[level] if levelwise else totals_by_level[1]
 		table.data[i] = ["%.6g" % (row[j] / totals[j] / divisor) for j in range(len(totals))]
 
 
@@ -143,7 +154,7 @@ def normalize(table, method, levelwise=False, taxonwise=False, special=True):
 def main():
 	args = get_args()
 	table = utils.Table(args.i)
-	normalize(table, args.u, args.m)
+	normalize(table, args.u, args.m, args.s=="y")
 	table.write(args.o)
 
 

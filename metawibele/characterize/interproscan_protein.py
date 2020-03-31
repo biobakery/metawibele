@@ -42,7 +42,7 @@ except ImportError:
 # Description and arguments
 # ---------------------------------------------------------------
 description = """
-Extact functioanl annotation for each peptide from InterProScan results
+Extact functional annotation for each peptide from InterProScan results
 """
 
 def get_args():
