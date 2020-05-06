@@ -320,7 +320,7 @@ def check_annotation (annotation, required_types):
 		myflag = 0
 		for myitem in required_types.keys():
 			if not myitem in annotation[myclust]:
-				#print("No required type\t" + myitem + "\t" + myclust)
+				print("No required type\t" + myitem + "\t" + myclust)
 				myflag = 1
 				break
 		if myflag == 0:
@@ -554,10 +554,12 @@ def prioritize_families (summary_table, score_column, ann_conf):
 		# debug
 		print("Specified threshold of priority score: " + str(pri_score))
 	else:
-		mytop_num = int(summary_table.shape[0] * float(pri_percentile))
-		imp_families = summary_table.head(mytop_num)
-		print("Specified threshold of priority: " + str(pri_percentile))
-	
+		if pri_percentile != "NaN":
+			mytop_num = int(summary_table.shape[0] * float(pri_percentile))
+			imp_families = summary_table.head(mytop_num)
+			print("Specified threshold of priority: " + str(pri_percentile))
+		else:
+			imp_families = summary_table
 	return summary_table, imp_families
 
 
