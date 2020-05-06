@@ -22,7 +22,7 @@ We provide support for MetaWIBELE users via our Google group. Please feel free t
 * [Workflow](#workflow)
 * [Install MetaWIBELE](#install-metawibele)
     * [Requirements](#requirements)
-    * [Installment](#Installment)
+    * [Installation](#installation)
     	* [Download MetaWIBELE](#download-metawibele)
     	* [Install MetaWIBELE](#install-metawibele)
     	* [Download database](#download-databases)
@@ -89,7 +89,7 @@ We provide support for MetaWIBELE users via our Google group. Please feel free t
 
 ```
 
-### Installment
+### Installation
 #### Download MetaWIBELE
 You can download the latest MetaWIBELE release or the development version. The source contains example files.
 
@@ -111,7 +111,8 @@ Option 2: Development Version
 
 * Install MetaWIBELE package
 	* `$ python setup.py install`
-	* If you do not have write permissions to '/usr/lib/', then add the option --user to the install command. This will install the python package into subdirectories of '\~/.local/'. Please note when using the '--user' install option on some platforms, you might need to add '\~/.local/bin/' to your $PATH as it might not be included by default. You will know if it needs to be added if you see the following message `metawibele_workflow: command not found` when trying to run MetaWIBELE after installing with the '--user' option. Similarly, you can also specify the installment directory using '--prefix' option which will install the python package into the directory $YOUR\_INSTALL\_DIR specified using '--prefix'. You might need to add $YOUR\_INSTALL\_DIR/bin to your $PATH as it might not be included by default.
+	* If you do not have write permissions to '/usr/lib/', then add the option --user to the install command. This will install the python package into subdirectories of '\~/.local/'. Please note when using the '--user' install option on some platforms, you might need to add '\~/.local/bin/' to your $PATH as it might not be included by default. You will know if it needs to be added if you see the following message `metawibele_workflow: command not found` when trying to run MetaWIBELE after installing with the '--user' option. 
+	* Similarly, you can also specify the installation directory using '--prefix' option which will install the python package into the directory $YOUR\_INSTALL\_DIR that is a directory on PYTHONPATH and which Python reads ".pth" files from. You might need to add $YOUR\_INSTALL\_DIR/bin to your $PATH as it might not be included by default.
 
 #### Download databases
 MetaWIBELE requires several databases that are needed to put in the **MetaWIBELE directory**. The versions used in the MetaWIBELE publication are available for download here. You need to download, unpack and put these databases in `$MetaWIBELE_PATH/data`.
@@ -152,7 +153,7 @@ MetaWIBELE requires several databases that are needed to put in the **MetaWIBELE
 	
 ### Configuration for MetaWIBELE
 #### Global configration file
-When running MetaWIBELE, one global configuation file `metawibele.cfg` is required. You can copy `metawibele.cfg` file from the MetaWIBELE installment directory to your working directory, and then modify your configuration based on your datasets. You may need to specify:
+When running MetaWIBELE, one global configuation file `metawibele.cfg` is required. You can copy `metawibele.cfg` file from the MetaWIBELE installation directory to your working directory, and then modify your configuration based on your datasets. You may need to specify:
 * Input files:
 
 ```
