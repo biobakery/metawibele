@@ -183,6 +183,7 @@ def output_info (cluster, sample_num, phe_category, abundance, myflag, flag, out
 			maximal_pre = -999999
 			hit_abundance = "NA"
 			hit_prevalence = "NA"
+			mytypes = {}
 			for mytype in sorted(abundance[myid].keys()):
 				mynum = len(abundance[myid][mytype])
 				mytotal = sum(abundance[myid][mytype])
@@ -200,7 +201,9 @@ def output_info (cluster, sample_num, phe_category, abundance, myflag, flag, out
 				mystr = myid + "\t" + myflag2 + "\t" + str(mypre) + "\t" + str(mymean) + "\t" + str(mymean_beta) + "\t" + str(mypre) + "\t" + str(mytotal) + "\t" + str(mysample_num)
 				open_out.write(mystr + "\n")
 				
-				if mytype in phe_category:
+				mytype1 = re.sub("-", "_", mytype)
+				if mytype in phe_category or mytype1 in phe_category:
+					mytypes[mytype1] = ""
 					if mymean > maximal_abu:
 						maximal_abu = mymean
 						myflag1 = re.sub("_abundance", "-" + "within-phenotype" + "_abundance", myflag)
@@ -213,6 +216,19 @@ def output_info (cluster, sample_num, phe_category, abundance, myflag, flag, out
 			if hit_abundance != "NA":
 				open_out.write(hit_abundance + "\n")
 				open_out.write(hit_prevalence + "\n")
+			for tmp in sorted(phe_category.keys()):
+				if tmp in mytypes:
+					continue
+				else:
+					mysample_num = len(sample_num[tmp].keys())
+					mytype = re.sub("_", "-", tmp)
+					myflag1 = re.sub("_abundance", "-" + mytype + "_abundance", myflag)
+					myflag1 = re.sub("-combined_abundance", "_abundance", myflag1)
+					mystr = myid + "\t" + myflag1 + "\t" + str(0) + "\t" + str(0) + "\t" + str(0) + "\t" + str(0) + "\t" + str(0) + "\t" + str(mysample_num)
+					open_out.write(mystr + "\n")
+					myflag2 = re.sub("abundance", "prevalence", myflag1)
+					mystr = myid + "\t" + myflag2 + "\t" + str(0) + "\t" + str(0) + "\t" + str(0) + "\t" + str(0) + "\t" + str(0) + "\t" + str(mysample_num)
+					open_out.write(mystr + "\n")
 		else:
 			mystr = myid + "\t" + myflag + "\t" + "NaN" + "\t" + "NaN" + "\t" + "NaN" + "\t" + "NaN" + "\t" + "NaN" + "\t" + str(len(sample_num["combined"].keys()))
 			open_out.write(mystr + "\n")
