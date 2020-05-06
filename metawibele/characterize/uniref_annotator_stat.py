@@ -271,8 +271,8 @@ def stat_annotation (query, hits, identity, qcov, mcov, outfile):
 #==============================================================
 ###########  Main processing ############
 #==============================================================
-if __name__ == '__main__':
-	
+def main():
+
 	### get arguments ###
 	values = get_args()
 
@@ -295,3 +295,6 @@ if __name__ == '__main__':
 	sys.stderr.write("### Finish uniref_annotator_stat.py ####\n\n")
 
 # end: main
+
+if __name__ == '__main__':
+	main()
