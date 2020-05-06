@@ -77,9 +77,6 @@ def parse_cli_arguments ():
 	workflow.add_argument("split-number",
 	                      desc="indicates number of spliting files for annotation based on sequence information",
 	                      default = 10)
-	workflow.add_argument("rna-count",
-	                      desc = "indicates RNA count tables if is available",
-	                      default = "none")
 	workflow.add_argument("bypass-integration",
 	                      desc = "do not integrate annotations for protein families",
 	                      action = "store_true")
@@ -125,7 +122,6 @@ def get_method_config (config_file):
 			myvalue = config_items["abundance"][name]
 			abundance_conf[name] = myvalue
 		abundance_conf["mspminer"] = config.mspminer
-		abundance_conf["rna_ratio_abundance"] = config.rna_ratio_abundance
 		# for each method
 
 	if "integration" in config_items:
@@ -165,7 +161,6 @@ def main(workflow):
 	gene_catalog = config.gene_catalog
 	gene_catalog_seq = config.gene_catalog_prot
 	gene_catalog_count = config.gene_catalog_count
-	gene_catalog_rna_count = config.gene_catalog_rna_count
 
 	# get all output files
 	protein_family = config.protein_family
@@ -214,7 +209,7 @@ def main(workflow):
 	if not args.bypass_abundance:
 		print("Run abundance annotation")
 		myprotein_family_ann, myprotein_ann, abundance_output_folder = characterization.abundance_annotation (workflow, abundance_conf,
-		                                                                                                            gene_catalog, gene_catalog_count, gene_catalog_rna_count,
+		                                                                                                            gene_catalog, gene_catalog_count,
 		                                                                                                            uniref_taxonomy_family, uniref_taxonomy,
 		                                                                                                            args.split_number, args.threads,
 		                                                                                                            output_dir, protein_family_relab, taxonomy_annotation_family, taxonomy_annotation,
