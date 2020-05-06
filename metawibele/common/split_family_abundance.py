@@ -40,6 +40,7 @@ def split_abundance_info (abundance_file, sample_num):	# summary_peptide_family_
 	titles = []
 	samples = {}
 	abundance = {}
+	myflag = "NA"
 	mypos = 0
 	split = 0
 	for line in open_file.readlines():
@@ -47,9 +48,15 @@ def split_abundance_info (abundance_file, sample_num):	# summary_peptide_family_
 		if not len(line):
 			continue
 		info = line.split("\t")
-		if re.search("^ID", line): # title
+		if re.search("^ID", line):
+			myflag = "ID"
 			for item in info:
 				#titles[info.index(item)] = item
+				titles.append(item)
+			continue
+		if re.search("^# Gene Family", line): # title
+			myflag = "# Gene Family"
+			for item in info:
 				titles.append(item)
 			continue
 		myid = info[0]
@@ -79,7 +86,7 @@ def split_abundance_info (abundance_file, sample_num):	# summary_peptide_family_
 	for mysplit in sorted(samples.keys(), key=int):
 		outfile = re.sub(".tsv", ".split" + str(mysplit) + ".tsv", abundance_file)
 		open_out = open(outfile, "w")
-		title = "ID\t" + samples[mysplit]
+		title = myflag + "\t" + samples[mysplit]
 		open_out.write(title + "\n")
 		if mysplit in abundance:
 			for myid in sorted(abundance[mysplit].keys()):
