@@ -66,7 +66,6 @@ def get_args():
 	                    default="0.05")
 	parser.add_argument('-e', "--effect-size",
 	                    help='specify the item name indicating effect size',
-	                    choices = ["coef", "mean(log)", "log(FC)"],
 						required=True)
 	parser.add_argument('-o', "--output",
 	                    help='output DA summary file',
@@ -520,6 +519,8 @@ def summary_info (folds, p_cutoff, q_value_cutoff, outfile):
 def main():	
 	### get arguments ###
 	values = get_args()
+	values.effect_size = re.sub("mean_log", "mean(log)", values.effect_size)
+	values.effect_size = re.sub("log_FC", "log(FC)", values.effect_size)
 
 	sys.stderr.write("### Start maaslin2_summary.py -a " + values.abundance + " ####\n")
 	
