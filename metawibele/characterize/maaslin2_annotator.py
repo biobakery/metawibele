@@ -57,7 +57,6 @@ def get_args():
 	                    required=True)
 	parser.add_argument('-e', "--effect-size",
 	                    help='specify the item name indicating effect size', 
-	                    choices = ["coef", "mean(log)", "log(FC)"],
 						required=True)
 	parser.add_argument('-o', "--output",
 	                    help='output annotated file',
@@ -126,6 +125,8 @@ def main():
 
 	### get info
 	sys.stderr.write("\nGet DA annotation info ......starting\n")
+	values.effect_size = re.sub("mean_log", "mean(log)", values.effect_size)
+	values.effect_size = re.sub("log_FC", "log(FC)", values.effect_size)
 	stat_annotation (values.stat, values.type, values.effect_size, values.output)
 	sys.stderr.write("Get DA annotation info ......done\n")
 
