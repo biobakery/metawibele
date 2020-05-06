@@ -4,7 +4,7 @@
 MeteWIBELE workflow: MeteWIBELE prioritization workflow
 1) unsupervised prioritization based on abundance and prevalence
 2) supervised prioritization based on association with phenotypes
-3) selected prioritization based on sequence annotations
+3) selected prioritization based on interested functions
 4) format and finalize prioritization
 
 
@@ -66,7 +66,7 @@ def parse_cli_arguments ():
 	                     desc = "do not prioritize protein families based on quantitative criteria (mandatory prioritization)",
 						 action = "store_true")
 	workflow.add_argument("bypass-optional",
-	                     desc = "do not prioritize protein families based on sequence annotation (optional prioritization)",
+	                     desc = "do not prioritize protein families based on interested functions (optional prioritization)",
 	                     action = "store_true")
 	workflow.add_argument("module",
 	                     desc = "cluster protein families into potential functional modules (moduling prioritization)",
@@ -108,7 +108,7 @@ def main(workflow):
 	unsupervised_priority = priority_dir + "/" + config.basename + "_unsupervised_prioritization.priority.tsv"
 	supervised_rank = priority_dir + "/" + config.basename + "_supervised_prioritization.rank.tsv"
 	supervised_priority = priority_dir + "/" + config.basename + "_supervised_prioritization.priority.tsv"
-	selected_priority = priority_dir + "/" + config.basename + "_supervised_prioritization.rank.filter.tsv" 
+	selected_priority = priority_dir + "/" + config.basename + "_supervised_prioritization.rank.refined.tsv" 
 	moduled_priority = priority_dir + "/" + config.basename + "_supervised_prioritization.rank.module.tsv" 
 
 	final_unsupervised_rank = priority_dir + "/" + config.basename + "_unsupervised_prioritization.rank.table.tsv"
@@ -127,7 +127,7 @@ def main(workflow):
 
 
 	### STEP #2: optional prioritization: binary filtering ###
-	# if optional action is provided, then prioritize protein families based on sequence annotations (selection factor)
+	# if optional action is provided, then prioritize protein families based on interested functions (selection factor)
 	if not args.bypass_optional:
 		myselection = prioritization.optional_prioritization (workflow, args.prioritization_config,
 		                                                             protein_family_ann,
