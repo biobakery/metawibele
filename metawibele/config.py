@@ -324,20 +324,12 @@ priority_dir = working_dir + "/" + "prioritization"
 
 study = get_item(config_items, "input", "study", "string")
 metadata = get_item(config_items, "input", "metadata", "string")
-try:
-	rna_metadata = get_item(config_items, "input", "rna_metadata", "string")
-except:
-	rna_metadata = "none"
 sample_list = get_item(config_items, "input", "sample_list", "string")
 #protein_seq = get_item(config_items, "input", "protein_seq", "string")
 gene_catalog = get_item(config_items, "input", "gene_catalog", "string")
 #gene_catalog_nuc = get_item(config_items, "input", "gene_catalog_nuc", "string")
 gene_catalog_prot = get_item(config_items, "input", "gene_catalog_prot", "string")
 gene_catalog_count = get_item(config_items, "input", "gene_catalog_count", "string")
-try:
-	gene_catalog_rna_count = get_item(config_items, "input", "gene_catalog_rna_count", "string")
-except:
-	gene_catalog_rna_count = "none"
 
 protein_family = annotation_dir + "/" + basename + "_proteinfamilies.clstr"
 protein_family_prot_seq = annotation_dir + "/" + basename + "_proteinfamilies.centroid.faa"
@@ -439,7 +431,6 @@ mspminer = get_item(config_items, "abundance", "mspminer", "string")
 # abundance
 normalize = "cpm"		# # the method for normalization: [cpm]:copies per million units (sum to 1 million); [relab]: relative abundance (sum to 1)
 #normalize = get_item(config_items, "abundance", "normalize", "string") 		# the method for abundance normalization
-rna_ratio_abundance = get_item(config_items, "abundance", "rna_ratio_abundance", "string") 
 abundance_detection_level = 0	# cutoff for abundance detection
 
 # maaslin2
@@ -477,6 +468,10 @@ tshld_qvalue = get_item(config_items, "maaslin2", "tshld_qvalue", "float")
 effect_size = get_item(config_items, "maaslin2", "effect_size", "string")
 if effect_size == "log(fc)":
 	effect_size = "log(FC)"
+if effect_size == "log(FC)":
+	effect_size = "log_FC"
+if effect_size == "mean(log)":
+	effect_size = "mean_log"
 #maaslin2_cores = 25			# the number of threads used by maaslin2
 maaslin2_cores = get_item(config_items, "maaslin2", "maaslin2_cores", "int")
 #maaslin2_cmmd = "~/usr/Maaslin2/R/Maaslin2.R"
