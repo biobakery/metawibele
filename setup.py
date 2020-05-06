@@ -206,7 +206,7 @@ def download_unpack_zip(url, download_file_name, folder, software_name):
 setuptools.setup(
 	name="metawibele",
 	author=AUTHOR,
-	author_email=AUTHOR_EMAIL,
+	author_email=MAINTAINER_EMAIL,
 	version=VERSION,
 	license="MIT",
 	description="MetaWIBELE: Workflow to Identify novel Bioactive Elements in microbiome",
@@ -328,5 +328,6 @@ setuptools.setup(
 		],
 	#scripts=glob('metawibele/workflows/*py') + glob('metawibele/characterize/*py') + glob('metawibele/prioritize/*py') +
 	#		glob('metawibele/tools/*py') + glob('metawibele/common/*py') + glob('metawibele/*py'),
+	scripts=glob('metawibele/workflows/*py'),
 	zip_safe=False
 )
