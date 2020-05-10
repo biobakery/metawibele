@@ -148,9 +148,9 @@ def main(workflow):
 	# get configuration info
 	metawibele_install_directory = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 	default_characterization_conf = metawibele_install_directory + "/configs/characterization.cfg"
-	print(default_characterization_conf)
 	if args.characterization_config == "none":
 		args.characterization_config = default_characterization_conf
+	print(args.characterization_config)
 	family_conf, domain_motif_conf, abundance_conf, integration_conf = get_method_config(args.characterization_config)
 
 	# input and output folder
