@@ -235,7 +235,7 @@ def get_item(config_items, section, name, type=None):
 
 
 ## default option for MetaWIBELE
-version = '0.1'
+version = '0.2'
 log_level = 'DEBUG'
 verbose = 'DEBUG'
 
@@ -300,7 +300,6 @@ Expression_Atlas_database = [database_directory + "32_Uhlen_Lab_colon_rectum.tsv
 							database_directory + "Illumina_Body_Map_colon.tsv"]
 vignettes_database = database_directory + "vignettes_proteins.tsv"
 antiSMASH_database = database_directory + "BGC_genes_unirefID.tsv"
-#essentialGene_database = database_directory + "DEG_genes_unirefID.tsv"
 essentialGene_database = database_directory + "essential_genes_unirefID.tsv"
 
 ## config files and computing resources
@@ -313,8 +312,6 @@ memory = get_item(config_items, "computation", "memory", "int")
 # input folder and files
 basename = get_item(config_items, "output", "basename", "string")
 working_dir = get_item(config_items, "output", "working_dir", "string")
-#gene_catalog_dir = working_dir + "/input/"
-#output_dir = working_dir + "/output/" 
 annotation_dir = working_dir + "/" + "characterization"
 cluster_dir = annotation_dir + "/" + "clustering"
 protein_family_dir = annotation_dir + "/" + "protein_family_annotation"
@@ -418,20 +415,12 @@ tshld_unclassified = 0.10	# the minimum percentile of unclassified in one MSP
 tshld_diff = 0.50			# the minimum difference between most and second dominant taxa in the MSP
 tshld_lca = 0.80			# the minimum consistency for LCA calculattion
 taxa_final = "Rep"			# the source of taxa for one protein family, representatives vs. LCA
-
 mspminer = get_item(config_items, "abundance", "mspminer", "string")
-#msp_dir = get_item(config_items, "output_folders", "msp_dir", "string")
-#msp_dir = abundance_dir + "/MSPminer/"
-#msp_config =  get_item(config_items, "MSP", "msp_config", "string")
-#tshld_unclassified = get_item(config_items, "MSP", "tshld_unclassified", "float")	# the minimum percentile of unclassified in one MSP
-#tshld_diff = get_item(config_items, "MSP", "tshld_diff", "float")			        # the minimum difference between most and second dominant taxa in the MSP
-#tshld_lca = get_item(config_items, "MSP", "tshld_lca", "float")				        # the minimum percentile of consistent taxon for protein family to get LCA
-#taxa_final = get_item(config_items, "MSP", "taxa_final", "string")				    # the source of taxa for one protein family, representatives vs. LCA
 
 # abundance
-normalize = "cpm"		# # the method for normalization: [cpm]:copies per million units (sum to 1 million); [relab]: relative abundance (sum to 1)
-#normalize = get_item(config_items, "abundance", "normalize", "string") 		# the method for abundance normalization
-abundance_detection_level = 0	# cutoff for abundance detection
+#normalize = "cpm"		# the method for normalization: [cpm]:copies per million units (sum to 1 million); [relab]: relative abundance (sum to 1)
+normalize = get_item(config_items, "abundance", "normalize", "string") 		# the method for abundance normalization
+#abundance_detection_level = 0	# cutoff for abundance detection
 
 # maaslin2
 maaslin2_dir = get_item(config_items, "maaslin2", "maaslin2_output", "string")
@@ -453,34 +442,19 @@ ref_status = {}
 for item in tmp:
 	tmp1 = item.split(":")
 	ref_status[tmp1[0]] = tmp1[1]
-#fixed_effect = "diagnosis,age,antibiotic,immunosuppressant,mesalamine,steroids"
-fixed_effects = get_item(config_items, "maaslin2", "fixed_effects", "string")
-random_effects = get_item(config_items, "maaslin2", "random_effects", "string")
-#nested_effects = get_item(config_items, "maaslin2", "nested_effects", "string")
-nested_effects = "none"
-#abundance_detection_level = 0	# the detectable level of abundance
 abundance_detection_level = get_item(config_items, "maaslin2", "abundance_detection_level", "float")
-#tshld_prevalence = 0.10		# the minimum prevalence of protein family abundance across samples
 tshld_prevalence = get_item(config_items, "maaslin2", "tshld_prevalence", "float")
-#tshld_qvalue = 0.05			# the maximum q-value for significant results
 tshld_qvalue = get_item(config_items, "maaslin2", "tshld_qvalue", "float")
-#effect_size = 'coef'			# the source of effect size, coef vs. Cohen's d
 effect_size = get_item(config_items, "maaslin2", "effect_size", "string")
 if effect_size == "log(fc)":
 	effect_size = "log(FC)"
-if effect_size == "log(FC)":
-	effect_size = "log_FC"
-if effect_size == "mean(log)":
-	effect_size = "mean_log"
-#maaslin2_cores = 25			# the number of threads used by maaslin2
-maaslin2_cores = get_item(config_items, "maaslin2", "maaslin2_cores", "int")
-#maaslin2_cmmd = "~/usr/Maaslin2/R/Maaslin2.R"
+#if effect_size == "log(FC)":
+#	effect_size = "log_FC"
+#if effect_size == "mean(log)":
+#	effect_size = "mean_log"
 maaslin2_cmmd = get_item(config_items, "maaslin2", "maaslin2_cmmd", "string")
-#maaslin2_utils = get_item(config_items, "maaslin2", "maaslin2_utils", "string")
 maaslin2_utils = metawibele_install_directory + "/characterize/maaslin2_utils.r"
-#pcl_utils = get_item(config_items, "maaslin2", "pcl_utils", "string")
 pcl_utils = metawibele_install_directory + "/characterize/pcl_utils.r"
-#transpose_cmmd = get_item(config_items, "maaslin2", "transpose_cmmd", "string")
 transpose_cmmd =  metawibele_install_directory + "/common/transpose.py"
 min_abundance = get_item(config_items, "maaslin2", "min_abundance", "float")
 min_prevalence = get_item(config_items, "maaslin2", "min_prevalence", "float")
@@ -488,19 +462,15 @@ max_significance = get_item(config_items, "maaslin2", "max_significance", "float
 normalization = get_item(config_items, "maaslin2", "normalization", "string")
 transform = get_item(config_items, "maaslin2", "transform", "string")
 analysis_method = get_item(config_items, "maaslin2", "analysis_method", "string")
+fixed_effects = get_item(config_items, "maaslin2", "fixed_effects", "string")
+random_effects = get_item(config_items, "maaslin2", "random_effects", "string")
+correction = get_item(config_items, "maaslin2", "correction", "string")
+standardize = get_item(config_items, "maaslin2", "standardize", "string")
 plot_heatmap = get_item(config_items, "maaslin2", "plot_heatmap", "string")
+heatmap_first_n = get_item(config_items, "maaslin2", "heatmap_first_n", "string")
 plot_scatter = get_item(config_items, "maaslin2", "plot_scatter", "string")
-maaslin2_cmmd_opts = ["--min_abundance", min_abundance, "--min_prevalence", min_prevalence, "--max_significance", max_significance, "--normalization", normalization,  "--transform", transform, "--analysis_method", analysis_method, "--cores", maaslin2_cores, "--fixed_effects", fixed_effects, "--random_effects", random_effects, "--plot_heatmap", plot_heatmap, "--plot_scatter", plot_scatter]
-
-
-## prioritization thresholds ## 
-#tshld_abund = 75
-#tshld_abund = 75
-#tshld_prev = 75
-#tshld_priority = 0.25		# the top percentile for priority
-#tshld_priority = get_item(config_items, "prioritization", "tshld_priority", "float")
-#tshld_score = 0.5			# the minimum score for priority 
-#tshld_priority_score = get_item(config_items, "prioritization", "tshld_priority_score", "float")
+maaslin2_cores = get_item(config_items, "maaslin2", "maaslin2_cores", "int")
+maaslin2_cmmd_opts = ["--min_abundance", min_abundance, "--min_prevalence", min_prevalence, "--max_significance", max_significance, "--normalization", normalization,  "--transform", transform, "--analysis_method", analysis_method, "--cores", maaslin2_cores, "--fixed_effects", fixed_effects, "--random_effects", random_effects, "--correction", correction, "--standardize", standardize, "--plot_heatmap", plot_heatmap, "--heatmap_first_n", heatmap_first_n, "--plot_scatter", plot_scatter]
 
 
 ## assembly workflow
