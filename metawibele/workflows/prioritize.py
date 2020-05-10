@@ -95,6 +95,7 @@ def main(workflow):
 	default_prioritization_conf = metawibele_install_directory + "/configs/prioritization.cfg"
 	if args.prioritization_config == "none":
 		args.prioritization_config = default_prioritization_conf
+	print(args.prioritization_config)
 
 	# collect input files
 	protein_family = config.protein_family
