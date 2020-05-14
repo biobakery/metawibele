@@ -403,7 +403,6 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 	pfam_list = []
 	file_list_file = interpro + "/" + "split_files.list"
 	split_list_file = interpro + "/" + "split.list"
-	##os.system("split_seq_files.py" + " -i " + gene_catalog_seq + " -n " + str(split_number) + " -p " + myprefix + " -o " + interpro + " -l " + file_list_file + " -s " + split_list_file)
 	utilities.split_fasta_file (gene_catalog_seq, split_number, myprefix, interpro, file_list_file, split_list_file)
 	file_list = []
 	split_list = []
@@ -453,6 +452,7 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 			myfile_new = interpro + "/" + mym.group(1)
 			workflow.add_task(
 					"ln -fs [depends[0]] [targets[0]]",
+					#"cp -f [depends[0]] [targets[0]]",
 					depends = [myfile],
 					targets = [myfile_new],
 					name = utilities.name_task(myname, "ln"))
@@ -719,7 +719,6 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 	if domain_motif_conf["psortb"] == "yes" or domain_motif_conf["psortb"] == "Yes":
 		file_list_file = psortb + "/" + "split_files.list"
 		split_list_file = psortb + "/" + "split.list"
-		##os.system("split_seq_files.py -i " + gene_catalog_seq + " -n " + str(split_number) +  " -p " +  myprefix + " -o  " + psortb + " -l " + file_list_file + " -s " + split_list_file)
 		utilities.split_fasta_file (gene_catalog_seq, split_number, myprefix, psortb, file_list_file, split_list_file)
 		file_list = []
 		split_list = []
@@ -771,6 +770,7 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 			myout.append(myfile1)
 			workflow.add_task(
 					"ln -fs [depends[0]] [targets[0]]",
+					#"cp -f [depends[0]] [targets[0]]",
 					depends = [myfile],
 					targets = [myfile_new],
 					name = utilities.name_task(myname, "ln"))
