@@ -452,6 +452,7 @@ if effect_size == "log(fc)":
 #	effect_size = "log_FC"
 #if effect_size == "mean(log)":
 #	effect_size = "mean_log"
+nested_effects = "none"
 maaslin2_cmmd = get_item(config_items, "maaslin2", "maaslin2_cmmd", "string")
 maaslin2_utils = metawibele_install_directory + "/characterize/maaslin2_utils.r"
 pcl_utils = metawibele_install_directory + "/characterize/pcl_utils.r"
