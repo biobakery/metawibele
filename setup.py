@@ -76,7 +76,7 @@ import re
 import time
 
 
-VERSION = "0.2"
+VERSION = "0.3"
 AUTHOR = "MetaWIBELE Development Team"
 AUTHOR_EMAIL = "metawibele-users@googlegroups.com"
 MAINTAINER = "Yancong Zhang"
@@ -315,10 +315,11 @@ setuptools.setup(
 			'metawibele_prepare_abundance_heatmap = metawibele.common.prepare_abundance_heatmap:main',
 			'metawibele_split_family_abundance = metawibele.common.split_family_abundance:main',
 			'metawibele_transpose = metawibele.common.transpose:main',
-			'metawibele_preprocessing_workflow = metawibele.tools.preprocessing_workflow:main'
+			'metawibele_preprocess = metawibele.workflows.preprocess:main'
 		]},
 	package_data={
 		'metawibele': [
+			'workflows/*.py',
 			'metawibele.cfg',
 			'configs/*',
 			'data/*',
@@ -326,8 +327,6 @@ setuptools.setup(
 	data_files = [
 			("metawibele/examples/", glob("examples/*"))
 		],
-	#scripts=glob('metawibele/workflows/*py') + glob('metawibele/characterize/*py') + glob('metawibele/prioritize/*py') +
-	#		glob('metawibele/tools/*py') + glob('metawibele/common/*py') + glob('metawibele/*py'),
 	scripts=glob('metawibele/workflows/*py'),
 	zip_safe=False
 )
