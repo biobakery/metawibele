@@ -131,14 +131,14 @@ def read_config_file (conf_file, method):
 				if re.search("__", name):
 					name = re.sub("-", "_", name)
 					name = re.sub("\.", "_", name)
-					name = re.sub("(", "_", name)
-					name = re.sub(")", "", name)
+					name = re.sub("\(", "_", name)
+					name = re.sub("\)", "", name)
 					attr_conf[name] = myvalue
 				else:
 					name = re.sub("-", "_", name)
 					name = re.sub("\.", "_", name)
-					name = re.sub("(", "_", name)
-					name = re.sub(")", "", name)
+					name = re.sub("\(", "_", name)
+					name = re.sub("\)", "", name)
 					ann_conf[name] = myvalue
 				if myvalue == "required":
 					print("Required ranking item: " + name + "\t" + myvalue)
@@ -537,8 +537,8 @@ def prioritize_families (summary_table, score_column, ann_conf):
 	"""
 	print('prioritize_families')
 
-	pri_percentile = ann_conf["tshld_priority"]
-	pri_score = ann_conf["tshld_priority_score"]
+	#pri_percentile = ann_conf["tshld_priority"]
+	#pri_score = ann_conf["tshld_priority_score"]
 	#metawibele_score = config.tshld_score  # 1/((1/(beta*tshld_prev)) + (1/((1-beta)*tshld_abund)))
 
 	# get important family based on their MetaWIBELE score
@@ -549,18 +549,18 @@ def prioritize_families (summary_table, score_column, ann_conf):
 	except:
 		#imp_families = imp_families.sort(score_column, ascending=False)
 		summary_table = summary_table.sort_values(score_column, ascending=False)
-	if pri_score != "NaN":
-		imp_families = summary_table[summary_table[score_column] > float(pri_score)]
-		# debug
-		print("Specified threshold of priority score: " + str(pri_score))
-	else:
-		if pri_percentile != "NaN":
-			mytop_num = int(summary_table.shape[0] * float(pri_percentile))
-			imp_families = summary_table.head(mytop_num)
-			print("Specified threshold of priority: " + str(pri_percentile))
-		else:
-			imp_families = summary_table
-	return summary_table, imp_families
+	#if pri_score != "NaN":
+	#	imp_families = summary_table[summary_table[score_column] > float(pri_score)]
+	#	print("Specified threshold of priority score: " + str(pri_score))
+	#else:
+	#	if pri_percentile != "NaN":
+	#		mytop_num = int(summary_table.shape[0] * float(pri_percentile))
+	#		imp_families = summary_table.head(mytop_num)
+	#		print("Specified threshold of priority: " + str(pri_percentile))
+	#	else:
+	#		imp_families = summary_table
+	
+	return summary_table
 
 
 def write_results (summary_table, split, out_file):
@@ -625,11 +625,11 @@ def main():
 	### get important families ###
 	if config.verbose == 'DEBUG':
 		print ("\n--- Get prioritized families based on MetaWIBELE score ---")
-	summary_table, imp_family = prioritize_families (summary_table, "priority_score", ann_conf)
+	summary_table = prioritize_families (summary_table, "priority_score", ann_conf)
 	metawibele_output_file = args_value.output + '/' + myout + '.rank.tsv'
 	write_results(summary_table, split, metawibele_output_file)
-	metawibele_output_file = args_value.output + '/' + myout + '.priority.tsv'
-	write_results (imp_family, split, metawibele_output_file)
+	#metawibele_output_file = args_value.output + '/' + myout + '.priority.tsv'
+	#write_results (imp_family, split, metawibele_output_file)
 
 	if config.verbose == 'DEBUG':
 		print ("\n--- The prioritization output is written in %s ..." % (args_value.output))
