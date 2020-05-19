@@ -81,10 +81,12 @@ def assembly (workflow, input_dir, extension, extension_paired, threads, output_
 		extension_paireds = extension_paired.split(",")
 		pair_identifier = re.sub(extension, "", extension_paireds[0])
 		pair_identifier2 = re.sub("1", "2", pair_identifier)
+		sample_files = utilities.find_files(input_dir, extension_paireds[0], None)
+		samples = utilities.sample_names(sample_files, extension_paireds[0], None)
 	else:
 		extension_paireds = [extension]
-	sample_files = utilities.find_files(input_dir, extension, None)
-	samples = utilities.sample_names(sample_files, extension, None)
+		sample_files = utilities.find_files(input_dir, extension, None)
+		samples = utilities.sample_names(sample_files, extension, None)
 	split_dir = input_dir
 	assembly_dir = output_folder
 
@@ -104,7 +106,7 @@ def assembly (workflow, input_dir, extension, extension_paired, threads, output_
 				sys.exit("File not exist! " + myfile)
 		if len(mypair_tmp) == 1:
 			# split into paired reads files
-			mypair_tmp = utilities.split_paired_reads(mypair_tmp[0], extension, pair_identifier=".R1")
+			mypair_tmp = utilities.split_paired_reads(mypair_tmp[0], extension, pair_identifier)
 			if len(mypair_tmp) == 1:
 				myorphan = mypair_tmp[0]
 			if len(mypair_tmp) == 2:
@@ -155,7 +157,7 @@ def assembly (workflow, input_dir, extension, extension_paired, threads, output_
 				f_seq = tmp[0]
 				r_seq = tmp[1]
 				if myorphan != "none":
-					print(sample + " megahit: " + mypair + "\t" + myorphan)
+					#print(sample + " megahit: " + mypair + "\t" + myorphan)
 					workflow.add_task_gridable("rm -rf " + megahit_contig_dir + " && " + "megahit -1 [depends[0]] -2 [depends[1]] -r [args[2]] -t [args[0]] -o [args[3]] --out-prefix [args[1]] >[args[4]] 2>&1",
 									depends = [f_seq, r_seq, TrackedExecutable("megahit")],
 									targets = [megahit_contig],
@@ -165,7 +167,7 @@ def assembly (workflow, input_dir, extension, extension_paired, threads, output_
 									time = time_equation,
 									name = sample + "__megahit")
 				else:
-					print(sample + " megahit: " + "\t" + mypair)
+					#print(sample + " megahit: " + "\t" + mypair)
 					workflow.add_task_gridable("rm -rf " + megahit_contig_dir + " && " + "megahit -1 [depends[0]] -2 [depends[1]] -t [args[0]] -o [args[2]] --out-prefix [args[1]] >[args[3]] 2>&1",
 									depends = [f_seq, r_seq, TrackedExecutable("megahit")],
 									targets = [megahit_contig],
@@ -173,7 +175,7 @@ def assembly (workflow, input_dir, extension, extension_paired, threads, output_
 									cores = threads,
 									name = sample + "__megahit")
 			else:
-				print(sample + " megahit: " + "\t" + mypair)
+				#print(sample + " megahit: " + "\t" + mypair)
 				workflow.add_task_gridable("rm -rf " + megahit_contig_dir + " && " + "megahit -r [depends[0]] -t [args[0]] -o [args[2]] --out-prefix [args[1]] >[args[3]] 2>&1",
 									depends = [mypair, TrackedExecutable("megahit")],
 									targets = [megahit_contig],
@@ -182,7 +184,7 @@ def assembly (workflow, input_dir, extension, extension_paired, threads, output_
 									name = sample + "__megahit")
 		else:
 			if myorphan != "none":	
-				print(sample + " megahit: " + "\t" + myorphan)
+				#print(sample + " megahit: " + "\t" + myorphan)
 				workflow.add_task_gridable("rm -rf " + megahit_contig_dir + " && " + "megahit -r [depends[0]] -t [args[0]] -o [args[2]] --out-prefix [args[1]] >[args[3]] 2>&1",
 								depends = [myorphan, TrackedExecutable("megahit")],
 								targets = [megahit_contig],
@@ -213,7 +215,7 @@ def assembly (workflow, input_dir, extension, extension_paired, threads, output_
 	return contigs_list
 
 
-def gene_calling (workflow, assembly_dir, assembly_extentsion, input_dir, extension,
+def gene_calling (workflow, assembly_dir, assembly_extentsion, input_dir, extension, extension_paired,
                  prokka_dir, prodigal_dir,
                  threads,
                  gene_file, gene_PC_file, protein_file, protein_sort,
@@ -263,8 +265,13 @@ def gene_calling (workflow, assembly_dir, assembly_extentsion, input_dir, extens
 	# ================================================
 	# collect sequences
 	# ================================================
-	sample_files = utilities.find_files(input_dir, extension, None)
-	samples = utilities.sample_names(sample_files, extension, None)
+	if extension_paired:
+		extension_paireds = extension_paired.split(",")
+		sample_files = utilities.find_files(input_dir, extension_paireds[0], None)
+		samples = utilities.sample_names(sample_files, extension_paireds[0], None)
+	else:
+		sample_files = utilities.find_files(input_dir, extension, None)
+		samples = utilities.sample_names(sample_files, extension, None)
 	sequence_files = []
 	for mysample in samples:
 		myfile = os.path.join(assembly_dir, mysample, mysample + "%s" % assembly_extentsion)
@@ -458,7 +465,7 @@ def gene_calling (workflow, assembly_dir, assembly_extentsion, input_dir, extens
 
 
 def gene_catalog (workflow, complete_gene, complete_protein,
-                  input_dir, extension, threads,
+                  input_dir, extension, extension_paired, threads,
                   prefix_gene_catalog, gene_catalog, gene_catalog_nuc, gene_catalog_prot,
                   mapping_dir, gene_catalog_saf, gene_catalog_count):
 	"""
@@ -545,21 +552,28 @@ def gene_catalog (workflow, complete_gene, complete_protein,
 		name = "gene_abundance_indexRef")
 
 	## collect sequences
-	sample_files = utilities.find_files(input_dir, extension, None)
-	samples = utilities.sample_names(sample_files, extension, None)
+	if extension_paired:
+		extension_paireds = extension_paired.split(",")
+		sample_files = utilities.find_files(input_dir, extension_paireds[0], None)
+		samples = utilities.sample_names(sample_files, extension_paireds[0], None)
+	else:
+		sample_files = utilities.find_files(input_dir, extension, None)
+		samples = utilities.sample_names(sample_files, extension, None)
 
 	## bowtie2 will map reads to gene categories
 	flt_seqs = []
 	for sample in samples:
 		seq_file = "NA"
-		if extension != "none":
-			tmp = extension.split(",")
-			for item in tmp:
-				if seq_file == "NA":
-					seq_file = os.path.join(input_dir, sample + '%s' % item)
-				else:
-					seq_file = seq_file + "," + os.path.join(input_dir, sample + '%s' % item)
-		# r_seq_pair = os.path.join(qc_out_dir, '%s_adapRev_paired_2.fastq.gz' % seq_base)
+		if extension_paired:
+			tmp = extension_paired.split(",")
+		else:
+			if extension != "none":
+				tmp = extension.split(",")
+		for item in tmp:
+			if seq_file == "NA":
+				seq_file = os.path.join(input_dir, sample + '%s' % item)
+			else:
+				seq_file = seq_file + "," + os.path.join(input_dir, sample + '%s' % item)
 		flt_seqs.append((sample, seq_file))
 	# foreah sample
 
@@ -601,10 +615,10 @@ def gene_catalog (workflow, complete_gene, complete_protein,
 	# collect abundance
 	mylog = gene_catalog_count + ".log"
 	workflow.add_task(
-		'metawibele_gene_catalog_abundance -p [args[0]] -s sort.bed -o [targets[0]] >[args[1]] 2>&1 ',
+		'metawibele_gene_catalog_abundance -p [args[0]] -s sort.bed -c [args[1]] -o [targets[0]] >[args[2]] 2>&1 ',
 		depends = utilities.add_to_list(mappings,TrackedExecutable("metawibele_gene_catalog_abundance")),
 		targets = [gene_catalog_count],
-		args = [mapping_dir, mylog],
+		args = [mapping_dir, gene_catalog, mylog],
 		name = "gene_catalog_abundance")
 
 	return gene_catalog, gene_catalog_count
