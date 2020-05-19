@@ -49,6 +49,7 @@ def get_args ():
 	parser = argparse.ArgumentParser()
 	parser.add_argument('-p', help='input the working directory path of counts files', required=True)
 	parser.add_argument('-s', help='specify the suffix of counts file, e.g. sort.bed', default="sort.bed")
+	parser.add_argument('-c', help='input non-redundant gene catalog clustering info file', default="none")
 	parser.add_argument('-o', help='output cluster distribution file', required=True)
 	values = parser.parse_args()
 	return values
@@ -158,14 +159,17 @@ def assign_counts (counts, samples, outfile):
 def main():
 	### get arguments ###
 	values = get_args()
-
+	if values.c == "none":
+		gene_catalog = config.gene_catalog
+	else:
+		gene_catalog = values.c
 
 	sys.stderr.write("### Start gene_catalog_abundance.py -p " + values.p + " ####\n")
 
 
 	### collect cluster info ###
 	sys.stderr.write("Get cluster info ......starting\n")
-	gene_cluster = collect_gene_cluster_info (config.gene_catalog)
+	gene_cluster = collect_gene_cluster_info (gene_catalog)
 	sys.stderr.write("Get cluster info ......done\n")
 	
 	### collect counts info ###
