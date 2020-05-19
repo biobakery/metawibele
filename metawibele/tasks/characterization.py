@@ -1352,7 +1352,7 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog, gene_catalog_c
 		## prepare data for maaslin2 ##
 		mylog = re.sub(".tsv", ".log", family_smooth)
 		workflow.add_task(
-				"metawibele_abundance_smoothing -i [depends[0]] -f [args[0]] -o [targets[0]] >[args[1]] 2>&1",
+				"metawibele_abundance_smoothing -i [depends[0]] -f 0 -o [targets[0]] >[args[1]] 2>&1",
 				depends = [family_relab, TrackedExecutable("metawibele_abundance_smoothing")],
 				targets = [family_smooth],
 				args = [config.tshld_prevalence, mylog],
