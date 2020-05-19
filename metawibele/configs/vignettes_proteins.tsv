@@ -1,0 +1,60 @@
+type	accession	name	accession_type	interpro_accession	description	http
+pilin	PF11530	Pilin_PilX-like	PfamDomain	IPR025922	Minor type IV pilin, PilX-like	http://www.ebi.ac.uk/interpro/entry/IPR025922
+pilin	PF14245	Pilin_PilA	PfamDomain	IPR028188	Type IV pilin PilA	https://www.ebi.ac.uk/interpro/entry/IPR028188?q=%22Type%20IV%20pilin%22
+pilin	PF16734	Pilin_GH	PfamDomain	IPR031975	Type IV pilin-like putative secretion pathway protein G/H	https://www.ebi.ac.uk/interpro/entry/IPR031975/taxonomy
+pilin	PF08805	Pilin_PilS_N	PfamDomain	IPR014911	Type 4 secretion system, PilS, N-terminal	https://www.ebi.ac.uk/interpro/entry/IPR014911?q=PilS
+pilin	PF09160	Pilin_FimH_man-bd	PfamDomain	IPR015243	FimH, mannose-binding domain	https://www.ebi.ac.uk/interpro/entry/IPR015243
+pilin	PF11104	Pilin_PilM	PfamDomain	IPR005883	Type IV pilus assembly protein PilM	http://www.ebi.ac.uk/interpro/entry/IPR005883
+pilin	PF16976	Pilin_RcpC_dom	PfamDomain	IPR031571	Flp pilus assembly protein RcpC/CpaB	http://www.ebi.ac.uk/interpro/entry/IPR031571
+pilin	PF00114	Pilin	PfamDomain	IPR001082	Pilin (bacterial filament)	NA
+pilin	PF04964	Flp_Fap	PfamDomain	IPR007047	Flp/Fap pilin component	NA
+pilin	PF06864	PAP_PilO	PfamDomain	IPR009663	Pilin accessory protein (PilO)	NA
+pilin	PF07790	Pilin_N	PfamDomain	IPR012859	Archaeal Type IV pilin, N-terminal 	NA
+pilin	PF09460	Saf-Nte_pilin	PfamDomain	IPR018569	Saf-pilin pilus formation protein	NA
+pilin	PF09673	TrbC_Ftype	PfamDomain	IPR019106	Type-F conjugative transfer system pilin assembly protein	NA
+pilin	PF09679	TraQ	PfamDomain	IPR014112	Type-F conjugative transfer system pilin chaperone (TraQ)	NA
+pilin	PF16555	GramPos_pilinD1	PfamDomain	IPR032364	Gram-positive pilin subunit D1, N-terminal domain	NA
+pilin	PF16569	GramPos_pilinBB	PfamDomain	IPR032334	Gram-positive pilin backbone subunit 2, Cna-B-like domain	NA
+pilin	PF16570	GramPos_pilinD3	PfamDomain	IPR032332	Gram-positive pilin backbone subunit 3, Cna-B-like domain	NA
+pilin	PF16732	ComP_DUS	PfamDomain	IPR031982	Type IV minor pilin ComP, DNA uptake sequence receptor	NA
+pilin	PF16964	TadF	PfamDomain	IPR031582	Putative tight adherence pilin protein F	NA
+pilin	PF18682	PilA4	PfamDomain	IPR041050	Pilin A4	NA
+pilin	PF04350	PilO	PfamDomain	IPR007445	Pilus assembly protein, PilO	NA
+pilin	PF04351	PilP	PfamDomain	IPR007446	Pilus assembly protein, PilP	NA
+pilin	PF05946	TcpA	PfamDomain	IPR010271	Toxin-coregulated pilus subunit TcpA	NA
+pilin	PF06340	TcpF	PfamDomain	IPR009405	Vibrio cholerae toxin co-regulated pilus biosynthesis protein F	NA
+pilin	PF07434	CblD	PfamDomain	IPR010888	CblD like pilus biogenesis initiator	NA
+pilin	PF09460	Saf-Nte_pilin	PfamDomain	IPR018569	Saf-pilin pilus formation protein	NA
+pilin	PF09476	Pilus_CpaD	PfamDomain	IPR019027	Pilus biogenesis CpaD protein (pilus_cpaD)	NA
+pilin	PF09589	HrpA_pilin	PfamDomain	IPR018581	HrpA pilus formation protein	NA
+pilin	PF09977	Tad_C	PfamDomain	IPR018705	Putative Tad-like Flp pilus-assembly	NA
+pilin	PF10671	TcpQ	PfamDomain	IPR018927	Toxin co-regulated pilus biosynthesis protein Q	NA
+pilin	PF11130	TraC_F_IV	PfamDomain	IPR025955	F pilus assembly Type-IV secretion system for plasmid transfer	NA
+pilin	PF13400	Tad	PfamDomain	IPR028087	Putative Flp pilus-assembly TadE/G-like	NA
+pilin	PF13629	T2SS-T3SS_pil_N	PfamDomain	IPR032789	Pilus formation protein N terminal region	NA
+pilin	PF13681	PilX	PfamDomain	IPR025205	Type IV pilus assembly protein PilX C-term	NA
+pilin	PF16074	PilW	PfamDomain	IPR032092	Type IV Pilus-assembly protein W	NA
+pilin	PF16968	TadZ_N	PfamDomain	IPR031580	Pilus assembly protein TadZ N-terminal	NA
+pilin	PF17456	TcpS	PfamDomain	IPR020213	Toxin-coregulated pilus protein S	NA
+pilin	PF10623	PilI	PfamDomain	IPR018897	Plasmid conjugative transfer protein PilI	NA
+pilin	PF15976	CooC_C	PfamDomain	IPR031917	CS1-pili formation C-terminal	NA
+pilin	PF18223	PilJ_C	PfamDomain	IPR040599	Pili PilJ C-terminal domain	NA
+pilin	PF00419	Fimbrial	PfamDomain	IPR000259	Fimbrial protein	NA
+pilin	PF02432	Fimbrial_K88	PfamDomain	IPR003467	Fimbrial, major and minor subunit	NA
+pilin	PF04449	Fimbrial_CS1	PfamDomain	IPR007540	CS1 type fimbrial major subunit	NA
+pilin	PF09222	Fim-adh_lectin	PfamDomain	IPR015303	Fimbrial adhesin F17-AG, lectin domain	NA
+pilin	PF10610	Tafi-CsgC	PfamDomain	IPR014491	Thin aggregative fimbriae synthesis protein	NA
+pilin	PF14481	Fimbrial_PilY2	PfamDomain	IPR029497	Type 4 fimbrial biogenesis protein PilY2	NA
+pilin	PF15495	Fimbrillin_C	PfamDomain	IPR029140	Major fimbrial subunit protein type IV, Fimbrillin, C-terminal	NA
+pilin	PF16831	CssAB	PfamDomain	IPR031788	CS6 fimbrial subunits A and B, Coli surface antigen 6	NA
+pilin	PF16970	FimA	PfamDomain	IPR039458	Type-1 fimbrial protein, A	NA
+pilin	PF06321	P_gingi_FimA	PfamDomain	IPR029141	Major fimbrial subunit protein (FimA)	NA
+pilin	PF08842	Mfa2	PfamDomain	IPR014941	Fimbrillin-A associated anchor proteins Mfa1 and Mfa2	NA
+pilin	PF02753	PapD_C	PfamDomain	IPR016148	Pili assembly chaperone PapD, C-terminal domain	NA
+pilin	PF00345	PapD_N	PfamDomain	IPR016147	Pili and flagellar-assembly chaperone, PapD N-terminal domain	NA
+pilin	PF14855	PapJ	PfamDomain	IPR029224	Pilus-assembly fibrillin subunit, chaperone	NA
+pilin	PF03628	PapG_C	PfamDomain	IPR005309	PapG chaperone-binding domain; PapG, the adhesin of the P-pili, is situated at the tip and is only a minor component of the whole pilus structure	NA
+pilin	PF05567	Neisseria_PilC	PfamDomain	IPR008707	Neisseria PilC beta-propeller domain	NA
+pilin	PF07419	PilM	PfamDomain	IPR009987	PilM is an inner membrane protein that has been predicted to function as a component of the pilin transport apparatus and thin-pilus basal body	NA
+pilin	PF05137	PilN	PfamDomain	IPR007813	Fimbrial assembly protein (PilN)	NA
+pilin	PF18222	PilN_bio_d	PfamDomain	IPR040888	PilN biogenesis protein dimerization domain, PilN is an integral inner membrane protein needed for the formation of type IV pilus	NA
