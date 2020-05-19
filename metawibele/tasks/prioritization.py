@@ -74,8 +74,8 @@ def mandatory_prioritization (workflow, prioritization_conf,
 	priority_dir = output_folder
 	unsupervised_rank = priority_dir + "/" + config.basename + "_unsupervised_prioritization.rank.tsv"
 	supervised_rank = priority_dir + "/" + config.basename + "_supervised_prioritization.rank.tsv"
-	unsupervised_priority = priority_dir + "/" + config.basename + "_unsupervised_prioritization.priority.tsv"
-	supervised_priority = priority_dir + "/" + config.basename + "_supervised_prioritization.priority.tsv"
+	#unsupervised_priority = priority_dir + "/" + config.basename + "_unsupervised_prioritization.priority.tsv"
+	#supervised_priority = priority_dir + "/" + config.basename + "_supervised_prioritization.priority.tsv"
 	if not os.path.exists(priority_dir): 
 		os.system("mkdir -p " + priority_dir)
 
@@ -84,7 +84,7 @@ def mandatory_prioritization (workflow, prioritization_conf,
 	workflow.add_task(
 			"metawibele_quantify_prioritization -c [depends[0]] -m unsupervised -w fixed -a [depends[1]] -b [depends[2]] -o [args[0]] >[args[1]] 2>&1",
 			depends = [prioritization_conf, protein_family_ann, protein_family_attr, TrackedExecutable("metawibele_quantify_prioritization")],
-			targets = [unsupervised_rank, unsupervised_priority],
+			targets = [unsupervised_rank],
 			args = [priority_dir, mylog],
 			name = "quantify_prioritization__unsupervised")
 
@@ -93,14 +93,14 @@ def mandatory_prioritization (workflow, prioritization_conf,
 	workflow.add_task(
 			"metawibele_quantify_prioritization -c [depends[0]] -m supervised -w equal -a [depends[1]] -b [depends[2]] -o [args[0]] >[args[1]] 2>&1",
 			depends = [prioritization_conf, protein_family_ann, protein_family_attr, TrackedExecutable("metawibele_quantify_prioritization")],
-			targets = [supervised_rank, supervised_priority],
+			targets = [supervised_rank],
 			args = [priority_dir, mylog],
 			name = "quantify_prioritization__supervised")
 
-	return unsupervised_priority, supervised_priority
+	return unsupervised_rank, supervised_rank
 
 
-def optional_prioritization (workflow, prioritization_conf,
+def optional_prioritization (workflow, prioritization_conf, interested_function,
                                      protein_family_ann, supervised_priority,
                                      output_folder, selected_priority):
 	"""
@@ -143,21 +143,21 @@ def optional_prioritization (workflow, prioritization_conf,
 	# run annotation-based prioritization
 	mylog = re.sub(".tsv", ".log", selected_priority)
 	workflow.add_task(
-			"metawibele_filter_prioritization -c [depends[0]] -a [depends[1]] -p [depends[2]] -o [targets[0]] > [args[0]] 2>&1",
+			"metawibele_filter_prioritization -c [depends[0]] -a [depends[1]] -p [depends[2]] -f [args[0]] -o [targets[0]] > [args[1]] 2>&1",
 			depends = [prioritization_conf, protein_family_ann, supervised_priority, TrackedExecutable("metawibele_filter_prioritization")],
 			targets = [selected_priority],
-			args = [mylog],
+			args = [interested_function, mylog],
 			name = "filter_prioritization")
 
 	return selected_priority
 
 
 def finalize_prioritization (workflow,
-                             unsupervised_rank, unsupervised_priority,
-                             supervised_rank, supervised_priority, selected_priority,
+                             unsupervised_rank,
+                             supervised_rank, selected_priority,
                              output_folder,
-                             final_unsupervised_rank, final_unsupervised_priority,
-                             final_supervised_rank, final_supervised_priority, final_selected_priority):
+                             final_unsupervised_rank,
+                             final_supervised_rank, final_selected_priority):
 
 	"""
 	This set of tasks will format prioritization files
@@ -180,11 +180,11 @@ def finalize_prioritization (workflow,
 
 		# add quality control tasks for the fastq files
 		finalize_prioritization (workflow,
-                             unsupervised_rank, unsupervised_priority,
-                             supervised_rank, supervised_priority, selected_priority,
+                             unsupervised_rank,
+                             supervised_rank, selected_priority,
                              output_folder,
-                             final_unsupervised_rank, final_unsupervised_priority,
-                             final_supervised_rank, final_supervised_priority, final_selected_priority)
+                             final_unsupervised_rank,
+                             final_supervised_rank, final_selected_priority)
 		# run the workflow
 		workflow.go()
 	"""
@@ -202,14 +202,6 @@ def finalize_prioritization (workflow,
 			args = [mylog],
 			name = "finalize_prioritization__unsupervised_rank")
 
-	mylog = re.sub(".tsv", ".log", final_unsupervised_priority)
-	workflow.add_task(
-			"metawibele_finalize_prioritization -i [depends[0]] -o [targets[0]] > [args[0]] 2>&1",
-			depends = [unsupervised_priority, TrackedExecutable("metawibele_finalize_prioritization")],
-			targets = [final_unsupervised_priority],
-			args = [mylog],
-			name = "finalize_prioritization__unsupervised_priority")
-
 	mylog = re.sub(".tsv", ".log", final_supervised_rank)
 	workflow.add_task(
 			"metawibele_finalize_prioritization -i [depends[0]] -o [targets[0]] > [args[0]] 2>&1",
@@ -218,14 +210,6 @@ def finalize_prioritization (workflow,
 			args = [mylog],
 			name = "finalize_prioritization__supervised_rank")
 
-	mylog = re.sub(".tsv", ".log", final_supervised_priority)
-	workflow.add_task(
-			"metawibele_finalize_prioritization -i [depends[0]] -o [targets[0]] > [args[0]] 2>&1",
-			depends = [supervised_priority, TrackedExecutable("metawibele_finalize_prioritization")],
-			targets = [final_supervised_priority],
-			args = [mylog],
-			name = "finalize_prioritization__supervised_priority")
-
 	mylog = re.sub(".tsv", ".log", final_selected_priority)
 	workflow.add_task(
 			"metawibele_finalize_prioritization -i [depends[0]] -o [targets[0]] > [args[0]] 2>&1",
@@ -233,57 +217,4 @@ def finalize_prioritization (workflow,
 			targets = [final_selected_priority],
 			args = [mylog],
 			name = "finalize_prioritization__selected_priority")
-
-
-def moduled_prioritization (workflow, prioritization_conf,
-                            protein_family_ann, supervised_priority,
-							output_folder, moduled_priority):
-
-	"""
-	This set of tasks will identify potential functional modules for prioritized proteins
-
-	Args:
-		workflow (anadama2.workflow): An instance of the workflow class.
-		prioritization_conf: Configuration file for quantitative prioritization.
-		protein_family_ann: Finalized annotation file for protein .
-		supervised_priority: Supervised prioritization file.
-
-	Requires:
-		config file
-		annotation and quantitative prioritization files
-
-	Returns:
-		string: the name of annotation-based prioritization file.
-
-	Example:
-		from anadama2 import Workflow
-		from MetaWIBELE.characterize import characterization
-
-		# create an anadama2 workflow instance
-		workflow=Workflow()
-
-		# annotation_based_prioritization tasks
-		mymodule = prioritization.moduled_prioritization (workflow, args.prioritization_conf,
-		                                                             protein_family_ann,
-		                                                             supervised_priority,
-		                                                             output_dir, moduled_priority)
-
-		workflow.go()
-	"""
-
-	# get the clustering output files
-	priority_dir = output_folder
-	if not os.path.exists(priority_dir): 
-		os.system("mkdir -p " + priority_dir)
-
-	# run moduling prioritization
-	mylog = re.sub(".tsv", ".log", moduled_priority)
-	workflow.add_task(
-			"metawibele_cluster_prioritization -c [depends[0]] -a [depends[1]] -p [depends[2]] -o [targets[0]] > [args[0]] 2>&1",
-			depends = [prioritization_conf, protein_family_ann, supervised_priority, TrackedExecutable("metawibele_cluster_prioritization")],
-			targets = [selected_priority],
-			args = [mylog],
-			name = "cluster_prioritization")
-
-	return moduled_priority
 
