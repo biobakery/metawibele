@@ -317,8 +317,8 @@ def sample_names(files, extension, pair_identifier=None):
 	"""
 
 	# add period to extension if not included
-	if not extension.startswith("."):
-		extension = "." + extension
+	#if not extension.startswith("."):
+	#	extension = "." + extension
 
 	# if files is a string, convert to a list
 	convert = False
