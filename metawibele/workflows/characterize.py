@@ -148,6 +148,7 @@ def main(workflow):
 	# get configuration info
 	metawibele_install_directory = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 	default_characterization_conf = metawibele_install_directory + "/configs/characterization.cfg"
+	#print(default_characterization_conf)
 	if args.characterization_config == "none":
 		args.characterization_config = default_characterization_conf
 	print(args.characterization_config)
@@ -156,6 +157,8 @@ def main(workflow):
 	# input and output folder
 	input_dir = args.input
 	output_dir = config.annotation_dir
+	input_dir = os.path.abspath(input_dir)
+	output_dir = os.path.abspath(output_dir)
 
 	# get all input files
 	gene_catalog = config.gene_catalog
