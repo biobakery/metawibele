@@ -235,7 +235,7 @@ def get_item(config_items, section, name, type=None):
 
 
 ## default option for MetaWIBELE
-version = '0.2'
+version = '0.3'
 log_level = 'DEBUG'
 verbose = 'DEBUG'
 
@@ -250,9 +250,6 @@ c_strat_delim = "|" 	 # strantified item, e.g. Cluster_1000010|Bacteroides dorei
 c_taxon_delim = "|"	 	 # taxonomic lineage, e.g. g__Faecalibacterium|s__Faecalibacterium_prausnitzii|t__Faecalibacterium_prausnitzii_A2-165
 c_multiname_delim = ";"	 # multiple ietms, e.g. PF00482;PF01841 
 c_msp_unknown = "msp_unknown"
-#c_metedata_delim = get_item(config_items, "constant", "c_metedata_delim", "string")
-#c_strat_delim = get_item(config_items, "constant", "c_strat_delim", "string")
-#c_multiname_delim = get_item(config_items, "constant", "c_multiname_delim", "string")
 
 
 # User config file
@@ -322,9 +319,7 @@ priority_dir = working_dir + "/" + "prioritization"
 study = get_item(config_items, "input", "study", "string")
 metadata = get_item(config_items, "input", "metadata", "string")
 sample_list = get_item(config_items, "input", "sample_list", "string")
-#protein_seq = get_item(config_items, "input", "protein_seq", "string")
 gene_catalog = get_item(config_items, "input", "gene_catalog", "string")
-#gene_catalog_nuc = get_item(config_items, "input", "gene_catalog_nuc", "string")
 gene_catalog_prot = get_item(config_items, "input", "gene_catalog_prot", "string")
 gene_catalog_count = get_item(config_items, "input", "gene_catalog_count", "string")
 
@@ -336,13 +331,10 @@ protein_family_ann = annotation_dir + "/" + basename + "_proteinfamilies_annotat
 protein_family_attr = annotation_dir + "/" + basename + "_proteinfamilies_annotation.attribute.tsv"
 unsupervised_rank = priority_dir + "/" + basename + "_unsupervised_prioritization.rank.table.tsv"
 supervised_rank = priority_dir + "/" + basename + "_supervised_prioritization.rank.table.tsv"
-unsupervised_priority = priority_dir + "/" + basename + "_unsupervised_prioritization.priority.table.tsv"
-supervised_priority = priority_dir + "/" + basename + "_supervised_prioritization.priority.table.tsv"
 
 
 ## characterization ##
 tshld_consistency = 0.75	# the minimum annotation consistency in one protein family
-#tshld_consistency = get_item(config_items, "characterization", "tshld_consistency", "float") # the minimum annotation consistency in one protein family
 
 # CD-hit
 # memory used for CD-hit
@@ -350,10 +342,6 @@ cd_hit_memory = memory
 cd_hit_prot_opts = "-d 100 -c 0.9 -aL 0.8 -aS 0.8 -G 0 -M 0 -B 0"	# clustering protein families
 cd_hit_gene_opts = "-d 100 -c 0.95 -aS 0.8 -G 0 -M 0 -B 0"
 featureCounts_opts = " -F SAF "
-#cd_hit_memory = get_item(config_items, "CD-hit", "cd_hit_memory", "int")
-#cd_hit_prot_opts = get_item(config_items, "CD-hit", "cd_hit_protein_opts", "string")  # used for protein families
-#cd_hit_gene_opts = get_item(config_items, "CD-hit", "cd_hit_gene_opts", "string") # ued for gene catalogs
-#featureCounts_opts = get_item(config_items, "CD-hit", "featurecounts_opts", "string") + " -T " + str(threads)
 
 # diamond options
 diamond_database_extension = ".dmnd"
@@ -369,24 +357,14 @@ diamond_version={
     "second minor" : 22,
     "line" : 0,
     "column" : 2}
-#diamond_database_extension = get_item(config_items, "diamond", "diamond_database_extension", "string")
-#diamond_cmmd_protein_search = get_item(config_items, "diamond", "diamond_cmmd_protein_search", "string")
-#diamond_cmmd_nucleotide_search = get_item(config_items, "diamond", "diamond_cmmd_nucleotide_search", "string")
-#diamond_identity = get_item(config_items, "diamond", "diamond_identity", "float")
-#diamond_query_coverage = get_item(config_items, "diamond", "diamond_query_coverage", "float")
-#diamond_mutual_coverage = get_item(config_items, "diamond", "diamond_mutual_coverage", "float")
 
 # protein family
 tshld_identity = 0.25	# the minimum identity of homology
 tshld_coverage = 0.25	# the minimum coverage of homology
 taxa_source = "Rep"		# the source of taxa for one protein family, representatives vs. LCA
-#tshld_identity = get_item(config_items, "protein-family", "tshld_identity", "float")    # the minimum identity of homology
-#tshld_coverage = get_item(config_items, "protein-family", "tshld_coverage", "float") 	# the minimum coverage of homology
-#taxa_source = get_item(config_items, "protein-family", "taxa_source", "string") 		# the source of taxa for one protein family, representatives vs. LCA
 
 # interporscan
 interproscan_appl = "CDD,COILS,Gene3D,HAMAP,MobiDBLite,PANTHER,Pfam,PIRSF,PRINTS,ProDom,PROSITEPATTERNS,PROSITEPROFILES,SFLD,SMART,SUPERFAMILY,TIGRFAM,Phobius,SignalP,TMHMM"
-#interproscan_appl = get_item(config_items, "interproscan", "interproscan_appl", "string")
 interproscan_type = []
 tmp = interproscan_appl.split(",")
 for item in tmp:
@@ -418,9 +396,7 @@ taxa_final = "Rep"			# the source of taxa for one protein family, representative
 mspminer = get_item(config_items, "abundance", "mspminer", "string")
 
 # abundance
-#normalize = "cpm"		# the method for normalization: [cpm]:copies per million units (sum to 1 million); [relab]: relative abundance (sum to 1)
 normalize = get_item(config_items, "abundance", "normalize", "string") 		# the method for abundance normalization
-#abundance_detection_level = 0	# cutoff for abundance detection
 
 # maaslin2
 maaslin2_dir = get_item(config_items, "maaslin2", "maaslin2_output", "string")
@@ -448,11 +424,6 @@ tshld_qvalue = get_item(config_items, "maaslin2", "tshld_qvalue", "float")
 effect_size = get_item(config_items, "maaslin2", "effect_size", "string")
 if effect_size == "log(fc)":
 	effect_size = "log(FC)"
-#if effect_size == "log(FC)":
-#	effect_size = "log_FC"
-#if effect_size == "mean(log)":
-#	effect_size = "mean_log"
-nested_effects = "none"
 maaslin2_cmmd = get_item(config_items, "maaslin2", "maaslin2_cmmd", "string")
 maaslin2_utils = metawibele_install_directory + "/characterize/maaslin2_utils.r"
 pcl_utils = metawibele_install_directory + "/characterize/pcl_utils.r"
@@ -465,6 +436,7 @@ transform = get_item(config_items, "maaslin2", "transform", "string")
 analysis_method = get_item(config_items, "maaslin2", "analysis_method", "string")
 fixed_effects = get_item(config_items, "maaslin2", "fixed_effects", "string")
 random_effects = get_item(config_items, "maaslin2", "random_effects", "string")
+nested_effects = "none"
 correction = get_item(config_items, "maaslin2", "correction", "string")
 standardize = get_item(config_items, "maaslin2", "standardize", "string")
 plot_heatmap = get_item(config_items, "maaslin2", "plot_heatmap", "string")
