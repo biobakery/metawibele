@@ -67,6 +67,10 @@ def parse_arguments():
 		default = "prioritization.cfg",
 		required=True)
 	parser.add_argument(
+		"-f", "--function",
+		help = "[OPTIONAL] specify file for interested functions filtering\n",
+		default = "none")
+	parser.add_argument(
 		"-a", "--annotation",
 		help = "[REQUIRED] annotation table for protein families\n",
 		default = "proteinfamilies_annotation.tsv",
@@ -327,11 +331,13 @@ def filter_prioritization (priority_file, cluster, outfile):
 
 def main():
 	args_value = parse_arguments()
+	if args_value.function == "none":
+		vignettes_database = config.vignettes_database
 
 	if config.verbose == 'DEBUG':
 		print ("--- Collect config information ---")
 	required_conf, optional_conf, specific_annotation, specific_cluster = read_config_file (args_value.config)
-	spe_ann = read_vignettes_file (config.vignettes_database, specific_annotation)
+	spe_ann = read_vignettes_file (vignettes_database, specific_annotation)
 	spe_cluster = read_cluster_file (specific_cluster)
 	clusters = read_annotation_file (args_value.annotation, required_conf, optional_conf, spe_ann, spe_cluster)
 
