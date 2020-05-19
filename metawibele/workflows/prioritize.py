@@ -62,6 +62,9 @@ def parse_cli_arguments ():
 	workflow.add_argument("prioritization-config",
 	                    desc = "the configuration file of quantitative prioritization",
 	                    default = "none"),
+	workflow.add_argument("interested-function",
+	                    desc = "the file of interested functions",
+	                    default = "none"),
 	workflow.add_argument("bypass-mandatory",
 	                     desc = "do not prioritize protein families based on quantitative criteria (mandatory prioritization)",
 						 action = "store_true")
@@ -89,6 +92,8 @@ def main(workflow):
 	# input and output folder
 	input_dir = args.input
 	priority_dir = config.priority_dir
+	input_dir = os.path.abspath(input_dir)
+	priority_dir = os.path.abspath(priority_dir)
 
 	# get config file
 	metawibele_install_directory = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -106,16 +111,11 @@ def main(workflow):
 
 	# output files
 	unsupervised_rank = priority_dir + "/" + config.basename + "_unsupervised_prioritization.rank.tsv"
-	unsupervised_priority = priority_dir + "/" + config.basename + "_unsupervised_prioritization.priority.tsv"
 	supervised_rank = priority_dir + "/" + config.basename + "_supervised_prioritization.rank.tsv"
-	supervised_priority = priority_dir + "/" + config.basename + "_supervised_prioritization.priority.tsv"
-	selected_priority = priority_dir + "/" + config.basename + "_supervised_prioritization.rank.refined.tsv" 
-	moduled_priority = priority_dir + "/" + config.basename + "_supervised_prioritization.rank.module.tsv" 
+	selected_priority = priority_dir + "/" + config.basename + "_supervised_prioritization.rank.selected.tsv" 
 
 	final_unsupervised_rank = priority_dir + "/" + config.basename + "_unsupervised_prioritization.rank.table.tsv"
 	final_supervised_rank = priority_dir + "/" + config.basename + "_supervised_prioritization.rank.table.tsv"
-	final_unsupervised_priority = priority_dir + "/" + config.basename + "_unsupervised_prioritization.priority.table.tsv"
-	final_supervised_priority = priority_dir + "/" + config.basename + "_supervised_prioritization.priority.table.tsv"
 	final_selected_priority = re.sub(".tsv", ".table.tsv", selected_priority)
 
 
@@ -130,28 +130,21 @@ def main(workflow):
 	### STEP #2: optional prioritization: binary filtering ###
 	# if optional action is provided, then prioritize protein families based on interested functions (selection factor)
 	if not args.bypass_optional:
-		myselection = prioritization.optional_prioritization (workflow, args.prioritization_config,
+		myselection = prioritization.optional_prioritization (workflow, args.prioritization_config, args.interested_function,
 		                                                             protein_family_ann,
 		                                                             supervised_rank,
 		                                                             priority_dir, selected_priority)
 	
-	### STEP #3: moduled prioritization: category moduling ###
-	# if moduled action is provided, then cluster prioritize protein families into some modules
-	if args.module:
-		mymodule = prioritization.moduled_prioritization (workflow, args.prioritization_config,
-		                                                             protein_family_ann,
-		                                                             supervised_rank,
-		                                                             priority_dir, moduled_priority)
 
 	### STEP #4: finalized annotation ###
 	# if finalized action is provided, then format and fianlize prioritizations
 	if not args.bypass_finalized:
 		prioritization.finalize_prioritization (workflow,
-		                                        unsupervised_rank, unsupervised_priority,
-		                                        supervised_rank, supervised_priority, selected_priority,
+		                                        unsupervised_rank,
+		                                        supervised_rank, selected_priority,
 		                                        priority_dir,
-		                                        final_unsupervised_rank, final_unsupervised_priority,
-		                                        final_supervised_rank, final_supervised_priority, final_selected_priority)
+		                                        final_unsupervised_rank,
+		                                        final_supervised_rank, final_selected_priority)
 
 	### start the workflow
 	workflow.go()
