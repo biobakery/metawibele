@@ -323,6 +323,7 @@ setuptools.setup(
 			'metawibele.cfg',
 			'configs/*',
 			'data/*',
+			'Rscripts/*'
 		]},
 	data_files = [
 			("metawibele/examples/", glob("examples/*"))
