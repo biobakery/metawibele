@@ -91,8 +91,11 @@ def format_metadata (infile, outfile):
 				tmp2 = config.ref_status[mymeta].split(",")
 				myrefs = []
 				for mytmp in tmp2:
-					mym = re.search("_vs_([\S]+)", mytmp)
-					myrefs.append(mym.group(1))
+					if re.search("_vs_", mytmp):
+						mym = re.search("_vs_([\S]+)", mytmp)
+						myrefs.append(mym.group(1))
+					else:
+						myrefs.append(mytmp)
 				if item in myrefs:
 					info[myindex] = "a_" + info[myindex]
 		# foreach metadata
