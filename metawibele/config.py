@@ -427,7 +427,7 @@ if effect_size == "log(fc)":
 maaslin2_cmmd = get_item(config_items, "maaslin2", "maaslin2_cmmd", "string")
 maaslin2_utils = metawibele_install_directory + "/characterize/maaslin2_utils.r"
 pcl_utils = metawibele_install_directory + "/characterize/pcl_utils.r"
-transpose_cmmd =  metawibele_install_directory + "/common/transpose.py"
+transpose_cmmd = "metawibele_transpose"
 min_abundance = get_item(config_items, "maaslin2", "min_abundance", "float")
 min_prevalence = get_item(config_items, "maaslin2", "min_prevalence", "float")
 max_significance = get_item(config_items, "maaslin2", "max_significance", "float")
