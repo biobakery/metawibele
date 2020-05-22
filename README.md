@@ -59,7 +59,7 @@ We provide support for MetaWIBELE users via our Google group. Please feel free t
 
 
 ## Workflow
-![workflow.png](https://www.dropbox.com/s/9wj1tufchuzgdmt/workflow.png?raw=1)
+![workflow.png](https://www.dropbox.com/s/vsg7baww6utske1/MetaWIBELE_overview.png?dl=1)
 ***
 
 
@@ -585,10 +585,9 @@ InterProScan_MobiDBLite = optional
 	
 	* File name: 
 	$OUTPUT\_DIR/prioritization/$BASENAME\_unsupervised\_prioritization.rank.tsv
-	$OUTPUT\_DIR/prioritization/$BASENAME\_unsupervised\_prioritization.priority.tsv
-	* These files are the results of unsupervised prioritization based on ecological properties. Each of protein family has a numeric priority score.
+	* These are the results of unsupervised prioritization based on ecological properties. Each of protein family has a numeric priority score.
 	* `$BASENAME_unsupervised_prioritization.rank.tsv` is the overall ranking for all protein families.
-	* `$BASENAME_unsupervised_prioritization.priority.tsv`is one subset of unsupervised prioritization results with higher priority scores.
+
 	
 	**2. supervised prioritization: numeric ranking**
 	
@@ -605,10 +604,8 @@ InterProScan_MobiDBLite = optional
 	
 	* File name: 
 		$OUTPUT\_DIR/prioritization/$BASENAME\_supervised\_prioritization.rank.tsv
-		$OUTPUT\_DIR/prioritization/$BASENAME\_supervised\_prioritization.priority.tsv
-	* These file are the results of supervised prioritization by combing ecological properties and assoiciation with host phenotypes. Each of protein family has a numeric priority score.
+	* These are the results of supervised prioritization by combing ecological properties and assoiciation with host phenotypes. Each of protein family has a numeric priority score.
 	* `$BASENAME_supervised_prioritization.rank.tsv` is the overall ranking for all protein families.
-	* `$BASENAME_supervised_prioritization.priority.tsv`is one subset of supervised prioritization results with higher priority scores.
 
 	**3. supervised prioritization: binary filtering**
 	
@@ -786,10 +783,8 @@ InterProScan_MobiDBLite = optional
 	
 	* File name: 
 		$OUTPUT\_DIR/prioritization/$BASENAME\_unsupervised\_prioritization.rank.table.tsv
-		$OUTPUT\_DIR/prioritization/$BASENAME\_unsupervised\_prioritization.priority.table.tsv
 		$OUTPUT\_DIR/prioritization/$BASENAME\_supervised\_prioritization.rank.table.tsv
-		$OUTPUT\_DIR/prioritization/$BASENAME\_supervised\_prioritization.priority.table.tsv
-		$OUTPUT\_DIR/prioritization/$BASENAME\_supervised\_prioritization.rank.filter.table.tsv
+		$OUTPUT\_DIR/prioritization/$BASENAME\_supervised\_prioritization.rank.selected.table.tsv
 	* These file are formated the prioritization results in the same way.
 
 ***
