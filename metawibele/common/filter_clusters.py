@@ -60,7 +60,8 @@ def collect_info (list_file, info_file, outfile):
 		if not len(line):
 			continue
 		info = line.split("\t")
-		ids[info[0]] = ""
+		myid = info[0].split("|")[0]
+		ids[myid] = ""
 	# foreach line
 	open_file.close()
 
