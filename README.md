@@ -59,7 +59,7 @@ We provide support for MetaWIBELE users via our Google group. Please feel free t
 
 
 ## Workflow
-![workflow.png](https://www.dropbox.com/s/vsg7baww6utske1/MetaWIBELE_overview.png?dl=1)
+![workflow.png](https://www.dropbox.com/s/vsg7baww6utske1/MetaWIBELE_overview.png?raw=1)
 ***
 
 
