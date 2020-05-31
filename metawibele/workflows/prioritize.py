@@ -71,9 +71,6 @@ def parse_cli_arguments ():
 	workflow.add_argument("bypass-optional",
 	                     desc = "do not prioritize protein families based on interested functions (optional prioritization)",
 	                     action = "store_true")
-	workflow.add_argument("module",
-	                     desc = "cluster protein families into potential functional modules (moduling prioritization)",
-						 action = "store_true")
 	workflow.add_argument("bypass-finalized",
 	                     desc = "do not finalize prioritized protein families",
 						 action = "store_true")
