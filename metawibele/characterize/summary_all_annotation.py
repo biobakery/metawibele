@@ -64,7 +64,6 @@ def collect_function_info (ann_file):
 	titles = {}
 	dna = {}
 	rna = {}
-	ratio = {}
 	open_file = open(ann_file, "r")
 	line = open_file.readline()
 	line = line.strip()
@@ -98,14 +97,6 @@ def collect_function_info (ann_file):
 			if not myid in rna:
 				rna[myid] = {}
 			rna[myid]["RNA_prevalence"] = myann
-		if mytype == "RNA-ratio_abundance":
-			if not myid in ratio:
-				ratio[myid] = {}
-			ratio[myid]["RNA-ratio_abundance"] = myann
-		if mytype == "RNA-ratio_prevalence":
-			if not myid in ratio:
-				ratio[myid] = {}
-			ratio[myid]["RNA-ratio_prevalence"] = myann
 		if mytype == "UniRef90_unknown" or mytype == "UniRef90_uncharacterized":
 			continue
 		if not myid in anns:
@@ -114,21 +105,27 @@ def collect_function_info (ann_file):
 			anns[myid] = anns[myid] + "#" + mytype + "=" + myann
 	# foreach line
 	open_file.close()
-	return anns, dna, rna, ratio, note
+	return anns, dna, rna, note
 # function collect_function_info
 
 
 #==============================================================
 # combine functional and taxonomic annotation info
 #==============================================================
-def combine_annotation (annotation, dna, rna, ratio, note, taxa_file, outfile):
+def combine_annotation (annotation, dna, rna, note, taxa_file, outfile):
 	titles = {}
 	open_file = open(taxa_file, "r")
 	open_out = open(outfile, "w")
 	line = open_file.readline()
 	line = line.strip()
 	info = line.split("\t")
-	title = info[0] + "\t" + info[1] + "\tmap_type\tunirefID\tdescription\tmsp_name\tmsp_taxa_name\tmsp_taxa_id\ttaxa_id\ttaxa_name\ttaxa_rank\ttaxa_lineage\tDNA_abundance\tDNA_prevalence\tRNA_abundance\tRNA_prevalence\tRNA-ratio_abundance\tRNA-ratio_prevalence\tannotation\tnote"
+	rna_flag = 0
+	if len(rna.keys()) > 0:
+		rna_flag = 1
+	if rna_flag == 1:
+		title = info[0] + "\t" + info[1] + "\tmap_type\tunirefID\tdescription\tmsp_name\tmsp_taxa_name\tmsp_taxa_id\ttaxa_id\ttaxa_name\ttaxa_rank\ttaxa_lineage\tDNA_abundance\tDNA_prevalence\tRNA_abundance\tRNA_prevalence\tannotation\tnote"
+	else:
+		title = info[0] + "\t" + info[1] + "\tmap_type\tunirefID\tdescription\tmsp_name\tmsp_taxa_name\tmsp_taxa_id\ttaxa_id\ttaxa_name\ttaxa_rank\ttaxa_lineage\tDNA_abundance\tDNA_prevalence\tannotation\tnote"
 	open_out.write(title + "\n")
 	for item in info:
 		titles[item] = info.index(item)
@@ -154,8 +151,6 @@ def combine_annotation (annotation, dna, rna, ratio, note, taxa_file, outfile):
 		mydna_p = "NA"
 		myrna_a = "NA"
 		myrna_p = "NA"
-		myratio_a = "NA"
-		myratio_p = "NA"
 		if myid in dna:
 			if "DNA_abundance" in dna[myid]:
 				mydna_a = dna[myid]["DNA_abundance"]
@@ -166,11 +161,6 @@ def combine_annotation (annotation, dna, rna, ratio, note, taxa_file, outfile):
 				myrna_a = rna[myid]["RNA_abundance"]
 			if "RNA_prevalence" in rna[myid]:
 				myrna_p = rna[myid]["RNA_prevalence"]
-		if myid in ratio:
-			if "RNA-ratio_abundance" in ratio[myid]:
-				myratio_a = ratio[myid]["RNA-ratio_abundance"]
-			if "RNA-ratio_prevalence" in ratio[myid]:
-				myratio_p = ratio[myid]["RNA-ratio_prevalence"]
 		if myid in note:
 			mynote1 = note[myid]
 			tmp1 = mynote1.split(";")
@@ -184,7 +174,10 @@ def combine_annotation (annotation, dna, rna, ratio, note, taxa_file, outfile):
 		myann = "NA"
 		if myid in annotation:
 			myann = annotation[myid]
-		mystr = myid + "\t" + mystudy + "\t" + mymap + "\t" + myuniref + "\t" + mydesc + "\t" + mymsp + "\t" + mymsp_taxa + "\t" + mymsp_taxa_id + "\t" + taxa_id + "\t" + taxa_name + "\t" + taxa_rank + "\t" + taxa_lineage + "\t" + mydna_a + "\t" + mydna_p + "\t" + myrna_a + "\t" + myrna_p + "\t" + myratio_a + "\t" + myratio_p + "\t" + myann + "\t" + mynote
+		if rna_flag == 1:
+			mystr = myid + "\t" + mystudy + "\t" + mymap + "\t" + myuniref + "\t" + mydesc + "\t" + mymsp + "\t" + mymsp_taxa + "\t" + mymsp_taxa_id + "\t" + taxa_id + "\t" + taxa_name + "\t" + taxa_rank + "\t" + taxa_lineage + "\t" + mydna_a + "\t" + mydna_p + "\t" + myrna_a + "\t" + myrna_p + "\t" + myann + "\t" + mynote
+		else:
+			mystr = myid + "\t" + mystudy + "\t" + mymap + "\t" + myuniref + "\t" + mydesc + "\t" + mymsp + "\t" + mymsp_taxa + "\t" + mymsp_taxa_id + "\t" + taxa_id + "\t" + taxa_name + "\t" + taxa_rank + "\t" + taxa_lineage + "\t" + mydna_a + "\t" + mydna_p + "\t" + "\t" + myann + "\t" + mynote
 		open_out.write(mystr + "\n")
 	# foreach cluster
 	open_file.close()
@@ -207,12 +200,12 @@ def main():
 
 	### collect annotation info ###
 	sys.stderr.write("Get annotation info ......starting\n")
-	anns, dna, rna, ratio, note = collect_function_info (values.annotation)
+	anns, dna, rna, note = collect_function_info (values.annotation)
 	sys.stderr.write("Get annotation info ......done\n")
 
 	### combine functional and taxonomic annotation
 	sys.stderr.write("\nCombine annotation......starting\n")
-	combine_annotation (anns, dna, rna, ratio, note, values.taxonomy, values.output)
+	combine_annotation (anns, dna, rna, note, values.taxonomy, values.output)
 	sys.stderr.write("\nCombine annotation......done\n")
 
 	sys.stderr.write("### Finish summary_all_annotation.py ####\n\n\n")
