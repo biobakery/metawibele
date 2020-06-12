@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
 """
 interproscan_annotator.py
@@ -32,6 +32,12 @@ import sys
 import argparse
 import csv 
 import re
+
+try:
+	from metawibele import config
+except ImportError:
+	sys.exit("CRITICAL ERROR: Unable to find the MetaWIBELE python package." +
+	         " Please check your install.")
 
 description = """
 A workflow to annotate domain signatures
@@ -68,21 +74,21 @@ def main():
 	samples = []
 	sequence_files = []
 	mysplit = args.split_file
-	# myfile = os.path.join(args.input, args.prefix + "." + mysplit + ".fasta")
 	myfile = args.input
 	samples.append(mysplit)
 	sequence_files.append(myfile)
 
 	## InterProScan 5: genome-scale protein function classification
 	annotation_dir = args.output
-	#os.chdir(annotation_dir)
 
 	for protein in sequence_files:
 		protein_base = os.path.basename(protein).split(os.extsep)[-2]
 		out_file = os.path.join(annotation_dir, '%s.interproscan.txt' % protein_base)
 		stderr_log = os.path.join(annotation_dir, '%s.interproscan.err' % protein_base)
-		os.system("~/usr/interproscan-5.31-70.0/interproscan.sh " + " -cpu " + str(args.threads) + " -i " + protein + " -f tsv -dp -t p -o " + out_file + " >" + stderr_log + " 2>&1")
-
+		#commands = config.interproscan_cmmd + " -appl " + config.interproscan_appl + " -cpu " + str(args.threads) + " -i " + protein + " -f tsv -dp -t p -o " + out_file + " >" + stderr_log + " 2>&1"
+		commands = config.interproscan_cmmd + " -appl " + config.interproscan_appl + " -i " + protein + " -f tsv -dp -t p -o " + out_file + " >" + stderr_log + " 2>&1"
+		print(commands)
+		os.system(commands)
 	# foreach sequence file
 
 
