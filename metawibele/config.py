@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 """
 MetaWIBELE: config module
 Configuration settings
@@ -234,13 +232,14 @@ def get_item(config_items, section, name, type=None):
 	return value
 
 
-## default option for MetaWIBELE
-version = '0.3'
+## default option for MetaWIBELE ##
+version = '0.3.1'
 log_level = 'DEBUG'
 verbose = 'DEBUG'
 
 # name global logging instance
 logger = logging.getLogger(__name__)
+
 
 ## constant values ##
 PROTEIN_FAMILY_ID = "familyID"
@@ -252,20 +251,22 @@ c_multiname_delim = ";"	 # multiple ietms, e.g. PF00482;PF01841
 c_msp_unknown = "msp_unknown"
 
 
-# User config file
+## User config file ##
 metawibele_install_directory = os.path.dirname(os.path.abspath(__file__))
+config_directory = os.path.join(metawibele_install_directory, "configs")
 
-user_edit_config_file = os.getcwd() + "/metawibele.cfg"
+user_edit_config_file = os.path.join(os.getcwd(), "metawibele.cfg")
 if not os.path.exists (user_edit_config_file):
-	user_edit_config_file = metawibele_install_directory + "/metawibele.cfg"
+	user_edit_config_file = os.path.join(config_directory, "metawibele.cfg")
 full_path_user_edit_config_file = user_edit_config_file
 
 # get the base settings from the user edit config file
 config_items = read_user_edit_config_file(full_path_user_edit_config_file)
 
 
-## databases ##
-database_directory = metawibele_install_directory + "/data/"
+## Databases ##
+# installed data
+database_directory = os.path.join(metawibele_install_directory, "data/")
 taxonomy_database_choices = ["uniprot_taxonomy.map.tsv","uniprot_taxaID_bac-arc-vir.tsv","uniprot_taxaID_mammalia.tsv"]
 taxonomy_database = database_directory + taxonomy_database_choices[0]
 microbiome_taxa = database_directory + taxonomy_database_choices[1]
@@ -273,12 +274,6 @@ mammalia_taxa = database_directory + taxonomy_database_choices[2]
 pdb_database_choices = ["pdb_chain_taxonomy.tsv","pdb_chain_pfam.tsv"]
 pdb_taxonomy = database_directory + pdb_database_choices[0]
 pdb_pfam = database_directory + pdb_database_choices[1]
-uniref_database_choices = ['uniref90.ann.tsv', 'uniref50.ann.tsv', 'map_UniRef90_UniRef50.dat', 'uniref90.fasta.dmnd', 'uniref50.fasta.dmnd', 'uniref90.fasta', 'uniref50.fasta']
-uniref_database = database_directory + uniref_database_choices[0]
-uniref50_database = database_directory + uniref_database_choices[1]
-uniref_map = database_directory + uniref_database_choices[2]
-uniref_dmnd = database_directory + uniref_database_choices[3]
-uniref50_dmnd = database_directory + uniref_database_choices[4]
 pfam_database_choices = ["Pfam_ann.tsv","uniprot_human_pfam.tsv"]
 pfam_database = database_directory + pfam_database_choices[0]
 human_pfam_database = database_directory + pfam_database_choices[1]
@@ -299,22 +294,61 @@ vignettes_database = database_directory + "vignettes_proteins.tsv"
 antiSMASH_database = database_directory + "BGC_genes_unirefID.tsv"
 essentialGene_database = database_directory + "essential_genes_unirefID.tsv"
 
-## config files and computing resources
-config_directory = metawibele_install_directory + "/configs/"
+# uniref databases
+uniref_database_dir = get_item (config_items, "uniref", "database", "string")
+if uniref_database_dir.lower() == "none" or uniref_database_dir == "":
+	uniref_database_dir = database_directory
+uniref_database_dir = uniref_database_dir + "/"
+uniref_database_choices = ['map_UniRef90_UniRef50.dat', 'uniref90.fasta.dmnd', 'uniref50.fasta.dmnd', 'uniref90.ann.tsv', 'uniref50.ann.tsv']
+uniref_map = uniref_database_dir + uniref_database_choices[0]
+uniref_dmnd = uniref_database_dir + uniref_database_choices[1]
+uniref50_dmnd = uniref_database_dir + uniref_database_choices[2]
+uniref_database = uniref_database_dir + uniref_database_choices[3]
+uniref_database_new = [uniref_database_dir + "map_Protein_names_uniref90.txt",
+                        uniref_database_dir + "map_Gene_names_uniref90.txt",
+                        uniref_database_dir + "map_UniProtKB_uniref90.txt",
+                        uniref_database_dir + "map_Tax_uniref90.txt",
+                        uniref_database_dir + "map_TaxID_uniref90.txt",
+                        uniref_database_dir + "map_Rep_Tax_uniref90.txt",
+                        uniref_database_dir + "map_Rep_TaxID_uniref90.txt",
+                        uniref_database_dir + "map_Organism_uniref90.txt",
+                        uniref_database_dir + "map_GO_uniref90.txt",
+                        uniref_database_dir + "map_KO_uniref90.txt",
+                        uniref_database_dir + "map_eggNOG_uniref90.txt",
+                        uniref_database_dir + "map_Pfam_uniref90.txt"]
+uniref50_database = uniref_database_dir + uniref_database_choices[4]
+uniref50_database_new = [uniref_database_dir + "map_Protein_names_uniref50.txt",
+                        uniref_database_dir + "map_Gene_names_uniref90.txt",
+                        uniref_database_dir + "map_UniProtKB_uniref50.txt",
+                        uniref_database_dir + "map_Tax_uniref50.txt",
+                        uniref_database_dir + "map_TaxID_uniref50.txt",
+                        uniref_database_dir + "map_Rep_Tax_uniref50.txt",
+                        uniref_database_dir + "map_Rep_TaxID_uniref50.txt",
+                        uniref_database_dir + "map_Organism_uniref50.txt",
+                        uniref_database_dir + "map_GO_uniref50.txt",
+                        uniref_database_dir + "map_KO_uniref50.txt",
+                        uniref_database_dir + "map_eggNOG_uniref50.txt",
+                        uniref_database_dir + "map_Pfam_uniref50.txt"]
+
+
+## Computing resources ##
 threads = get_item (config_items, "computation", "threads", "int")
 memory = get_item(config_items, "computation", "memory", "int")
+time = get_item(config_items, "computation", "time", "int")
 
 
 ## Input and output ##
 # input folder and files
 basename = get_item(config_items, "output", "basename", "string")
-working_dir = get_item(config_items, "output", "working_dir", "string")
-annotation_dir = working_dir + "/" + "characterization"
-cluster_dir = annotation_dir + "/" + "clustering"
-protein_family_dir = annotation_dir + "/" + "protein_family_annotation"
-domain_motif_dir = annotation_dir + "/" + "doamin_motif_annotation"
-abundance_dir = annotation_dir + "/" + "abundance_annotation"
-priority_dir = working_dir + "/" + "prioritization"
+working_dir = get_item(config_items, "output", "output_dir", "string")
+if working_dir.lower() == "none" or working_dir.lower() == "":
+	working_dir = os.getcwd()
+annotation_dir = os.path.join(working_dir, "characterization")
+cluster_dir = os.path.join(annotation_dir, "clustering")
+protein_family_dir = os.path.join(annotation_dir, "protein_family_annotation")
+domain_motif_dir = os.path.join(annotation_dir, "doamin_motif_annotation")
+abundance_dir = os.path.join(annotation_dir, "abundance_annotation")
+priority_dir = os.path.join(working_dir, "prioritization")
 
 study = get_item(config_items, "input", "study", "string")
 metadata = get_item(config_items, "input", "metadata", "string")
@@ -323,14 +357,14 @@ gene_catalog = get_item(config_items, "input", "gene_catalog", "string")
 gene_catalog_prot = get_item(config_items, "input", "gene_catalog_prot", "string")
 gene_catalog_count = get_item(config_items, "input", "gene_catalog_count", "string")
 
-protein_family = annotation_dir + "/" + basename + "_proteinfamilies.clstr"
-protein_family_prot_seq = annotation_dir + "/" + basename + "_proteinfamilies.centroid.faa"
-protein_family_nuc_seq = annotation_dir + "/" + basename + "_proteinfamilies.centroid.fna"
-protein_family_relab = annotation_dir + "/" + basename + "_proteinfamilies_relab.tsv"
-protein_family_ann = annotation_dir + "/" + basename + "_proteinfamilies_annotation.tsv" 
-protein_family_attr = annotation_dir + "/" + basename + "_proteinfamilies_annotation.attribute.tsv"
-unsupervised_rank = priority_dir + "/" + basename + "_unsupervised_prioritization.rank.table.tsv"
-supervised_rank = priority_dir + "/" + basename + "_supervised_prioritization.rank.table.tsv"
+protein_family = os.path.join(annotation_dir, basename + "_proteinfamilies.clstr")
+protein_family_prot_seq = os.path.join(annotation_dir, basename + "_proteinfamilies.centroid.faa")
+protein_family_nuc_seq = os.path.join(annotation_dir, basename + "_proteinfamilies.centroid.fna")
+protein_family_relab = os.path.join(annotation_dir, basename + "_proteinfamilies_relab.tsv")
+protein_family_ann = os.path.join(annotation_dir, basename + "_proteinfamilies_annotation.tsv") 
+protein_family_attr = os.path.join(annotation_dir, basename + "_proteinfamilies_annotation.attribute.tsv")
+unsupervised_rank = os.path.join(priority_dir, basename + "_unsupervised_prioritization.rank.table.tsv")
+supervised_rank =  os.path.join(priority_dir, basename + "_supervised_prioritization.rank.table.tsv")
 
 
 ## characterization ##
@@ -364,7 +398,11 @@ tshld_coverage = 0.25	# the minimum coverage of homology
 taxa_source = "Rep"		# the source of taxa for one protein family, representatives vs. LCA
 
 # interporscan
-interproscan_appl = "CDD,COILS,Gene3D,HAMAP,MobiDBLite,PANTHER,Pfam,PIRSF,PRINTS,ProDom,PROSITEPATTERNS,PROSITEPROFILES,SFLD,SMART,SUPERFAMILY,TIGRFAM,Phobius,SignalP,TMHMM"
+interproscan_cmmd = get_item(config_items, "interproscan", "interproscan_cmmd", "string")
+interproscan_appl = get_item(config_items, "interproscan", "interproscan_appl", "string")
+if interproscan_appl.lower() == "none" or interproscan_appl.lower() == "":
+	interproscan_appl = "CDD,COILS,Gene3D,HAMAP,MobiDBLite,PANTHER,Pfam,PIRSF,PRINTS,ProDom,PROSITEPATTERNS,PROSITEPROFILES,SFLD,SMART,SUPERFAMILY,TIGRFAM,Phobius,SignalP,TMHMM"
+split_number = get_item(config_items, "interproscan", "split_number", "int")
 interproscan_type = []
 tmp = interproscan_appl.split(",")
 for item in tmp:
@@ -385,6 +423,11 @@ for item in tmp:
 	item = "interpro." + item + ".tsv"
 	interproscan_type.append(item)
 
+
+# EffectiveT3
+#effectivet3_cmmd = get_item(config_items, "effectivet3", "effectivet3_cmmd", "string")
+#effectivet3_module = get_item(config_items, "effectivet3", "effectivet3_module", "string")
+
 # DDI
 #human_microbiome_ddi = get_item(config_items, "DDI", "human_microbiome_ddi", "string")
 
@@ -393,14 +436,14 @@ tshld_unclassified = 0.10	# the minimum percentile of unclassified in one MSP
 tshld_diff = 0.50			# the minimum difference between most and second dominant taxa in the MSP
 tshld_lca = 0.80			# the minimum consistency for LCA calculattion
 taxa_final = "Rep"			# the source of taxa for one protein family, representatives vs. LCA
-mspminer = get_item(config_items, "abundance", "mspminer", "string")
+mspminer = os.path.join(config_directory, "MSPminer_setting.cfg")
 
 # abundance
 normalize = get_item(config_items, "abundance", "normalize", "string") 		# the method for abundance normalization
+abundance_detection_level = get_item(config_items, "abundance", "abundance_detection_level", "float")
 
 # maaslin2
-maaslin2_dir = get_item(config_items, "maaslin2", "maaslin2_output", "string")
-maaslin2_dir = abundance_dir + "/" + maaslin2_dir + "/maaslin2_output/" 
+maaslin2_dir =  os.path.join(abundance_dir, "DA", "maaslin2_output/") 
 phenotype = get_item(config_items, "maaslin2", "phenotype", "string")
 phenotype = re.sub("\"", "", phenotype)
 phenotype = phenotype.split(";")
@@ -410,33 +453,35 @@ tmp = contrast_status.split(";")
 contrast_status = {}
 for item in tmp:
 	tmp1 = item.split(":")
-	contrast_status[tmp1[0]] = tmp1[1]
+	if len(tmp1) > 1:
+		contrast_status[tmp1[0]] = tmp1[1]
 ref_status = get_item(config_items, "maaslin2", "flag_ref", "string")
 ref_status = re.sub("\"", "", ref_status)
 tmp = ref_status.split(";")
 ref_status = {}
 for item in tmp:
 	tmp1 = item.split(":")
-	ref_status[tmp1[0]] = tmp1[1]
-abundance_detection_level = get_item(config_items, "maaslin2", "abundance_detection_level", "float")
+	if len(tmp1) > 1:
+		ref_status[tmp1[0]] = tmp1[1]
 tshld_prevalence = get_item(config_items, "maaslin2", "tshld_prevalence", "float")
 tshld_qvalue = get_item(config_items, "maaslin2", "tshld_qvalue", "float")
 effect_size = get_item(config_items, "maaslin2", "effect_size", "string")
 if effect_size == "log(fc)":
 	effect_size = "log(FC)"
+nested_effects = "none"
 maaslin2_cmmd = get_item(config_items, "maaslin2", "maaslin2_cmmd", "string")
-maaslin2_utils = metawibele_install_directory + "/characterize/maaslin2_utils.r"
-pcl_utils = metawibele_install_directory + "/characterize/pcl_utils.r"
-transpose_cmmd = "metawibele_transpose"
+maaslin2_utils = os.path.join(metawibele_install_directory, "Rscripts", "maaslin2_utils.R")
+pcl_utils = os.path.join(metawibele_install_directory, "Rscripts", "pcl_utils.R")
+transpose_cmmd = "metawibele_transpose" 
 min_abundance = get_item(config_items, "maaslin2", "min_abundance", "float")
 min_prevalence = get_item(config_items, "maaslin2", "min_prevalence", "float")
+#min_variance = get_item(config_items, "maaslin2", "min_variance", "float")
 max_significance = get_item(config_items, "maaslin2", "max_significance", "float")
 normalization = get_item(config_items, "maaslin2", "normalization", "string")
 transform = get_item(config_items, "maaslin2", "transform", "string")
 analysis_method = get_item(config_items, "maaslin2", "analysis_method", "string")
 fixed_effects = get_item(config_items, "maaslin2", "fixed_effects", "string")
 random_effects = get_item(config_items, "maaslin2", "random_effects", "string")
-nested_effects = "none"
 correction = get_item(config_items, "maaslin2", "correction", "string")
 standardize = get_item(config_items, "maaslin2", "standardize", "string")
 plot_heatmap = get_item(config_items, "maaslin2", "plot_heatmap", "string")
