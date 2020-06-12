@@ -72,12 +72,14 @@ split_table <- function(infile, split_num, outfile) {
 	split_size <- as.integer(rownum/as.numeric(split_num))
 	i <- 1
 	j <- split_size
+	if (j < i) {
+		j <- rownum
+	}
 	mynum <- 1
 	while (i <= rownum)
 	{
 		myfile <- paste(outfile, mynum, ".pcl", sep="")
 		b <- a[i:j,]
-		#print(i:j)
   		new_col_name <- c("ID", colnames(a))
   		write.table(t(new_col_name), file = myfile, append = FALSE, sep = "\t", eol = "\n", na = "nan", row.names = FALSE, col.names = FALSE, quote=FALSE) 
   		#write.table(t(new_col_name), file = myfile, append = FALSE, sep = "\t", eol = "\n", row.names = FALSE, col.names = FALSE, quote=FALSE) 
