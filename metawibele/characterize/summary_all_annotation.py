@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
 """
 MetaWIBELE: summary_all_annotation module
@@ -123,9 +123,9 @@ def combine_annotation (annotation, dna, rna, note, taxa_file, outfile):
 	if len(rna.keys()) > 0:
 		rna_flag = 1
 	if rna_flag == 1:
-		title = info[0] + "\t" + info[1] + "\tmap_type\tunirefID\tdescription\tmsp_name\tmsp_taxa_name\tmsp_taxa_id\ttaxa_id\ttaxa_name\ttaxa_rank\ttaxa_lineage\tDNA_abundance\tDNA_prevalence\tRNA_abundance\tRNA_prevalence\tannotation\tnote"
+		title = info[0] + "\t" + info[1] + "\tmap_type\tunirefID\tUniProtKB\tdescription\tmsp_name\tmsp_taxa_name\tmsp_taxa_id\ttaxa_id\ttaxa_name\ttaxa_rank\ttaxa_lineage\tDNA_abundance\tDNA_prevalence\tRNA_abundance\tRNA_prevalence\tannotation\tnote"
 	else:
-		title = info[0] + "\t" + info[1] + "\tmap_type\tunirefID\tdescription\tmsp_name\tmsp_taxa_name\tmsp_taxa_id\ttaxa_id\ttaxa_name\ttaxa_rank\ttaxa_lineage\tDNA_abundance\tDNA_prevalence\tannotation\tnote"
+		title = info[0] + "\t" + info[1] + "\tmap_type\tunirefID\tUniProtKB\tdescription\tmsp_name\tmsp_taxa_name\tmsp_taxa_id\ttaxa_id\ttaxa_name\ttaxa_rank\ttaxa_lineage\tDNA_abundance\tDNA_prevalence\tannotation\tnote"
 	open_out.write(title + "\n")
 	for item in info:
 		titles[item] = info.index(item)
@@ -138,6 +138,7 @@ def combine_annotation (annotation, dna, rna, note, taxa_file, outfile):
 		mystudy = info[1]
 		mymap = info[titles["map_type"]]
 		myuniref = info[titles["unirefID"]]
+		myunprot = info[titles["UniProtKB"]]
 		mydesc = info[titles["detail"]]
 		mymsp = info[titles["msp_name"]]
 		mymsp_taxa = info[titles["msp_taxa_name"]]
@@ -175,9 +176,9 @@ def combine_annotation (annotation, dna, rna, note, taxa_file, outfile):
 		if myid in annotation:
 			myann = annotation[myid]
 		if rna_flag == 1:
-			mystr = myid + "\t" + mystudy + "\t" + mymap + "\t" + myuniref + "\t" + mydesc + "\t" + mymsp + "\t" + mymsp_taxa + "\t" + mymsp_taxa_id + "\t" + taxa_id + "\t" + taxa_name + "\t" + taxa_rank + "\t" + taxa_lineage + "\t" + mydna_a + "\t" + mydna_p + "\t" + myrna_a + "\t" + myrna_p + "\t" + myann + "\t" + mynote
+			mystr = myid + "\t" + mystudy + "\t" + mymap + "\t" + myuniref + "\t" + myunprot + "\t" + mydesc + "\t" + mymsp + "\t" + mymsp_taxa + "\t" + mymsp_taxa_id + "\t" + taxa_id + "\t" + taxa_name + "\t" + taxa_rank + "\t" + taxa_lineage + "\t" + mydna_a + "\t" + mydna_p + "\t" + myrna_a + "\t" + myrna_p + "\t" + myann + "\t" + mynote
 		else:
-			mystr = myid + "\t" + mystudy + "\t" + mymap + "\t" + myuniref + "\t" + mydesc + "\t" + mymsp + "\t" + mymsp_taxa + "\t" + mymsp_taxa_id + "\t" + taxa_id + "\t" + taxa_name + "\t" + taxa_rank + "\t" + taxa_lineage + "\t" + mydna_a + "\t" + mydna_p + "\t" + "\t" + myann + "\t" + mynote
+			mystr = myid + "\t" + mystudy + "\t" + mymap + "\t" + myuniref + "\t" + myunprot + "\t" + mydesc + "\t" + mymsp + "\t" + mymsp_taxa + "\t" + mymsp_taxa_id + "\t" + taxa_id + "\t" + taxa_name + "\t" + taxa_rank + "\t" + taxa_lineage + "\t" + mydna_a + "\t" + mydna_p + "\t" + myann + "\t" + mynote
 		open_out.write(mystr + "\n")
 	# foreach cluster
 	open_file.close()
