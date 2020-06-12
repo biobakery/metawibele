@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
 """
 MetaWIBELE: summary_protein_family_uniref_annotation module
@@ -73,7 +73,7 @@ def get_args():
 # ==============================================================
 # collect taxonomy info for taxaID
 # ==============================================================
-def collect_taxonomy_info (taxa_file):  # uniprot_taxonomy.map.tsv
+def collect_taxonomy_info (taxa_file, taxa_hits):  # uniprot_taxonomy.map.tsv
 	taxa = {}
 	taxa_map = {}
 	titles = {}
@@ -89,6 +89,8 @@ def collect_taxonomy_info (taxa_file):  # uniprot_taxonomy.map.tsv
 			continue
 		# title line
 		mytaxa = info[titles["Taxon"]]
+		if not mytaxa in taxa_hits:
+			continue
 		myname = info[titles["Scientific_name"]]
 		myline = info[titles["Lineage"]]
 		myrank = info[titles["Rank"]]
@@ -127,9 +129,10 @@ def collect_taxonomy_info (taxa_file):  # uniprot_taxonomy.map.tsv
 # ==============================================================
 # collect taxonomy info for UniRefID
 # ==============================================================
-def collect_uniref_taxonomy_info (uniref_file, spe_type):  # uniref90.ann.all.tsv
+def collect_uniref_taxonomy_info (uniref_file, spe_type, hits):  # uniref90.ann.all.tsv
 	uniref_taxa = {}
 	titles = {}
+	taxa_hits = {}
 	open_file = open(uniref_file, "r")
 	for line in open_file:
 		line = line.strip()
@@ -141,6 +144,8 @@ def collect_uniref_taxonomy_info (uniref_file, spe_type):  # uniref90.ann.all.ts
 				titles[item] = info.index(item)
 			continue
 		uniref_id = info[titles["ID"]]
+		if not uniref_id in hits:
+			continue
 		taxa_id = info[titles["TaxID"]]
 		taxa = info[titles["Tax"]]
 		reptaxa_id = info[titles["Rep_TaxID"]]
@@ -153,13 +158,15 @@ def collect_uniref_taxonomy_info (uniref_file, spe_type):  # uniref90.ann.all.ts
 			mytax_id = taxa_id
 		if spe_type == "Rep":
 			mytax_id = reptaxa_id
+		taxa_hits[mytax_id] = ""
 		detail = info[titles["Description"]]
 		org = info[titles["Organism"]]
 		uniprot = info[titles["UniProtKB"]]
 		uniref_taxa[uniref_id] = mytax_id + "\n" + detail + "\t" + taxa + "\t" + taxa_id + "\t" + reptaxa + "\t" + reptaxa_id + "\t" + org + "\t" + uniprot
 	# foreach line
 	open_file.close()
-	return uniref_taxa
+
+	return uniref_taxa, taxa_hits
 # collect_uniref_taxonomy_info
 
 
@@ -290,9 +297,12 @@ def collect_uniref_mapping_info (uniref_stat, uniref_taxa, taxa, taxa_map):  # d
 # ==============================================================
 # collect pre-annotation info
 # ==============================================================
-def collect_ann_info (ann_file):  # summary_peptide_family_annotation.tsv
+def collect_ann_info (ann_file, spe_type):  # summary_peptide_family_annotation.tsv
 	anns = {}
 	ann_type = {}
+	hits = {}
+	uniref_taxa = {}
+	taxa_hits = {}
 	titles = {}
 	open_file = open(ann_file, "r")
 	line = open_file.readline()
@@ -318,15 +328,28 @@ def collect_ann_info (ann_file):  # summary_peptide_family_annotation.tsv
 		myreptaxID = info[titles["Rep_TaxID"]]
 		myorg = info[titles["organism"]]
 		myuniprot = info[titles["UniProtKB"]]
+		myunirefID = info[titles["unirefID"]]
+		hits[myunirefID] = ""
 		mystr = detail + "\t" + mytax + "\t" + mytaxID + "\t" + myreptax + "\t" + myreptaxID + "\t" + myorg + "\t" + myuniprot
-		if re.search("^UniRef", mytype):
-			if not myid in ann_type:
-				ann_type[myid] = {}
-			ann_type[myid][mytype] = ""
-			anns[myid] = mystr
+		if not re.search("^UniRef", mytype):
+			continue
+		if not myid in ann_type:
+			ann_type[myid] = {}
+		ann_type[myid][mytype] = ""
+		anns[myid] = mystr
+
+		if re.search("_UPI", myunirefID) and myreptaxID == "NA":    # use LCA as representatives for UniParc item, e.g. UniRef90_UPI000682ABCC
+			myreptaxID = mytaxID
+			myreptax = mytax
+		mytaxa_id = myreptaxID
+		if spe_type == "LCA" or spe_type == "lca":
+			mytaxa_id = mytaxID
+		taxa_hits[mytaxa_id] = ""
+		uniref_taxa[myunirefID] = mytaxa_id + "\n" + detail + "\t" + mytax + "\t" + mytaxID + "\t" + myreptax + "\t" + myreptaxID + "\t" + myorg + "\t" + myuniprot
 	# foreach line
 	open_file.close()
-	return anns, ann_type
+
+	return anns, ann_type, hits, uniref_taxa, taxa_hits
 # collect_anns_info
 
 
@@ -507,11 +530,11 @@ def main():
 
 	### collect cluster info ###
 	sys.stderr.write("Get info ......starting\n")
-	taxa, taxa_map = collect_taxonomy_info(config.taxonomy_database)
-	pep_cluster = collect_pep_cluster_info(config.protein_family)
-	uniref_taxa = collect_uniref_taxonomy_info(config.uniref_database, values.type)
-	uniref = collect_uniref_mapping_info(values.mapping, uniref_taxa, taxa, taxa_map)
-	anns, ann_type = collect_ann_info(values.annotation)
+	pep_cluster = collect_pep_cluster_info (config.protein_family)
+	anns, ann_type, hits, uniref_taxa, taxa_hits  = collect_ann_info (values.annotation, values.type)
+	#uniref_taxa, taxa_hits = collect_uniref_taxonomy_info (config.uniref_database, values.type, hits)
+	taxa, taxa_map = collect_taxonomy_info (config.taxonomy_database, taxa_hits)
+	uniref = collect_uniref_mapping_info (values.mapping, uniref_taxa, taxa, taxa_map)
 	sys.stderr.write("Get info ......done\n")
 
 	### assign annotation to peptide families ###
