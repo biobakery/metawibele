@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
 """
 MetaWIBELE: interproscan_signalp_protein_family module

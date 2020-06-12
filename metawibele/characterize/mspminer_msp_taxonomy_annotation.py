@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
 """
 MetaWIBELE: mspminer_msp_taxonomy_annotation module

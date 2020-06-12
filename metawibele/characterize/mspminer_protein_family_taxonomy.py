@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
 """
 MetaWIBELE: mspminer_protein_family_taxonomy module
