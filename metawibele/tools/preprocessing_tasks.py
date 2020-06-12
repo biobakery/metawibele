@@ -33,7 +33,11 @@ import collections
 from anadama2.tracked import TrackedExecutable, TrackedDirectory
 
 # import the utilities functions and config settings from MetaWIBELE
-from metawibele import utilities, config, files
+try:
+	from metawibele import utilities, config, files
+except ImportError:
+	sys.exit("CRITICAL ERROR: Unable to find the MetaWIBELE python package." +
+		         " Please check your install.")
 
 
 def assembly (workflow, input_dir, extension, extension_paired, threads, output_folder, contigs):
@@ -71,6 +75,9 @@ def assembly (workflow, input_dir, extension, extension_paired, threads, output_
 		# run the workflow
 		workflow.go()
 	"""
+
+	time_equation = config.time  # xxx hours defined in global config
+	mem_equation = config.memory  # xxx GB defined in global config
 
 	# ================================================
 	# collect sequences
@@ -146,8 +153,8 @@ def assembly (workflow, input_dir, extension, extension_paired, threads, output_
 		megahit_contig = os.path.join(megahit_contig_dir, '%s.contigs.fa' % seq_base)
 
 		## MEGAHIT needs memory in a byte format so let's take care of data
-		time_equation = "24*60 if file_size('[depends[0]]') < 25 else 6*24*60" # 24 hours or more depending on file size
-		mem_equation = "32*1024 if file_size('[depends[0]]') < 25 else 3*32*1024" # 32 GB or more depending on file size
+		#time_equation = "24*60 if file_size('[depends[0]]') < 25 else 6*24*60" # 24 hours or more depending on file size
+		#mem_equation = "32*1024 if file_size('[depends[0]]') < 25 else 3*32*1024" # 32 GB or more depending on file size
 		mylog = os.path.join(assembly_dir, '%s.log' % seq_base)
 		
 		if mypair != "none":
@@ -173,6 +180,8 @@ def assembly (workflow, input_dir, extension, extension_paired, threads, output_
 									targets = [megahit_contig],
 									args = [threads, seq_base, megahit_contig_dir, mylog],
 									cores = threads,
+									mem = mem_equation,
+									time = time_equation,
 									name = sample + "__megahit")
 			else:
 				#print(sample + " megahit: " + "\t" + mypair)
@@ -181,6 +190,8 @@ def assembly (workflow, input_dir, extension, extension_paired, threads, output_
 									targets = [megahit_contig],
 									args = [threads, seq_base, megahit_contig_dir, mylog],
 									cores = threads,
+									mem = mem_equation,
+									time = time_equation,
 									name = sample + "__megahit")
 		else:
 			if myorphan != "none":	
@@ -190,16 +201,18 @@ def assembly (workflow, input_dir, extension, extension_paired, threads, output_
 								targets = [megahit_contig],
 								args = [threads, seq_base, megahit_contig_dir, mylog],
 								cores = threads,
+								mem = mem_equation,
+								time = time_equation,
 								name = sample + "__megahit")
 			
 	for myfile in contigs_list:
-		mym = re.search("([^\/]+)$", myfile)
-		myname = mym.group(1)
-		myfile_new = assembly_dir + "/" + myname
+		myname = os.path.basename(myfile)
+		myfile_new = os.path.join(assembly_dir, myname)
 		workflow.add_task(
 			"ln -fs [depends[0]] [targets[0]]",
 			depends = [myfile],
 			targets = [myfile_new],
+			cores = 1,
 			name = "ln__" + myname)
 
 
@@ -210,6 +223,7 @@ def assembly (workflow, input_dir, extension, extension_paired, threads, output_
 		depends=utilities.add_to_list(contigs_list, TrackedExecutable("metawibele_format_contig_sequences")),
 		targets=[contigs],
 		args=[assembly_dir, mylog],
+		cores = 1,
 		name="format_contig_table")
 
 	return contigs_list
@@ -262,6 +276,9 @@ def gene_calling (workflow, assembly_dir, assembly_extentsion, input_dir, extens
 		workflow.go()
 	"""
 
+	time_equation = config.time  # xxx hours defined in global config
+	mem_equation = config.memory  # xxx GB defined in global config
+
 	# ================================================
 	# collect sequences
 	# ================================================
@@ -284,8 +301,8 @@ def gene_calling (workflow, assembly_dir, assembly_extentsion, input_dir, extens
 	# Gene calling
 	# ================================================
 	os.system("mkdir -p " + prodigal_dir)
-	time_equation = "24*60 if file_size('[depends[0]]') < 25 else 6*24*60" # 24 hours or more depending on file size
-	mem_equation = "32*1024 if file_size('[depends[0]]') < 25 else 3*32*1024" # 32 GB or more depending on file size
+	#time_equation = "24*60 if file_size('[depends[0]]') < 25 else 6*24*60" # 24 hours or more depending on file size
+	#mem_equation = "32*1024 if file_size('[depends[0]]') < 25 else 3*32*1024" # 32 GB or more depending on file size
 	fna_file = []
 	faa_file = []
 	gff_files = []
@@ -296,7 +313,7 @@ def gene_calling (workflow, assembly_dir, assembly_extentsion, input_dir, extens
 	## Using Prodigal
 	for contig in filtered_contigs:
 		contig_base = os.path.basename(contig).split(os.extsep)[0]
-		annotation_dir = prodigal_dir + "/" + contig_base
+		annotation_dir = os.path.join(prodigal_dir, contig_base)
 		os.system("mkdir -p " + annotation_dir)
 		gff_file = os.path.join(annotation_dir, '%s.gff' % contig_base)
 		cds_file = os.path.join(annotation_dir, '%s.fna' % contig_base)
@@ -318,8 +335,6 @@ def gene_calling (workflow, assembly_dir, assembly_extentsion, input_dir, extens
 								   name = contig_base + "__prodigal")
 	
 	for myfile in faa_file_tmp:
-		#mym = re.search("([^\/]+)$", myfile)
-		#myname = mym.group(1)
 		myname = os.path.basename(myfile)
 		myfile_new = os.path.join(prodigal_dir, myname)
 		faa_file.append(myfile_new)
@@ -327,6 +342,7 @@ def gene_calling (workflow, assembly_dir, assembly_extentsion, input_dir, extens
 			"ln -fs [depends[0]] [targets[0]]",
 			depends = [myfile],
 			targets = [myfile_new],
+			cores = 1,
 			name = "ln__" + myname)
 		myfna = re.sub(".faa", ".fna", myfile)
 		myfna_new = re.sub(".faa", ".fna", myfile_new)
@@ -334,6 +350,7 @@ def gene_calling (workflow, assembly_dir, assembly_extentsion, input_dir, extens
 			"ln -fs [depends[0]] [targets[0]]",
 			depends = [myfna],
 			targets = [myfna_new],
+			cores = 1,
 			name = "ln__" + myname)
 		mygff = re.sub(".faa", ".gff", myfile)
 		mygff_new = re.sub(".faa", ".gff", myfile_new)
@@ -341,8 +358,8 @@ def gene_calling (workflow, assembly_dir, assembly_extentsion, input_dir, extens
 			"ln -fs [depends[0]] [targets[0]]",
 			depends = [mygff],
 			targets = [mygff_new],
+			cores = 1,
 			name = "ln__" + myname)
-
 
 
 	## Calling genes with Prokka
@@ -350,9 +367,8 @@ def gene_calling (workflow, assembly_dir, assembly_extentsion, input_dir, extens
 
 	for contig in filtered_contigs:
 		contig_base = os.path.basename(contig).split(os.extsep)[0]
-		mym = re.search("([^\/]+$)", contig_base)
-		sample = mym.group(1)
-		annotation_dir = prokka_dir + "/" + sample
+		sample = os.path.basename(contig_base)
+		annotation_dir = os.path.join(prokka_dir, sample)
 		os.system("mkdir -p " + annotation_dir)
 		stdout_log = os.path.join(annotation_dir, '%s.prokka.bacteria.stdout.log' % contig_base)
 		score = os.path.join(annotation_dir, '%s.gene_score.txt' % contig_base)
@@ -379,8 +395,6 @@ def gene_calling (workflow, assembly_dir, assembly_extentsion, input_dir, extens
 		myfile_new = os.path.join(prokka_dir, myname)
 		gff_files.append(myfile_new)
 	for myfile in fna_file_tmp:
-		#mym = re.search("([^\/]+)$", myfile)
-		#myname = mym.group(1)
 		myname = os.path.basename(myfile)
 		myfile_new = os.path.join(prokka_dir, myname)
 		fna_file.append(myfile_new)
@@ -388,6 +402,7 @@ def gene_calling (workflow, assembly_dir, assembly_extentsion, input_dir, extens
 			"ln -fs [depends[0]] [targets[0]]",
 			depends = [myfile],
 			targets = [myfile_new],
+			cores = 1,
 			name = "ln__" + myname)
 		myfaa = re.sub(".ffn", ".faa", myfile)
 		myfaa_new = re.sub(".ffn", ".faa", myfile_new)
@@ -395,6 +410,7 @@ def gene_calling (workflow, assembly_dir, assembly_extentsion, input_dir, extens
 			"ln -fs [depends[0]] [targets[0]]",
 			depends = [myfaa],
 			targets = [myfaa_new],
+			cores = 1,
 			name = "ln__" + myname)
 		mygff = re.sub(".ffn", ".gff", myfile)
 		mygff_new = re.sub(".ffn", ".gff", myfile_new)
@@ -402,65 +418,73 @@ def gene_calling (workflow, assembly_dir, assembly_extentsion, input_dir, extens
 			"ln -fs [depends[0]] [targets[0]]",
 			depends = [mygff],
 			targets = [mygff_new],
+			cores = 1,
 			name = "ln__" + myname)
 	
 	
 	# ================================================
 	# Summarize sequences
 	# ================================================
-	mem_equation = "50000"
+	#mem_equation = "50000"
 	### combine gene sequences ###
 	mylog = re.sub(".fna", ".log", gene_file)
 	workflow.add_task('metawibele_combine_gene_sequences -p [args[0]] -e ffn -o [targets[0]] > [args[1]] 2>&1 ',
-	                  depends=utilities.add_to_list(fna_file,TrackedExecutable("metawibele_combine_gene_sequences")),
-	                  targets=[gene_file],
-	                  args=[prokka_dir, mylog],
-	                  name="combine_gene_sequences")
+					depends = utilities.add_to_list(fna_file,TrackedExecutable("metawibele_combine_gene_sequences")),
+	                targets = [gene_file],
+	                args = [prokka_dir, mylog],
+	                cores = 1,
+	                name = "combine_gene_sequences")
 
 	### combine protein sequences ###
 	## collect sequences
 	mylog = re.sub(".faa", ".log", protein_file)
 	workflow.add_task('metawibele_format_protein_sequences -p [args[0]] -q [args[1]] -e faa -o [targets[0]] '
-	                  '-m [targets[1]] >[args[2]] 2>&1 ',
-	                  depends=utilities.add_to_list(faa_file, TrackedExecutable("metawibele_format_protein_sequences")) + gff_files,
-	                  targets=[protein_file, gene_info],
-	                  args=[prokka_dir, prodigal_dir, mylog],
-	                  name="format_protein_sequences")
+					'-m [targets[1]] >[args[2]] 2>&1 ',
+					depends = utilities.add_to_list(faa_file, TrackedExecutable("metawibele_format_protein_sequences")) + gff_files,
+	                targets = [protein_file, gene_info],
+	                args = [prokka_dir, prodigal_dir, mylog],
+	                cores = 1,
+	                name = "format_protein_sequences")
 
 	## sort by length and filter out short-length sequence
 	mylog = re.sub(".faa", ".log", protein_sort)
 	workflow.add_task('usearch -sortbylength [depends[0]] '
-	                  '-fastaout [targets[0]] -minseqlength 0 >[args[0]] 2>&1 ',
-	                  depends = [protein_file, TrackedExecutable("usearch")],
-	                  targets = [protein_sort],
-	                  args = [mylog],
-					  name = "usearch__sorting")
+	                '-fastaout [targets[0]] -minseqlength 0 >[args[0]] 2>&1 ',
+	                depends = [protein_file, TrackedExecutable("usearch")],
+	                targets = [protein_sort],
+	                args = [mylog],
+	                cores = 1,
+					name = "usearch__sorting")
 
 	## extract nucleotide sequence for protein coding genes
 	mylog = re.sub(".fna", ".log", gene_PC_file)
 	workflow.add_task(
-		'metawibele_extract_protein_coding_genes -g [depends[0]] -p [depends[1]] -o [targets[0]] > [args[0]] 2>&1 ',
-		depends = [gene_file, protein_sort, TrackedExecutable("metawibele_extract_protein_coding_genes")],
-		targets = [gene_PC_file],
-		args = [mylog],
-		name = "extract_protein_coding_genes")
+				'metawibele_extract_protein_coding_genes -g [depends[0]] -p [depends[1]] -o [targets[0]] > [args[0]] 2>&1 ',
+				depends = [gene_file, protein_sort, TrackedExecutable("metawibele_extract_protein_coding_genes")],
+				targets = [gene_PC_file],
+				args = [mylog],
+				cores = 1,
+				name = "extract_protein_coding_genes")
 
 	## extract sequences
 	mylog = re.sub(".fna", ".log", complete_gene)
 	workflow.add_task(
-		'metawibele_extract_complete_ORF_seq -t complete -m [depends[0]] -i [depends[1]] -o [targets[0]] >[args[0]] 2>&1',
-		depends = [gene_info, gene_PC_file, TrackedExecutable("metawibele_extract_complete_ORF_seq")],
-		targets = [complete_gene],
-		args = [mylog],
-		name = 'extract_complete_ORF_seq')
+				'metawibele_extract_complete_ORF_seq -t complete -m [depends[0]] -i [depends[1]] -o [targets[0]] >[args[0]] 2>&1',
+				depends = [gene_info, gene_PC_file, TrackedExecutable("metawibele_extract_complete_ORF_seq")],
+				targets = [complete_gene],
+				args = [mylog],
+				cores = 1,
+				name = 'extract_complete_ORF_seq')
 
 	mylog = re.sub(".faa", ".log", complete_protein)
 	workflow.add_task(
-		'metawibele_extract_complete_ORF_seq -t complete -m [depends[0]] -i [depends[1]] -o [targets[0]] >[args[0]] 2>&1',
-		depends = [gene_info, protein_sort, TrackedExecutable("metawibele_extract_complete_ORF_seq")],
-		targets = [complete_protein],
-		args = [mylog],
-		name = 'extract_complete_ORF_seq')
+				'metawibele_extract_complete_ORF_seq -t complete -m [depends[0]] -i [depends[1]] -o [targets[0]] >[args[0]] 2>&1',
+				depends = [gene_info, protein_sort, TrackedExecutable("metawibele_extract_complete_ORF_seq")],
+				targets = [complete_protein],
+				args = [mylog],
+				cores = 1,
+				name = 'extract_complete_ORF_seq')
+
 	return complete_gene, complete_protein
 
 
@@ -511,45 +535,48 @@ def gene_catalog (workflow, complete_gene, complete_protein,
         workflow.go()
     """
 
+	time_equation = config.time # xxx hours defined in global config
+	mem_equation = config.memory  # xxx GB defined in global config
+
 	### run gene-catalog workflow
 	mylog = gene_catalog_nuc + ".log"
 	myclust = gene_catalog_nuc + ".clstr"
 	workflow.add_task(
-		'cd-hit-est -i [depends[0]] [args[0]] -o [targets[0]] >[args[1]] 2>&1 ',
-		depends = [complete_gene, TrackedExecutable("cd-hit-est")],
-		targets = [gene_catalog_nuc, myclust],
-		args = [config.cd_hit_gene_opts, mylog],
-		cores = threads,
-		name = "cd-hit-est")
+			'cd-hit-est -i [depends[0]] [args[0]] -o [targets[0]] >[args[1]] 2>&1 ',
+			depends = [complete_gene, TrackedExecutable("cd-hit-est")],
+			targets = [gene_catalog_nuc, myclust],
+			args = [config.cd_hit_gene_opts, mylog],
+			cores = threads,
+			name = "cd-hit-est")
 
 	mylog = gene_catalog + ".log"
 	workflow.add_task(
-		'metawibele_extract_cluster -c [depends[0]] -o [targets[0]] >[args[0]] 2>&1 ',
-		depends = [myclust, TrackedExecutable("metawibele_extract_cluster")],
-		targets = [gene_catalog],
-		args = [mylog],
-		cores = threads,
-		name = "extract_cluster_CD-hit")
+			'metawibele_extract_cluster -c [depends[0]] -o [targets[0]] >[args[0]] 2>&1 ',
+			depends = [myclust, TrackedExecutable("metawibele_extract_cluster")],
+			targets = [gene_catalog],
+			args = [mylog],
+			cores = 1,
+			name = "extract_cluster_CD-hit")
 
 	mylog = gene_catalog_prot + ".log"
 	workflow.add_task(
-		'metawibele_extract_non_redundance_seq -r [depends[0]] -i [depends[1]] -o [targets[0]] >[args[0]] 2>&1 ',
-		depends = [gene_catalog_nuc, complete_protein, TrackedExecutable("metawibele_extract_non_redundance_seq")],
-		targets = [gene_catalog_prot],
-		args = [mylog],
-		cores = threads,
-		name = "extract_non_redundance_seq")
+			'metawibele_extract_non_redundance_seq -r [depends[0]] -i [depends[1]] -o [targets[0]] >[args[0]] 2>&1 ',
+			depends = [gene_catalog_nuc, complete_protein, TrackedExecutable("metawibele_extract_non_redundance_seq")],
+			targets = [gene_catalog_prot],
+			args = [mylog],
+			cores = 1,
+			name = "extract_non_redundance_seq")
 
 	### get the abundance of gene catalog
 	# run gene-abundance workflow
 	mylog = gene_catalog_saf + ".log"
 	workflow.add_task(
-		'metawibele_gene_abundance_indexRef -r [depends[0]] -t gene -b [args[0]] -o [targets[0]] >[args[1]] 2>&1 ',
-		depends = [gene_catalog_nuc, TrackedExecutable("metawibele_gene_abundance_indexRef")],
-		targets = [gene_catalog_saf],
-		args = [prefix_gene_catalog, mylog],
-		cores = threads,
-		name = "gene_abundance_indexRef")
+			'metawibele_gene_abundance_indexRef -r [depends[0]] -t gene -b [args[0]] -o [targets[0]] >[args[1]] 2>&1 ',
+			depends = [gene_catalog_nuc, TrackedExecutable("metawibele_gene_abundance_indexRef")],
+			targets = [gene_catalog_saf],
+			args = [prefix_gene_catalog, mylog],
+			cores = 1,
+			name = "gene_abundance_indexRef")
 
 	## collect sequences
 	if extension_paired:
@@ -580,46 +607,45 @@ def gene_catalog (workflow, complete_gene, complete_protein,
 	## Now run bowtie2 to map reads to gene categories
 	mappings = []
 	mappings_tmp = []
-	mem_equation = "2*12*1024 if file_size('[depends[0]]') < 10 else 4*12*1024"
-	time_equation = "2*60 if file_size('[depends[0]]') < 10 else 2*2*60"
+	#mem_equation = "2*12*1024 if file_size('[depends[0]]') < 10 else 4*12*1024"
+	#time_equation = "2*60 if file_size('[depends[0]]') < 10 else 2*2*60"
 	for (sample, seq_file) in flt_seqs:
 		seq_base = sample
-		mydir = mapping_dir + "/" + sample
+		mydir = os.path.join(mapping_dir, sample)
 		os.system("mkdir -p " + mydir)
 		sample_counts = os.path.join(mydir, seq_base + ".sort.bed")
 		stdout_log = os.path.join(mydir, '%s.mapping.stdout.log' % seq_base)
 		mappings_tmp.append(sample_counts)
 
-		workflow.add_task_gridable(
-			'metawibele_gene_abundance -r [depends[0]] -u [args[0]] -t [args[1]] -s [args[2]] -w [args[3]] '
-			'> [args[4]] 2>&1 ',
-			depends = [gene_catalog_nuc, gene_catalog_saf, TrackedExecutable("metawibele_gene_abundance")],
-			targets = [sample_counts],
-			args = [seq_file, threads, seq_base, mydir, stdout_log],
-			cores = threads,
-			mem = mem_equation,
-			time = time_equation,
-			name = sample + "__gene_abundance")
+		workflow.add_task(
+				'metawibele_gene_abundance -r [depends[0]] -u [args[0]] -t [args[1]] -s [args[2]] -w [args[3]] '
+				'> [args[4]] 2>&1 ',
+				depends = [gene_catalog_nuc, gene_catalog_saf, TrackedExecutable("metawibele_gene_abundance")],
+				targets = [sample_counts],
+				args = [seq_file, threads, seq_base, mydir, stdout_log],
+				cores = 1,
+				name = sample + "__gene_abundance")
 
 	for myfile in mappings_tmp:
-		mym = re.search("([^\/]+)$", myfile)
-		myname = mym.group(1)
-		myfile_new = mapping_dir + "/" + myname
+		myname = os.path.basename(myfile)
+		myfile_new = os.path.join(mapping_dir, myname)
 		mappings.append(myfile_new)
 		workflow.add_task(
-			"ln -fs [depends[0]] [targets[0]]",
-			depends = [myfile],
-			targets = [myfile_new],
-			name = "ln__" + myname)
+				"ln -fs [depends[0]] [targets[0]]",
+				depends = [myfile],
+				targets = [myfile_new],
+				cores = 1,
+				name = "ln__" + myname)
 
 	# collect abundance
 	mylog = gene_catalog_count + ".log"
 	workflow.add_task(
-		'metawibele_gene_catalog_abundance -p [args[0]] -s sort.bed -c [args[1]] -o [targets[0]] >[args[2]] 2>&1 ',
-		depends = utilities.add_to_list(mappings,TrackedExecutable("metawibele_gene_catalog_abundance")),
-		targets = [gene_catalog_count],
-		args = [mapping_dir, gene_catalog, mylog],
-		name = "gene_catalog_abundance")
+				'metawibele_gene_catalog_abundance -p [args[0]] -s sort.bed -c [args[1]] -o [targets[0]] >[args[2]] 2>&1 ',
+				depends = utilities.add_to_list(mappings,TrackedExecutable("metawibele_gene_catalog_abundance")),
+				targets = [gene_catalog_count],
+				args = [mapping_dir, gene_catalog, mylog],
+				cores = 1,
+				name = "gene_catalog_abundance")
 
 	return gene_catalog, gene_catalog_count
 
