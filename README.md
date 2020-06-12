@@ -115,41 +115,10 @@ Option 2: Development Version
 	* Similarly, you can also specify the installation directory using '--prefix' option which will install the python package into the directory $YOUR\_INSTALL\_DIR that is a directory on PYTHONPATH and which Python reads ".pth" files from. You might need to add $YOUR\_INSTALL\_DIR/bin to your $PATH as it might not be included by default.
 
 #### Download databases
-MetaWIBELE requires several databases that are needed to put in the **MetaWIBELE directory**. The versions used in the MetaWIBELE publication are available for download here. You need to download, unpack and put these databases in `$MetaWIBELE_PATH/data`.
+MetaWIBELE requires Uniref/UniProt databases which are consistent with [HUMAnN](https://github.com/biobakery/humann) used. The versions used in the MetaWIBELE publication are available for download here. You need to download, unpack and specify the path of these databases in the MetaWIBELE global configuration file `metawibele.cfg` in your working directory.
 
-* all databases: [metawibele_databases.tar](http://huttenhower.sph.harvard.edu/xxx) (58 GB)
-	* UniRef databases: 
-		* [uniref90.fasta.gz](http://huttenhower.sph.harvard.edu/xxx) (19 GB)
-		* [uniref90.fasta.dmnd.gz](http://huttenhower.sph.harvard.edu/xxx)(20 GB)
-		* [uniref50.fasta.gz](http://huttenhower.sph.harvard.edu/xxx) (6.4 GB)
-		* [uniref50.fasta.dmnd.gz](http://huttenhower.sph.harvard.edu/xxx)(6.7 GB)
-		* [uniref90.ann.tsv.gz](http://huttenhower.sph.harvard.edu/xxx)(5.2 GB)
-		* [map\_UniRef90_UniRef50.dat.gz](http://huttenhower.sph.harvard.edu/xxx) (525 MB)
-		* [BGC\_genes_unirefID.tsv.gz](http://huttenhower.sph.harvard.edu/xxx) (95 MB)
-	* UniProt databases: 
-		* [uniprot_taxonomy.map.tsv.gz](http://huttenhower.sph.harvard.edu/xxx) (43 MB)
-		* [uniprot\_taxaID_mammalia.tsv.gz](http://huttenhower.sph.harvard.edu/xxx) (25 KB)
-		* [uniprot\_taxaID_bac-arc-vir.tsv.gz](http://huttenhower.sph.harvard.edu/xxx) (1.6 MB)
-		* [uniprot\_human_pfam.tsv.gz](http://huttenhower.sph.harvard.edu/xxx) (2.2 MB)
-	* Pfam databases:
-		* [Pfam_ann.tsv.gz](http://huttenhower.sph.harvard.edu/xxx) (214 KB)
-		* [Pfam2GO.txt.gz](http://huttenhower.sph.harvard.edu/xxx) (98 KB)
-	* DOMINE database:
-		* [INTERACTION.txt.gz](http://huttenhower.sph.harvard.edu/xxx) (136 KB)
-	* PDB database:
-		* [pdb\_chain_taxonomy.tsv.gz](http://huttenhower.sph.harvard.edu/xxx) (27 MB)
-		* [pdb\_chain_pfam.tsv.gz](http://huttenhower.sph.harvard.edu/xxx) (2.2 MB)
-	* Expression Atlas databases:
-		* [32\_Uhlen_Lab\_colon\_rectum.tsv.gz](http://huttenhower.sph.harvard.edu/xxx) (184 KB)
-		* [Encode\_sigmoid_colon.tsv.gz](http://huttenhower.sph.harvard.edu/xxx) (128 KB)
-		* [FANTOM5\_colon_rectum.tsv.gz](http://huttenhower.sph.harvard.edu/xxx) (147 KB)
-		* [GTEx\_sigmoid_transverse\_colon.tsv.gz](http://huttenhower.sph.harvard.edu/xxx) (184 KB)
-		* [Human\_protein_Atlas\_colon\_rectum.tsv.gz](http://huttenhower.sph.harvard.edu/xxx) (33 KB)
-		* [Human\_proteome_map\_colon\_rectum.tsv.gz](http://huttenhower.sph.harvard.edu/xxx) (92 KB)
-		* [Illumina\_Body_Map\_colon.tsv.gz](http://huttenhower.sph.harvard.edu/xxx) (133 KB)
-	* example vignettes:
-		* [vignettes_proteins.tsv.gz](http://huttenhower.sph.harvard.edu/xxx) (2.7 KB)
-
+* Download HUMAnN databases: [TBD]
+	
 	
 ### Configuration for MetaWIBELE
 #### Global configration file
