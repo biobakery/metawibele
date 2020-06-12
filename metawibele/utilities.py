@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 """
 MetaWIBELE: utilities module
 Utilities relating to third party software, file permissions, and file formats
@@ -37,7 +35,6 @@ import bz2
 import time
 import math
 
-#from anadama2.tracked import TrackedDirectory
 from metawibele import config
 
 # constants
@@ -569,40 +566,59 @@ def split_paired_reads (infile, extension, pair_identifier=None):
 #==============================================================
 # split files
 #==============================================================
-def split_fasta_file (seq, number, prefix, output, list_file, mylist):
-	open_list_file = open(list_file, "w")
-	open_list = open(mylist, "w")
-	mynum = 0
-	filenum = 0
-	start = 0
+def split_fasta_file (seq, split_num, prefix, output, list_file, mylist):
+	seqs = {}
 	open_file = open(seq, "r")
+	myid = ""
 	for line in open_file:
 		line = line.strip()
 		if not len(line):
 			continue
 		if re.search("^>", line):
 			mym = re.search(">([\S]+)", line)
-			line = ">" + mym.group(1)
-			mynum = mynum + 1
-			myfile = int(mynum) % int(number)
-			filenum = myfile + 1
-			if (int(mynum) <= int(number)): # number
-				myfile = prefix + ".split" + str(filenum) + ".fasta"
-				mydir = output + "/" + "split" + str(filenum)
-				os.system("mkdir " + mydir)
-				myfile = mydir + "/" + myfile
-				open_list_file.write(myfile + "\n")
-				open_list.write("split" + str(filenum) + "\n")
-				open_out = open(myfile, "w")
-			else:
-				myfile = prefix + ".split" + str(filenum) + ".fasta"
-				mydir = output + "/" + "split" + str(filenum)
-				myfile = mydir + "/" + myfile
-				open_out = open(myfile, "a")
-		open_out.write(line + "\n")
+			myid = ">" + mym.group(1)
+			seqs[myid] = ""
+		else:
+			seqs[myid] = seqs[myid] + line
 	# foreach line
 	open_file.close()
+
+	total_num = len(seqs.keys())
+	chunck = int(total_num / int(split_num))
+	mynum = 0
+	filenum = 0
+	start = 0
+	out_list = []
+	out_list_file = []
+	for myid in seqs.keys():
+		if mynum > chunck:  # close a split file
+			open_out.close()
+			mynum = 0
+		mynum = mynum + 1
+		if mynum == 1: # open a new split file
+			filenum = filenum + 1
+			myfile = prefix + ".split" + str(filenum) + ".fasta"
+			mydir = output + "/" + "split" + str(filenum)
+			os.system("mkdir " + mydir)
+			myfile = mydir + "/" + myfile
+			open_out = open(myfile, "w")
+			out_list.append("split" + str(filenum))
+			out_list_file.append(myfile)
+			open_out.write(myid + "\n" + seqs[myid] + "\n")
+		else:
+			open_out.write(myid + "\n" + seqs[myid] + "\n")
+	# foreach sequence
+	open_out.close()
+
+    # ouput file
+	open_list = open(mylist, "w")
+	for item in out_list:
+		open_list.write(item + "\n")
 	open_list.close()
+
+	open_list_file = open(list_file, "w")
+	for item in out_list_file:
+		open_list_file.write(item + "\n")
 	open_list_file.close()
 
 # split_fasta_file
@@ -631,6 +647,16 @@ def dict_to_file (dict_data, outfile):
 	for mydata in sorted(dict_data.keys()):
 		open_out.write(mydata + "\n")
 	open_out.close()
+
+
+def is_file_exist (file_path):
+	""" Check if file is not empty by confirming if its size is more than 0 bytes"""
+	# Check if file exist and it is not empty
+	status = 0
+	if os.path.exists(file_path):
+		if time.time() - os.stat(file_path).st_mtime > 60:
+			status = 1
+	return status
 
 
 # ==============================================================
