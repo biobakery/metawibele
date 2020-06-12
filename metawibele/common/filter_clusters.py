@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
 """
 MetaWIBELE: filter_clusters module
@@ -60,8 +60,7 @@ def collect_info (list_file, info_file, outfile):
 		if not len(line):
 			continue
 		info = line.split("\t")
-		myid = info[0].split("|")[0]
-		ids[myid] = ""
+		ids[info[0]] = ""
 	# foreach line
 	open_file.close()
 
