@@ -1,15 +1,19 @@
 
 # MetaWIBELE History #
 
+## v0.3.1 2020-06-1 ##
+* Convert input sources for gridable task
+* Reformat annotations of PSORTb, InterProScan
+* Add EffectiveT3 to predict effector (TBD)
+* Make config file for MSPminer as optional
+
 ## v0.3 2020-05-21 ##
 * Update different cases for binary filtering
 * Update local and global configuration files
 * Add Rscripts folder
-* Remove QC workflow
 
 ## v0.2.2 2020-05-06 ##
 * Update binary filtering approaches for supervised prioritization
-* Remove RNA modules
 
 ## v0.2.1 2020-03-09 ##
 * Add setup.py
