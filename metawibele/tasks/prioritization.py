@@ -33,7 +33,11 @@ import re
 from anadama2.tracked import TrackedExecutable, TrackedDirectory
 
 # import the utilities functions and config settings from MetaWIBELE
-from metawibele import utilities, config, files
+try:
+	from metawibele import utilities, config, files
+except ImportError:
+	sys.exit("CRITICAL ERROR: Unable to find the MetaWIBELE python package." +
+		         " Please check your install.")
 
 
 def mandatory_prioritization (workflow, prioritization_conf,
@@ -72,11 +76,14 @@ def mandatory_prioritization (workflow, prioritization_conf,
 
 	# get the clustering output files
 	priority_dir = output_folder
-	unsupervised_rank = priority_dir + "/" + config.basename + "_unsupervised_prioritization.rank.tsv"
-	supervised_rank = priority_dir + "/" + config.basename + "_supervised_prioritization.rank.tsv"
-	#unsupervised_priority = priority_dir + "/" + config.basename + "_unsupervised_prioritization.priority.tsv"
-	#supervised_priority = priority_dir + "/" + config.basename + "_supervised_prioritization.priority.tsv"
-	if not os.path.exists(priority_dir): 
+	unsupervised_rank = os.path.join(priority_dir, config.basename + "_unsupervised_prioritization.rank.tsv")
+	supervised_rank = os.path.join(priority_dir, config.basename + "_supervised_prioritization.rank.tsv")
+	#unsupervised_priority = os.path.join(priority_dir, config.basename + "_unsupervised_prioritization.priority.tsv")
+	#supervised_priority = os.path.join(priority_dir, config.basename + "_supervised_prioritization.priority.tsv")
+	time_equation = config.time  # xxx hours defined in global config
+	mem_equation = config.memory  # xxx GB defined in global config
+
+	if not os.path.exists(priority_dir):
 		os.system("mkdir -p " + priority_dir)
 
 	# run unsupervised prioritization
@@ -86,6 +93,7 @@ def mandatory_prioritization (workflow, prioritization_conf,
 			depends = [prioritization_conf, protein_family_ann, protein_family_attr, TrackedExecutable("metawibele_quantify_prioritization")],
 			targets = [unsupervised_rank],
 			args = [priority_dir, mylog],
+			cores = 1,
 			name = "quantify_prioritization__unsupervised")
 
 	# run supervised prioritization
@@ -95,6 +103,7 @@ def mandatory_prioritization (workflow, prioritization_conf,
 			depends = [prioritization_conf, protein_family_ann, protein_family_attr, TrackedExecutable("metawibele_quantify_prioritization")],
 			targets = [supervised_rank],
 			args = [priority_dir, mylog],
+			cores = 1,
 			name = "quantify_prioritization__supervised")
 
 	return unsupervised_rank, supervised_rank
@@ -135,6 +144,9 @@ def optional_prioritization (workflow, prioritization_conf, interested_function,
 		workflow.go()
 	"""
 
+	time_equation = config.time  # xxx hours defined in global config
+	mem_equation = config.memory  # xxx GB defined in global config
+
 	# get the clustering output files
 	priority_dir = output_folder
 	if not os.path.exists(priority_dir): 
@@ -147,6 +159,7 @@ def optional_prioritization (workflow, prioritization_conf, interested_function,
 			depends = [prioritization_conf, protein_family_ann, supervised_priority, TrackedExecutable("metawibele_filter_prioritization")],
 			targets = [selected_priority],
 			args = [interested_function, mylog],
+			cores = 1,
 			name = "filter_prioritization")
 
 	return selected_priority
@@ -188,7 +201,9 @@ def finalize_prioritization (workflow,
 		# run the workflow
 		workflow.go()
 	"""
-	
+	time_equation = config.time  # xxx hours defined in global config
+	mem_equation = config.memory  # xxx GB defined in global config
+
 	priority_dir = output_folder
 	if not os.path.exists(priority_dir): 
 		os.system("mkdir -p " + priority_dir)
@@ -200,6 +215,7 @@ def finalize_prioritization (workflow,
 			depends = [unsupervised_rank, TrackedExecutable("metawibele_finalize_prioritization")],
 			targets = [final_unsupervised_rank],
 			args = [mylog],
+			cores = 1,
 			name = "finalize_prioritization__unsupervised_rank")
 
 	mylog = re.sub(".tsv", ".log", final_supervised_rank)
@@ -208,6 +224,7 @@ def finalize_prioritization (workflow,
 			depends = [supervised_rank, TrackedExecutable("metawibele_finalize_prioritization")],
 			targets = [final_supervised_rank],
 			args = [mylog],
+			cores = 1,
 			name = "finalize_prioritization__supervised_rank")
 
 	mylog = re.sub(".tsv", ".log", final_selected_priority)
@@ -216,5 +233,6 @@ def finalize_prioritization (workflow,
 			depends = [selected_priority, TrackedExecutable("metawibele_finalize_prioritization")],
 			targets = [final_selected_priority],
 			args = [mylog],
+			cores = 1,
 			name = "finalize_prioritization__selected_priority")
 
