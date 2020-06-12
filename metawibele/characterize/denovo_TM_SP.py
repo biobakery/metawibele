@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
 """
 MetaWIBELE: denovo_TM_SP module
@@ -169,10 +169,10 @@ def overlap_annotation(cluster, types, title, outfile):
 	for mycat in sorted(outs.keys()):
 		for myclust in sorted(outs[mycat].keys()):
 			if re.search("signaling", mycat):
-				mytype = "Denovo_signaling\tDenovo_signaling"
+				mytype = "Denovo_signaling\tsignaling"
 				open_out1.write(myclust + "\t" + mytype + "\t" + str(outs[mycat][myclust]) + "\n")
 			if re.search("transmembrane", mycat):
-				mytype = "Denovo_transmembrane\tDenovo_transmembrane"
+				mytype = "Denovo_transmembrane\ttransmembrane"
 				open_out2.write(myclust + "\t" + mytype + "\t" + str(outs[mycat][myclust]) + "\n")
 		# foreach family
 	# foreach category
