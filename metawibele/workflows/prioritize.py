@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
 """
 MeteWIBELE workflow: MeteWIBELE prioritization workflow
@@ -38,10 +38,19 @@ import re
 from anadama2 import Workflow
 
 # import the library of MetaWIBELE tasks for prioritization
-from metawibele.tasks import prioritization
+try:
+	from metawibele.tasks import prioritization
+except ImportError:
+	sys.exit("CRITICAL ERROR: Unable to find the MetaWIBELE python package." +
+		         " Please check your install.")
 
 # import the utilities functions and config settings from MetaWIBELE
-from metawibele import utilities, config
+try:
+	from metawibele import utilities, config
+except ImportError:
+	sys.exit("CRITICAL ERROR: Unable to find the MetaWIBELE python package." +
+		         " Please check your install.")
+
 
 VERSION = config.version
 
@@ -58,7 +67,7 @@ def parse_cli_arguments ():
 	# add the custom arguments to the workflow
 	workflow.add_argument("threads",
 						desc = "number of threads/cores for each task to use",
-						default = 20)
+						default = "none")
 	workflow.add_argument("prioritization-config",
 	                    desc = "the configuration file of quantitative prioritization",
 	                    default = "none"),
@@ -85,6 +94,8 @@ def main(workflow):
 
 	# get arguments
 	args = workflow.parse_args()
+	if args.threads == "none":
+		args.threads = int(config.threads)
 
 	# input and output folder
 	input_dir = args.input
@@ -94,7 +105,7 @@ def main(workflow):
 
 	# get config file
 	metawibele_install_directory = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-	default_prioritization_conf = metawibele_install_directory + "/configs/prioritization.cfg"
+	default_prioritization_conf = os.path.join(metawibele_install_directory, "configs", "prioritization.cfg")
 	if args.prioritization_config == "none":
 		args.prioritization_config = default_prioritization_conf
 	print(args.prioritization_config)
@@ -107,12 +118,12 @@ def main(workflow):
 	protein_family_attr = config.protein_family_attr
 
 	# output files
-	unsupervised_rank = priority_dir + "/" + config.basename + "_unsupervised_prioritization.rank.tsv"
-	supervised_rank = priority_dir + "/" + config.basename + "_supervised_prioritization.rank.tsv"
-	selected_priority = priority_dir + "/" + config.basename + "_supervised_prioritization.rank.selected.tsv" 
+	unsupervised_rank = os.path.join(priority_dir, config.basename + "_unsupervised_prioritization.rank.tsv")
+	supervised_rank = os.path.join(priority_dir, config.basename + "_supervised_prioritization.rank.tsv")
+	selected_priority = os.path.join(priority_dir, config.basename + "_supervised_prioritization.rank.selected.tsv") 
 
-	final_unsupervised_rank = priority_dir + "/" + config.basename + "_unsupervised_prioritization.rank.table.tsv"
-	final_supervised_rank = priority_dir + "/" + config.basename + "_supervised_prioritization.rank.table.tsv"
+	final_unsupervised_rank = os.path.join(priority_dir, config.basename + "_unsupervised_prioritization.rank.table.tsv")
+	final_supervised_rank = os.path.join(priority_dir, config.basename + "_supervised_prioritization.rank.table.tsv")
 	final_selected_priority = re.sub(".tsv", ".table.tsv", selected_priority)
 
 
