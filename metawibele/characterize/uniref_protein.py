@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
 """
 MetaWIBELE: uniref_protein module
@@ -103,7 +103,7 @@ def collect_pfam_info (pfamfile):	# Pfam_ann.tsv
 #==============================================================
 # collect UniRef info
 #==============================================================
-def collect_uniref_info (uniref, pfam):
+def collect_uniref_info (uniref, pfam, hits):
 	uniref_info = {}
 	titles = {}
 	#items = ["UniRefID", "Tax", "TaxID", "Description", "Organism", "GO(MF)", "GO(CC)", "Subcellular_location", "Transmembrane", "Signal_peptide", "Pfam"]
@@ -125,6 +125,8 @@ def collect_uniref_info (uniref, pfam):
 			continue
 		info = line.split("\t")
 		myid = info[0]
+		if not myid in hits:
+			continue
 		mystr = line
 		mystr = re.sub("root\tNA", "root\t1", mystr)
 		mypfam = info[titles["Pfam"]]
@@ -157,6 +159,7 @@ def collect_uniref_info (uniref, pfam):
 def collect_uniref_mapping (mapfile, member):	# PRISM_peptides.clust.rep.uniref90.stat.all.tsv
 	titles = {}
 	mapping = {}
+	hits = {}
 	open_file = open(mapfile, "r")
 	for line in open_file:
 		line = line.strip()
@@ -173,12 +176,14 @@ def collect_uniref_mapping (mapfile, member):	# PRISM_peptides.clust.rep.uniref9
 			#print("Not members of specified clusters!\t" + myid)
 			continue
 		myuniref = info[titles["subject"]]
+		hits[myuniref] = ""
 		query_type = info[titles["query_type"]]
 		mutual_type = info[titles["mutual_type"]]
 		mapping[myid] = myuniref + "\t" + query_type + "\t" + mutual_type
 	# foreach line
 	open_file.close()
-	return mapping
+
+	return mapping, hits
 # collect_uniref_mapping
 
 
@@ -226,9 +231,9 @@ def main():
 	### collect uniref and annotation info ###
 	sys.stderr.write("Get UniRef DB and annotation info ......starting\n")
 	member = collect_peptide_cluster_info (config.protein_family)
+	mapping, hits = collect_uniref_mapping (values.mapping, member)
 	pfam = collect_pfam_info (config.pfam_database)
-	uniref_info, uniref_title = collect_uniref_info (config.uniref_database, pfam)
-	mapping = collect_uniref_mapping (values.mapping, member)
+	uniref_info, uniref_title = collect_uniref_info (config.uniref_database, pfam, hits)
 	extract_annotation_info (uniref_info, uniref_title, mapping, values.output)
 	sys.stderr.write("Get UniRef DB and annotation info ......done\n")
 
