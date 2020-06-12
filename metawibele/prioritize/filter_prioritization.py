@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
 """
 MeteWIBELE: filter_prioritization.py module
@@ -109,6 +109,8 @@ def read_config_file (conf_file):
 		for name in config_items["filtering"].keys():
 			myvalue = config_items["filtering"][name]
 			if name == "vignettes" or name == "clusters":
+				if myvalue.lower() == "none":
+					continue
 				print("Required filtering item: " + name + "\t" + myvalue)
 				required_conf[name] = myvalue
 				if name == "vignettes":
@@ -119,12 +121,12 @@ def read_config_file (conf_file):
 				if not myvalue in values:
 					print("Please use valid value for the config item " + name + ": e.g. required | optional | none")
 					continue
-				if myvalue == "none":
+				if myvalue.lower() == "none":
 					continue
-				if myvalue == "required":
+				if myvalue.lower()  == "required":
 					print("Required filtering item: " + name + "\t" + myvalue)
 					required_conf[name] = myvalue
-				if myvalue == "optional": 
+				if myvalue.lower() == "optional": 
 					print("Optional filtering item: " + name + "\t" + myvalue)
 					optional_conf[name] = myvalue
 
