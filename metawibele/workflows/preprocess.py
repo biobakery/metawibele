@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
 """
 Preprocessing workflow:
@@ -35,10 +35,20 @@ import sys
 
 # import the workflow class from anadama2
 from anadama2 import Workflow
+
 # import the utilities functions and config settings from MetaWIBELE
-from metawibele import utilities, config
+try:
+	from metawibele import utilities, config
+except ImportError:
+	sys.exit("CRITICAL ERROR: Unable to find the MetaWIBELE python package." +
+		         " Please check your install.")
+
 # import the library of MetaWIBELE tasks for characterization
-from metawibele.tools import preprocessing_tasks
+try:
+	from metawibele.tools import preprocessing_tasks
+except ImportError:
+	sys.exit("CRITICAL ERROR: Unable to find the MetaWIBELE python package." +
+		         " Please check your install.")
 
 VERSION = config.version
 
@@ -57,7 +67,7 @@ def parse_cli_arguments():
 	# add the custom arguments to the workflow
 	workflow.add_argument("threads",
 	                      desc = "number of threads/cores for each task to use",
-	                      default = 20)
+	                      default = "none")
 	workflow.add_argument("extension-paired",
 	                      desc = "provide the extension for paired fastq files using comma to seperate, e.g. .R1.fastq.gz,.R2.fastq.gz | .R1.fastq,.R2.fastq",
 						  default = None) 
@@ -88,6 +98,8 @@ def main(workflow):
 
 	# get arguments
 	args = workflow.parse_args()
+	if args.threads == "none":
+		args.threads = int(config.threads)
 
 	# input and output folder
 	input_dir = args.input # reads fastq files
@@ -98,27 +110,27 @@ def main(workflow):
 	file_extension = args.extension
 
 	# get all output files
-	assembly_dir = output_dir + "/assembly/"
-	contigs = output_dir + "/" + args.output_basename + "_contig_sequence.fasta"
+	assembly_dir = os.path.join(output_dir, "assembly/")
+	contigs = os.path.join(output_dir, args.output_basename + "_contig_sequence.fasta")
 	assembly_extentsion = ".contigs.fa"
 
-	prokka_dir = output_dir + "/gene_annotation/"
-	prodigal_dir = output_dir + "/gene_calls/"
-	gene_file = output_dir + "/" + args.output_basename + "_combined_gene.fna"
-	gene_PC_file = output_dir + "/" + args.output_basename + "_combined_gene_protein_coding.sorted.fna"
-	protein_file = output_dir + "/" + args.output_basename + "_combined_protein.faa"
-	protein_sort = output_dir + "/" + args.output_basename + "_combined_protein.sorted.faa"
-	gene_info = output_dir + "/" + args.output_basename + "_gene_info.tsv"
-	complete_gene = output_dir + "/" + args.output_basename + "_combined_gene_protein_coding.complete.sorted.fna"
-	complete_protein = output_dir + "/" + args.output_basename + "_combined_protein.complete.sorted.faa"
+	prokka_dir = os.path.join(output_dir, "gene_annotation/")
+	prodigal_dir = os.path.join(output_dir, "gene_calls/")
+	gene_file = os.path.join(output_dir, args.output_basename + "_combined_gene.fna")
+	gene_PC_file = os.path.join(output_dir, args.output_basename + "_combined_gene_protein_coding.sorted.fna")
+	protein_file = os.path.join(output_dir, args.output_basename + "_combined_protein.faa")
+	protein_sort = os.path.join(output_dir, args.output_basename + "_combined_protein.sorted.faa")
+	gene_info = os.path.join(output_dir, args.output_basename + "_gene_info.tsv")
+	complete_gene = os.path.join(output_dir, args.output_basename + "_combined_gene_protein_coding.complete.sorted.fna")
+	complete_protein = os.path.join(output_dir, args.output_basename + "_combined_protein.complete.sorted.faa")
 
-	mapping_dir = output_dir + "/mapping/"
-	prefix_gene_catalog = output_dir + "/" + args.output_basename + "_genecatalogs.centroid"
-	gene_catalog = output_dir + "/" + args.output_basename + "_genecatalogs.clstr"
-	gene_catalog_nuc = output_dir + "/" + args.output_basename + "_genecatalogs.centroid.fna"
-	gene_catalog_prot = output_dir + "/" + args.output_basename + "_genecatalogs.centroid.faa"
-	gene_catalog_saf = output_dir + "/" + args.output_basename + "_genecatalogs.centroid.saf.gtf"
-	gene_catalog_count = output_dir + "/" + args.output_basename + "_genecatalogs_counts.all.tsv"
+	mapping_dir = os.path.join(output_dir, "mapping/")
+	prefix_gene_catalog = os.path.join(output_dir, args.output_basename + "_genecatalogs.centroid")
+	gene_catalog = os.path.join(output_dir, args.output_basename + "_genecatalogs.clstr")
+	gene_catalog_nuc = os.path.join(output_dir, args.output_basename + "_genecatalogs.centroid.fna")
+	gene_catalog_prot = os.path.join(output_dir, args.output_basename + "_genecatalogs.centroid.faa")
+	gene_catalog_saf = os.path.join(output_dir, args.output_basename + "_genecatalogs.centroid.saf.gtf")
+	gene_catalog_count = os.path.join(output_dir, args.output_basename + "_genecatalogs_counts.all.tsv")
 
 	
 	### STEP #1: assembly ###
