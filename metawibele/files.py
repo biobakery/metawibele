@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 """
 MetaWIBELE: files module
 A collection of file names used by tasks
