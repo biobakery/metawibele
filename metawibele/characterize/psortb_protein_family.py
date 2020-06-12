@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
 """
 MetaWIBELE: psortb_protein_family module
@@ -208,7 +208,7 @@ def collect_localizing_info (cluster_mem, extension, ann_path, outfile):	# list.
 	# output details
 	outfile1 = re.sub("_proteinfamilies.", "_proteinfamilies.ORF.", outfile)
 	open_out = open(outfile1, "w")
-	open_out.write(utilities.PROTEIN_ID + "\ttype\tdetail\n")
+	open_out.write(utilities.PROTEIN_ID + "\ttype\tdetail\tscore\n")
 	for myid in sorted(location.keys()):
 		mytype = location[myid]
 		if mytype == "Unknown":
@@ -228,7 +228,8 @@ def collect_localizing_info (cluster_mem, extension, ann_path, outfile):	# list.
 		myscore = "NA"
 		if myid in score:
 			myscore = score[myid]
-		open_out.write(myid + "\t" + mytype + "\t" + str(myscore) + "\n")
+		mydetail = re.sub("PSORTb_", "", mytype)
+		open_out.write(myid + "\t" + mytype + "\t" + mydetail + "\t" + str(myscore) + "\n")
 	# foreach seqID
 	open_out.close()
 
@@ -356,8 +357,9 @@ def output_info (cutoff, cluster, gram_p, gram_n, archaea, location, score,locat
 						if not mytotal in pers[myper]:
 							pers[myper][mytotal] = {}
 						pers[myper][mytotal][clust_id] = ""
+					mydetail = re.sub("PSORTb_", "", item)
 					#if myper >= float(cutoff):
-					open_file2.write(clust_id + "\t" + item + "\t" + item + "\t" + str(myper) + "\n")
+					open_file2.write(clust_id + "\t" + item + "\t" + mydetail + "\t" + str(myper) + "\n")
 				# foreach type
 				break
 			# foreach voting weight
@@ -377,7 +379,8 @@ def output_info (cutoff, cluster, gram_p, gram_n, archaea, location, score,locat
 							pers[myper][mytotal] = {}
 						pers[myper][mytotal][clust_id] = ""
 					if myper >= float(cutoff):
-						open_file2.write(clust_id + "\t" + item + "\t" + item + "\t" + str(myper) + "\n")
+						mydetail = re.sub("PSORTb_", "", item)
+						open_file2.write(clust_id + "\t" + item + "\t" + mydetail + "\t" + str(myper) + "\n")
 				# foreach type
 				break
 			# foreach voting weight
