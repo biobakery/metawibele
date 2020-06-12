@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
 """
 MeteWIBELE workflow: MeteWIBELE characterization workflow
@@ -37,10 +37,18 @@ import logging
 from anadama2 import Workflow
 
 # import the library of MetaWIBELE tasks for characterization
-from metawibele.tasks import characterization
+try:
+	from metawibele.tasks import characterization
+except ImportError:
+	sys.exit("CRITICAL ERROR: Unable to find the MetaWIBELE python package." +
+		         " Please check your install.")
 
 # import the utilities functions and config settings from MetaWIBELE
-from metawibele import utilities, config
+try:
+	from metawibele import utilities, config
+except ImportError:
+	sys.exit("CRITICAL ERROR: Unable to find the MetaWIBELE python package." +
+		         " Please check your install.")
 
 
 VERSION = config.version
@@ -58,9 +66,12 @@ def parse_cli_arguments ():
 	# add the custom arguments to the workflow
 	workflow.add_argument("threads",
 	                      desc = "number of threads/cores for each task to use",
-	                      default = 20)
+	                      default = "none")
 	workflow.add_argument("characterization-config",
 	                      desc = "the configuration file of characterization analysis",
+	                      default = "none")
+	workflow.add_argument("mspminer-config",
+	                      desc = "the configuration file used by mspminer",
 	                      default = "none")
 	workflow.add_argument("bypass-clustering",
 	                      desc = "do not cluster proteins into protein families",
@@ -76,7 +87,7 @@ def parse_cli_arguments ():
 	                      action = "store_true")
 	workflow.add_argument("split-number",
 	                      desc="indicates number of spliting files for annotation based on sequence information",
-	                      default = 10)
+	                      default = "none")
 	workflow.add_argument("bypass-integration",
 	                      desc = "do not integrate annotations for protein families",
 	                      action = "store_true")
@@ -121,7 +132,6 @@ def get_method_config (config_file):
 		for name in config_items["abundance"].keys():
 			myvalue = config_items["abundance"][name]
 			abundance_conf[name] = myvalue
-		abundance_conf["mspminer"] = config.mspminer
 		# for each method
 
 	if "integration" in config_items:
@@ -147,12 +157,19 @@ def main(workflow):
 
 	# get configuration info
 	metawibele_install_directory = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-	default_characterization_conf = metawibele_install_directory + "/configs/characterization.cfg"
-	#print(default_characterization_conf)
+	default_characterization_conf = os.path.join(metawibele_install_directory, "configs", "characterization.cfg")
 	if args.characterization_config == "none":
 		args.characterization_config = default_characterization_conf
-	print(args.characterization_config)
+	#print(args.characterization_config)
 	family_conf, domain_motif_conf, abundance_conf, integration_conf = get_method_config(args.characterization_config)
+	if args.threads == "none":
+		args.threads = int(config.threads)
+	if args.split_number == "none":
+		args.split_number = int(config.split_number)
+	if args.mspminer_config == "none":
+		abundance_conf["mspminer"] = config.mspminer
+	else:	
+		abundance_conf["mspminer"] = os.path.abspath(args.mspminer_config)
 
 	# input and output folder
 	input_dir = args.input
@@ -173,10 +190,10 @@ def main(workflow):
 	protein_family_attr = config.protein_family_attr
 	protein_family_ann_list = {}
 	protein_ann_list = {}
-	uniref_taxonomy_family = output_dir + "/" + config.basename + "_proteinfamilies_annotation.uniref90_annotation.tsv"
-	uniref_taxonomy = output_dir + "/" + config.basename + "_protein_annotation.uniref90_annotation.tsv"
-	taxonomy_annotation_family = output_dir + "/" + config.basename + "_proteinfamilies_annotation.MSPminer_taxonomy.tsv"
-	taxonomy_annotation = output_dir + "/" + config.basename + "_protein_annotation.MSPminer_taxonomy.tsv"
+	uniref_taxonomy_family = os.path.join(output_dir, config.basename + "_proteinfamilies_annotation.uniref90_annotation.tsv")
+	uniref_taxonomy = os.path.join(output_dir, config.basename + "_protein_annotation.uniref90_annotation.tsv")
+	taxonomy_annotation_family = os.path.join(output_dir, config.basename + "_proteinfamilies_annotation.MSPminer_taxonomy.tsv")
+	taxonomy_annotation = os.path.join(output_dir, config.basename + "_protein_annotation.MSPminer_taxonomy.tsv")
 
 
 	### STEP #1: clustering ###
