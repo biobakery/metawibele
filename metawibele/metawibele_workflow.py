@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
 """
 MeteWIBELE workflow: A collection of AnADAMA2 workflows
@@ -37,7 +37,11 @@ import subprocess
 from anadama2 import Workflow
 
 # import the utilities functions and config settings from MetaWIBELE
-from metawibele import config
+try:
+	from metawibele import config
+except ImportError:
+	sys.exit("CRITICAL ERROR: Unable to find the MetaWIBELE python package." +
+		         " Please check your install.")
 
 
 VERSION = config.version
