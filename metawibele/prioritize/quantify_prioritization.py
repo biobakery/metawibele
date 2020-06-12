@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
 """
 MeteWIBELE: quantify_prioritization module
@@ -128,6 +128,8 @@ def read_config_file (conf_file, method):
 				except ValueError:
 					print("Not numberic values for the config item " + name)
 					continue
+				if myvalue.lower() == "none":
+					continue
 				if re.search("__", name):
 					name = re.sub("-", "_", name)
 					name = re.sub("\.", "_", name)
@@ -140,9 +142,9 @@ def read_config_file (conf_file, method):
 					name = re.sub("\(", "_", name)
 					name = re.sub("\)", "", name)
 					ann_conf[name] = myvalue
-				if myvalue == "required":
+				if myvalue.lower() == "required":
 					print("Required ranking item: " + name + "\t" + myvalue)
-				if myvalue == "optional":
+				if myvalue.lower() == "optional":
 					print("Optional ranking item: " + name + "\t" + myvalue)
 
 	if method == "supervised":
@@ -159,6 +161,8 @@ def read_config_file (conf_file, method):
 					if not myvalue in values:
 						print("Please use valid value for the config item " + name + ": e.g. required | optional | none")
 						continue
+				if myvalue.lower() == "none":
+					continue
 				if re.search("__", name):
 					name = re.sub("-", "_", name)
 					name = re.sub("\.", "_", name)
@@ -171,9 +175,9 @@ def read_config_file (conf_file, method):
 					name = re.sub("\(", "_", name)
 					name = re.sub("\)", "", name)
 					ann_conf[name] = myvalue
-				if myvalue == "required":
+				if myvalue.lower() == "required":
 					print("Required ranking item: " + name + "\t" + myvalue)
-				if myvalue == "optional":
+				if myvalue.lower() == "optional":
 					print("Optional ranking item: " + name + "\t" + myvalue)
 
 	return ann_conf, attr_conf
