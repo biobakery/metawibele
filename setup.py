@@ -76,7 +76,7 @@ import re
 import time
 
 
-VERSION = "0.3"
+VERSION = "0.3.1"
 AUTHOR = "MetaWIBELE Development Team"
 AUTHOR_EMAIL = "metawibele-users@googlegroups.com"
 MAINTAINER = "Yancong Zhang"
@@ -256,7 +256,6 @@ setuptools.setup(
 			'metawibele_maaslin2 = metawibele.characterize.maaslin2:main',
 			'metawibele_maaslin2_annotator = metawibele.characterize.maaslin2_annotator:main',
 			'metawibele_maaslin2_collection = metawibele.characterize.maaslin2_collection:main',
-			'metawibele_maaslin2_collection_stratified = metawibele.characterize.maaslin2_collection_stratified:main',
 			'metawibele_maaslin2_summary = metawibele.characterize.maaslin2_summary:main',
 			'metawibele_metadata_format = metawibele.characterize.metadata_format:main',
 			'metawibele_msp_protein_family = metawibele.characterize.msp_protein_family:main',
@@ -270,6 +269,9 @@ setuptools.setup(
 			'metawibele_psortb_annotator = metawibele.characterize.psortb_annotator:main',
 			'metawibele_psortb_protein = metawibele.characterize.psortb_protein:main',
 			'metawibele_psortb_protein_family = metawibele.characterize.psortb_protein_family:main',
+			#'metawibele_effectiveT3_annotator = metawibele.characterize.effectiveT3_annotator:main',
+			#'metawibele_effectiveT3_protein = metawibele.characterize.effectiveT3_protein:main',
+			#'metawibele_effectiveT3_protein_family = metawibele.characterize.effectiveT3_protein_family:main',
 			'metawibele_sum_to_protein_family_abundance = metawibele.characterize.sum_to_protein_family_abundance:main',
 			'metawibele_sum_to_protein_family_stratified_abundance = metawibele.characterize.sum_to_protein_family_stratified_abundance:main',
 			'metawibele_summary_all_annotation = metawibele.characterize.summary_all_annotation:main',
@@ -283,7 +285,6 @@ setuptools.setup(
 			'metawibele_cluster_prioritization = metawibele.prioritize.cluster_prioritization:main',
 			'metawibele_filter_prioritization = metawibele.prioritize.filter_prioritization:main',
 			'metawibele_finalize_prioritization = metawibele.prioritize.finalize_prioritization:main',
-			'metawibele_module_prioritization = metawibele.prioritize.module_prioritization:main',
 			'metawibele_quantify_prioritization = metawibele.prioritize.quantify_prioritization:main',
 			'metawibele_combine_gene_sequences = metawibele.tools.combine_gene_sequences:main',
 			'metawibele_extract_cluster = metawibele.tools.extract_cluster_CD_hit:main',
@@ -307,14 +308,12 @@ setuptools.setup(
 			'metawibele_extract_sequences_list = metawibele.common.extract_sequences_list:main',
 			'metawibele_filter_clusters = metawibele.common.filter_clusters:main',
 			'metawibele_filter_prevalence = metawibele.common.filter_prevalence:main',
-			'metawibele_filter_ratio_prevalence = metawibele.common.filter_ratio_prevalence:main',
 			'metawibele_format_metadata = metawibele.common.format_metadata:main',
-			'metawibele_rna_dna_ratio = metawibele.common.rna_dna_ratio:main',
-			'metawibele_rna_stratified_filtering = metawibele.common.rna_stratified_abundance_filtering:main',
 			'metawibele_join_family_abundance = metawibele.common.join_family_abundance:main',
 			'metawibele_prepare_abundance_heatmap = metawibele.common.prepare_abundance_heatmap:main',
 			'metawibele_split_family_abundance = metawibele.common.split_family_abundance:main',
 			'metawibele_transpose = metawibele.common.transpose:main',
+			'metawibele_split_fasta_file = metawibele.common.split_fasta_file:main',
 			'metawibele_preprocess = metawibele.workflows.preprocess:main'
 		]},
 	package_data={
