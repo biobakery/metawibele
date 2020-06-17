@@ -233,7 +233,7 @@ def get_item(config_items, section, name, type=None):
 
 
 ## default option for MetaWIBELE ##
-version = '0.3.1'
+version = '0.3.2'
 log_level = 'DEBUG'
 verbose = 'DEBUG'
 
@@ -257,6 +257,7 @@ config_directory = os.path.join(metawibele_install_directory, "configs")
 
 user_edit_config_file = os.path.join(os.getcwd(), "metawibele.cfg")
 if not os.path.exists (user_edit_config_file):
+	#user_edit_config_file = metawibele_install_directory + "/metawibele.cfg"
 	user_edit_config_file = os.path.join(config_directory, "metawibele.cfg")
 full_path_user_edit_config_file = user_edit_config_file
 
@@ -266,69 +267,66 @@ config_items = read_user_edit_config_file(full_path_user_edit_config_file)
 
 ## Databases ##
 # installed data
-database_directory = os.path.join(metawibele_install_directory, "data/")
-taxonomy_database_choices = ["uniprot_taxonomy.map.tsv","uniprot_taxaID_bac-arc-vir.tsv","uniprot_taxaID_mammalia.tsv"]
-taxonomy_database = database_directory + taxonomy_database_choices[0]
-microbiome_taxa = database_directory + taxonomy_database_choices[1]
-mammalia_taxa = database_directory + taxonomy_database_choices[2]
-pdb_database_choices = ["pdb_chain_taxonomy.tsv","pdb_chain_pfam.tsv"]
-pdb_taxonomy = database_directory + pdb_database_choices[0]
-pdb_pfam = database_directory + pdb_database_choices[1]
-pfam_database_choices = ["Pfam_ann.tsv","uniprot_human_pfam.tsv"]
-pfam_database = database_directory + pfam_database_choices[0]
-human_pfam_database = database_directory + pfam_database_choices[1]
-pfam2go_database_choices = ['Pfam2GO.txt']
-pfam2go_database = database_directory + pfam2go_database_choices[0]
-go_database_choices = ['go.obo']
-go_database = database_directory + go_database_choices[0]
-interaction_database_choices = ['INTERACTION.txt']
-interaction_database = database_directory + interaction_database_choices[0]
-Expression_Atlas_database = [database_directory + "32_Uhlen_Lab_colon_rectum.tsv", 
-							database_directory + "Encode_sigmoid_colon.tsv",
-							database_directory + "FANTOM5_colon_rectum.tsv",
-							database_directory + "GTEx_sigmoid_transverse_colon.tsv",
-							database_directory + "Human_protein_Atlas_colon_rectum.tsv",
-							database_directory + "Human_proteome_map_colon_rectum.tsv",
-							database_directory + "Illumina_Body_Map_colon.tsv"]
-vignettes_database = database_directory + "vignettes_proteins.tsv"
-antiSMASH_database = database_directory + "BGC_genes_unirefID.tsv"
-essentialGene_database = database_directory + "essential_genes_unirefID.tsv"
+database_directory = os.path.join(metawibele_install_directory, "data")
+taxonomy_directory = os.path.join(database_directory, "taxonomy")
+taxonomy_database_choices = ["uniprot_taxonomy.txt.gz","uniprot_taxaID_bac-arc-vir.txt.gz","uniprot_taxaID_mammalia.txt.gz"]
+taxonomy_database = os.path.join(taxonomy_directory,  taxonomy_database_choices[0])
+microbiome_taxa = os.path.join(taxonomy_directory, taxonomy_database_choices[1])
+mammalia_taxa = os.path.join(taxonomy_directory, taxonomy_database_choices[2])
+
+domain_directory = os.path.join(database_directory, "domain")
+pdb_database_choices = ["pdb_chain_taxonomy.txt.gz","pdb_chain_pfam.txt.gz"]
+pdb_taxonomy = os.path.join(domain_directory, pdb_database_choices[0])
+pdb_pfam = os.path.join(domain_directory, pdb_database_choices[1])
+pfam_database_choices = ["pfam_descriptions.txt.gz","uniprot_human_pfam.txt.gz"]
+pfam_database = os.path.join(domain_directory, pfam_database_choices[0])
+human_pfam_database = os.path.join(domain_directory, pfam_database_choices[1])
+pfam2go_database_choices = ['pfam2GO.txt.gz']
+pfam2go_database = os.path.join(domain_directory, pfam2go_database_choices[0])
+#go_database_choices = ['go.obo']
+#go_database = database_directory + go_database_choices[0]
+interaction_database_choices = ['INTERACTION.txt.gz']
+interaction_database = os.path.join(domain_directory, interaction_database_choices[0])
+Expression_Atlas_database = [os.path.join(domain_directory, "32_Uhlen_Lab_colon_rectum.txt.gz"), 
+							os.path.join(domain_directory, "Encode_sigmoid_colon.txt.gz"),
+							os.path.join(domain_directory, "FANTOM5_colon_rectum.txt.gz"),
+							os.path.join(domain_directory, "GTEx_sigmoid_transverse_colon.txt.gz"),
+							os.path.join(domain_directory,"Human_protein_Atlas_colon_rectum.txt.gz"),
+							os.path.join(domain_directory, "Human_proteome_map_colon_rectum.txt.gz"),
+							os.path.join(domain_directory, "Illumina_Body_Map_colon.txt.gz")]
+
+misc_directory = os.path.join(database_directory, "misc")
+vignettes_database = os.path.join(misc_directory, "vignettes_proteins.txt.gz")
 
 # uniref databases
 uniref_database_dir = get_item (config_items, "uniref", "database", "string")
 if uniref_database_dir.lower() == "none" or uniref_database_dir == "":
-	uniref_database_dir = database_directory
-uniref_database_dir = uniref_database_dir + "/"
-uniref_database_choices = ['map_UniRef90_UniRef50.dat', 'uniref90.fasta.dmnd', 'uniref50.fasta.dmnd', 'uniref90.ann.tsv', 'uniref50.ann.tsv']
-uniref_map = uniref_database_dir + uniref_database_choices[0]
-uniref_dmnd = uniref_database_dir + uniref_database_choices[1]
-uniref50_dmnd = uniref_database_dir + uniref_database_choices[2]
-uniref_database = uniref_database_dir + uniref_database_choices[3]
-uniref_database_new = [uniref_database_dir + "map_Protein_names_uniref90.txt",
-                        uniref_database_dir + "map_Gene_names_uniref90.txt",
-                        uniref_database_dir + "map_UniProtKB_uniref90.txt",
-                        uniref_database_dir + "map_Tax_uniref90.txt",
-                        uniref_database_dir + "map_TaxID_uniref90.txt",
-                        uniref_database_dir + "map_Rep_Tax_uniref90.txt",
-                        uniref_database_dir + "map_Rep_TaxID_uniref90.txt",
-                        uniref_database_dir + "map_Organism_uniref90.txt",
-                        uniref_database_dir + "map_GO_uniref90.txt",
-                        uniref_database_dir + "map_KO_uniref90.txt",
-                        uniref_database_dir + "map_eggNOG_uniref90.txt",
-                        uniref_database_dir + "map_Pfam_uniref90.txt"]
-uniref50_database = uniref_database_dir + uniref_database_choices[4]
-uniref50_database_new = [uniref_database_dir + "map_Protein_names_uniref50.txt",
-                        uniref_database_dir + "map_Gene_names_uniref90.txt",
-                        uniref_database_dir + "map_UniProtKB_uniref50.txt",
-                        uniref_database_dir + "map_Tax_uniref50.txt",
-                        uniref_database_dir + "map_TaxID_uniref50.txt",
-                        uniref_database_dir + "map_Rep_Tax_uniref50.txt",
-                        uniref_database_dir + "map_Rep_TaxID_uniref50.txt",
-                        uniref_database_dir + "map_Organism_uniref50.txt",
-                        uniref_database_dir + "map_GO_uniref50.txt",
-                        uniref_database_dir + "map_KO_uniref50.txt",
-                        uniref_database_dir + "map_eggNOG_uniref50.txt",
-                        uniref_database_dir + "map_Pfam_uniref50.txt"]
+	uniref_database_dir = os.path.join(database_directory, "uniref")
+uniref_database_choices = ['uniref90.fasta.dmnd', 'uniref90.ann.tsv.gz']
+uniref_dmnd = os.path.join(uniref_database_dir, uniref_database_choices[0])
+'''
+files_path1 = []
+if os.isdir(os.path.join(database_directory, "uniref")):
+	path = os.path.join(database_directory, "uniref")
+	files_path1 = [os.path.abspath(x) for x in os.listdir(path)]
+files_path2 = []
+if os.isdir(get_item (config_items, "uniref", "database", "string")):
+	path = get_item (config_items, "uniref", "database", "string")
+	files_path2 = [os.path.abspath(x) for x in os.listdir(path)]
+uniref_database = files_path1 + files_path2
+'''
+uniref_database = [os.path.join(uniref_database_dir, "map_Protein_names_uniref90.txt.gz"),
+                        os.path.join(uniref_database_dir, "map_Gene_names_uniref90.txt.gz"),
+                        os.path.join(uniref_database_dir, "map_UniProtKB_uniref90.txt.gz"),
+                        os.path.join(uniref_database_dir, "map_Tax_uniref90.txt.gz"),
+                        os.path.join(uniref_database_dir, "map_TaxID_uniref90.txt.gz"),
+                        os.path.join(uniref_database_dir, "map_Rep_Tax_uniref90.txt.gz"),
+                        os.path.join(uniref_database_dir, "map_Rep_TaxID_uniref90.txt.gz"),
+                        os.path.join(uniref_database_dir, "map_go_uniref90.txt.gz"),
+                        os.path.join(uniref_database_dir, "map_ko_uniref90.txt.gz"),
+                        os.path.join(uniref_database_dir, "map_eggnog_uniref90.txt.gz"),
+                        os.path.join(uniref_database_dir, "map_level4ec_uniref90.txt.gz"),
+                        os.path.join(uniref_database_dir, "map_pfam_uniref90.txt.gz")]
 
 
 ## Computing resources ##
@@ -345,7 +343,7 @@ if working_dir.lower() == "none" or working_dir.lower() == "":
 	working_dir = os.getcwd()
 annotation_dir = os.path.join(working_dir, "characterization")
 cluster_dir = os.path.join(annotation_dir, "clustering")
-protein_family_dir = os.path.join(annotation_dir, "protein_family_annotation")
+global_homology_dir = os.path.join(annotation_dir, "global_homology_annotation")
 domain_motif_dir = os.path.join(annotation_dir, "doamin_motif_annotation")
 abundance_dir = os.path.join(annotation_dir, "abundance_annotation")
 priority_dir = os.path.join(working_dir, "prioritization")
@@ -399,9 +397,11 @@ taxa_source = "Rep"		# the source of taxa for one protein family, representative
 
 # interporscan
 interproscan_cmmd = get_item(config_items, "interproscan", "interproscan_cmmd", "string")
+interproscan_cmmd = re.sub("\"", "", interproscan_cmmd)
 interproscan_appl = get_item(config_items, "interproscan", "interproscan_appl", "string")
 if interproscan_appl.lower() == "none" or interproscan_appl.lower() == "":
 	interproscan_appl = "CDD,COILS,Gene3D,HAMAP,MobiDBLite,PANTHER,Pfam,PIRSF,PRINTS,ProDom,PROSITEPATTERNS,PROSITEPROFILES,SFLD,SMART,SUPERFAMILY,TIGRFAM,Phobius,SignalP,TMHMM"
+interproscan_appl = re.sub("\"", "", interproscan_appl)
 split_number = get_item(config_items, "interproscan", "split_number", "int")
 interproscan_type = []
 tmp = interproscan_appl.split(",")
@@ -437,6 +437,9 @@ tshld_diff = 0.50			# the minimum difference between most and second dominant ta
 tshld_lca = 0.80			# the minimum consistency for LCA calculattion
 taxa_final = "Rep"			# the source of taxa for one protein family, representatives vs. LCA
 mspminer = os.path.join(config_directory, "MSPminer_setting.cfg")
+#mspminer = get_item(config_items, "abundance", "mspminer", "string")
+#if mspminer.lower() == "none":
+#	mspminer = os.path.join(config_directory, "MSPminer_setting.cfg")
 
 # abundance
 normalize = get_item(config_items, "abundance", "normalize", "string") 		# the method for abundance normalization
