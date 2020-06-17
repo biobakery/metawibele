@@ -67,10 +67,17 @@ def parse_cli_arguments():
 	# add the custom arguments to the workflow
 	workflow.add_argument("threads",
 	                      desc = "number of threads/cores for each task to use",
-	                      default = "none")
+	                      default = None)
 	workflow.add_argument("extension-paired",
 	                      desc = "provide the extension for paired fastq files using comma to seperate, e.g. .R1.fastq.gz,.R2.fastq.gz | .R1.fastq,.R2.fastq",
 						  default = None) 
+	workflow.add_argument("sample-list",
+	                      desc = "sample list file",
+	                      default = None)
+	workflow.add_argument("gene-call-type",
+	                      desc = "specify which type of gene calls will be used",
+						  choices = ['prokka', 'prodigal'],
+	                      default = 'prokka')
 	workflow.add_argument("extension",
 	                      desc = "provide the extension for all fastq files",
 						  choices = [".fastq.gz", ".fastq"],
@@ -86,7 +93,7 @@ def parse_cli_arguments():
 	                      action = "store_true")
 	workflow.add_argument("output-basename",
 	                      desc = "provide the basename for output files",
-	                      default = "metawibele")
+	                      default = None)
 
 	return workflow
 
@@ -98,8 +105,18 @@ def main(workflow):
 
 	# get arguments
 	args = workflow.parse_args()
-	if args.threads == "none":
+	if args.threads:
+		args.threads = int(args.threads)
+	else:
 		args.threads = int(config.threads)
+	if args.sample_list:
+		args.sample_list = os.path.abspath(args.sample_list)
+	else:
+		args.sample_list = config.sample_list
+	if args.output_basename:
+		args.output_basename = args.output_basename
+	else:
+		args.output_basename = config.basename
 
 	# input and output folder
 	input_dir = args.input # reads fastq files
@@ -145,8 +162,8 @@ def main(workflow):
 	# if gene-calling action is provided, then identify ORFs
 	if not args.bypass_gene_calling:
 		mygene, myprotein = preprocessing_tasks.gene_calling (workflow, assembly_dir, assembly_extentsion,
-		                                                     input_dir, args.extension, extension_paired,
-		                                                     prokka_dir, prodigal_dir,
+															 input_dir, args.extension, extension_paired,
+		                                                     args.gene_call_type, prokka_dir, prodigal_dir,
 		                                                     args.threads,
 		                                                     gene_file, gene_PC_file, protein_file, protein_sort,
 		                                                     gene_info, complete_gene, complete_protein)
@@ -154,8 +171,9 @@ def main(workflow):
 	### STEP #3: gene-catalog  ###
 	# if gene-catalog action is provided, then build gene catalogs and calculate abundance per gene catalogs across samples
 	if not args.bypass_gene_catalog:
-		mygene_catalog, mycounts = preprocessing_tasks.gene_catalog (workflow, complete_gene, complete_protein,
-		                                                             input_dir, args.extension, extension_paired,
+		mygene_catalog, mycounts = preprocessing_tasks.gene_catalog (workflow, args.sample_list, 
+																	 complete_gene, complete_protein,
+																	 input_dir, args.extension, extension_paired,
 		                                                             args.threads,
 		                                                             prefix_gene_catalog, gene_catalog,
 		                                                             gene_catalog_nuc, gene_catalog_prot,
