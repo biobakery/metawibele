@@ -49,7 +49,8 @@ def get_args ():
 	parser = argparse.ArgumentParser()
 	parser.add_argument('-p', help='input the working directory path of counts files', required=True)
 	parser.add_argument('-s', help='specify the suffix of counts file, e.g. sort.bed', default="sort.bed")
-	parser.add_argument('-c', help='input non-redundant gene catalog clustering info file', default="none")
+	parser.add_argument('-c', help='input non-redundant gene catalog clustering info file', default=None)
+	parser.add_argument('-l', help='speficy the sample list file', default=None)
 	parser.add_argument('-o', help='output cluster distribution file', required=True)
 	values = parser.parse_args()
 	return values
@@ -159,10 +160,14 @@ def assign_counts (counts, samples, outfile):
 def main():
 	### get arguments ###
 	values = get_args()
-	if values.c == "none":
-		gene_catalog = config.gene_catalog
-	else:
+	if values.c:
 		gene_catalog = values.c
+	else:
+		gene_catalog = config.gene_catalog
+	if values.l:
+		sample_list = values.l
+	else:
+		sample_list = config.sample_list
 
 	sys.stderr.write("### Start gene_catalog_abundance.py -p " + values.p + " ####\n")
 
@@ -174,7 +179,7 @@ def main():
 	
 	### collect counts info ###
 	sys.stderr.write("Get counts info ......starting\n")
-	counts, samples = collect_counts(config.sample_list, values.p, values.s, gene_cluster)
+	counts, samples = collect_counts(sample_list, values.p, values.s, gene_cluster)
 	sys.stderr.write("Get counts info ......done\n")
 
 	### assign counts to peptide families ###
