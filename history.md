@@ -1,7 +1,15 @@
 
 # MetaWIBELE History #
 
-## v0.3.1 2020-06-1 ##
+## v0.3.2 2020-06-11 ##
+* Use UniRef/UniProt databases in HUMAnN
+* Remove to map assembled proteins to UniRef50
+* Pack default dependent databases: domain databases, taxonomy databases
+* Add function to download gloabl and local configuration files
+* Remove specific utility scripts in the common folder
+* Add option for readling compressed databases
+
+## v0.3.1 2020-06-01 ##
 * Convert input sources for gridable task
 * Reformat annotations of PSORTb, InterProScan
 * Add EffectiveT3 to predict effector (TBD)
