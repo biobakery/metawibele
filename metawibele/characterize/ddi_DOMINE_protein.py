@@ -34,6 +34,7 @@ import argparse
 try:
 	from metawibele import config
 	from metawibele import utilities
+	from metawibele.common import utils
 except ImportError:
 	sys.exit("CRITICAL ERROR: Unable to find the MetaWIBELE python package." +
 	         " Please check your install.")
@@ -74,8 +75,7 @@ def get_args ():
 #==============================================================
 def collect_pfam_ann (pfamfile):   # Pfam_ann.tsv 
 	pfams = {}
-	open_file = open(pfamfile, "r")
-	for line in open_file.readlines():
+	for line in utils.gzip_bzip2_biom_open_readlines (pfamfile):
 		line = line.strip()
 		if not len(line):
 			continue
@@ -87,7 +87,7 @@ def collect_pfam_ann (pfamfile):   # Pfam_ann.tsv
 		if not pfam in pfams:
 			pfams[pfam] = ann
     # foreach line
-	open_file.close()
+	
 	return pfams
 #collect_pfam_ann
 
@@ -116,23 +116,26 @@ def collect_pfam_info (pfam_file):	# split1.interpro.PfamDomain.tsv
 		peptide[myid][pfam] = ann
 	# foreach line
 	open_file.close()
+	
 	return peptide
 # function collect_pfam_info
+
 
 def collect_mapping_info (map_file):	# uniprot_human_pfam.tsv
 	maps = {}
 	titles = {}
-	open_file = open(map_file, "r")
-	line = open_file.readline()
-	line = line.strip()
-	info = line.split("\t")
-	myindex = 0
-	while myindex < len(info):
-		titles[info[myindex]] = myindex
-		myindex = myindex + 1
-	for line in open_file.readlines():
+	for line in utils.gzip_bzip2_biom_open_readlines (map_file):
 		line = line.strip()
 		if not len(line):
+			continue
+		if re.search("^#", line):
+			continue
+		if re.search("^Pfam\t", line):
+			info = line.split("\t")
+			myindex = 0
+			while myindex < len(info):
+				titles[info[myindex]] = myindex
+				myindex = myindex + 1
 			continue
 		info = line.split("\t")
 		pfam = info[titles["Pfam"]]
@@ -142,7 +145,6 @@ def collect_mapping_info (map_file):	# uniprot_human_pfam.tsv
 			maps[pfam] = {}
 		maps[pfam][taxaID] = ""
 	# foreach line
-	open_file.close()
 
 	# human pfams
 	human_pfam = {}
@@ -154,8 +156,7 @@ def collect_mapping_info (map_file):	# uniprot_human_pfam.tsv
 
 def collect_interaction_info (int_file, filter_flag, human_pfam):	# INTERACTION.txt
 	interact = {}
-	open_file = open(int_file, "r")
-	for line in open_file.readlines():
+	for line in utils.gzip_bzip2_biom_open_readlines (int_file): 
 		line = line.strip()
 		if not len(line):
 			continue
@@ -177,7 +178,7 @@ def collect_interaction_info (int_file, filter_flag, human_pfam):	# INTERACTION.
 			interact[id2] = {}
 		interact[id2][id1] = level
 	# foreach line
-	open_file.close()
+	
 	return interact
 # collect_interaction_info
 
