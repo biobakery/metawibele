@@ -34,6 +34,7 @@ import argparse
 try:
 	from metawibele import config
 	from metawibele import utilities
+	from metawibele.common import utils
 except ImportError:
 	sys.exit("CRITICAL ERROR: Unable to find the MetaWIBELE python package." +
 	         " Please check your install.")
@@ -99,8 +100,7 @@ def collect_DDI_info (DDI_file):	# summary_DOMINE_peptide.tsv
 
 def collect_pfam_info (pfamfile):	# Pfam_ann.txt 
 	pfams = {}
-	open_file = open(pfamfile, "r")
-	for line in open_file.readlines():
+	for line in utils.gzip_bzip2_biom_open_readlines (pfamfile):
 		line = line.strip()
 		if not len(line):
 			continue
@@ -113,15 +113,14 @@ def collect_pfam_info (pfamfile):	# Pfam_ann.txt
 			pfams[pfam] = {}
 		pfams[pfam][ann] = ""
 	# foreach line
-	open_file.close()
+	
 	return pfams
 #collect_pfam_info
 
 
-def collect_pfam2go_info (pfamfile):	# Pfam2GO.txt 
+def collect_pfam2go_info (pfam2go_file):	# Pfam2GO.txt 
 	pfam2go = {}
-	open_file = open(pfamfile, "r")
-	for line in open_file.readlines():
+	for line in utils.gzip_bzip2_biom_open_readlines (pfam2go_file): 
 		line = line.strip()
 		if not len(line):
 			continue
@@ -143,7 +142,7 @@ def collect_pfam2go_info (pfamfile):	# Pfam2GO.txt
 			pfam2go[pfam] = {}
 		pfam2go[pfam][myann] = ""	
 	# foreach line
-	open_file.close()
+	
 	return pfam2go
 # function collect_pfam2go_info
 
