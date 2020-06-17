@@ -123,9 +123,9 @@ def combine_annotation (annotation, dna, rna, note, taxa_file, outfile):
 	if len(rna.keys()) > 0:
 		rna_flag = 1
 	if rna_flag == 1:
-		title = info[0] + "\t" + info[1] + "\tmap_type\tunirefID\tUniProtKB\tdescription\tmsp_name\tmsp_taxa_name\tmsp_taxa_id\ttaxa_id\ttaxa_name\ttaxa_rank\ttaxa_lineage\tDNA_abundance\tDNA_prevalence\tRNA_abundance\tRNA_prevalence\tannotation\tnote"
+		title = info[0] + "\t" + info[1] + "\tmap_type\tunirefID\tUniProtKB\tProtein_names\tmsp_name\tmsp_taxa_name\tmsp_taxa_id\ttaxa_id\ttaxa_name\ttaxa_rank\ttaxa_lineage\tDNA_abundance\tDNA_prevalence\tRNA_abundance\tRNA_prevalence\tannotation\tnote"
 	else:
-		title = info[0] + "\t" + info[1] + "\tmap_type\tunirefID\tUniProtKB\tdescription\tmsp_name\tmsp_taxa_name\tmsp_taxa_id\ttaxa_id\ttaxa_name\ttaxa_rank\ttaxa_lineage\tDNA_abundance\tDNA_prevalence\tannotation\tnote"
+		title = info[0] + "\t" + info[1] + "\tmap_type\tunirefID\tUniProtKB\tProtein_names\tmsp_name\tmsp_taxa_name\tmsp_taxa_id\ttaxa_id\ttaxa_name\ttaxa_rank\ttaxa_lineage\tDNA_abundance\tDNA_prevalence\tannotation\tnote"
 	open_out.write(title + "\n")
 	for item in info:
 		titles[item] = info.index(item)

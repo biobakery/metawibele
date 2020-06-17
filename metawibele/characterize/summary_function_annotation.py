@@ -152,19 +152,19 @@ def collect_annotation (list_file, id_flag):
 			if "note" in titles:
 				note[myid] = info[titles["note"]]
 			if re.search("UniRef", method):
-				desc = info[titles["description"]]
+				desc = info[titles["Protein_names"]]
 				tax = info[titles["Tax"]]
 				taxID = info[titles["TaxID"]]
 				reptax = info[titles["Rep_Tax"]]
 				reptaxID = info[titles["Rep_TaxID"]]
-				org = info[titles["organism"]]
+				#org = info[titles["organism"]]
 				uniprot = info[titles["UniProtKB"]]
 				uniref = info[titles["unirefID"]]
 				if len(info) < 8:
 					print(line)
-				mytype = info[1] + "\t" + info[2] + "\t" + desc + "\t" + tax + "\t" + taxID + "\t" +  reptax + "\t" + reptaxID + "\t" + org + "\t" + uniprot + "\t" + uniref
+				mytype = info[1] + "\t" + info[2] + "\t" + desc + "\t" + tax + "\t" + taxID + "\t" +  reptax + "\t" + reptaxID + "\t" + uniprot + "\t" + uniref
 			else:
-				mytype = info[1] + "\t" + info[2] + "\tNA\tNA\tNA\tNA\tNA\tNA\tNA\tNA"
+				mytype = info[1] + "\t" + info[2] + "\tNA\tNA\tNA\tNA\tNA\tNA\tNA"
 			if not myid in annotation:
 				annotation[myid] = {}
 			if not method in annotation[myid]:
@@ -299,7 +299,7 @@ def assign_annotation (id_flag, pep_cluster, annotation, study, note1, note2, ou
 	# foreach cluster
 
 	open_out = open(outfile, "w")
-	open_out.write(id_flag + "\tstudy\tmethod\tcategory\ttype\tdetail\tdescription\tTax\tTaxID\tRep_Tax\tRep_TaxID\torganism\tUniProtKB\tunirefID\tnote\n")
+	open_out.write(id_flag + "\tstudy\tmethod\tcategory\ttype\tdetail\tProtein_names\tTax\tTaxID\tRep_Tax\tRep_TaxID\tUniProtKB\tunirefID\tnote\n")
 	for myclust in sorted(outs.keys()):
 		note = {}
 		if myclust in note1:
