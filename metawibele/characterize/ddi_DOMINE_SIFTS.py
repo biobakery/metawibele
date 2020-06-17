@@ -34,6 +34,7 @@ import argparse
 try:
 	from metawibele import config
 	from metawibele import utilities
+	from metawibele.common import utils
 except ImportError:
 	sys.exit("CRITICAL ERROR: Unable to find the MetaWIBELE python package." +
 	         " Please check your install.")
@@ -64,21 +65,20 @@ def get_args ():
 #==============================================================
 def collect_taxa_list (taxa_file): # uniprot_taxaID_bac-arc-vir.tsv
 	taxa = {}
-	open_file = open(taxa_file, "r")
-	for line in open_file:
+	for line in utils.gzip_bzip2_biom_open_readlines (taxa_file):
 		line = line.strip()
 		if not len(line):
 			continue
 		taxa[line] = ""
 	# foreach line
-	open_file.close()
+	
 	return taxa
 # collect_taxa_list
 
+
 def collect_pfam_info (pfam_file):	# pdb_chain_pfam.tsv 
 	pfams = {}
-	open_file = open(pfam_file, "r")
-	for line in open_file.readlines():
+	for line in utils.gzip_bzip2_biom_open_readlines (pfam_file):
 		line = line.strip()
 		if not len(line):
 			continue
@@ -94,15 +94,15 @@ def collect_pfam_info (pfam_file):	# pdb_chain_pfam.tsv
 			pfams[mypdb][mychain] = {}
 		pfams[mypdb][mychain][mypfam] = ""
 	# foreach line
-	open_file.close()
+	
 	return pfams
 # function collect_pfam_info
+
 
 def collect_taxanomy_info (map_file):	# pdb_chain_taxonomy.tsv 
 	taxa = {}
 	taxa_hit = {}
-	open_file = open(map_file, "r")
-	for line in open_file.readlines():
+	for line in utils.gzip_bzip2_biom_open_readlines (map_file): 
 		line = line.strip()
 		if not len(line):
 			continue
@@ -121,7 +121,6 @@ def collect_taxanomy_info (map_file):	# pdb_chain_taxonomy.tsv
 			taxa[mypdb][mychain] = {}
 		taxa[mypdb][mychain][tax] = ""
 	# foreach line
-	open_file.close()
 
 	#taxa_flt = {}
 	#for mypdb in taxa:
@@ -142,6 +141,7 @@ def collect_taxanomy_info (map_file):	# pdb_chain_taxonomy.tsv
 	# foreach PDB
 	return taxa
 # function collect_taxonomy_info
+
 
 def collect_interaction_info (ann_file):	# summary_DOMINE_peptide.denovo.ann.tsv
 	interact = {}
