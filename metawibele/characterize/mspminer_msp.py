@@ -31,11 +31,6 @@ import os.path
 import re
 import argparse
 
-try:
-	from metawibele import config
-except ImportError:
-	sys.exit("CRITICAL ERROR: Unable to find the MetaWIBELE python package." +
-	         " Please check your install.")
 
 # ---------------------------------------------------------------
 # Description and arguments
