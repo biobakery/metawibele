@@ -34,8 +34,6 @@ import argparse
 try:
 	from metawibele import config
 	from metawibele import utilities
-	#import config
-	#import utilities
 except ImportError:
 	sys.exit("CRITICAL ERROR: Unable to find the MetaWIBELE python package." +
 	         " Please check your install.")
