@@ -33,7 +33,7 @@ from anadama2.tracked import TrackedExecutable, TrackedDirectory
 
 # import the utilities functions and config settings from MetaWIBELE
 try:
-	from metawibele import utilities, config, files
+	from metawibele import utilities, config
 except ImportError:
 	sys.exit("CRITICAL ERROR: Unable to find the MetaWIBELE python package." +
 		         " Please check your install.")
@@ -152,7 +152,7 @@ def clustering (workflow, gene_catalog_seq, threads, output_folder, protein_fami
 	return clustering_output_cluster, main_folder
 
 
-def protein_family_annotation (workflow, family_conf, gene_catalog_seq,
+def global_homology_annotation (workflow, family_conf, gene_catalog_seq,
                                threads, output_folder, uniref_taxonomy_family, uniref_taxonomy,
                                protein_family_ann_list, protein_ann_list, protein_family, protein_family_seq):
 	"""
@@ -182,8 +182,8 @@ def protein_family_annotation (workflow, family_conf, gene_catalog_seq,
 		# create an anadama2 workflow instance
 		workflow=Workflow()
 
-		# add protein_family_annotation tasks
-		myprotein_family_ann, myprotein_ann, homology_output_folder = characterization.protein_family_annotation (workflow, family_conf, gene_catalog_seq,
+		# add global_homology_annotation tasks
+		myprotein_family_ann, myprotein_ann, homology_output_folder = characterization.global_homology_annotation (workflow, family_conf, gene_catalog_seq,
 	                                                                                                          protein_family,
 	                                                                                                          args.threads,
 	                                                                                                          output_dir, uniref_annotation)
@@ -191,10 +191,10 @@ def protein_family_annotation (workflow, family_conf, gene_catalog_seq,
 		workflow.go()
 	"""
 	
-	print("protein_family_annotation")
+	print("global_homology_annotation")
 
 	# define the annotation output files
-	main_folder = os.path.join(output_folder, "protein_family_annotation")
+	main_folder = os.path.join(output_folder, "global_homology_annotation")
 	os.system("mkdir -p " + main_folder)
 	tmps_dir = os.path.join (os.getcwd(), "temp")
 	if not os.path.isdir(tmps_dir):
@@ -216,7 +216,7 @@ def protein_family_annotation (workflow, family_conf, gene_catalog_seq,
 	uniref_log2 = os.path.join(main_folder, "uniref90_protein.log")
 	uniref_log3 = os.path.join(main_folder, "uniref90_proteinfamilies.log")
 	uniref_log4 = os.path.join(main_folder, "uniref90_annotation.log")
-	#uniref_log5 = os.path.join(main_folder, "antiSMASH.log")
+	uniref_log5 = os.path.join(main_folder, "uniref90_family_annotation.log")
 	myprotein_family_ann = {}
 	myprotein_ann = {}
 	myprotein_ann_family = {}
@@ -225,15 +225,14 @@ def protein_family_annotation (workflow, family_conf, gene_catalog_seq,
 
 	# mapping to UniRef database
 	if family_conf["uniref"] == "yes" or family_conf["uniref"] == "Yes":
-		#time_equation = "24*60 if file_size('[depends[0]]') < 10 else 3*24*60"          # 24 hours or more depending on file size
-		#mem_equation = "6*12*1024 if file_size('[depends[0]]') < 10 else 10*12*1024"    # 72 GB or more depending on file size
 		myname = os.path.basename(gene_catalog_seq)
 		myhit = re.sub(".uniref90.stat.tsv", ".uniref90.hits", annotation_stat)
 		link_cmd = "ln -fs " + gene_catalog_seq + " " + main_folder + "/" + myname
 		os.system(link_cmd)
 		workflow.add_task_gridable(
-				link_cmd + " && metawibele_uniref_annotator [depends[0]] --seqtype prot --uniref90db [depends[1]] --uniref50db [depends[2]] --diamond-options \"--threads [args[0]]\" --temp [args[1]] --transitive-map [depends[3]] >[args[2]] 2>&1",
-				depends = [os.path.join(main_folder, myname), config.uniref_dmnd, config.uniref50_dmnd, config.uniref_map, TrackedExecutable("metawibele_uniref_annotator")],
+				#link_cmd + " && metawibele_uniref_annotator [depends[0]] --seqtype prot --uniref90db [depends[1]] --uniref50db [depends[2]] --diamond-options \"--threads [args[0]]\" --temp [args[1]] --transitive-map [depends[3]] >[args[2]] 2>&1",
+				link_cmd + " && metawibele_uniref_annotator [depends[0]] --seqtype prot --uniref90db [depends[1]] --diamond-options \"--threads [args[0]]\" --temp [args[1]] >[args[2]] 2>&1",
+				depends = [os.path.join(main_folder, myname), config.uniref_dmnd, TrackedExecutable("metawibele_uniref_annotator")],
 				targets = [myhit],
 				args = [threads, main_folder, uniref_log0],
 				cores = threads,
@@ -290,10 +289,10 @@ def protein_family_annotation (workflow, family_conf, gene_catalog_seq,
 				name = "summary_protein_uniref_annotation")
 
 		workflow.add_task_gridable(
-				"metawibele_summary_protein_family_uniref_annotation -a [depends[0]] -m [depends[1]] -t Rep -o [targets[0]] >>[args[0]] 2>&1",
+				"metawibele_summary_protein_family_uniref_annotation -a [depends[0]] -m [depends[1]] -t Rep -o [targets[0]] >[args[0]] 2>&1",
 				depends = [uniref_ann_family, annotation_stat, TrackedExecutable("metawibele_summary_protein_family_uniref_annotation")],
 				targets = [uniref_taxa_family],
-				args = [uniref_log4],
+				args = [uniref_log5],
 				cores = 1,
 				time = time_equation,
 				mem = mem_equation,
@@ -658,7 +657,7 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 	## DOMINE (domain-domain interaction)
 	if domain_motif_conf["domine"] == "yes" or domain_motif_conf["domine"] == "Yes":
 		# DDI annotation
-		mylog = re.sub(".tsv", ".log", pfam2go_ann_family)
+		mylog = re.sub(".tsv", ".log", domine_ann)
 		myout = []
 		myout_all = []
 		for myfile in interpro_list:
@@ -671,15 +670,14 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 				"metawibele_ddi_DOMINE_protein -e [args[0]] -p [args[2]] -f [args[3]] -s [args[1]] >[args[4]] 2>&1 ",
 				depends = utilities.add_to_list(pfam_list, TrackedExecutable("metawibele_ddi_DOMINE_protein")),
 				targets = myout,
-				#args = ["interpro.PfamDomain.tsv", "interpro.DDI.tsv", interpro, config.human_microbiome_ddi, mylog],
 				args = ["interpro.PfamDomain.tsv", "interpro.DDI.tsv", interpro, "yes", mylog],
 				cores = 1,
 				name = "ddi_DOMINE_protein")
 		
 		workflow.add_task(
-				"metawibele_ddi_DOMINE_protein -e [args[0]] -p [args[2]] -f [args[3]] -s [args[1]] >[args[4]] 2>&1 ",
+				"metawibele_ddi_DOMINE_protein -e [args[0]] -p [args[2]] -f [args[3]] -s [args[1]] >> [args[4]] 2>&1 ",
 				depends = utilities.add_to_list(pfam_list, TrackedExecutable("metawibele_ddi_DOMINE_protein")),
-				targets = myout,
+				targets = myout_all,
 				args = ["interpro.PfamDomain.tsv", "interpro.all.DDI.tsv", interpro, "no", mylog],
 				cores = 1,
 				name = "ddi_DOMINE_protein")
@@ -997,7 +995,7 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog, gene_catalog_c
 
 	myname = os.path.basename(gene_catalog_count)
 	myprefix = re.sub(".tsv", "", myname)
-	count_file= os.path.join(tmps_dir,  myprefix + ".refined.tsv")
+	count_file= os.path.join(main_folder,  myprefix + ".refined.tsv")
 	mymsp = os.path.join(main_folder, config.basename + "_MSPminer_msp.tsv")
 	mymsp_uniref = os.path.join(main_folder, config.basename + "_MSPminer_msp.uniref90_annotation.tsv")
 	mymsp_taxa = os.path.join(main_folder, config.basename + "_MSPminer_msp.taxonomy.tsv")
@@ -1060,6 +1058,12 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog, gene_catalog_c
 				time = time_equation,
 				mem = mem_equation,
 				name = "abundance_filtering")
+		
+		workflow.add_task("ln -fs [depends[0]] [targets[0]]",
+	            depends = [count_file],
+	            targets = [os.path.join(tmps_dir, os.path.basename(count_file))],
+		        cores = 1,
+	            name = "ln__counts_file")
 		
 		## binning co-abundant genes across metagenomic samples ##
 		# run MSPminer
