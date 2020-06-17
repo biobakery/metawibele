@@ -85,15 +85,6 @@ def get_args( ):
                          required=True,
                          help="Path to HUMAnN2-formatted UniRef90 database",
                          )
-    parser.add_argument( "--uniref50db",
-                         metavar="<path>",
-                         required=True,
-                         help="Path to HUMAnN2-formatted UniRef50 database",
-                         )
-    parser.add_argument( "--transitive-map",
-                         metavar="<path>",
-                         help="Path to UniRef90->UniRef50 idmapping file (optional)",
-                         )
     parser.add_argument( "--temp",
                          metavar="<path>",
                          default=".",
@@ -261,7 +252,9 @@ def main( ):
         seqtype=args.seqtype,
         temp=args.temp,
         diamond_options=args.diamond_options, )
-    uniref90hits = query + ".uniref90.hits"
+    
+    '''
+	uniref90hits = query + ".uniref90.hits"
     uniref90map = parse_results( uniref90hits )
     # perform uniref50 search
     uniref50hits = uniref_search( 
@@ -285,6 +278,7 @@ def main( ):
         uniref50map=uniref50map, 
         overrides=overrides, )
     # done
+    '''
     say( "Finished successfully." )
 
 if __name__ == "__main__":
