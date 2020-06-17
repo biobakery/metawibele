@@ -34,6 +34,7 @@ import argparse
 try:
 	from metawibele import config
 	from metawibele import utilities
+	from metawibele.common import utils
 except ImportError:
 	sys.exit("CRITICAL ERROR: Unable to find the MetaWIBELE python package." +
 	         " Please check your install.")
@@ -74,8 +75,7 @@ def collect_taxonomy_info (taxa_file, taxa_hits):  # uniprot_taxonomy.map.tsv
 	taxa = {}
 	taxa_map = {}
 	titles = {}
-	open_file = open(taxa_file, "r")
-	for line in open_file.readlines():
+	for line in utils.gzip_bzip2_biom_open_readlines (taxa_file): 
 		line = line.strip()
 		if not len(line):
 			continue
@@ -118,7 +118,7 @@ def collect_taxonomy_info (taxa_file, taxa_hits):  # uniprot_taxonomy.map.tsv
 		taxa_map[myid] = mytaxa + "\t" + myname + "\t" + myrank + "\t" + myline
 		taxa[mytaxa] = myname + "\t" + myrank + "\t" + myline
 	# foreach line
-	open_file.close()
+	
 	return taxa, taxa_map
 # function collect_taxonomy_info
 
@@ -156,10 +156,10 @@ def collect_uniref_taxonomy_info (uniref_file, spe_type, hits):  # uniref90.ann.
 		if spe_type == "Rep":
 			mytaxa_id = reptaxa_id
 		taxa_hits[mytaxa_id] = ""
-		detail = info[titles["Description"]]
-		org = info[titles["Organism"]]
+		detail = info[titles["Protein_names"]]
+		#org = info[titles["Organism"]]
 		uniprot = info[titles["UniProtKB"]]
-		uniref_taxa[uniref_id] = mytaxa_id + "\n" + detail + "\t" + taxa + "\t" + taxa_id + "\t" + reptaxa + "\t" + reptaxa_id + "\t" + org + "\t" + uniprot
+		uniref_taxa[uniref_id] = mytaxa_id + "\n" + detail + "\t" + taxa + "\t" + taxa_id + "\t" + reptaxa + "\t" + reptaxa_id + "\t" + uniprot
 	# foreach line
 	open_file.close()
 
@@ -321,16 +321,16 @@ def collect_ann_info (ann_file, spe_type):	# summary_peptide_family_annotation.t
 		info = line.split("\t")
 		myid = info[titles[utilities.PROTEIN_ID]]
 		mytype = info[titles["type"]]
-		detail = info[titles["description"]]
+		detail = info[titles["Protein_names"]]
 		mytax = info[titles["Tax"]]
 		mytaxID = info[titles["TaxID"]]
 		myreptax = info[titles["Rep_Tax"]]
 		myreptaxID = info[titles["Rep_TaxID"]]
-		myorg = info[titles["organism"]]
+		#myorg = info[titles["organism"]]
 		myuniprot = info[titles["UniProtKB"]]
 		myunirefID = info[titles["unirefID"]]
 		hits[myunirefID] = ""
-		mystr = detail + "\t" + mytax + "\t" + mytaxID + "\t" + myreptax + "\t" + myreptaxID + "\t" + myorg + "\t" + myuniprot
+		mystr = detail + "\t" + mytax + "\t" + mytaxID + "\t" + myreptax + "\t" + myreptaxID + "\t" + myuniprot
 		if not re.search("^UniRef", mytype):
 			continue
 		if not myid in ann_type:
@@ -345,7 +345,7 @@ def collect_ann_info (ann_file, spe_type):	# summary_peptide_family_annotation.t
 		if spe_type == "LCA" or spe_type == "lca":
 			mytaxa_id = mytaxID
 		taxa_hits[mytaxa_id] = ""
-		uniref_taxa[myunirefID] = mytaxa_id + "\n" + detail + "\t" + mytax + "\t" + mytaxID + "\t" + myreptax + "\t" + myreptaxID + "\t" + myorg + "\t" + myuniprot
+		uniref_taxa[myunirefID] = mytaxa_id + "\n" + detail + "\t" + mytax + "\t" + mytaxID + "\t" + myreptax + "\t" + myreptaxID + "\t" + myuniprot
 	# foreach line
 	open_file.close()
 	
@@ -360,8 +360,8 @@ def assign_annotation (identity_cutoff, coverage_cutoff, cluster, uniref, anns, 
 	outfile2 = re.sub(".tsv", ".all.tsv", outfile)
 	open_out = open(outfile, "w")
 	open_out2 = open(outfile2, "w")
-	open_out.write(utilities.PROTEIN_ID + "\tstudy\tmap_type\tquery_type\tmutual_type\tidentity\tquery_coverage\tmutual_coverage\tdetail\tTax\tTaxID\tRep_Tax\tRep_TaxID\torganism\tUniProtKB\tunirefID\ttaxa_id\ttaxa_name\ttaxa_rank\ttaxa_lineage\tnote\n")
-	open_out2.write(utilities.PROTEIN_ID + "\tstudy\tmap_type\tquery_type\tmutual_type\tidentity\tquery_coverage\tmutual_coverage\tdetail\tTax\tTaxID\tRep_Tax\tRep_TaxID\torganism\tUniProtKB\tunirefID\ttaxa_id\ttaxa_name\ttaxa_rank\ttaxa_lineage\tnote\n")
+	open_out.write(utilities.PROTEIN_ID + "\tstudy\tmap_type\tquery_type\tmutual_type\tidentity\tquery_coverage\tmutual_coverage\tdetail\tTax\tTaxID\tRep_Tax\tRep_TaxID\tUniProtKB\tunirefID\ttaxa_id\ttaxa_name\ttaxa_rank\ttaxa_lineage\tnote\n")
+	open_out2.write(utilities.PROTEIN_ID + "\tstudy\tmap_type\tquery_type\tmutual_type\tidentity\tquery_coverage\tmutual_coverage\tdetail\tTax\tTaxID\tRep_Tax\tRep_TaxID\tUniProtKB\tunirefID\ttaxa_id\ttaxa_name\ttaxa_rank\ttaxa_lineage\tnote\n")
 	taxa_level = ["Kingdom", "Phylum", "Class", "Order", "Family", "Genus", "Species", "Terminal"]
 	for myclust in sorted(anns.keys()): # foreach peptide family
 		mynote = "good"
@@ -535,7 +535,6 @@ def main():
 	sys.stderr.write("Get info ......starting\n")
 	pep_cluster = collect_pep_cluster_info (config.protein_family)
 	anns, ann_type, hits, uniref_taxa, taxa_hits = collect_ann_info (values.annotation, values.type)
-	#uniref_taxa, taxa_hits = collect_uniref_taxonomy_info (config.uniref_database, values.type, hits)
 	taxa, taxa_map = collect_taxonomy_info (config.taxonomy_database, taxa_hits)
 	uniref = collect_uniref_mapping_info (values.mapping, uniref_taxa, taxa, taxa_map)
 	sys.stderr.write("Get info ......done\n")

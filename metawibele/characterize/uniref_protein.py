@@ -34,6 +34,7 @@ import argparse
 try:
 	from metawibele import config
 	from metawibele import utilities
+	from metawibele.common import utils
 except ImportError:
 	sys.exit("CRITICAL ERROR: Unable to find the MetaWIBELE python package." +
 	         " Please check your install.")
@@ -85,8 +86,7 @@ def collect_peptide_cluster_info (clust_file):  # discovery_cohort.peptides.clus
 #==============================================================
 def collect_pfam_info (pfamfile):	# Pfam_ann.tsv
 	pfam = {}
-	open_file = open(pfamfile, "r")
-	for line in open_file:
+	for line in utils.gzip_bzip2_biom_open_readlines (pfamfile): 
 		line = line.strip()
 		if not len(line):
 			continue
@@ -95,7 +95,7 @@ def collect_pfam_info (pfamfile):	# Pfam_ann.tsv
 			continue
 		pfam[info[0]] = info[1]
 	# foreach line
-	open_file.close()
+	
 	return pfam
 # collect_pfam_info
 
@@ -103,33 +103,116 @@ def collect_pfam_info (pfamfile):	# Pfam_ann.tsv
 #==============================================================
 # collect UniRef info
 #==============================================================
-def collect_uniref_info (uniref, pfam, hits):
+def collect_basic_info (uniref_list, hits):
+	uniref_info = {}
+	uniref_info_tmp = {}
+	flags = {}
+	names = [] # ["UniRefID", "Protein_names", "Gene_names", "UniProtKB", "Tax", "TaxID", "Rep_Tax", "Rep_TaxID", "GO", "KO", "eggNOG", "Pfam", "Level4EC"]
+	hits_items = set(sorted(hits.keys()))
+	for myfile in uniref_list:
+		myfile = myfile.strip()
+		if not len(myfile):
+			continue
+		if re.search("^#", myfile):
+			continue
+		if not os.path.isfile(myfile):
+			print("File does not exist! " + myfile)
+			continue
+		myname = os.path.basename(myfile)
+		if not re.search("^map_", myname):
+			continue
+		if not re.search("uniref90", myname) and not re.search("uniref50", myname):
+			continue
+		myname = re.sub("map_", "", myname)
+		if re.search("^[\S]+_uniref", myname):
+			myname = re.sub("_uniref[\S]+$", "", myname)
+			if myname == "go":
+				myname = "GO"
+			if myname == "ko":
+				myname = "KO"
+			if myname == "eggnog":
+				myname = "eggNOG"
+			if myname == "pfam":
+				myname = "Pfam"
+			if myname == "level4ec":
+				myname = "Level4EC"
+		if re.search("^uniref[\d]+_name", myname):
+			myname = "Protein_names"
+		if not myname in flags:
+			flags[myname] = ""
+			names.append(myname)
+		else:
+			continue
+		for line in utils.gzip_bzip2_biom_open_readlines (myfile): 
+			line = line.strip()
+			if not len(line):
+				continue
+			if re.search("^#", line) :
+				continue
+			info = line.split("\t")
+			myvalue = info[0]
+			myset = set(sorted(info[1:len(info)]))
+			myoverlap = myset.intersection(hits_items)
+			for mykey in myoverlap:
+				if not mykey in uniref_info_tmp:
+					uniref_info_tmp[mykey] = {}
+				if not myname in uniref_info_tmp[mykey]:
+					uniref_info_tmp[mykey][myname] = myvalue
+				else:
+					uniref_info_tmp[mykey][myname] = uniref_info_tmp[mykey][myname] + ";" + myvalue
+
+			#myindex = 1
+			#while myindex < len(info):
+			#	mykey = info[myindex]
+			#	if not mykey in hits:
+			#		myindex = myindex + 1
+			#		continue
+			#	if not mykey in uniref_info_tmp:
+			#		uniref_info_tmp[mykey] = {}
+			#	if not myname in uniref_info_tmp[mykey]:
+			#		uniref_info_tmp[mykey][myname] = myvalue
+			#	else:
+			#		uniref_info_tmp[mykey][myname] = uniref_info_tmp[mykey][myname] + ";" + myvalue
+			#	myindex = myindex + 1
+		
+		# foreach line
+	# foreach dataset
+
+	# collecting all info
+	for myid in uniref_info_tmp.keys():
+		mystr = myid
+		for myname in names:
+			if myname in uniref_info_tmp[myid]:
+				mystr = mystr + "\t" + uniref_info_tmp[myid][myname]
+			else:
+				mystr = mystr + "\tNA"
+		uniref_info[myid] = mystr
+	uniref_info_tmp = {}
+
+	return uniref_info, names
+# function collect_expression_info
+
+
+def collect_uniref_info (uniref, names, pfam):
 	uniref_info = {}
 	titles = {}
-	#items = ["UniRefID", "Tax", "TaxID", "Description", "Organism", "GO(MF)", "GO(CC)", "Subcellular_location", "Transmembrane", "Signal_peptide", "Pfam"]
-	open_file = open(uniref, "r")
-	line = open_file.readline()
-	line = line.strip()
-	uniref_title = line
-	uniref_title = re.sub("^ID", "UniRefID", uniref_title)
-	uniref_title = uniref_title + "\tPfam_desc"
-	info = line.split("\t")
+	uniref_title = "UniRefID\t" + "\t".join(names) + "\tPfam_desc"
+	titles["UniRefID"] = 0
 	myindex = 0
-	while myindex < len(info):
-		item = info[myindex]
-		titles[item] = myindex
+	while myindex < len(names):
+		item = names[myindex]
+		titles[item] = myindex + 1
 		myindex = myindex + 1
-	for line in open_file:
-		line = line.strip()
-		if not len(line):
-			continue
+	for myid in sorted(uniref.keys()):
+		line = uniref[myid]
 		info = line.split("\t")
 		myid = info[0]
-		if not myid in hits:
-			continue
 		mystr = line
 		mystr = re.sub("root\tNA", "root\t1", mystr)
-		mypfam = info[titles["Pfam"]]
+		if "Pfam" in titles:
+			mypfam = info[titles["Pfam"]]
+		else:
+			mypfam = "NA"
 		if mypfam == "NA":
 			mystr = mystr + "\tNA"
 		else:
@@ -148,7 +231,7 @@ def collect_uniref_info (uniref, pfam, hits):
 			# only use the annotation of representatives
 			uniref_info[myid].append(mystr)
 	# foreach line
-	open_file.close()
+	
 	return uniref_info, uniref_title
 # collect_uniref_info
 
@@ -156,7 +239,7 @@ def collect_uniref_info (uniref, pfam, hits):
 #==============================================================
 # collect UniRef mapping info
 #==============================================================
-def collect_uniref_mapping (mapfile, member):	# PRISM_peptides.clust.rep.uniref90.stat.all.tsv
+def collect_uniref_mapping (mapfile, member):
 	titles = {}
 	mapping = {}
 	hits = {}
@@ -176,10 +259,10 @@ def collect_uniref_mapping (mapfile, member):	# PRISM_peptides.clust.rep.uniref9
 			#print("Not members of specified clusters!\t" + myid)
 			continue
 		myuniref = info[titles["subject"]]
-		hits[myuniref] = ""
 		query_type = info[titles["query_type"]]
 		mutual_type = info[titles["mutual_type"]]
 		mapping[myid] = myuniref + "\t" + query_type + "\t" + mutual_type
+		hits[myuniref] = ""
 	# foreach line
 	open_file.close()
 
@@ -233,7 +316,8 @@ def main():
 	member = collect_peptide_cluster_info (config.protein_family)
 	mapping, hits = collect_uniref_mapping (values.mapping, member)
 	pfam = collect_pfam_info (config.pfam_database)
-	uniref_info, uniref_title = collect_uniref_info (config.uniref_database, pfam, hits)
+	uniref, names = collect_basic_info(config.uniref_database, hits)
+	uniref_info, uniref_title = collect_uniref_info (uniref, names, pfam)
 	extract_annotation_info (uniref_info, uniref_title, mapping, values.output)
 	sys.stderr.write("Get UniRef DB and annotation info ......done\n")
 

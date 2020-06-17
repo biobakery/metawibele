@@ -34,6 +34,7 @@ import argparse
 try:
 	from metawibele import config
 	from metawibele import utilities
+	from metawibele.common import utils
 except ImportError:
 	sys.exit("CRITICAL ERROR: Unable to find the MetaWIBELE python package." +
 	         " Please check your install.")
@@ -68,7 +69,7 @@ def collect_taxonomy_info (map_file):
 	taxa_map = {}
 	titles = {}
 	open_file = open(map_file, "r")
-	for line in open_file:
+	for line in utils.gzip_bzip2_biom_open_readlines (map_file):
 		line = line.strip()
 		if not len(line):
 			continue
@@ -89,7 +90,7 @@ def collect_taxonomy_info (map_file):
 			myid = mym.group(1)
 		taxa_map[myid] = taxa_id + "\t" + taxa_name + "\t" + taxa_rank + "\t" + taxa_lineage
     # foreach line
-	open_file.close()
+	
 	return taxa_map
 # collect_taxonomy_info
 
