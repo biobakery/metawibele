@@ -34,6 +34,7 @@ from collections import Counter
 
 try:
 	from metawibele import config
+	from metawibele.common import utils
 except ImportError:
 	sys.exit("CRITICAL ERROR: Unable to find the MetaWIBELE python package." +
 	         " Please check your install.")
@@ -69,8 +70,7 @@ def get_args ():
 def collect_taxonomy_info (map_file):  
 	taxa_map = {}
 	titles = {}
-	open_file = open(map_file, "r")
-	for line in open_file:
+	for line in utils.gzip_bzip2_biom_open_readlines (map_file):
 		line = line.strip()
 		if not len(line):
 			continue
@@ -109,9 +109,10 @@ def collect_taxonomy_info (map_file):
 			myid = mym.group(2)
 		taxa_map[myid] = taxa_id + "\t" + taxa_name + "\t" + taxa_rank + "\t" + taxa_lineage + "\t" + taxa_rank + "__" + taxa_name
 	# foreach line
-	open_file.close()
+	
 	return taxa_map
 # collect_taxonomy_info
+
 
 
 #==============================================================
@@ -140,7 +141,7 @@ def extract_taxon_info (msp_file, homology):
 		taxa_name = info[titles["taxa_name"]]
 		taxa_rank = info[titles["taxa_rank"]]
 		taxa_lineage = info[titles["taxa_lineage"]]
-		organism = info[titles["organism"]]
+		#organism = info[titles["organism"]]
 		map_type = info[titles["map_type"]]
 		identity = info[titles["identity"]]
 		coverage = info[titles["mutual_coverage"]]
@@ -151,21 +152,21 @@ def extract_taxon_info (msp_file, homology):
 					taxa_name = "NA"
 					taxa_rank = "Unclassified"
 					taxa_lineage = "NA"
-					organism = "NA"
+					#organism = "NA"
 			if homology == "UniRef90_homology":
 				if map_type == "UniRef90_worse_homology":
 					taxID = "NA"
 					taxa_name = "NA"
 					taxa_rank = "Unclassified"
 					taxa_lineage = "NA"
-					organism = "NA"
+					#organism = "NA"
 				else:
 					if not(float(identity) >= 50 and float(coverage) >= 0.8):	# UniRef50-like protein
 						taxID = "NA"
 						taxa_name = "NA"
 						taxa_rank = "Unclassified"
 						taxa_lineage = "NA"
-						organism = "NA"
+						#organism = "NA"
 		if not msp_name in msp:
 			msp[msp_name] = {}
 		if not myclass in msp[msp_name]:
