@@ -34,7 +34,7 @@ from anadama2.tracked import TrackedExecutable, TrackedDirectory
 
 # import the utilities functions and config settings from MetaWIBELE
 try:
-	from metawibele import utilities, config, files
+	from metawibele import utilities, config
 except ImportError:
 	sys.exit("CRITICAL ERROR: Unable to find the MetaWIBELE python package." +
 		         " Please check your install.")
@@ -230,7 +230,7 @@ def assembly (workflow, input_dir, extension, extension_paired, threads, output_
 
 
 def gene_calling (workflow, assembly_dir, assembly_extentsion, input_dir, extension, extension_paired,
-                 prokka_dir, prodigal_dir,
+                 gene_call_type, prokka_dir, prodigal_dir,
                  threads,
                  gene_file, gene_PC_file, protein_file, protein_sort,
                  gene_info, complete_gene, complete_protein):
@@ -252,7 +252,7 @@ def gene_calling (workflow, assembly_dir, assembly_extentsion, input_dir, extens
 		complete_protein: The fasta file of protein sequences for complete ORFs.
 
 	Requires:
-		prokka 1.14-dev: rapid prokaryotic genome annotation
+		prokka 1.14-dev: rapid prokaryotic genome annotation (recommend to close '-c' parameter in prodigal)
 		prodigal v2.6: gene prediction
 		usearch (tested with usearch v9.0.2132_i86linux64)
 		assembled contig files
@@ -301,8 +301,6 @@ def gene_calling (workflow, assembly_dir, assembly_extentsion, input_dir, extens
 	# Gene calling
 	# ================================================
 	os.system("mkdir -p " + prodigal_dir)
-	#time_equation = "24*60 if file_size('[depends[0]]') < 25 else 6*24*60" # 24 hours or more depending on file size
-	#mem_equation = "32*1024 if file_size('[depends[0]]') < 25 else 3*32*1024" # 32 GB or more depending on file size
 	fna_file = []
 	faa_file = []
 	gff_files = []
@@ -346,6 +344,9 @@ def gene_calling (workflow, assembly_dir, assembly_extentsion, input_dir, extens
 			name = "ln__" + myname)
 		myfna = re.sub(".faa", ".fna", myfile)
 		myfna_new = re.sub(".faa", ".fna", myfile_new)
+		if gene_call_type == "prodigal":
+			fna_file.append(myfna_new)
+			prokka_dir = prodigal_dir
 		workflow.add_task(
 			"ln -fs [depends[0]] [targets[0]]",
 			depends = [myfna],
@@ -361,24 +362,25 @@ def gene_calling (workflow, assembly_dir, assembly_extentsion, input_dir, extens
 			cores = 1,
 			name = "ln__" + myname)
 
+	
+	if gene_call_type == "prokka":
+		## Calling genes with Prokka
+		os.system("mkdir -p " + prokka_dir)
 
-	## Calling genes with Prokka
-	os.system("mkdir -p " + prokka_dir)
+		for contig in filtered_contigs:
+			contig_base = os.path.basename(contig).split(os.extsep)[0]
+			sample = os.path.basename(contig_base)
+			annotation_dir = os.path.join(prokka_dir, sample)
+			os.system("mkdir -p " + annotation_dir)
+			stdout_log = os.path.join(annotation_dir, '%s.prokka.bacteria.stdout.log' % contig_base)
+			score = os.path.join(annotation_dir, '%s.gene_score.txt' % contig_base)
+			gene_nuc = os.path.join(annotation_dir, '%s.ffn' % contig_base)
+			gene_aa = os.path.join(annotation_dir, '%s.faa' % contig_base)
+			gff_file = os.path.join(annotation_dir, '%s.gff' % contig_base)
+			fna_file_tmp.append(gene_nuc)
+			gff_files_tmp.append(gff_file)
 
-	for contig in filtered_contigs:
-		contig_base = os.path.basename(contig).split(os.extsep)[0]
-		sample = os.path.basename(contig_base)
-		annotation_dir = os.path.join(prokka_dir, sample)
-		os.system("mkdir -p " + annotation_dir)
-		stdout_log = os.path.join(annotation_dir, '%s.prokka.bacteria.stdout.log' % contig_base)
-		score = os.path.join(annotation_dir, '%s.gene_score.txt' % contig_base)
-		gene_nuc = os.path.join(annotation_dir, '%s.ffn' % contig_base)
-		gene_aa = os.path.join(annotation_dir, '%s.faa' % contig_base)
-		gff_file = os.path.join(annotation_dir, '%s.gff' % contig_base)
-		fna_file_tmp.append(gene_nuc)
-		gff_files_tmp.append(gff_file)
-
-		workflow.add_task_gridable('prokka --prefix [args[0]] --addgenes --addmrna --force --metagenome '
+			workflow.add_task_gridable('prokka --prefix [args[0]] --addgenes --addmrna --force --metagenome '
 		                           '--cpus [args[2]] '
 		                           '--outdir [args[1]] [depends[0]] '
 		                           '>[args[3]] 2>&1 ',
@@ -390,36 +392,36 @@ def gene_calling (workflow, assembly_dir, assembly_extentsion, input_dir, extens
 		                           time = time_equation,
 								   name = contig_base + "__prokka")
 	
-	for myfile in gff_files_tmp:
-		myname = os.path.basename(myfile)
-		myfile_new = os.path.join(prokka_dir, myname)
-		gff_files.append(myfile_new)
-	for myfile in fna_file_tmp:
-		myname = os.path.basename(myfile)
-		myfile_new = os.path.join(prokka_dir, myname)
-		fna_file.append(myfile_new)
-		workflow.add_task(
-			"ln -fs [depends[0]] [targets[0]]",
-			depends = [myfile],
-			targets = [myfile_new],
-			cores = 1,
-			name = "ln__" + myname)
-		myfaa = re.sub(".ffn", ".faa", myfile)
-		myfaa_new = re.sub(".ffn", ".faa", myfile_new)
-		workflow.add_task(
-			"ln -fs [depends[0]] [targets[0]]",
-			depends = [myfaa],
-			targets = [myfaa_new],
-			cores = 1,
-			name = "ln__" + myname)
-		mygff = re.sub(".ffn", ".gff", myfile)
-		mygff_new = re.sub(".ffn", ".gff", myfile_new)
-		workflow.add_task(
-			"ln -fs [depends[0]] [targets[0]]",
-			depends = [mygff],
-			targets = [mygff_new],
-			cores = 1,
-			name = "ln__" + myname)
+		for myfile in gff_files_tmp:
+			myname = os.path.basename(myfile)
+			myfile_new = os.path.join(prokka_dir, myname)
+			gff_files.append(myfile_new)
+		for myfile in fna_file_tmp:
+			myname = os.path.basename(myfile)
+			myfile_new = os.path.join(prokka_dir, myname)
+			fna_file.append(myfile_new)
+			workflow.add_task(
+				"ln -fs [depends[0]] [targets[0]]",
+				depends = [myfile],
+				targets = [myfile_new],
+				cores = 1,
+				name = "ln__" + myname)
+			myfaa = re.sub(".ffn", ".faa", myfile)
+			myfaa_new = re.sub(".ffn", ".faa", myfile_new)
+			workflow.add_task(
+				"ln -fs [depends[0]] [targets[0]]",
+				depends = [myfaa],
+				targets = [myfaa_new],
+				cores = 1,
+				name = "ln__" + myname)
+			mygff = re.sub(".ffn", ".gff", myfile)
+			mygff_new = re.sub(".ffn", ".gff", myfile_new)
+			workflow.add_task(
+				"ln -fs [depends[0]] [targets[0]]",
+				depends = [mygff],
+				targets = [mygff_new],
+				cores = 1,
+				name = "ln__" + myname)
 	
 	
 	# ================================================
@@ -427,11 +429,14 @@ def gene_calling (workflow, assembly_dir, assembly_extentsion, input_dir, extens
 	# ================================================
 	#mem_equation = "50000"
 	### combine gene sequences ###
+	nuc_type = "ffn"
+	if gene_call_type == "prodigal":
+		nuc_type = "fna"
 	mylog = re.sub(".fna", ".log", gene_file)
-	workflow.add_task('metawibele_combine_gene_sequences -p [args[0]] -e ffn -o [targets[0]] > [args[1]] 2>&1 ',
+	workflow.add_task('metawibele_combine_gene_sequences -p [args[0]] -e [args[1]] -o [targets[0]] > [args[2]] 2>&1 ',
 					depends = utilities.add_to_list(fna_file,TrackedExecutable("metawibele_combine_gene_sequences")),
 	                targets = [gene_file],
-	                args = [prokka_dir, mylog],
+	                args = [prokka_dir, nuc_type, mylog],
 	                cores = 1,
 	                name = "combine_gene_sequences")
 
@@ -488,7 +493,7 @@ def gene_calling (workflow, assembly_dir, assembly_extentsion, input_dir, extens
 	return complete_gene, complete_protein
 
 
-def gene_catalog (workflow, complete_gene, complete_protein,
+def gene_catalog (workflow, sample_list, complete_gene, complete_protein,
                   input_dir, extension, extension_paired, threads,
                   prefix_gene_catalog, gene_catalog, gene_catalog_nuc, gene_catalog_prot,
                   mapping_dir, gene_catalog_saf, gene_catalog_count):
@@ -640,10 +645,10 @@ def gene_catalog (workflow, complete_gene, complete_protein,
 	# collect abundance
 	mylog = gene_catalog_count + ".log"
 	workflow.add_task(
-				'metawibele_gene_catalog_abundance -p [args[0]] -s sort.bed -c [args[1]] -o [targets[0]] >[args[2]] 2>&1 ',
+				'metawibele_gene_catalog_abundance -p [args[0]] -s sort.bed -c [args[1]] -l [args[2]] -o [targets[0]] >[args[3]] 2>&1 ',
 				depends = utilities.add_to_list(mappings,TrackedExecutable("metawibele_gene_catalog_abundance")),
 				targets = [gene_catalog_count],
-				args = [mapping_dir, gene_catalog, mylog],
+				args = [mapping_dir, gene_catalog, sample_list, mylog],
 				cores = 1,
 				name = "gene_catalog_abundance")
 
