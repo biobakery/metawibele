@@ -51,6 +51,9 @@ def get_args():
 def collect_sequence (ann_path, extension, partial_path, outfile):
 	filelist = utilities.find_files(ann_path, extension, None)
 	open_out = open(outfile, "w")
+	outfile2 = re.sub(".faa", ".abnormal_seq.faa", outfile)
+	outfile2 = re.sub(".fasta", ".abnormal_seq.fasta", outfile)
+	open_out2 = open(outfile2, "w")
 	gff = {}
 	types = {}
 	partial = {}
@@ -73,10 +76,16 @@ def collect_sequence (ann_path, extension, partial_path, outfile):
 			if not len(line):
 				continue
 			if re.search("^#", line):
-				if re.search("##sequence-region", line):
+				if re.search("^##sequence-region", line):
 					mym = re.search("##sequence-region\s+([\S]+)\s+([\d]+)\s+([\d]+)", line)
 					tmp_contig = mym.group(1)
 					contigs[tmp_contig] = str(mym.group(2)) + "\t" + str(mym.group(3))
+				if re.search("^# Sequence Data", line):
+					mytmp = line.split(";")
+					mym = re.sub("\"", "", mytmp[-1])
+					mym = re.search("^seqhdr\=([\S]+)[\s]+[\s\S]+len\=([\d]+)", mym)
+					tmp_contig = mym.group(1)
+					contigs[tmp_contig] = str(1) + "\t" + str(mym.group(2))
 				continue
 			if re.search("^>", line):
 				break
@@ -87,6 +96,8 @@ def collect_sequence (ann_path, extension, partial_path, outfile):
 			strand = info[6]
 			desc = info[8]
 			myinfo = desc.split(";")
+			myid = re.search("ID\=([^\;]+)", desc)
+			myid = myid.group(1)
 			gene_name = "NA"
 			gene_id = "NA"
 			gene_num = "NA"
@@ -103,18 +114,25 @@ def collect_sequence (ann_path, extension, partial_path, outfile):
 					mym = re.search("Name=([\S]+)", item)
 					gene_name = mym.group(1)
 			# foreach item
+			if not re.search("locus_tag=", desc):
+				gene_id = sample + "_" + re.sub("_", "-", myid) 
+			if not re.search("Name=", desc):
+				gene_name = sample + "_" + re.sub("_", "-", myid) 
 			if re.search("\_", gene_id):
 				mym = re.search("^([^\_]+)\_([\S]+)", gene_id)
 				sample_id = mym.group(1)
 				gene_num = mym.group(2)
-			gene = sample + "_" + gene_num
+			if not re.search("locus_tag=", desc):
+				gene = gene_id
+				sample_id = sample
+			else:
+				gene = sample + "_" + gene_num
 			contig = sample + "_contig_" + contig_id
 			if feature == "gene":
 				if not sample in gff:
 					gff[sample] = {}
 				if not gene_id in gff[sample]:
 					gff[sample][gene_id] = gene + "\t" + gene_id + "\t" + gene_name + "\t" + start + "\t" + stop + "\t" + strand + "\n" + contig + "\t" + contig_id + "\t" + contig_len + "\n" + sample + "\t" + sample_id
-					#gff[sample][gene_id] = sample + "\t" + sample_id + "\t" + contig + "\t" + contig_id + "\t" + contig_len + "\t" + gene + "\t" + gene_id + "\t" + gene_name + "\t" + start + "\t" + stop + "\t" + strand
 			if feature != "gene" and feature != "mRNA":
 				if not sample in types:
 					types[sample] = {}
@@ -123,6 +141,11 @@ def collect_sequence (ann_path, extension, partial_path, outfile):
 				if feature == "CDS":
 					new_id = contig_id + "\t" + start + "\t" + stop + "\t" + strand
 					mapping[new_id] = gene + "\t" + gene_id
+					if not re.search("locus_tag=", desc):
+						if not sample in gff:
+							gff[sample] = {}
+						if not gene_id in gff[sample]:
+							gff[sample][gene_id] = gene + "\t" + gene_id + "\t" + gene_name + "\t" + start + "\t" + stop + "\t" + strand + "\n" + contig + "\t" + contig_id + "\t" + contig_len + "\n" + sample + "\t" + sample_id
 				# foreach line
 		open_gff.close()
 
@@ -132,11 +155,14 @@ def collect_sequence (ann_path, extension, partial_path, outfile):
 		AA_seq = {}
 		myname = ""
 		flag = 0
+		hit_num = 0
+		total_num = 0
 		for line in open_file.readlines():
 			line = line.strip()
 			if not len(line):
 				continue
 			if re.search("^>", line):  # sequence id
+				total_num = total_num + 1
 				line = re.sub("^>", "", line)
 				info = line.split(" # ")
 				if len(info) < 4:
@@ -153,6 +179,7 @@ def collect_sequence (ann_path, extension, partial_path, outfile):
 				myname = myid
 				flag = 0
 				if myid in mapping:
+					hit_num = hit_num + 1
 					# debug
 					#print("Mapping:" + myid + "\t" + mapping[myid])
 					gene, gene_id = mapping[myid].split("\t")
@@ -175,17 +202,47 @@ def collect_sequence (ann_path, extension, partial_path, outfile):
 						AA_seq[myname] = AA_seq[myname] + line
 		# foreach line
 		open_file.close()
+	
+		if hit_num != total_num:
+			open_file = open(myfile, "r")
+			myname = ""
+			for line in open_file.readlines():
+				line = line.strip()
+				if not len(line):
+					continue
+				if re.search("^>", line):  # sequence id	
+					mym = re.search("^>([^\_]+)\_([\S]+)", line)
+					sample_id = mym.group(1)
+					gene_num = mym.group(2)
+					gene = sample + "_" + gene_num
+					mym = re.search("^>([\S]+)", line)
+					gene_id = mym.group(1)
+					myname = ">" + gene
+					if not myname in AA_seq:
+						AA_seq[myname] = ""
+					else:
+						myname = ""
+						continue
+					if not sample in partial:
+						partial[sample] = {}
+					partial[sample][gene_id] = "00"
+				else:
+					if myname in AA_seq:
+						AA_seq[myname] = AA_seq[myname] + line
+			# foreach line
+			open_file.close()
+		
 
 		for myname in sorted(AA_seq.keys()):
 			myseq = AA_seq[myname]
 			myseq = re.sub("\*$", "", myseq)
 			AA_seq[myname] = myseq
-			#	if re.search("\*", myseq): # terminal codon in CDS
-			# debug
-			#		print("Abnormal CDS\t" + sample + "\t" + myname)
-			#		open_out2.write(myname + "\n" + AA_seq[myname] + "\n")
-			#		continue
-			open_out.write(myname + "\n" + AA_seq[myname] + "\n")
+			if re.search("\*", myseq): # terminal codon in CDS
+				#print("Abnormal CDS\t" + sample + "\t" + myname)
+				open_out2.write(myname + "\n" + AA_seq[myname] + "\n")
+				continue
+			else:
+				open_out.write(myname + "\n" + AA_seq[myname] + "\n")
 	# foreach sample
 	open_out.close()
 

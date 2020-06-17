@@ -88,12 +88,21 @@ def collect_sequence (gene_path, extension, outfile):
 			if not len(line):
 				continue
 			if re.search("^\>", line):	# sequence id
-				mym = re.search("\>([^\_]+)", line)
-				myid = mym.group(1)
-				sampleid[sample] = myid
-				mym = re.search("\>([\S]+)", line)
-				mygene = mym.group(1)
-				line = re.sub(myid, sample, line)
+				if re.search("ID\=", line):
+					mym = re.search("ID\=([^\;]+)", line)
+					mygene = mym.group(1)
+					mym = re.search("\>([\S]+)", line)
+					myid = mym.group(1)
+					myid_new = sample + "_" + re.sub("_", "-", mygene)	
+					sampleid[sample] = sample
+					line = re.sub(myid, myid_new, line)
+				else:
+					mym = re.search("\>([\S]+)", line)
+					mygene = mym.group(1)
+					mym = re.search("\>([^\_]+)", line)
+					myid = mym.group(1)
+					sampleid[sample] = myid
+					line = re.sub(myid, sample, line)
 				open_out.write(line + "\n")
 				if mygene in gffs:
 					flag = 1
