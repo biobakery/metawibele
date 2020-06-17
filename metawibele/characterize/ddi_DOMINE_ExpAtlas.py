@@ -34,6 +34,7 @@ import argparse
 try:
 	from metawibele import config
 	from metawibele import utilities
+	from metawibele.common import utils
 except ImportError:
 	sys.exit("CRITICAL ERROR: Unable to find the MetaWIBELE python package." +
 	         " Please check your install.")
@@ -70,8 +71,7 @@ def collect_expression_info (exp_list):	#  expression.list
 			continue
 		if re.search("^#", myfile):
 			continue
-		open_file = open(myfile, "r")
-		for line in open_file:
+		for line in utils.gzip_bzip2_biom_open_readlines (myfile): 
 			line = line.strip()
 			if not len(line):
 				continue
@@ -90,27 +90,27 @@ def collect_expression_info (exp_list):	#  expression.list
 			mygene = info[1]
 			expression[mygene] = ""
 		# foreach line
-		open_file.close()
 	# foreach dataset
+	
 	return expression
 # function collect_expression_info
+
 
 def collect_pfam_info (map_file):	# uniprot_human_pfam.tsv 
 	pfams = {}
 	titles = {}
-	open_file = open(map_file, "r")
-	line = open_file.readline()
-	line = line.strip()
-	info = line.split("\t")
-	myindex = 0
-	while myindex < len(info):
-		titles[info[myindex]] = myindex
-		myindex = myindex + 1
-	for line in open_file.readlines():
+	for line in utils.gzip_bzip2_biom_open_readlines (map_file):
 		line = line.strip()
 		if not len(line):
 			continue
-		if re.search("^#", line) or re.search("^Pfam", line):
+		if re.search("^#", line):
+			continue
+		if re.search("^Pfam\t", line):
+			info = line.split("\t")
+			myindex = 0
+			while myindex < len(info):
+				titles[info[myindex]] = myindex
+				myindex = myindex + 1
 			continue
 		info = line.split("\t")
 		pfam = info[titles["Pfam"]]
@@ -120,9 +120,10 @@ def collect_pfam_info (map_file):	# uniprot_human_pfam.tsv
 			continue
 		pfams[pfam] = gene
 	# foreach line
-	open_file.close()
+	
 	return pfams
 # function collect_pfam_info
+
 
 def collect_interaction_info (ann_file):	# summary_DOMINE_peptide.ann.tsv
 	interact = {}
