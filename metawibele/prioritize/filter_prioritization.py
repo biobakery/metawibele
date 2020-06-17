@@ -44,6 +44,7 @@ from operator import attrgetter, itemgetter
 try:
 	from metawibele import config
 	from metawibele import utilities
+	from metawibele.common import utils
 except ImportError:
 	sys.exit("CRITICAL ERROR: Unable to find the MetaWIBELE python package." +
 	         " Please check your install.")
@@ -83,7 +84,7 @@ def parse_arguments():
 	parser.add_argument(
 		"-o", "--outfile",
 		help = "[REQUIRED] the name of output file\n",
-		default = "metawibele_supervised_prioritization.priority-filter.tsv",
+		default = "metawibele_supervised_prioritization.priority-select.tsv",
 		required=True)
 
 	return parser.parse_args()
@@ -143,19 +144,17 @@ def read_vignettes_file (vignettes_file, specific_annotation):
 
 	vignettes = {}
 	titles = {}
-	open_file = open(vignettes_file, "r")
-	line = open_file.readline()
-	line = re.sub("\n$", "", line)
-	info = line.split("\t")
-	for item in info:
-		titles[item] = info.index(item)
-	for line in open_file:
-		line = line.strip() 
+	for line in utils.gzip_bzip2_biom_open_readlines (vignettes_file):
+		line = line.strip()
 		if not len(line):
 			continue
 		if re.search("^#", line):
 			continue
 		info = line.split("\t")
+		if re.search("^type", line):
+			for item in info:
+				titles[item] = info.index(item)
+			continue
 		mytype = info[titles["type"]]
 		if not mytype.lower() in specific_annotation and not mytype in specific_annotation:
 			continue
@@ -166,7 +165,6 @@ def read_vignettes_file (vignettes_file, specific_annotation):
 		myid = info[titles["accession"]]
 		vignettes[myid] = ""
 	# foreach line
-	open_file.close()
 
 	return vignettes
 
@@ -335,6 +333,8 @@ def main():
 	args_value = parse_arguments()
 	if args_value.function == "none":
 		vignettes_database = config.vignettes_database
+	else:
+		vignettes_database = args_value.function
 
 	if config.verbose == 'DEBUG':
 		print ("--- Collect config information ---")
