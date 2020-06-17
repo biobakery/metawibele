@@ -34,7 +34,7 @@ from anadama2.tracked import TrackedExecutable, TrackedDirectory
 
 # import the utilities functions and config settings from MetaWIBELE
 try:
-	from metawibele import utilities, config, files
+	from metawibele import utilities, config
 except ImportError:
 	sys.exit("CRITICAL ERROR: Unable to find the MetaWIBELE python package." +
 		         " Please check your install.")
