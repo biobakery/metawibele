@@ -31,9 +31,9 @@ def python_version():
     Check the current version of python
     """
 
-    # required python versions (3.6+)
-	required_python_version_major = [3]
-    required_python_version_minor = [6]
+    # required python versions (3.7+)
+    required_python_version_major = [3]
+    required_python_version_minor = [7]
 
     # check for either of the required versions
     pass_check = False
