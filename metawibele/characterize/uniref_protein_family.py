@@ -118,7 +118,7 @@ def collect_gene_cluster_info (clust_file):	# discovery_cohort.genes.clust
 #==============================================================
 # collect uniref mapping info
 #==============================================================
-def collect_uniref_mapping (mapfile):	# discovery_cohort_meta.genes.clust.rep.uniref90.stat.tsv
+def collect_uniref_mapping (mapfile):
 	maps = {}
 	titles = {}
 	open_file = open(mapfile, "r")
@@ -178,144 +178,57 @@ def collect_annotation (uniref):
 		line = line.strip()
 		if not len(line):
 			continue
-		if re.search("^name", line):
-			continue
 		info = line.split("\t")
 		myid = info[0]
 		if myid in annotation:
 			continue
 		mytype = info[1]
 		myinfo = "\t".join(info[1:len(info)])
-		ann = info[titles["Description"]]
+		ann = info[titles["Protein_names"]]
 		if ann == "NA":
 			ann = mytype
 		if not re.search("_unknown", info[1]):
 			mym = re.search("^([^_]+)", info[1])
 			unitype = mym.group(1)
-			go_bp = info[titles["GO(BP)"]]
-			go_mf = info[titles["GO(MF)"]]
-			go_cc = info[titles["GO(CC)"]]
-			kegg = info[titles["KO"]]
-			cog = info[titles["COG"]]
-			pfam = info[titles["Pfam"]]
-			transmembrane = info[titles["Transmembrane"]]
-			signaling = info[titles["Signal_peptide"]]
-			secreted = info[titles["Subcellular_location"]]
-			if re.search("^NA ", secreted):
-				secreted = "NA"
+			#go_bp = info[titles["GO(BP)"]]
+			#go_mf = info[titles["GO(MF)"]]
+			#go_cc = info[titles["GO(CC)"]]
+			if "GO" in titles:
+				go = info[titles["GO"]]
+			else:
+				go = "NA"
+			if "KO" in titles:
+				kegg = info[titles["KO"]]
+			else:
+				kegg = "NA"
+			if "eggNOG" in titles:
+				cog = info[titles["eggNOG"]]
+			else:
+				cog = "NA"
+			if "Pfam" in titles:
+				pfam = info[titles["Pfam"]]
+			else:
+				pfam = "NA"
+			if "Level4EC" in titles:
+				level4ec = info[titles["Level4EC"]]
+			else:
+				level4ec = "NA"
 			interest_flag = 0
 
 			# based on GO info to define uncharacterized protein
-			#if info[titles["GO(BP)"]] == "NA" and info[titles["GO(MF)"]] == "NA" and info[titles["GO(CC)"]] == "NA" and info[titles["Pfam"]] == "NA":
-			if info[titles["GO(BP)"]] == "NA" and info[titles["GO(MF)"]] == "NA" and info[titles["GO(CC)"]] == "NA":
+			if go == "NA":
 				mytype = unitype + "_uncharacterized"
 				if not myid in annotation:
 					annotation[myid] = []
 				annotation[myid].append(mytype + "\t" + mytype + "\t" + ann + "\n" + myinfo)
 
-			# secondary structure
-			if transmembrane != "NA":
-				interest_flag = 1
-				tmp = transmembrane.split(";")
-				tmp = list(dict.fromkeys(tmp))
-				transmembrane = ";".join(sorted(tmp))
-				mytype = unitype + "_transmembrane"
-				if not myid in annotation:
-					annotation[myid] = []
-				annotation[myid].append(mytype + "\t" + transmembrane + "\t" + ann + "\n" + myinfo)
-			if signaling != "NA":
-				interest_flag = 1
-				tmp = signaling.split(";")
-				tmp = list(dict.fromkeys(tmp))
-				signaling = ";".join(sorted(tmp))
-				mytype = unitype + "_signaling"
-				if not myid in annotation:
-					annotation[myid] = []
-				annotation[myid].append(mytype + "\t" + signaling + "\t" + ann + "\n" + myinfo)
-			if secreted != "NA":
-				myflag = 0
-				if re.search("extracellular", go_cc) or re.search("Extracellular", go_cc):
-					if re.search("extracellular", secreted) or re.search("Extracellular", secreted):
-						myflag = 1
-						interest_flag = 1
-						mytype = unitype + "_extracellular"
-						if not myid in annotation:
-							annotation[myid] = []
-						annotation[myid].append(mytype + "\t" + secreted + "\t" + ann + "\n" + myinfo)
-					else:
-						if re.search("secretion", secreted) or re.search("secretory", secreted) or re.search("secreted", secreted) or re.search("secretin", secreted) or re.search("Secretion", secreted) or re.search("Secretory", secreted) or re.search("Secreted", secreted) or re.search("Secretin", secreted):
-							myflag = 1
-							interest_flag = 1
-							mytype = unitype + "_extracellular"
-							if not myid in annotation:
-								annotation[myid] = []
-							annotation[myid].append(mytype + "\t" + secreted + "\t" + ann + "\n" + myinfo)
-				if myflag == 0:
-					mytype = "NA"
-					mysecreted = secreted.lower()
-					if re.search("cytoplasm", mysecreted):
-						mytype = unitype + "_cytoplasmic"
-					if re.search("membrane", mysecreted):
-						mytype = unitype + "_membrane"
-					if re.search("periplasm", mysecreted):
-						mytype = unitype + "_periplasmic"
-					if re.search("nucleus", mysecreted):
-						mytype = unitype + "_nucleus"
-					if re.search("fimbrium", mysecreted):
-						mytype = unitype + "_fimbrium"
-					if re.search("virion", mysecreted):
-						mytype = unitype + "_virion"
-					if re.search("spore core", mysecreted):
-						mytype = unitype + "_sporeCore"
-					if re.search("mitochondrion", mysecreted):
-						mytype = unitype + "_mitochondrion"
-					if re.search("cell surface", mysecreted):
-						mytype = unitype + "_outerMembrane"
-					if re.search("cell envelop", mysecreted):
-						mytype = unitype + "_cellEnvelop"
-					if re.search("cell membrane", mysecreted):
-						mytype = unitype + "_cellMembrane"
-					if re.search("cell inner membrane", mysecreted):
-						mytype = unitype + "_cellInnerMembrane"
-					if re.search("cell outer membrane", mysecreted):
-						mytype = unitype + "_outerMembrane"
-					if re.search("cell wall", mysecreted):
-						mytype = unitype + "_cellWall"
-					if re.search("bacterial flagellum", mysecreted):
-						mytype = unitype + "_bacterialFlagellum"
-					if mytype == "NA":
-						mytype = unitype + "_other"
-					if mytype != "NA":
-						myflag = 1
-						if not myid in annotation:
-							annotation[myid] = []
-						annotation[myid].append(mytype + "\t" + secreted + "\t" + ann + "\n" + myinfo)
-
 			# functional annotation
-			go_bp = info[titles["GO(BP)"]]
-			go_mf = info[titles["GO(MF)"]]
-			go_cc = info[titles["GO(CC)"]]
-			kegg = info[titles["KO"]]
-			cog = info[titles["COG"]]
-			pfam = info[titles["Pfam"]]
-			if go_bp != "NA":
+			if go != "NA":
 				interest_flag = 1
-				mytype = unitype + "_GO(BP)"
+				mytype = unitype + "_GO"
 				if not myid in annotation:
 					annotation[myid] = []
-				annotation[myid].append(mytype + "\t" + go_bp + "\t" + ann + "\n" + myinfo)
-			if go_mf != "NA":
-				interest_flag = 1
-				mytype = unitype + "_GO(MF)"
-				if not myid in annotation:
-					annotation[myid] = []
-				annotation[myid].append(mytype + "\t" + go_mf + "\t" + ann + "\n" + myinfo)
-			if go_cc != "NA":
-				interest_flag = 1
-				mytype = unitype + "_GO(CC)"
-				if not myid in annotation:
-					annotation[myid] = []
-				annotation[myid].append(mytype + "\t" + go_cc + "\t" + ann + "\n" + myinfo)
+				annotation[myid].append(mytype + "\t" + go + "\t" + ann + "\n" + myinfo)
 			if kegg != "NA":
 				interest_flag = 1
 				mytype = unitype + "_KEGG-KOs"
@@ -324,7 +237,7 @@ def collect_annotation (uniref):
 				annotation[myid].append(mytype + "\t" + kegg + "\t" + ann + "\n" + myinfo)
 			if cog != "NA":
 				interest_flag = 1
-				mytype = unitype + "_COG"
+				mytype = unitype + "_eggNOG"
 				if not myid in annotation:
 					annotation[myid] = []
 				annotation[myid].append(mytype + "\t" + cog + "\t" + ann + "\n" + myinfo)
@@ -334,6 +247,12 @@ def collect_annotation (uniref):
 				if not myid in annotation:
 					annotation[myid] = []
 				annotation[myid].append(mytype + "\t" + pfam + "\t" + ann + "\n" + myinfo)
+			if level4ec != "NA":
+				interest_flag = 1
+				mytype = unitype + "_Level4EC"
+				if not myid in annotation:
+					annotation[myid] = []
+				annotation[myid].append(mytype + "\t" + level4ec + "\t" + ann + "\n" + myinfo)
 		# if not unknown
 		else:
 			if not myid in annotation:
@@ -413,14 +332,37 @@ def assign_annotation (identity_cutoff, coverage_cutoff, cutoff, pep_cluster, an
 				tmp_info = myinfo.split("\t")
 				if re.search("_unknown", tmp_info[0]):
 					tmp_info[0] = "NA"
-				tmp1 = "\t".join(tmp_info[titles["Length"]:len(tmp_info)])
+				mygene_name = "NA"
+				mytax = "NA"
+				mytaxID = "NA"
+				myreptax = "NA"
+				myreptaxID = "NA"
+				myorg = "NA"
+				myuniprot = "NA"
+				myunref = "NA"
+				if "Gene_names" in titles:
+					mygene_name = tmp_info[titles["Gene_names"]]
+				if "Tax" in titles:
+					mytax = tmp_info[titles["Tax"]]
+				if "TaxID" in titles:
+					mytaxID = tmp_info[titles["TaxID"]]
+				if "Rep_Tax" in titles:
+					myreptax = tmp_info[titles["Rep_Tax"]]
+				if "Rep_TaxID" in titles:
+					myreptaxID = tmp_info[titles["Rep_TaxID"]]
+				#if "Organism" in titles:
+				#	myorg = tmp_info[titles["Organism"]]
+				if "UniProtKB" in titles:
+					myuniprot= tmp_info[titles["UniProtKB"]]
+				if "UniRefID" in titles:
+					myuniref = tmp_info[titles["UniRefID"]]
 				if member == pepid:	# use the annotation of representative
 					flag = 1
 					if not clust_id in outs:
 						outs[clust_id] = {}
 					if not clust_id in outs_info:
 						outs_info[clust_id] = {}
-					outs[clust_id][mytype + "\t" + mytype1 + "\t" + ann + "\t" + tmp_info[titles["Tax"]] + "\t" + tmp_info[titles["TaxID"]] + "\t" + tmp_info[titles["Rep_Tax"]] + "\t" + tmp_info[titles["Rep_TaxID"]] + "\t" + tmp_info[titles["Organism"]] + "\t" + tmp_info[titles["UniProtKB"]] + "\t" + tmp_info[titles["Entry"]] + "\t" + tmp_info[titles["Gene_names"]] + "\t" + tmp_info[titles["UniRefID"]]] = ""
+					outs[clust_id][mytype + "\t" + mytype1 + "\t" + ann + "\t" + mygene_name + "\t" + mytax + "\t" + mytaxID + "\t" + myreptax + "\t" + myreptaxID + "\t" + myuniprot + "\t" + myuniref] = ""
 					outs_info[clust_id][mytype + "\t" + myinfo] = ""
 					if not clust_id in anns:
 						anns[clust_id] = {}
@@ -428,8 +370,8 @@ def assign_annotation (identity_cutoff, coverage_cutoff, cutoff, pep_cluster, an
 				# for cluster
 				if not member in outs_ORF:
 					outs_ORF[member] = {}
-				#outs_ORF[member][myid + "\t" + tmp_info[1] + "\t" + tmp_info[2] + "\t" + tmp_info[5] + "\t" + tmp_info[4] + "\t" + tmp_info[0] + "\t" + tmp1] = ""
-				outs_ORF[member][mytype + "\t" + mytype1 + "\t" + ann + "\t" + tmp_info[titles["Tax"]] + "\t" + tmp_info[titles["TaxID"]] + "\t" + tmp_info[titles["Rep_Tax"]] + "\t" + tmp_info[titles["Rep_TaxID"]] + "\t" + tmp_info[titles["Organism"]] + "\t" + tmp_info[titles["UniProtKB"]] + "\t" + tmp_info[titles["Entry"]] + "\t" + tmp_info[titles["Gene_names"]] + "\t" + tmp_info[titles["UniRefID"]]] = ""
+				#outs_ORF[member][mytype + "\t" + mytype1 + "\t" + ann + "\t" + tmp_info[titles["Gene_names"]] + "\t" + tmp_info[titles["Tax"]] + "\t" + tmp_info[titles["TaxID"]] + "\t" + tmp_info[titles["Rep_Tax"]] + "\t" + tmp_info[titles["Rep_TaxID"]] + "\t" + tmp_info[titles["Organism"]] + "\t" + tmp_info[titles["UniProtKB"]] + "\t" + tmp_info[titles["UniRefID"]]] = ""
+				outs_ORF[member][mytype + "\t" + mytype1 + "\t" + ann + "\t" + mygene_name + "\t" + mytax + "\t" + mytaxID + "\t" + myreptax + "\t" + myreptaxID  + "\t" + myuniprot + "\t" + myuniref] = ""
 				if tmp_info[0] != "NA":
 					mytotal = mytotal + 1
 				myuniref_id = tmp_info[0]
@@ -442,7 +384,8 @@ def assign_annotation (identity_cutoff, coverage_cutoff, cutoff, pep_cluster, an
 				detail_info[myuniref_id][member] = ""
 				if not myuniref_id in ann_info:
 					ann_info[myuniref_id] = {}
-				ann_info[myuniref_id][mytype + "\t" + mytype1 + "\t" + ann + "\t" + tmp_info[titles["Tax"]] + "\t" + tmp_info[titles["TaxID"]] + "\t" + tmp_info[titles["Rep_Tax"]] + "\t" + tmp_info[titles["Rep_TaxID"]] + "\t" + tmp_info[titles["Organism"]] + "\t" + tmp_info[titles["UniProtKB"]] + "\t" + tmp_info[titles["Entry"]] + "\t" + tmp_info[titles["Gene_names"]] + "\t" + tmp_info[titles["UniRefID"]]] = ""
+				#ann_info[myuniref_id][mytype + "\t" + mytype1 + "\t" + ann + "\t" + tmp_info[titles["Gene_names"]] + "\t" + tmp_info[titles["Tax"]] + "\t" + tmp_info[titles["TaxID"]] + "\t" + tmp_info[titles["Rep_Tax"]] + "\t" + tmp_info[titles["Rep_TaxID"]] + "\t" + tmp_info[titles["Organism"]] + "\t" + tmp_info[titles["UniProtKB"]] + "\t" + tmp_info[titles["UniRefID"]]] = ""
+				ann_info[myuniref_id][mytype + "\t" + mytype1 + "\t" + ann + "\t" + mygene_name + "\t" + mytax + "\t" + mytaxID + "\t" + myreptax + "\t" + myreptaxID + "\t" + myuniprot + "\t" + myuniref] = ""
 			# foreach type
 		# foreach member
 		if flag == 0:
@@ -457,17 +400,11 @@ def assign_annotation (identity_cutoff, coverage_cutoff, cutoff, pep_cluster, an
 				mystr = type_tmp
 				tmp1 = ann_title.split("\t")
 				item_num = len(tmp1)
-				tmp2 = tmp1[titles["Length"]:len(tmp1)]
-				item_num2 = len(tmp2)
 				mynum = 1
 				while mynum <= item_num:
 					mystr = mystr + "\tNA"
 					mynum = mynum + 1
-				mystr2 = "NA\tNA\tNA\tNA\tNA\tNA\tNA\tNA\tNA"
-				#mynum = 1
-				#while mynum <= item_num2:
-				#	mystr2 = mystr2 + "\tNA"
-				#	mynum = mynum + 1
+				mystr2 = "NA\tNA\tNA\tNA\tNA\tNA\tNA"
 				outs[clust_id][type_tmp + "\t" + type_tmp + "\t" + type_tmp  + "\t" + mystr2] = ""
 				outs_info[clust_id][mystr] = ""
 				if not clust_id in anns:
@@ -533,13 +470,13 @@ def assign_annotation (identity_cutoff, coverage_cutoff, cutoff, pep_cluster, an
 		# foreach number
 	# foreach peptide cluster
 
+	'''
 	# get number
 	number = {}
 	interest = ["secreted", "cellWall", "outerMembrane", "extracellular", "signaling", "transmembrane", "GO", "KEGG-KOs", "COG"]
 	other = ["cellInnerMembrane", "cellSurface", "cellEnvelop", "cellMembrane", "cytoplasm", "membrane", "cytoplasmicMembrane", "periplasm", "nucleus", "fimbrium", "virion", "sporeCore", "mitochondrion", "bacterialFlagellum"]
 	unknown = ["unknown", "hypothetical"]
 	unchar = ["uncharacterized"]
-
 	total_num = 0
 	for myclust in anns.keys():
 		total_num = total_num + 1
@@ -577,16 +514,15 @@ def assign_annotation (identity_cutoff, coverage_cutoff, cutoff, pep_cluster, an
 				number[mytype] = {}
 			number[mytype][myclust] = ""
     # foreach cluster
+    '''
 
-	
 	#### output info ####
 	outfile1 = re.sub(".detail.tsv", ".ORF.detail.tsv", outfile_detail)
 	open_out = open(outfile_detail, "w")
 	open_out1 = open(outfile1, "w")
 	tmp1 = ann_title.split("\t")
-	tmp2 = "\t".join(tmp1[titles["Length"]:len(tmp1)])
-	open_out.write(utilities.PROTEIN_FAMILY_ID + "\ttype\tdetail\tdescription\tTax\tTaxID\tRep_Tax\tRep_TaxID\torganism\tUniProtKB\tEntry\tGene_names\tunirefID" + "\n")
-	open_out1.write(utilities.PROTEIN_ID + "\ttype\tdetail\tdescription\tTax\tTaxID\tRep_Tax\tRep_TaxID\torganism\tUniProtKB\tEntry\tGene_names\tunirefID" + "\n")
+	open_out.write(utilities.PROTEIN_FAMILY_ID + "\ttype\tdetail\tProtein_names\tGene_names\tTax\tTaxID\tRep_Tax\tRep_TaxID\tUniProtKB\tunirefID" + "\n")
+	open_out1.write(utilities.PROTEIN_ID + "\ttype\tdetail\tProtein_names\tGene_names\tTax\tTaxID\tRep_Tax\tRep_TaxID\tUniProtKB\tunirefID" + "\n")
 	for myclust in sorted(cluster.keys()):
 		if assign_flag == "centroid":  # assign annotation based on representative info
 			if myclust in outs:
@@ -605,6 +541,7 @@ def assign_annotation (identity_cutoff, coverage_cutoff, cutoff, pep_cluster, an
 	# foreach peptide family
 	open_out1.close()
 	
+	'''
 	outfile2 = re.sub(".detail.tsv", ".plot.tsv", outfile_detail)
 	open_out = open(outfile2, "w")
 	open_out.write("type\tnumber\tpercentage\n")
@@ -635,27 +572,7 @@ def assign_annotation (identity_cutoff, coverage_cutoff, cutoff, pep_cluster, an
 				open_file.write(str(myper) + "\t" + str(mytotal) + "\t" + str(mynum) + "\n")
     # foreach percentage
 	open_file.close()
-
-"""	
-	outfile5 = re.sub(".detail.tsv", ".all.info.tsv", outfile_detail)
-	open_file = open(outfile5, "w")
-	title = "familyID\tmember\tunirefID"
-	open_file.write(title + "\n")
-	for myclust in sorted(outs2_info.keys()):
-		for member in sorted(outs2_info[myclust].keys()):
-			open_file.write(str(myclust) + "\t" + str(member) + "\t" + outs2_info[myclust][member] + "\n")
-    # foreach percentage
-	open_file.close()
-	
-	outfile6 = re.sub(".detail.tsv", ".consistency.tsv", outfile_detail)
-	open_file = open(outfile6, "w")
-	title = "familyID\tlabel\trep_label\tagreement"
-	open_file.write(title + "\n")
-	for myclust in sorted(consistency.keys()):
-		open_file.write(str(myclust) + "\t" + consistency[myclust] + "\n")
-    # foreach percentage
-	open_file.close()
-"""
+	'''
 # assign_annotation
 
 
