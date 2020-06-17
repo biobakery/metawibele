@@ -66,28 +66,28 @@ def parse_cli_arguments ():
 	# add the custom arguments to the workflow
 	workflow.add_argument("threads",
 	                      desc = "number of threads/cores for each task to use",
-	                      default = "none")
+	                      default = None)
 	workflow.add_argument("characterization-config",
 	                      desc = "the configuration file of characterization analysis",
-	                      default = "none")
+	                      default = None)
 	workflow.add_argument("mspminer-config",
 	                      desc = "the configuration file used by mspminer",
-	                      default = "none")
+	                      default = None)
 	workflow.add_argument("bypass-clustering",
 	                      desc = "do not cluster proteins into protein families",
 	                      action = "store_true")
-	workflow.add_argument("bypass-protein-family",
-	                      desc = "do not annotate protein families based on global homology  information",
+	workflow.add_argument("bypass-global-homology",
+	                      desc = "do not annotate protein families based on global homology information",
 	                      action = "store_true")
 	workflow.add_argument("bypass-domain-motif",
-	                      desc = "do not annotate protein families based on local homology information",
+	                      desc = "do not annotate protein families based on domain/motif information",
 	                      action = "store_true")
 	workflow.add_argument("bypass-abundance",
 	                      desc = "do not annotate protein families based on abundance information",
 	                      action = "store_true")
 	workflow.add_argument("split-number",
 	                      desc="indicates number of spliting files for annotation based on sequence information",
-	                      default = "none")
+	                      default = None)
 	workflow.add_argument("bypass-integration",
 	                      desc = "do not integrate annotations for protein families",
 	                      action = "store_true")
@@ -110,9 +110,9 @@ def get_method_config (config_file):
 	integration_conf = {}
 	values = ["yes", "no", "Yes", "No"]
 
-	if "protein_family" in config_items:
-		for name in config_items["protein_family"].keys():
-			myvalue = config_items["protein_family"][name]
+	if "global_homology" in config_items:
+		for name in config_items["global_homology"].keys():
+			myvalue = config_items["global_homology"][name]
 			if not myvalue in values:
 				print('The config value can not be recognized. Please check your config file!')
 				continue
@@ -156,20 +156,25 @@ def main(workflow):
 	args = workflow.parse_args()
 
 	# get configuration info
-	metawibele_install_directory = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-	default_characterization_conf = os.path.join(metawibele_install_directory, "configs", "characterization.cfg")
-	if args.characterization_config == "none":
+	default_characterization_conf = os.path.join(config.config_directory, "characterization.cfg")
+	if args.characterization_config:
+		args.characterization_config = os.path.abspath(args.characterization_config)
+	else:
 		args.characterization_config = default_characterization_conf
-	#print(args.characterization_config)
+	print(args.characterization_config)
 	family_conf, domain_motif_conf, abundance_conf, integration_conf = get_method_config(args.characterization_config)
-	if args.threads == "none":
+	if args.threads:
+		args.threads = int(args.threads)
+	else:
 		args.threads = int(config.threads)
-	if args.split_number == "none":
+	if args.split_number:
+		args.split_number = int(args.split_number)
+	else:
 		args.split_number = int(config.split_number)
-	if args.mspminer_config == "none":
-		abundance_conf["mspminer"] = config.mspminer
-	else:	
+	if args.mspminer_config:
 		abundance_conf["mspminer"] = os.path.abspath(args.mspminer_config)
+	else:
+		abundance_conf["mspminer"] = config.mspminer
 
 	# input and output folder
 	input_dir = args.input
@@ -204,11 +209,11 @@ def main(workflow):
 		                                                                                args.threads,
 		                                                                                output_dir, protein_family, protein_family_seq)
 
-	### STEP #2: protein-family annotation ###
-	# if protein-family action is provided, then directly extract annotations from database (UniProt)
-	if not args.bypass_protein_family:
-		print("Run protein_family annotation")
-		myprotein_family_ann, myprotein_ann, homology_output_folder = characterization.protein_family_annotation (workflow, family_conf,
+	### STEP #2: global-homology annotation ###
+	# if global-homology action is provided, then directly extract annotations from database (UniProt)
+	if not args.bypass_global_homology:
+		print("Run global-homology annotation")
+		myprotein_family_ann, myprotein_ann, homology_output_folder = characterization.global_homology_annotation (workflow, family_conf,
 		                                                                                                          gene_catalog_seq,
 		                                                                                                          args.threads,
 		                                                                                                          output_dir, uniref_taxonomy_family, uniref_taxonomy,
