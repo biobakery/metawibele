@@ -76,7 +76,7 @@ import re
 import time
 
 
-VERSION = "0.3.1"
+VERSION = "0.3.2"
 AUTHOR = "MetaWIBELE Development Team"
 AUTHOR_EMAIL = "metawibele-users@googlegroups.com"
 MAINTAINER = "Yancong Zhang"
@@ -237,6 +237,7 @@ setuptools.setup(
 			'metawibele_workflow = metawibele.metawibele_workflow:main',
 			'metawibele_characterize = metawibele.workflows.characterize:main',
 			'metawibele_prioritize = metawibele.workflows.prioritize:main',
+			'metawibele_preprocess = metawibele.workflows.preprocess:main',
 			'metawibele_abundance_annotator = metawibele.characterize.abundance_annotator:main',
 			'metawibele_antiSMASH_annotator = metawibele.characterize.antiSMASH_annotator:main',
 			'metawibele_ddi_DOMINE_ExpAtlas = metawibele.characterize.ddi_DOMINE_ExpAtlas:main',
@@ -304,29 +305,27 @@ setuptools.setup(
 			'metawibele_combine_abundance_annotation = metawibele.common.combine_abundance_annotation:main',
 			'metawibele_extract_abundance_feature_subset = metawibele.common.extract_abundance_feature_subset:main',
 			'metawibele_extract_abundance_sample_subset = metawibele.common.extract_abundance_sample_subset:main',
-			'metawibele_extract_sequences = metawibele.common.extract_sequences:main',
-			'metawibele_extract_sequences_list = metawibele.common.extract_sequences_list:main',
 			'metawibele_filter_clusters = metawibele.common.filter_clusters:main',
 			'metawibele_filter_prevalence = metawibele.common.filter_prevalence:main',
-			'metawibele_format_metadata = metawibele.common.format_metadata:main',
 			'metawibele_join_family_abundance = metawibele.common.join_family_abundance:main',
-			'metawibele_prepare_abundance_heatmap = metawibele.common.prepare_abundance_heatmap:main',
 			'metawibele_split_family_abundance = metawibele.common.split_family_abundance:main',
 			'metawibele_transpose = metawibele.common.transpose:main',
 			'metawibele_split_fasta_file = metawibele.common.split_fasta_file:main',
-			'metawibele_preprocess = metawibele.workflows.preprocess:main'
+			'metawibele_download_config = metawibele.common.download_config_file:main'
 		]},
 	package_data={
 		'metawibele': [
 			'workflows/*.py',
 			'metawibele.cfg',
 			'configs/*',
-			'data/*',
+			'data/domain/*',
+			'data/taxonomy/*',
+			'data/misc/*',
 			'Rscripts/*'
 		]},
-	data_files = [
-			("metawibele/examples/", glob("examples/*"))
-		],
+	#data_files = [
+	#		("metawibele/examples/", glob("examples/*"))
+	#	],
 	scripts=glob('metawibele/workflows/*py'),
 	zip_safe=False
 )
