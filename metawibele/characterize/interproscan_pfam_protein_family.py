@@ -36,8 +36,7 @@ import argparse
 try:
 	from metawibele import config
 	from metawibele import utilities
-	#import config
-	#import utilities
+	from metawibele.common import utils
 except ImportError:
 	sys.exit("CRITICAL ERROR: Unable to find the MetaWIBELE python package." +
 	         " Please check your install.")
@@ -77,8 +76,7 @@ def get_args ():
 #==============================================================
 def collect_pfam_ann (pfamfile):
 	pfam_ann = {}
-	open_file = open(pfamfile, "r")
-	for line in open_file:
+	for line in utils.gzip_bzip2_biom_open_readlines (pfamfile): 
 		line = line.strip()
 		if not len(line):
 			continue
@@ -87,7 +85,7 @@ def collect_pfam_ann (pfamfile):
 		info = line.split("\t")
 		pfam_ann[info[0]] = info[1]
 	# foreach line
-	open_file.close()
+	
 	return pfam_ann
 # collect_pfam_ann
 
