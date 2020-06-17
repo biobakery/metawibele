@@ -155,7 +155,7 @@ def collect_taxonomy_annotation (taxa_ann):
 			msp_taxa_name = info[titles["msp_taxa_name"]]
 		if "msp_taxa_id" in titles:
 			msp_taxa_id = info[titles["msp_taxa_id"]]
-		org = info[titles["organism"]]
+		#org = info[titles["organism"]]
 		unirefID = info[titles["unirefID"]]
 		uniprot = info[titles["UniProtKB"]]
 		taxa_id = info[titles["taxa_id"]]
@@ -175,7 +175,7 @@ def collect_taxonomy_annotation (taxa_ann):
 			taxonomy[myid] = "NA\tNA\tNA" 
 			mapping[myid] = "NA\t" + map_type + "\tNA"
 		else:
-			mapping[myid] = unirefID + "\t" + map_type + "\t" + "UniProtKB=" + uniprot + "\n" + "description=" + mydesc + "\n" + "organism=" + org + "\n" + "query_cov_type=" + query_type + "\n" + "mutual_cov_type=" + mutual_type + "\n" + "identity=" + identity + "\n" + "query_coverage=" + query_cov + "\n" + "mutual_coverage=" + mutual_cov + "\n" + "taxa_id=" + info[titles["TaxID"]] + "\ntaxa_name=" + myname
+			mapping[myid] = unirefID + "\t" + map_type + "\t" + "UniProtKB=" + uniprot + "\n" + "Protein_names=" + mydesc +  "\n" + "query_cov_type=" + query_type + "\n" + "mutual_cov_type=" + mutual_type + "\n" + "identity=" + identity + "\n" + "query_coverage=" + query_cov + "\n" + "mutual_coverage=" + mutual_cov + "\n" + "taxa_id=" + info[titles["TaxID"]] + "\ntaxa_name=" + myname
 
 			taxonomy[myid] = taxa_name + "\t" + taxa_rank + "\t" + "taxa_id=" + taxa_id + "\n" + "taxa_lineage=" + taxa_lineage + "\n" + "LCA_Tax=" + tax + "\n" + "LCA_TaxID=" + taxID + "\n" + "Rep_Tax=" + reptax + "\n" + "Rep_TaxID=" + reptaxID + "\n" + "msp_name=" + msp_name + "\n" + "msp_taxa_name=" + msp_taxa_name + "\n" + "msp_taxa_id=" + msp_taxa_id
 	# foreach line
