@@ -67,22 +67,25 @@ def parse_cli_arguments ():
 	# add the custom arguments to the workflow
 	workflow.add_argument("threads",
 						desc = "number of threads/cores for each task to use",
-						default = "none")
+						default = None)
 	workflow.add_argument("prioritization-config",
-	                    desc = "the configuration file of quantitative prioritization",
-	                    default = "none"),
-	workflow.add_argument("interested-function",
-	                    desc = "the file of interested functions",
-	                    default = "none"),
+	                    desc = "the configuration file for prioritization",
+	                    default = None)
+	workflow.add_argument("vignette-config",
+	                    desc = "the file with specific functions of interest used as binary filtering for prioritization",
+	                    default = "none")
 	workflow.add_argument("bypass-mandatory",
 	                     desc = "do not prioritize protein families based on quantitative criteria (mandatory prioritization)",
 						 action = "store_true")
 	workflow.add_argument("bypass-optional",
-	                     desc = "do not prioritize protein families based on interested functions (optional prioritization)",
+	                     desc = "do not prioritize protein families based on selecting our for interested annotations (optional prioritization)",
 	                     action = "store_true")
 	workflow.add_argument("bypass-finalized",
 	                     desc = "do not finalize prioritized protein families",
 						 action = "store_true")
+	workflow.add_argument("selected-output",
+	                    desc = "the output file name for the prioritized protein families by binary filtering",
+	                    default = None)
 
 	return workflow
 
@@ -94,7 +97,9 @@ def main(workflow):
 
 	# get arguments
 	args = workflow.parse_args()
-	if args.threads == "none":
+	if args.threads:
+		args.threads = int(args.threads)
+	else:
 		args.threads = int(config.threads)
 
 	# input and output folder
@@ -104,9 +109,10 @@ def main(workflow):
 	priority_dir = os.path.abspath(priority_dir)
 
 	# get config file
-	metawibele_install_directory = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-	default_prioritization_conf = os.path.join(metawibele_install_directory, "configs", "prioritization.cfg")
-	if args.prioritization_config == "none":
+	default_prioritization_conf = os.path.join(config.config_directory, "prioritization.cfg")
+	if args.prioritization_config:
+		args.prioritization_config = os.path.abspath(args.prioritization_config)
+	else:
 		args.prioritization_config = default_prioritization_conf
 	print(args.prioritization_config)
 
@@ -120,7 +126,10 @@ def main(workflow):
 	# output files
 	unsupervised_rank = os.path.join(priority_dir, config.basename + "_unsupervised_prioritization.rank.tsv")
 	supervised_rank = os.path.join(priority_dir, config.basename + "_supervised_prioritization.rank.tsv")
-	selected_priority = os.path.join(priority_dir, config.basename + "_supervised_prioritization.rank.selected.tsv") 
+	if args.selected_output:
+		selected_priority = os.path.join(priority_dir, os.path.basename(args.selected_output))
+	else:	
+		selected_priority = os.path.join(priority_dir, config.basename + "_supervised_prioritization.rank.selected.tsv") 
 
 	final_unsupervised_rank = os.path.join(priority_dir, config.basename + "_unsupervised_prioritization.rank.table.tsv")
 	final_supervised_rank = os.path.join(priority_dir, config.basename + "_supervised_prioritization.rank.table.tsv")
@@ -138,7 +147,7 @@ def main(workflow):
 	### STEP #2: optional prioritization: binary filtering ###
 	# if optional action is provided, then prioritize protein families based on interested functions (selection factor)
 	if not args.bypass_optional:
-		myselection = prioritization.optional_prioritization (workflow, args.prioritization_config, args.interested_function,
+		myselection = prioritization.optional_prioritization (workflow, args.prioritization_config, args.vignette_config,
 		                                                             protein_family_ann,
 		                                                             supervised_rank,
 		                                                             priority_dir, selected_priority)
