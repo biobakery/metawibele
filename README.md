@@ -191,7 +191,6 @@ gene_catalog_prot =
 	basename = 
 	# The output directory
 	output_dir =
-
 	``` 
 
 	* Specify applied computational resources:
