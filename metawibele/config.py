@@ -283,8 +283,6 @@ pfam_database = os.path.join(domain_directory, pfam_database_choices[0])
 human_pfam_database = os.path.join(domain_directory, pfam_database_choices[1])
 pfam2go_database_choices = ['pfam2GO.txt.gz']
 pfam2go_database = os.path.join(domain_directory, pfam2go_database_choices[0])
-#go_database_choices = ['go.obo']
-#go_database = database_directory + go_database_choices[0]
 interaction_database_choices = ['INTERACTION.txt.gz']
 interaction_database = os.path.join(domain_directory, interaction_database_choices[0])
 Expression_Atlas_database = [os.path.join(domain_directory, "32_Uhlen_Lab_colon_rectum.txt.gz"), 
@@ -423,11 +421,6 @@ for item in tmp:
 	item = "interpro." + item + ".tsv"
 	interproscan_type.append(item)
 
-
-# EffectiveT3
-#effectivet3_cmmd = get_item(config_items, "effectivet3", "effectivet3_cmmd", "string")
-#effectivet3_module = get_item(config_items, "effectivet3", "effectivet3_module", "string")
-
 # DDI
 #human_microbiome_ddi = get_item(config_items, "DDI", "human_microbiome_ddi", "string")
 
@@ -437,9 +430,6 @@ tshld_diff = 0.50			# the minimum difference between most and second dominant ta
 tshld_lca = 0.80			# the minimum consistency for LCA calculattion
 taxa_final = "Rep"			# the source of taxa for one protein family, representatives vs. LCA
 mspminer = os.path.join(config_directory, "MSPminer_setting.cfg")
-#mspminer = get_item(config_items, "abundance", "mspminer", "string")
-#if mspminer.lower() == "none":
-#	mspminer = os.path.join(config_directory, "MSPminer_setting.cfg")
 
 # abundance
 normalize = get_item(config_items, "abundance", "normalize", "string") 		# the method for abundance normalization
