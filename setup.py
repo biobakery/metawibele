@@ -8,9 +8,9 @@ import os
 import sys
 
 # check for either of the required versions
-# required python versions (3.6+)
+# required python versions (3.7+)
 required_python_version_major = [3]
-required_python_version_minor = [6]
+required_python_version_minor = [7]
 pass_check = False
 try:
 	for major, minor in zip(required_python_version_major, required_python_version_minor):
@@ -78,7 +78,6 @@ import time
 
 VERSION = "0.3.2"
 AUTHOR = "MetaWIBELE Development Team"
-AUTHOR_EMAIL = "metawibele-users@googlegroups.com"
 MAINTAINER = "Yancong Zhang"
 MAINTAINER_EMAIL = "zhangyc201211@gmail.com"
 
