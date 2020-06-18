@@ -76,8 +76,8 @@ def parse_cli_arguments():
 	                      default = None)
 	workflow.add_argument("gene-call-type",
 	                      desc = "specify which type of gene calls will be used",
-						  choices = ['prokka', 'prodigal'],
-	                      default = 'prokka')
+						  choices = ['prokka', 'prodigal', 'both'],
+	                      default = 'both')
 	workflow.add_argument("extension",
 	                      desc = "provide the extension for all fastq files",
 						  choices = [".fastq.gz", ".fastq"],
