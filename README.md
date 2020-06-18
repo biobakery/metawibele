@@ -29,7 +29,7 @@ Support for HUMAnN is available via [the MetaWIBELE channel](https://forum.bioba
     	* [Install MetaWIBELE](#install-metawibele)
     	* [Download databases](#download-databases)
     	* [Download configuration files](#download-configuration-files)
-			* [Download global configuration template] (#download-global-configuration-template)
+			* [Download global configuration template](#download-global-configuration-template)
     		* [Download local configuration template](#download-local-configuration-template)
     		* [Download vignette configuraion template](#download-vignetts-configuration-template)
 * [Quick-start Guide](#quick-start-guide)
@@ -47,8 +47,8 @@ Support for HUMAnN is available via [the MetaWIBELE channel](https://forum.bioba
     		* [Output files of MetaWIBELE-prioritize](#output-files-of-metawibele-prioritize)
 * [Guides to MetaWIBELE Utilities](#guides-to-metawibele-utilities)
 	* [Preprocessing sequencing reads to build gene catalogs](#preprocessing-sequencing-reads-into-to-build-gene-catalogs)
-		* [Input files for preprocessing](#input-files-preprocessing)
 		* [Preprocessing workflow](#preprocessing-workflow)
+		* [Input files for preprocessing workflow](#input-files-preprocessing-workflow)
 		* [Demo run of preprocessing workflow](#demo-run-of-preprocessing-workflow) 
 		* [Output files of preprocessing workflow](#output-files-of-preprocessing-workflow)
 * [Download MetaWIBELE resources](#download-metawibele-resources)
@@ -162,7 +162,7 @@ UniRef databases are required if you will use MetaWIBELE to do global-homology b
 	
 ### Download configuration files
 
-#### Download global configuration templates
+#### Download global configuration template
 
 To run MetaWIBELE, one global configuation file `metawibele.cfg` is required to make basic settings. 
 
@@ -279,7 +279,7 @@ analysis_method = LM
 	```
 
 
-#### Local configuration
+#### Download local configuration template
 By default, MetaWIBELE will perform by using the local configuration files installed in the package. Optionally, you can also make your own local configuration files and provide them with optional arguments to MetaWIBELE. For example, the local characterization configuration file can be provided with `--characterization-config characterization.cfg`
 
 * Download local configuration template files into your working directory:
@@ -386,7 +386,7 @@ summary_ann = yes
 
 	```
 	
-#### Vignettes configuration
+#### Download vignette configuration template
 MetaWIBELE can accept user defined vignette functions of interest for further prioritization. You can make your own vignettes configuration files and provide them with optional argument to MetaWIBELE. For example, the vignette function configurations file can be provided with `--vignette-config vignettes_function.tsv`
 
 * Download local vignettes template file into your working directory:
@@ -466,11 +466,11 @@ MetaWIBELE can accept user defined vignette functions of interest for further pr
 	* The workflow runs with the default settings to run all modules. These settings will work for most data sets. However, if you need to customize your workflow settings for the preprocessing workflow to determine the optimum seeting. You can specify which modules you want to run in your own configuration file.
 	* For example, `--characterization-config $myconfig_file` will modify the default settings when running the characterization modules.
 	
-* ##### Demo run for characterization
+* ##### Demo run of MetaWIBELE-characterize
 
 	`$ metawibele_workflow characterize --input examples/input/ --output $OUTPUT_DIR`
 
-* ##### Output files for characterization
+* ##### Output files of MetaWIBELE-characterize
 	**1. Annotation file**
 	
 	```
@@ -602,11 +602,11 @@ MetaWIBELE can accept user defined vignette functions of interest for further pr
 	* The workflow runs with the default settings for all main tool subtasks. These settings will work for most data sets. However, if you need to customize your workflow settings for the preprocessing workflow to determine the optimum seeting. Then apply these settings by using options for each task. You can specify your own configuration file.
 	* For example, `--prioritization-config $myconfig_file` will modify the default settings when running the prioritization tasks.
 	
-* ##### Demo run for prioritization
+* ##### Demo run of MetaWIBELE-prioritize
 
 	`$ metawibele_workflow prioritize --input examples/characterization/ --output $OUTPUT\_DIR/`
 
-* ##### Output files for prioritization
+* ##### Output files of MetaWIBELE-prioritize
 	**1. unsupervised prioritization**
 	
 	```
@@ -823,10 +823,10 @@ MaAsLin2_DA-sig = none
 
 ## Guides to MetaWIBELE Utilities
 
-### Preprocessing sequencing reads into gene catalogs
+### Preprocessing sequencing reads to build gene catalogs
 A utility workflow in MetaWIBELE package for preprocessing metagenomes reads, used for (i) metagenomic assembly, (ii) open reading frame prediction, (iii) non-redundant gene catalogs construction and (iv) gene abundance estimation.
 
-#### Specific options for preprocessing workflow
+#### Preprocessing workflow
 ```
 usage: preprocess.py [-h] [--version] [--threads THREADS]
                      [--extension-paired EXTENSION_PAIRED]
@@ -922,13 +922,14 @@ optional arguments:
 * `--extension` indicates the extension for all fastq files. It should be specified as **".fastq.gz"** if the fastq files are `$SAMPLE.fastq.gz` 
 * `--output`: the ouput directory. 
 
-#### How to run preprocessing workflow
+#### Input files of preprocessing workflow
 * Make sure the `metawibele.cfg` in your working directory.
+* QC'ed shotgun sequencing metagenome file (fastq, fastq.gz, fasta, or fasta.gz format)
 * See the section on parallelization options to optimize the workflow run based on your computing resources. 
 * The workflow runs with the default settings for all main tool subtasks. If you need to customize your workflow settings for the preprocessing workflow to determine the optimum seeting, you can change the parameter settings.
 * For example, `--extension-paried "$R1_suffix,$R2_suffix"`, `--extension "$fastq_suffix"` (what are the follwong part after `$SAMPLE` in the input file names) will modify the default settings when running the assembly task.
 
-#### Example for running preprocessing workflow
+#### Demo run of preprocessing workflow
 
 `$ preprocessing_workflow --input examples/raw_reads/ --output preprocessing/ --extension-paired "_R1.fastq.gz,_R2.fastq.gz" --extension ".fastq.gz" --sample-list examples/raw_reads/sample.txt --local-jobs 5 --output $OUTPUT_DIR/`
 
