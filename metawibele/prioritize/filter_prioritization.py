@@ -158,11 +158,11 @@ def read_vignettes_file (vignettes_file, specific_annotation):
 		mytype = info[titles["type"]]
 		if not mytype.lower() in specific_annotation and not mytype in specific_annotation:
 			continue
-		if not "accession" in titles:
+		if not "annotation" in titles:
 			# debug
-			print("No accession info!\t" + line)
+			print("No annotation info!\t" + line)
 			continue
-		myid = info[titles["accession"]]
+		myid = info[titles["annotation"]]
 		vignettes[myid] = ""
 	# foreach line
 
