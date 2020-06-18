@@ -917,8 +917,8 @@ optional arguments:
 ```
 
 * `--input`: the input directory where a set of fastq (or fastq.gz) files (single-end or paired-end) passing through QC are stored. The files are expected to be named `$SAMPLE.paired_R1.gz`, `$SAMPLE.paired_R2.gz`, `$SAMPLE.orphan_R1.gz` and `$SAMPLE.orphan_R2.gz` where `$SAMPLE` is the sample name or identifier corresponding to the sequences. `$SAMPLE` can contain any characters except spaces or periods.
-* `--extension-paired` indicates the extension for paired fastq files using comma to seperate. It should be specified as **".R1.fastq.gz,.R2.fastq.gz"** if the paired fastq files are `$SAMPLE.R1.fastq.gz` and `$SAMPLE.R2.fastq.gz`  
-* `--extension` indicates the extension for all fastq files. It should be specified as **".fastq.gz"** if the fastq files are `$SAMPLE.fastq.gz` 
+* `--extension-paired` indicates the extension for paired fastq files using comma to seperate. It should be specified as ".R1.fastq.gz,.R2.fastq.gz" if the paired fastq files are `$SAMPLE.R1.fastq.gz` and `$SAMPLE.R2.fastq.gz`  
+* `--extension` indicates the extension for all fastq files. It should be specified as ".fastq.gz" if the fastq files are `$SAMPLE.fastq.gz` 
 * `--output`: the ouput directory. 
 
 #### Input files of preprocessing workflow
