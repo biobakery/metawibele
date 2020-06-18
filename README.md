@@ -84,16 +84,16 @@ Bypass options:
 ### Requirements
 
 1. [Python](https://www.python.org/) (version >= 3.7)
-2. [Diamond](http://www.diamondsearch.org/index.php) (version >= 0.9.5)
+2. [AnADAMA2](https://huttenhower.sph.harvard.edu/anadama2) (version >= 0.7.4-devel)
 3. [CD-hit](http://weizhongli-lab.org/cd-hit/) (version >= 4.7)
-4. [Interproscan](https://github.com/ebi-pf-team/interproscan/wiki) (version >= 5.31-70)
-5. [Signalp](http://www.cbs.dtu.dk/services/SignalP-4.1/) (version >= 4.1)
-6. [TMHMM](http://www.cbs.dtu.dk/services/TMHMM/) (version >= 2.0)
-7. [Phobius](http://phobius.sbc.su.se/) (version >= 1.01)
-8. [PSORTb](https://psort.org/documentation/index.html) (version >= 3.0)
-9. [MSPminer](https://www.enterome.com/downloads/) (version >= 2)
-10. [MaAsLin2](https://huttenhower.sph.harvard.edu/maaslin2) (versuib >= 1.1.2)
-11. [AnADAMA2](https://huttenhower.sph.harvard.edu/anadama2) (version >= 0.7.4-devel)
+4. [Diamond](http://www.diamondsearch.org/index.php) (version >= 0.9.5)
+5. [MSPminer](https://www.enterome.com/downloads/) (version >= 2)
+6. [MaAsLin2](https://huttenhower.sph.harvard.edu/maaslin2) (versuib >= 1.1.2) (only required if using MaAsLin2 to associate with host phenotypes)
+7. [Interproscan](https://github.com/ebi-pf-team/interproscan/wiki) (version >= 5.31-70) (only required if using Interproscan to annotate domains and motifs)
+8. [Signalp](http://www.cbs.dtu.dk/services/SignalP-4.1/) (version >= 4.1) (only required if using Signalp to annotate signal peptides)
+9. [TMHMM](http://www.cbs.dtu.dk/services/TMHMM/) (version >= 2.0) (only required if using TMHMM to annotate transmembrane proteins)
+10. [Phobius](http://phobius.sbc.su.se/) (version >= 1.01) (only required if using Phobius to annotate both signal peptides and transmembrane proteins)
+11. [PSORTb](https://psort.org/documentation/index.html) (version >= 3.0) (only required if using PSORTb to predict subcellular localization)
 12. **Optional**: only required if using MetaWIBELE utitlity to preprocess metagenomic sequencing reads
 	* [MEGAHIT](https://github.com/voutcn/megahit) (version >= 1.1.3) 
 	* [Prokka](https://github.com/tseemann/prokka) (version >= 1.14-dev; recommend to close '-c' parameter in setting prodigal parameters)
@@ -103,7 +103,7 @@ Bypass options:
 	* [SAMtools](https://github.com/samtools/) (version >= 1.5)
 	* [featureCounts](http://bioinf.wehi.edu.au/featureCounts/) (version >= 1.6.2)
 
-Please install the required software in a location in your `$PATH`. If you always run with gene catalogs, the optional softwares are not required. Also if you always run with one or more bypass options (for information on bypass options, see optional arguments to the section [Workflow by bypass mode](#workflow-by-bypass-mode)), the software required for the steps you bypass does not need to be installed.
+**Note:** Please install the required software in a location in your `$PATH`. If you always run with gene catalogs, the optional softwares are not required. Also if you always run with one or more bypass options (for information on bypass options, see optional arguments to the section [Workflow by bypass mode](#workflow-by-bypass-mode)), the software required for the steps you bypass does not need to be installed.
 
 
 ### Installation
