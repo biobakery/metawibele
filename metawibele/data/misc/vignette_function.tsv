@@ -1,0 +1,62 @@
+type	accession	accession_type	description
+pilin	PF11530	PfamDomain	Minor type IV pilin, PilX-like
+pilin	PF14245	PfamDomain	Type IV pilin PilA
+pilin	PF16734	PfamDomain	Type IV pilin-like putative secretion pathway protein G/H
+pilin	PF08805	PfamDomain	Type 4 secretion system, PilS, N-terminal
+pilin	PF09160	PfamDomain	FimH, mannose-binding domain
+pilin	PF11104	PfamDomain	Type IV pilus assembly protein PilM
+pilin	PF16976	PfamDomain	Flp pilus assembly protein RcpC/CpaB
+pilin	PF00114	PfamDomain	Pilin (bacterial filament)
+pilin	PF04964	PfamDomain	Flp/Fap pilin component
+pilin	PF06864	PfamDomain	Pilin accessory protein (PilO)
+pilin	PF07790	PfamDomain	Archaeal Type IV pilin, N-terminal 
+pilin	PF09460	PfamDomain	Saf-pilin pilus formation protein
+pilin	PF09673	PfamDomain	Type-F conjugative transfer system pilin assembly protein
+pilin	PF09679	PfamDomain	Type-F conjugative transfer system pilin chaperone (TraQ)
+pilin	PF16555	PfamDomain	Gram-positive pilin subunit D1, N-terminal domain
+pilin	PF16569	PfamDomain	Gram-positive pilin backbone subunit 2, Cna-B-like domain
+pilin	PF16570	PfamDomain	Gram-positive pilin backbone subunit 3, Cna-B-like domain
+pilin	PF16732	PfamDomain	Type IV minor pilin ComP, DNA uptake sequence receptor
+pilin	PF16964	PfamDomain	Putative tight adherence pilin protein F
+pilin	PF18682	PfamDomain	Pilin A4
+pilin	PF04350	PfamDomain	Pilus assembly protein, PilO
+pilin	PF04351	PfamDomain	Pilus assembly protein, PilP
+pilin	PF05946	PfamDomain	Toxin-coregulated pilus subunit TcpA
+pilin	PF06340	PfamDomain	Vibrio cholerae toxin co-regulated pilus biosynthesis protein F
+pilin	PF07434	PfamDomain	CblD like pilus biogenesis initiator
+pilin	PF09460	PfamDomain	Saf-pilin pilus formation protein
+pilin	PF09476	PfamDomain	Pilus biogenesis CpaD protein (pilus_cpaD)
+pilin	PF09589	PfamDomain	HrpA pilus formation protein
+pilin	PF09977	PfamDomain	Putative Tad-like Flp pilus-assembly
+pilin	PF10671	PfamDomain	Toxin co-regulated pilus biosynthesis protein Q
+pilin	PF11130	PfamDomain	F pilus assembly Type-IV secretion system for plasmid transfer
+pilin	PF13400	PfamDomain	Putative Flp pilus-assembly TadE/G-like
+pilin	PF13629	PfamDomain	Pilus formation protein N terminal region
+pilin	PF13681	PfamDomain	Type IV pilus assembly protein PilX C-term
+pilin	PF16074	PfamDomain	Type IV Pilus-assembly protein W
+pilin	PF16968	PfamDomain	Pilus assembly protein TadZ N-terminal
+pilin	PF17456	PfamDomain	Toxin-coregulated pilus protein S
+pilin	PF10623	PfamDomain	Plasmid conjugative transfer protein PilI
+pilin	PF15976	PfamDomain	CS1-pili formation C-terminal
+pilin	PF18223	PfamDomain	Pili PilJ C-terminal domain
+pilin	PF00419	PfamDomain	Fimbrial protein
+pilin	PF02432	PfamDomain	Fimbrial, major and minor subunit
+pilin	PF04449	PfamDomain	CS1 type fimbrial major subunit
+pilin	PF09222	PfamDomain	Fimbrial adhesin F17-AG, lectin domain
+pilin	PF10610	PfamDomain	Thin aggregative fimbriae synthesis protein
+pilin	PF14481	PfamDomain	Type 4 fimbrial biogenesis protein PilY2
+pilin	PF15495	PfamDomain	Major fimbrial subunit protein type IV, Fimbrillin, C-terminal
+pilin	PF16831	PfamDomain	CS6 fimbrial subunits A and B, Coli surface antigen 6
+pilin	PF16970	PfamDomain	Type-1 fimbrial protein, A
+pilin	PF06321	PfamDomain	Major fimbrial subunit protein (FimA)
+pilin	PF08842	PfamDomain	Fimbrillin-A associated anchor proteins Mfa1 and Mfa2
+pilin	PF02753	PfamDomain	Pili assembly chaperone PapD, C-terminal domain
+pilin	PF00345	PfamDomain	Pili and flagellar-assembly chaperone, PapD N-terminal domain
+pilin	PF14855	PfamDomain	Pilus-assembly fibrillin subunit, chaperone
+pilin	PF03628	PfamDomain	PapG chaperone-binding domain; PapG, the adhesin of the P-pili, is situated at the tip and is only a minor component of the whole pilus structure
+pilin	PF13953	PfamDomain	PapC C-terminal domain
+pilin	PF13954	PfamDomain	PapC N-terminal domain
+pilin	PF05567	PfamDomain	Neisseria PilC beta-propeller domain
+pilin	PF07419	PfamDomain	PilM is an inner membrane protein that has been predicted to function as a component of the pilin transport apparatus and thin-pilus basal body
+pilin	PF05137	PfamDomain	Fimbrial assembly protein (PilN)
+pilin	PF18222	PfamDomain	PilN biogenesis protein dimerization domain, PilN is an integral inner membrane protein needed for the formation of type IV pilus
