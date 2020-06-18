@@ -14,41 +14,42 @@ Identifying Novel Bioactive Microbial Gene Products in Inflammatory Bowel Diseas
 
 **For additional information, read the** [MetaWIBELE Tutorial](https://github.com/biobakery/metawibele)
 
-We provide support for MetaWIBELE users via our Google group. Please feel free to send any questions to the group by posting directly or emailing `<metawibele-users@googlegroups.com>`.
+Support for HUMAnN is available via [the MetaWIBELE channel](https://forum.biobakery.org/c/Microbial-community-profiling/MetaWIBELE) of the bioBakery Support Forum.
+
 ***
 
 ## Contents ##
 
 * [Workflow](#workflow)
+	* [Workflow by bypass mode](#workflow-by-bypass-mode) 
 * [Install MetaWIBELE](#install-metawibele)
     * [Requirements](#requirements)
     * [Installation](#installation)
     	* [Download MetaWIBELE](#download-metawibele)
     	* [Install MetaWIBELE](#install-metawibele)
-    	* [Download database](#download-databases)
-    * [Configuration for MetaWIBELE](#configuration-for-metawibele)
-    	* [Global configration file](#global-configration-file)
-    	* [Configuration for characterization](#configuration-for-characterization)
-    	* [Configuration for prioritization](#configuration-for-prioritization)
-    * [Test with a demo run](#test-with-a-demo-run) 
+    	* [Download databases](#download-databases)
+    	* [Download configuration files](#download-configuration-files)
+			* [Download global configuration template] (#download-global-configuration-template)
+    		* [Download local configuration template](#download-local-configuration-template)
+    		* [Download vignette configuraion template](#download-vignetts-configuration-template)
 * [Quick-start Guide](#quick-start-guide)
     * [How to run](#how-to-run)
     * [Standard Workflows](#standard-workflows)
     	* [MetaWIBELE-characterize workflow](#metawibele-characterize-workflow)
     		* [Input files for characterization](#input-files-for-characterization)
     		* [MetaWIBELE-characterize workflow](#metawibele-characterize-workflow)
-    		* [To run a demo for characterization](#to-run-a-demo-for-characterization)
-    		* [Output files for characterization](#output-files-for-characterization)
+    		* [Demo run of MetaWIBELE-characterize](#demo-run-of-metawibele-characterize)
+    		* [Output files of MetaWIBELE-characterize](#output-files-of-metawibele-characterize)
     	* [MetaWIBELE-prioritize workflow](#metawibele-prioritize-workflow)
     		* [Input files for prioritization](#input-files-for-prioritization)
     		* [MetaWIBELE-prioritize workflow](#metawibele-prioritize-workflow)
-    		* [To run a demo for prioritization](#to-run-a-demo-for-prioritization)
-    		* [Output files for prioritization](#output-files-for-prioritization)
+    		* [Demo run of MetaWIBELE-prioritize](#demo-run-of-metawibele-prioritize)
+    		* [Output files of MetaWIBELE-prioritize](#output-files-of-metawibele-prioritize)
 * [Guides to MetaWIBELE Utilities](#guides-to-metawibele-utilities)
-	* [Preprocessing sequencing reads into gene catalogs](#preprocessing-sequencing-reads-into-gene-catalogs)
-		* [Specific options for preprocessing workflow](#specific-options-for-preprocessing-workflow)
-		* [How to run preprocessing workflow](#how-to-run-preprocessing-workflow)
-		* [Example for running preprocessing workflow](#example-for-running-preprocessing-workflow) 
+	* [Preprocessing sequencing reads to build gene catalogs](#preprocessing-sequencing-reads-into-to-build-gene-catalogs)
+		* [Input files for preprocessing](#input-files-preprocessing)
+		* [Preprocessing workflow](#preprocessing-workflow)
+		* [Demo run of preprocessing workflow](#demo-run-of-preprocessing-workflow) 
 		* [Output files of preprocessing workflow](#output-files-of-preprocessing-workflow)
 * [Download MetaWIBELE resources](#download-metawibele-resources)
 	* [Information of gene catalogs](#information-of-gene-catalogs)
@@ -62,32 +63,48 @@ We provide support for MetaWIBELE users via our Google group. Please feel free t
 ![workflow.png](https://www.dropbox.com/s/vsg7baww6utske1/MetaWIBELE_overview.png?raw=1)
 ***
 
+### Workflow by bypass mode
+There are multiple bypass options that will allow you to adjust the standard workflow.
+
+Bypass options:
+
+* --bypass-global-homology
+	* do not annotate protein families based on global homology information
+* --bypass-domain-motif
+	* do not annotate protein families based on domain/motif information
+* --bypass-abundance
+	* do not annotate protein families based on abundance information
+* --bypass-integration
+	* do not integrate annotations for protein families
+* --bypass-optional
+	* do not prioritize protein families based on selecting our for interested annotations (optional prioritization)
+
 
 ## Install MetaWIBELE
 ### Requirements
-```
-* Python 3+ (tested with 3.7.4)
-* Diamond (tested with v0.9.5)
-* CD-hit (teset with version 4.7)
-* Interproscan (tested with v5.31-70)
-* Signalp (tested with v4.1)
-* TMHMM (tested with v2.0c)
-* Phobius (tested with 1.01)
-* Psortb (tested with v3.0)
-* MSPminer (tested with v2)
-* MaAsLin2 (tested with version 0.99.12)
-* AnADAMA2 (tested with version 0.5.0-devel)
 
-(Optional)
-* MEGAHIT (tested with v1.1.3)
-* Prokka (tested with version 1.14-dev)
-* Prodigal (tested with version 2.6)
-* USEARCH (tested with version 9.0.2132_i86linux64)
-* Bowtie2 (tested with version 2.3.2)
-* SAMtools (tested with version 1.5)
-* featureCounts (tested with version 1.6.2)
+1. [Python](https://www.python.org/) (version >= 3.7)
+2. [Diamond](http://www.diamondsearch.org/index.php) (version >= 0.9.5)
+3. [CD-hit](http://weizhongli-lab.org/cd-hit/) (version >= 4.7)
+4. [Interproscan](https://github.com/ebi-pf-team/interproscan/wiki) (version >= 5.31-70)
+5. [Signalp](http://www.cbs.dtu.dk/services/SignalP-4.1/) (version >= 4.1)
+6. [TMHMM](http://www.cbs.dtu.dk/services/TMHMM/) (version >= 2.0)
+7. [Phobius](http://phobius.sbc.su.se/) (version >= 1.01)
+8. [PSORTb](https://psort.org/documentation/index.html) (version >= 3.0)
+9. [MSPminer](https://www.enterome.com/downloads/) (version >= 2)
+10. [MaAsLin2](https://huttenhower.sph.harvard.edu/maaslin2) (versuib >= 1.1.2)
+11. [AnADAMA2](https://huttenhower.sph.harvard.edu/anadama2) (version >= 0.7.4-devel)
+12. **Optional**: only required if using MetaWIBELE utitlity to preprocess metagenomic sequencing reads
+	* [MEGAHIT](https://github.com/voutcn/megahit) (version >= 1.1.3) 
+	* [Prokka](https://github.com/tseemann/prokka) (version >= 1.14-dev; recommend to close '-c' parameter in setting prodigal parameters)
+	* [Prodigal](https://github.com/hyattpd/Prodigal) (version >= 2.6)
+	* [USEARCH](http://www.drive5.com/usearch/) (version >= 9.0.2132_i86linux64)
+	* [Bowtie2](http://bowtie-bio.sourceforge.net/bowtie2/index.shtml) (version >= 2.3.2)
+	* [SAMtools](https://github.com/samtools/) (version >= 1.5)
+	* [featureCounts](http://bioinf.wehi.edu.au/featureCounts/) (version >= 1.6.2)
 
-```
+Please install the required software in a location in your `$PATH`. If you always run with gene catalogs, the optional softwares are not required. Also if you always run with one or more bypass options (for information on bypass options, see optional arguments to the section [Workflow by bypass mode](#workflow-by-bypass-mode)), the software required for the steps you bypass does not need to be installed.
+
 
 ### Installation
 #### Download MetaWIBELE
@@ -95,7 +112,7 @@ You can download the latest MetaWIBELE release or the development version. The s
 
 Option 1: Latest Release (Recommended)
 
-* download [MetaWIBELE.zip](http://huttenhower.sph.harvard.edu/MetaWIBELE/MetaWIBELE.zip) and unpack the latested release of MetaWIBELE
+* download [MetaWIBELE.tar.gz](http://huttenhower.sph.harvard.edu/MetaWIBELE/MetaWIBELE.tar.gz) and unpack the latested release of MetaWIBELE
 
 Option 2: Development Version
 
@@ -106,223 +123,287 @@ Option 2: Development Version
 
 #### Install MetaWIBELE
 
-* Move to the MetaWIBELE directory
-	* `$ cd $MetaWIBELE_PATH`
+* Installing from source
+	* Move to the MetaWIBELE directory
+		* `$ cd $MetaWIBELE_PATH`
 
-* Install MetaWIBELE package
-	* `$ python setup.py install`
-	* If you do not have write permissions to '/usr/lib/', then add the option --user to the install command. This will install the python package into subdirectories of '\~/.local/'. Please note when using the '--user' install option on some platforms, you might need to add '\~/.local/bin/' to your $PATH as it might not be included by default. You will know if it needs to be added if you see the following message `metawibele_workflow: command not found` when trying to run MetaWIBELE after installing with the '--user' option. 
-	* Similarly, you can also specify the installation directory using '--prefix' option which will install the python package into the directory $YOUR\_INSTALL\_DIR that is a directory on PYTHONPATH and which Python reads ".pth" files from. You might need to add $YOUR\_INSTALL\_DIR/bin to your $PATH as it might not be included by default.
+	* Install MetaWIBELE package
+		* `$ python setup.py install`
+		* If you do not have write permissions to `/usr/lib/`, then add the option --user to the install command. This will install the python package into subdirectories of `~/.local/`. Please note when using the --user install option on some platforms, you might need to add `~/.local/bin/` to your $PATH as it might not be included by default. You will know if it needs to be added if you see the following message `metawibele_workflow: command not found` when trying to run MetaWIBELE after installing with the --user option. 
+		* Similarly, you can also specify the installation directory using --prefix option which will install the python package into the directory `$YOUR_INSTALL_DIR` that is a directory on PYTHONPATH and which Python reads ".pth" files from. You might need to add `$YOUR_INSTALL_DIR/bin` to your `$PATH` as it might not be included by default.
+
 
 #### Download databases
-MetaWIBELE requires Uniref/UniProt databases which are consistent with [HUMAnN](https://github.com/biobakery/humann) used. The versions used in the MetaWIBELE publication are available for download here. You need to download, unpack and specify the path of these databases in the MetaWIBELE global configuration file `metawibele.cfg` in your working directory.
+UniRef databases are required if you will use MetaWIBELE to do global-homology based annotation and taxonomic annotation. These databases have been host by [HUMAnN](https://github.com/biobakery/humann). You can download these databases by using HUMAnN utility scripts and provid `$UNIREF_LOCATION` as the location to install the database.
 
-* Download HUMAnN databases: [TBD]
+* Download the full UniRef90 database (11.0GB, recommend):
+
+	`$ humann2_databases --download uniref uniref90_diamond $UNIREF_LOCATION`
+
+* Download additional UniRef90 mapping files (xxx GB):
+
+	`$ humann2_databases --download utility_mapping full $UNIREF_LOCATION`
+
+	* Mappings are available for the UniRef90 gene families to the following systems:
+		* MetaCyc Reactions
+		* KEGG Orthogroups (KOs)
+		* Pfam domains
+		* Level-4 enzyme commission (EC) categories
+		* EggNOG (including COGs)
+		* Gene Ontology (GO)
+		* Taxonomic information of the latest common acestor (LCA)
+		* Taxonomic information of the representative
+		* UniProt ID corresponding to the UniRef representative
+		* Protein names of the UniRef representative
+		* Gene names of the UniRef representative 
+	* In most cases, mappings are directly inferred from the annotation of the corresponding UniRef centroid sequence in UniProt.
+
+
 	
+### Download configuration files
+
+#### Download global configuration templates
+
+To run MetaWIBELE, one global configuation file `metawibele.cfg` is required to make basic settings. 
+
+* Download `metawibele.cfg` into  your working directory:
+	* `$ metawibele_download_config --config-type global`
+* Make your own configurations:
+	* Specify your input files and output folder:
+
+	```
+	[input]
+	# Study name
+	study = 
+	# Metadata file
+	metadata = 
+	# Sample list file
+	sample_list = 
+	# The clustering information of non-reduandant gene catalogs saved with an extended fasta file, similar with CD-hit output
+gene_catalog = 
+	# The protein sequences of representatives of gene catalogs
+gene_catalog_prot = 
+	# The reads counts matrix table across samples of gene catalogs
+	gene_catalog_count = 
+
+	[output]
+	# The prefix name for output results
+	basename = 
+	# The output directory
+	output_dir =
+
+	``` 
+
+	* Specify applied computational resources:
+
+	```
+	[computation]
+	# The number of cores that you’re requesting [ Default: 1 ]
+	threads = 1
+	# The amount of memory (in MB) that you will be using for your job [ Default: 20000 ] 
+	memory = 20000
+	# The amount of time (in minute) that you will be using for your job [ Default: 60 ]
+	time = 60
+	```
 	
-### Configuration for MetaWIBELE
-#### Global configration file
-When running MetaWIBELE, one global configuation file `metawibele.cfg` is required. You can copy `metawibele.cfg` file from the MetaWIBELE installation directory to your working directory, and then modify your configuration based on your datasets. You may need to specify:
-
-* Input files:
-
-```
-[input]
-study = my_study_name
-metadata = /my/path/for/metadata/file/my_metadata.tsv
-sample_list = /my/path/for/sample/list/my_samples.tsv
-gene_catalog = /my/path/for/gene_catalog/clusters/my_genecatalogs.clstr
-gene_catalog_prot = /my/path/for/gene_catalog/protein/sequences/	my_genecatalogs.centroid.faa
-gene_catalog_count = /my/path/for/gene_catalog/reads/counts/my_genecatalogs.counts.all.tsv
-
-``` 
-
-* Output files:
+	* Specify the path of uniref databases:
 	
-```
-[output]
-basename = my_output_prefix
-working_dir = /my/workding/direcoty/path/
-```
+	```
+	[uniref]
+	# The uniref databases used by MetaWIBELE. [data_path] provide the absolute path of the uniref databases folder
+	database = 
+	```
 
-* Computational resources
+	* Specify parameter setteings for annotations
 
-```
-[computation]
-# the number of cores that you’re requesting
-threads = 10
-# the amount of memory (in MB) that you will be using for your job 
-memory = 20000
-```
+	```
+	[abundance]
+	# The config file used by MSPminer. [config_file] provide the mspminer config file; [none] use the dedault config files installed in the metawibele package [ Default: none ]
+	mspminer = none
+	# The method for normalization [Choices: cpm, relab]. [cpm] copies per million units (sum to 1 million); [relab] relative abundance (sum to 1) [ Default: cpm ]  
+	normalize = cpm
+	# The minimum abundance for each feature [ Default: 0 ]   
+	abundance_detection_level = 0
 
-* Abundance configs
-
-```
-[abundance]
-# binning gene catalogs based on co-abundance info and do taxonomic annotation: [config] provide mspminer config file, [no] skip this step
-mspminer = configs/MSPminer_setting.cfg 
-# the method for normalization: [cpm]:copies per million units (sum to 1 million); [relab]: relative abundance (sum to 1) 
-normalize = cpm
-```
-
-* Parameter settings for MaAsLin2:
-
-```
-[maaslin2]
-maaslin2_output = my_maaslin2_output_directory
-maaslin2_cmmd = /my/path/Maaslin2/R/Maaslin2.R
+	[interproscan]
+	# The command of interproscan, e.g. /my/path/interproscan/interproscan.sh
+	interproscan_cmmd = 
+	# The appls used by interroiscan: [appls] comma separated list of analyses, [ Choices: CDD,COILS,Gene3D,HAMAP,MobiDBLite,PANTHER,Pfam,PIRSF,PRINTS,ProDom,PROSITEPATTERNS,PROSITEPROFILES,SFLD,SMART,SUPERFAMILY,TIGRFAM,Phobius,SignalP,TMHMM ]; [none] use all all analyses for running [ Default: Pfam,Phobius,SignalP,TMHMM ]
+	interproscan_appl = "Pfam,Phobius,SignalP,TMHMM"
+	# The number of spliting files which can be annotated in parallel 	[ Default: 1 ]
+	split_number = 1
+	
+	[maaslin2]
+	# The command of Maaslin2, e.g. /my/path/Maaslin2/R/Maaslin2.R
+	maaslin2_cmmd =
+	# The minimum abundance for each feature [ Default: 0 ]  
 min_abundance = 0 
-min_prevalence = 0 
-max_significance = 0.05
-normalization = NONE
-transform = LOG
+	# The minimum percent of samples for which a feature is detected at minimum abundance [ Default: 0.1 ]
+min_prevalence = 0.1  
+	# The q-value threshold for significance [ Default: 0.25 ]
+max_significance = 0.25
+	# The normalization method to apply [ Choices: TSS, CLR, CSS, NONE, TMM ], [ Default: TSS ]
+	normalization = NONE
+	# The transform to apply [ Choices: LOG, LOGIT, AST, NONE ],  [ Default: LOG ]
+	transform = LOG
+	# The analysis method to apply [ Choices: LM, CPLM, ZICP, NEGBIN, ZINB ], [ Default: LM ]
 analysis_method = LM
-fixed_effects = metadata1,metadata2,metadata3,metadata4
-random_effects = metadata5
-correction = BH
-standardize = TRUE
-plot_heatmap = FALSE
-heatmap_first_n = FALSE
-plot_scatter = FALSE
-maaslin2_cores = 10
-tshld_prevalence = 0.10
-tshld_qvalue = 0.05
-effect_size = mean(log)
-abundance_detection_level = 0
-# specify one main phenotype used for prioritization
-phenotype = metadata2
-# flag reference status as control for phenotype varibles; use semicolon to seperate variables
-flag_ref = "metadata1:control_status1;metadata2:control_status2"
-# specify case and control status paries for phenotype variables; use comma to seperate each comparison within the sample variable; use semicolon to seperate variables
-case_control_status = "metadata1:case_status1|control_status1; metadata2:case_status2|control_status2,case_status3|control_status2"
+	# The fixed effects for the model, comma-delimited for multiple effects [ Default: all ]
+	fixed_effects = all
+	# The random effects for the model, comma-delimited for multiple effects [ Default: none ]
+	random_effects = none
+	# The correction method for computing the q-value [ Default: BH ]
+	correction = BH
+	# Apply z-score so continuous metadata are on the same scale [ Default: TRUE ]pply z-score so continuous metadata are on the same scale [ Default: TRUE ]
+	standardize = TRUE
+	# Generate a heatmap for the significant associations [ Default: FALSE ]
+	plot_heatmap = FALSE
+	# In heatmap, plot top N features with significant associations [ Default: FALSE ]
+	heatmap_first_n = FALSE
+	# Generate scatter plots for the significant associations [ Default: FALSE ]
+	plot_scatter = FALSE
+	# The number of R processes to run in parallel [ Default: 1 ]
+	maaslin2_cores = 1
+	# The minimum percent of case-control samples used for comparision in which a feature is detected [ Default: 0.1 ]
+	tshld_prevalence = 0.10
+	# The q-value threshold for significance used as DA annotations [ Default: 0.05 ]
+	tshld_qvalue = 0.05
+	# The statistic used as effect size [ Choices: coef, mean(log) ]. [coef] represents the coefficient from the model; [mean(log)] represents the difference of mean values between case and control conditions. [  Default: mean(log) ]
+	effect_size = mean(log)
+	# The main phenotype metadata used for prioritization, e.g. metadata1
+	phenotype =
+	# Set metadata value used as control condition for phenotype metadata varibles; use semicolon to seperate variables, e.g. "metadata1:control_status1;metadata2:control_status2"
+	flag_ref = 
+	# Case and control metadata pairs for phenotype metadata variables; use semicolon to seperate variables, e.g. "metadata1:case_status1|control_status1;metadata2:case_status2|control_status2,case_status3|control_status2"
+	case_control_status =
+	```
 
-```
 
-#### Configuration for characterization
-You can specify the characterization modules in this configuration file. Default will run all modules for characterization. 
+#### Local configuration
+By default, MetaWIBELE will perform by using the local configuration files installed in the package. Optionally, you can also make your own local configuration files and provide them with optional arguments to MetaWIBELE. For example, the local characterization configuration file can be provided with `--characterization-config characterization.cfg`
+
+* Download local configuration template files into your working directory:
+	* `$ metawibele_download_config --config-type local`
+* Mofidy and provide your own configurations:
+	* Configurations for characterization in `characterization.cfg` which can be provided with `--characterization-config characterization.cfg`:
 	
-`my_characterization.cfg`:
-	
-```
-[protein_family]
-#protein family annotation based on global similarity: [yes] process this step, [no] skip this step
-uniref = yes
+	```
+	[global_homology]
+	# protein family annotation based on global similarity: [yes] process this step, [no] skip this step [ Default: yes ]
+	uniref = yes
 
-[domain_motif]
-#domain annotation: [yes] process this step, [no] skip this step
-interproscan = yes
-#Pfam2GO to annotate GOs: [yes] process this step, [no] skip this step
-pfam2go = yes
-#domain-domain interaction from DOMINE database: [yes] process this step, [no] skip this step
-domine = yes
-#DDI with SIFTS evidence: [yes] process this step, [no] skip this step
-sifts = yes
-#DDI with human expression from ExpAtlas database: [yes] process this step, [no] skip this step
-expatlas = yes
-#subcellular annotation: [yes] process this step, [no] skip this step
-psortb = yes
+	[domain_motif]
+	# domain annotation: [yes] process this step, [no] skip this step [ Default: yes ]
+	interproscan = yes
+	# Pfam2GO to annotate GOs: [yes] process this step, [no] skip this step [ Default: yes ]
+	pfam2go = yes
+	# domain-domain interaction from DOMINE database: [yes] process this step, [no] skip this step [ Default: yes ]
+	domine = yes
+	# DDI with SIFTS evidence: [yes] process this step, [no] skip this step [ Default: yes ]
+	sifts = yes
+	# DDI with human expression from ExpAtlas database: [yes] process this step, [no] skip this step [ Default: yes ]
+	expatlas = yes
+	# subcellular annotation: [yes] process this step, [no] skip this step [ Default: yes ]
+	psortb = yes
 
-[abundance]
-#summary DNA abundance: [label] provide label for DNA abundance, e.g. DNA_abundance, [no] skip this step
+	[abundance]
+	# summary DNA abundance: [label] provide label for DNA abundance, e.g. DNA_abundance, [no] skip this step [ Default: DNA_abundance ]
 dna_abundance = DNA_abundance
-#differential abundance based on DNA abundance: [label] provide label for DA annotation, e.g. MaAsLin2_DA, [no] skip this step
-dna_da = MaAsLin2_DA
-
-[integration]
-#summarize annotation info: [yes] process this step, [no] skip this step
+	# differential abundance based on DNA abundance: [label] provide label for DA annotation, e.g. MaAsLin2_DA, [no] skip this step [ Default: MaAsLin2_DA ]
+	dna_da = MaAsLin2_DA
+	
+	[integration]
+	# summarize annotation info: [yes] process this step, [no] skip this step [ Default: yes ]
 summary_ann = yes
-#generate finalized annotations: [yes] process this step, [no] skip this step
-finalization = yes
-``` 
-
-#### Configuration for prioritization
-You can specify the prioritization modules in this config file. Default will run all configurations of prioritization in MetaWIBELE installed directory. 
-
-`my_prioritization.cfg`:
+	# generate finalized annotations: [yes] process this step, [no] skip this step [ Default: yes ]
+	finalization = yes
+	``` 
 	
-```
-## Mandatory ranking
-[unsupervised]
-# weight parameter of prevalence: [proportion] values of parameter
-beta = 0.50
-# weight value of prevalence for calculating priority: [proportion] weight value
-DNA-nonIBD.non-dysbiosis_prevalence = 0.50
-# weight value of mean abundance for calculating priority: [proportion] weight value
-DNA-nonIBD.non-dysbiosis_abundance = 0.50
-
-[supervised]
-# ecological property (mean abundance) for calculating priority: [required] required item, [optional] optional item, [none] ignoring
-#MaAsLin2_DA__mean_prevalent_abundance = required
-DNA-within-phenotype_abundance = required
-# ecological property (prevalence) for calculating priority: [required] required item, [optional] optional item, [none] ignoring
-#MaAsLin2_DA__prevalence = required
-DNA-within-phenotype_prevalence = required
-# association property (q values) for calculating priority: [required] required item, [optional] optional item, [none] ignoring
-MaAsLin2_DA__qvalue = required
-# association property (coefficient) for calculating priority: [required] required item, [optional] optional item e.g. coef | mean(log) | log(FC), [none] ignoring
-MaAsLin2_DA__mean(log) = required
-
-
-##Binary filtering for selection subset
-#All [vignette_type], [cluster_file] items should be true: [vignette_type] required interested function type; [cluster_file] required subset of proteins
-#All [required] items should be true: [required] required item 
-#At least one [optional] item should be true: [optional] optional item
-#All [none] items will be ignored: [none] ignoring
-[filtering]
-# interested functional vignettes type: [vignette_type] vignettes types, e.g. pilin | superfamily | ect.
-#vignettes = pilin
-
-# significant associations for filtering: [required] required item, [optional] optional item, [none] ignoring
-#MaAsLin2_DA-sig = required
-
-# biochemical annotation for filtering: [required] required item, [optional] optional item, [none] ignoring
-ExpAtlas_interaction = required
-DOMINE_interaction = optional
-SIFTS_interaction = optional
-Denovo_signaling = optional
-Denovo_transmembrane = optional
-PSORTb_extracellular = optional
-PSORTb_cellWall = optional
-PSORTb_outerMembrane = optional
-UniRef90_extracellular = optional
-UniRef90_signaling = optional
-UniRef90_transmembrane = optional
-UniRef90_cellWall = optional
-UniRef90_outerMembrane = optional
-UniRef90_PfamDomain = optional
-InterProScan_PfamDomain = optional
-InterProScan_SUPERFAMILY = optional
-InterProScan_ProSiteProfiles = optional 
-InterProScan_ProSitePatterns = optional
-InterProScan_Gene3D = optional
-InterProScan_PANTHER = optional
-InterProScan_TIGRFAM = optional
-InterProScan_SFLD = optional
-InterProScan_ProDom = optional
-InterProScan_Hamap = optional
-InterProScan_SMART = optional
-InterProScan_CDD = optional
-InterProScan_PRINTS = optional
-InterProScan_PIRSF = optional
-InterProScan_MobiDBLite = optional
-```
-
-### Test with a demo run
-* Run with default configuration
-	* First, run MetaWIBELE for characterization:
-`$ metawibele_workflow characterize --input examples/input/ --output examples/`
+	* Configurations for prioritization in `prioritization.cfg` which can be provided with `--prioritization-config prioritization.cfg`:
 	
-	* Then, run MetaWIBELE for prioritization based on the output of the above characterization step:
-`$ metawibele_workflow prioritize --input examples/input/ --output examples/`
+	```
+	## Mandatory ranking
+	[unsupervised]
+	# Weight value of prevalence to caculate weighted harmonic mean, named as beta parameter[ Default: 0.50 ] 
+	DNA_prevalence = 0.50
+	# Weight value of mean abundance to calculate weighted harmonic mean [ Default: 0.50 ] 
+	DNA_abundance = 0.50
 
-* Run with specified configuration (see more details about configuration files for each workflow in the [Configuration for MetaWIBELE](#markdown-header-3.-configuration-for-metawibele) session)
-	* Run MetaWIBELE for characterization:
-`$ metawibele_workflow characterize --characterization-config my_characterization.cfg --input examples/input/ --output examples/`
+	[supervised]
+	# Use the ecological property (abundance) to do prioritization. [required] required item, [optional] optional item, [none] ignoring. [ Default: required]
+	DNA-within-phenotype_abundance = required
+	# Use the ecological property (prevalence) to do prioritization. [required] required item, [optional] optional item, [none] ignoring. [ Default: required]
+	DNA-within-phenotype_prevalence = required
+	# Use the association with phenotypes (q values from associations) to do prioritization. [required] required item, [optional] optional item, [none] ignoring. [ Default: required]
+	MaAsLin2_DA__qvalue = required
+	# Use the association with phenotypes (effect size from associations) to do prioritization. [required] required item, [optional] optional item, [none] ignoring. [ Default: required]
+	MaAsLin2_DA__mean(log) = required
 	
-	* Run MetaWIBELE for prioritization based on the output of the above characterization step:
-`$ metawibele_workflow prioritize --prioritization-config my_prioritization.cfg --input examples/input/ --output examples/`
+	## Binary filtering for selection subset
+	# All [vignette_type] should be true
+	# All [required] items should be true 
+	# At least one [optional] item should be true 
+	# All [none] items will be ignored
+	# Default: select protein families significantly associated with the main clinical phenotype
 
-***
+	[filtering]
+	# Filter for interested functional vignettes type [Choices: pilin | secreted_system | other user defined | none]
+	vignettes = none
+
+	# Filter for significant associations: [required] required item, [optional] optional item, [none] ignoring [ Default: required ]
+	MaAsLin2_DA-sig = required
+	
+	# Filter for biochemical annotations: [required] required item, [optional] optional item, [none] ignoring
+	ExpAtlas_interaction = optional
+	DOMINE_interaction = optional
+	SIFTS_interaction = optional
+	Denovo_signaling = optional
+	Denovo_transmembrane = optional
+	PSORTb_extracellular = optional
+	PSORTb_cellWall = optional
+	PSORTb_outerMembrane = optional
+	UniRef90_extracellular = optional
+	UniRef90_signaling = optional
+	UniRef90_transmembrane = optional
+	UniRef90_cellWall = optional
+	UniRef90_outerMembrane = optional
+	UniRef90_PfamDomain = optional
+	InterProScan_PfamDomain = optional
+	InterProScan_SUPERFAMILY = optional
+	InterProScan_ProSiteProfiles = optional 
+	InterProScan_ProSitePatterns = optional
+	InterProScan_Gene3D = optional
+	InterProScan_PANTHER = optional
+	InterProScan_TIGRFAM = optional
+	InterProScan_SFLD = optional
+	InterProScan_ProDom = optional
+	InterProScan_Hamap = optional
+	InterProScan_SMART = optional
+	InterProScan_CDD = optional
+	InterProScan_PRINTS = optional
+	InterProScan_PIRSF = optional
+	InterProScan_MobiDBLite = optional
+
+	```
+	
+#### Vignettes configuration
+MetaWIBELE can accept user defined vignette functions of interest for further prioritization. You can make your own vignettes configuration files and provide them with optional argument to MetaWIBELE. For example, the vignette function configurations file can be provided with `--vignette-config vignettes_function.tsv`
+
+* Download local vignettes template file into your working directory:
+	* `$ metawibele_download_config --config-type vignette`
+* Make your own configurations:
+	* This is a tab-separated values file.
+	* Two required columns: `type` indicates which type of function it is; `annotation` indicates the specific annotations assigned by MetaWIBELE given a annotation type.
+	* Other optional columns: `annotation_type` indicates what tye of annotation it is in MetaWIBELE; `description` indicates detailed descriptions of the annotation.
+	
+	```
+	type    annotation       annotation_type  description
+	pilin   PF11530 PfamDomain      Minor type IV pilin, PilX-like
+	pilin   PF14245 PfamDomain      Type IV pilin PilA
+	pilin   PF16734 PfamDomain      Type IV pilin-like putative secretion pathway protein G/H
+	pilin   PF08805 PfamDomain      Type 4 secretion system, PilS, N-terminal
+	pilin   PF09160 PfamDomain      FimH, mannose-binding domain
+	```
 
 
 ## Quick-start Guide
@@ -371,23 +452,23 @@ InterProScan_MobiDBLite = optional
 ### Standard Workflows
 #### MetaWIBELE-characterize workflow
 * ##### Input files for for characterization
-	* clustering information for non-redudant gene catalogs using extended-fasta format, e.g. [demo_genecatalogs.clstr]()
-	* nucleotide sequences for non-redudant gene catalogs, e.g. [demo_genecatalogs.centroid.fna]()
-	* protein seqeuences for non-redudant gene catalogs, e.g. [demo_genecatalogs.centroid.faa]()
-	* reads counts table for non-redudant gene catalogs, e.g. [demo\_genecatalogs_counts.all.tsv]()
-	* metadata file, e.g. [demo\_mgx_metadata.tsv]()
-	* sample list, e.g. [demo\_MGX_samples.tsv]()
+	* clustering information for non-redudant gene catalogs using extended-fasta format, e.g. [demo_genecatalogs.clstr](https://github.com/biobakery/metawibele/examples/input/demo_genecatalogs.clstr)
+	* protein seqeuences for non-redudant gene catalogs, e.g. [demo_genecatalogs.centroid.faa](https://github.com/biobakery/metawibele/examples/input/demo_genecatalogs.centroid.faa)
+	* reads counts table for non-redudant gene catalogs, e.g. [demo\_genecatalogs_counts.all.tsv](https://github.com/biobakery/metawibele/examples/input/demo_genecatalogs_counts.all.tsv)
+	* metadata file, e.g. [demo\_mgx_metadata.tsv](https://github.com/biobakery/metawibele/examples/input/demo_mgx_metadata.tsv)
+	* sample list, e.g. [demo\_mgx_samples.tsv](https://github.com/biobakery/metawibele/examples/input/demo_mgx_samples.tsv)
 	* all the above information can be specified in the `metawibele.cfg` file.
 
 * ##### MetaWIBELE-characterize workflow
 	`$ metawibele_workflow characterize --input $INPUT --output $OUTPUT`
+	* Make sure the global configuration file `metawibele.cfg` is in your working directory.
 	* In the command replace $INPUT with the path to the folder containing your fastq input files and $OUTPUT with the path to the folder to write output files. See the section on parallelization options to optimize the workflow run based on your computing resources. 
 	* The workflow runs with the default settings to run all modules. These settings will work for most data sets. However, if you need to customize your workflow settings for the preprocessing workflow to determine the optimum seeting. You can specify which modules you want to run in your own configuration file.
-	* For example, `--characterization-config=$myconfig_file` will modify the default settings when running the characterization modules.
+	* For example, `--characterization-config $myconfig_file` will modify the default settings when running the characterization modules.
 	
-* ##### To run a demo for characterization
+* ##### Demo run for characterization
 
-	`$ metawibele_workflow characterize --characterization-config my_characterization.cfg --input examples/input/ --output examples/`
+	`$ metawibele_workflow characterize --input examples/input/ --output $OUTPUT_DIR`
 
 * ##### Output files for characterization
 	**1. Annotation file**
@@ -428,18 +509,6 @@ InterProScan_MobiDBLite = optional
 	11  Cluster_1__UniRef90_homology    mutual_coverage 0.9146825396825397
 	12  Cluster_1__UniRef90_homology    taxa_id 1239
 	13  Cluster_1__UniRef90_homology    taxa_name   Firmicutes
-	14  Cluster_1__Taxonomy_characterization    taxa_id 853
-	15  Cluster_1__Taxonomy_characterization    taxa_lineage    k__Bacteria|p__Firmicutes|c__Clostridia|o__Clostridiales|f__Ruminococcaceae|g__Faecalibacterium|s__Faecalibacterium_prausnitzii
-	16  Cluster_1__Taxonomy_characterization    LCA_Tax Faecalibacterium prausnitzii
-	17  Cluster_1__Taxonomy_characterization    LCA_TaxID   853
-	18  Cluster_1__Taxonomy_characterization    Rep_Tax Faecalibacterium prausnitzii
-	19  Cluster_1__Taxonomy_characterization    Rep_TaxID   853
-	20  Cluster_1__Taxonomy_characterization    msp_name    msp_unknown
-	21  Cluster_1__Taxonomy_characterization    msp_taxa_name   NA
-	22  Cluster_1__Taxonomy_characterization    msp_taxa_id NA
-	23  Cluster_1__DNA-CD_abundance mean_abundance  145.88748347267776
-	24  Cluster_1__DNA-CD_abundance mean_prevalent_abundance    164.03938233794182
-	25  Cluster_1__DNA-CD_abundance prevalence  0.889344262295082
 	...
 	```
 	
@@ -479,7 +548,7 @@ InterProScan_MobiDBLite = optional
 	
 	* File name: $OUTPUT_DIR/characterization/$BASENAME\_proteinfamilies\_relab.tsv
 	* This is the relative abundance per protein family across samples.
-	* Protein family abundance is reported in copies per million (CPM) units, which is "total sum scaling (TSS)"-style normalization: each sample is constrained to sum to 1 million. First, each protein family is normalized to RPK (reads per kilobase) units for gene length normalization; RPK units reflect relative gene (or transcript) copy number in the community. Then, RPK values are further sum-normalized (CPM) to adjust for differences in sequencing depth across samples. Further information can refer to the normalization approach in [HUMAnN2] (). 
+	* Protein family abundance is reported in copies per million (CPM) units, which is "total sum scaling (TSS)"-style normalization: each sample is constrained to sum to 1 million. First, each protein family is normalized to RPK (reads per kilobase) units for gene length normalization; RPK units reflect relative gene (or transcript) copy number in the community. Then, RPK values are further sum-normalized (CPM) to adjust for differences in sequencing depth across samples. Further information can refer to the normalization approach in [HUMAnN](https://github.com/biobakery/humann). 
 	
 	**5. Clusting information for protein families**
 	
@@ -523,20 +592,19 @@ InterProScan_MobiDBLite = optional
 
 #### MetaWIBELE-prioritize workflow
 * ##### Input files for prioritiztion
-	* anntation file produced by MetaWIBELE-characterize workflow, e.g. [demo_proteinfamilies_annotation.tsv]()
-	* attribute file produced by MetaWIBELE-characterize workflow, e.g. [demo_proteinfamilies_annotation.attribute.tsv]()
-	* all the above information can be specified in the `prioritization.cfg` file.
+	* anntation file produced by MetaWIBELE-characterize workflow:$OUTPUT_DIR/characterization/$BASENAME\_proteinfamilies\_annotation.tsv
+	* attribute file produced by MetaWIBELE-characterize workflow: $OUTPUT_DIR/characterization/$BASENAME\_proteinfamilies\_annotation.attribute.tsv
 
 * ##### MetaWIBELE-prioritize workflow
 
 	`$ metawibele_workflow prioritize --input $INPUT --output $OUTPUT`
 	* In the command replace $INPUT with the path to the folder containing your fastq input files and $OUTPUT with the path to the folder to write output files. See the section on parallelization options to optimize the workflow run based on your computing resources. 
 	* The workflow runs with the default settings for all main tool subtasks. These settings will work for most data sets. However, if you need to customize your workflow settings for the preprocessing workflow to determine the optimum seeting. Then apply these settings by using options for each task. You can specify your own configuration file.
-	* For example, `--prioritization-config=$myconfig_file` will modify the default settings when running the prioritization tasks.
+	* For example, `--prioritization-config $myconfig_file` will modify the default settings when running the prioritization tasks.
 	
-* ##### To run a demo for prioritization
+* ##### Demo run for prioritization
 
-	`$ metawibele_workflow prioritize --prioritization-config my_prioritization.cfg --input examples/characterization/ --output examples/`
+	`$ metawibele_workflow prioritize --input examples/characterization/ --output $OUTPUT\_DIR/`
 
 * ##### Output files for prioritization
 	**1. unsupervised prioritization**
@@ -576,77 +644,21 @@ InterProScan_MobiDBLite = optional
 	* These are the results of supervised prioritization by combing ecological properties and assoiciation with host phenotypes. Each of protein family has a numeric priority score.
 	* `$BASENAME_supervised_prioritization.rank.tsv` is the overall ranking for all protein families.
 
+
 	**3. supervised prioritization: binary filtering**
 	
-	***3.1 Select interested subset based on specific functions***
-	
-	Setting `my_prioritization.cfg` as following:
-	
-	```
-	##Binary filtering for selection subset
-	# All [vignette_type], [cluster_file] items should be true: [vignette_type] required interested function type; [cluster_file] required subset of proteins
-	# All [required] items should be true: [required] required item 
-	# At least one [optional] item should be true: [optional] optional item
-	# All [none] items will be ignored: [none] ignoring
-	[filtering]
-	# interested functional vignettes type: [vignette_type] vignettes types, e.g. pilin | superfamily | ect.
-	vignettes = pilin
-
-	# significant associations for filtering: [required] required item, [optional] optional item, [none] ignoring
-	#MaAsLin2_DA-sig = required
-
-	# biochemical annotation for filtering: [required] required item, [optional] optional item, [none] ignoring
-	ExpAtlas_interaction = optional
-	DOMINE_interaction = optional
-	SIFTS_interaction = optional
-	Denovo_signaling = optional
-	Denovo_transmembrane = optional
-	PSORTb_extracellular = optional
-	PSORTb_cellWall = optional
-	PSORTb_outerMembrane = optional
-	UniRef90_extracellular = optional
-	UniRef90_signaling = optional
-	UniRef90_transmembrane = optional
-	UniRef90_cellWall = optional
-	UniRef90_outerMembrane = optional
-	UniRef90_PfamDomain = optional
-	InterProScan_PfamDomain = optional
-	InterProScan_SUPERFAMILY = optional
-	InterProScan_ProSiteProfiles = optional 
-	InterProScan_ProSitePatterns = optional
-	InterProScan_Gene3D = optional
-	InterProScan_PANTHER = optional
-	InterProScan_TIGRFAM = optional
-	InterProScan_SFLD = optional
-	InterProScan_ProDom = optional
-	InterProScan_Hamap = optional
-	InterProScan_SMART = optional
-	InterProScan_CDD = optional
-	InterProScan_PRINTS = optional
-	InterProScan_PIRSF = optional
-	InterProScan_MobiDBLite = optional
-	```
-	
-	* Use provied the file containing the interested functions which is formated as this example file: [vignettes_proteins.tsv](). By defualt, MetaWIBELE will use the file provided by the package. Users can also specify their own file for filtering specific functions with the required formmat by using `--interested-function` parameter when run MetaWIBELE prioritization workflow. E.g. `$ metawibele_workflow prioritize --prioritization-config my_prioritization.cfg --interested-function my_own_interested_functions_file --input examples/characterization/ --output examples/` 
-	* File name: $OUTPUT_DIR/prioritization/$BASENAME\_supervised\_prioritization.rank.selected.tsv
-	* This file is the results of supervised filtering of protein families based on pilin related functions.
-	
-	***3.2 Select interested subset annotated with at least one of specific biochemical annotations***
+	***3.1 Select interested subset annotated with at least one of specific biochemical annotations***
 	 
-	Setting `my_prioritization.cfg` as following:
+	Setting `prioritization.cfg` as following:
 	
 	```
 	##Binary filtering for selection subset
-	# All [vignette_type], [cluster_file] items should be true: [vignette_type] required interested function type; [cluster_file] required subset of proteins
-	# All [required] items should be true: [required] required item 
-	# At least one [optional] item should be true: [optional] optional item
-	# All [none] items will be ignored: [none] ignoring
 	[filtering]
-	# interested functional vignettes type: [vignette_type] vignettes types, e.g. pilin | superfamily | ect.
-	#vignettes = pilin
+	# Filter for interested functional vignettes type [Choices: pilin | secreted_system | other user defined | none]
+	vignettes = none
 
 	# significant associations for filtering: [required] required item, [optional] optional item, [none] ignoring
-	#MaAsLin2_DA-sig = required
+	MaAsLin2_DA-sig = none
 
 	# biochemical annotation for filtering: [required] required item, [optional] optional item, [none] ignoring
 	ExpAtlas_interaction = required
@@ -680,26 +692,24 @@ InterProScan_MobiDBLite = optional
 	InterProScan_MobiDBLite = none
 	```
 	
-	* File name: $OUTPUT_DIR/prioritization/$BASENAME\_supervised\_prioritization.rank.selected.tsv
+	* Re-run prioritization workflow for filtering:
+		* `$ metawibele_workflow prioritize --prioritization-config prioritization.cfg --bypass-mandatory --selected-output demo_prioritized.selected.tsv --output $OUTPUT\_DIR/`
+	* Output file name: $OUTPUT_DIR/prioritization/demo_prioritized.selected.tsv
 	* This file is the results of supervised filtering of protein families based on biochemical annotations.
 	* These settings require that each of prioritized protein family should 1) be annotated to domain-domain interaction with host, and 2) have at least one of the following features: signaling, extracellular, cellWall, outerMembrane, transmembrane 
 	
-    ***3.3. Select interested subset annotated with multiple specific biochemical annotations simultaneously***
+    ***3.2. Select interested subset annotated with multiple specific biochemical annotations simultaneously***
 	 
-	 Setting `my_prioritization.cfg` as following:
+	 Setting `prioritization.cfg` as following:
 	
 	```
 	##Binary filtering for selection subset
-	# All [vignette_type], [cluster_file] items should be true: [vignette_type] required interested function type; [cluster_file] required subset of proteins
-	# All [required] items should be true: [required] required item 
-	# At least one [optional] item should be true: [optional] optional item
-	# All [none] items will be ignored: [none] ignoring
 	[filtering]
-	# interested functional vignettes type: [vignette_type] vignettes types, e.g. pilin | superfamily | ect.
-	#vignettes = pilin
+	# Filter for interested functional vignettes type [Choices: pilin | secreted_system | other user defined | none]
+	vignettes = none
 
 	# significant associations for filtering: [required] required item, [optional] optional item, [none] ignoring
-	#MaAsLin2_DA-sig = required
+	MaAsLin2_DA-sig = required
 
 	# biochemical annotation for filtering: [required] required item, [optional] optional item, [none] ignoring
 	ExpAtlas_interaction = required
@@ -733,9 +743,61 @@ InterProScan_MobiDBLite = optional
 	InterProScan_MobiDBLite = none
 	```
 	
-	 * File name: $OUTPUT_DIR/prioritization/$BASENAME\_supervised\_prioritization.rank.selected.tsv
+	 * Re-run prioritization workflow for filtering:
+		* `$ metawibele_workflow prioritize --prioritization-config prioritization.cfg --bypass-mandatory --selected-output demo_prioritized.selected.tsv --output $OUTPUT\_DIR/`
+	 * Output file name: $OUTPUT_DIR/prioritization demo_prioritized.selected.tsv
 	 * This file is the results of supervised filtering of protein families based on biochemical annotations.
-	 * These settings require that each of prioritized protein family should 1) be annotated to domain-domain interaction with host and 3) predicted as signal peptides, and 3) have at least one of the following features: extracellular, cellWall, outerMembrane, transmembrane 
+	 * These settings require that each of prioritized protein family should 1) significantly associated with the main phenotype, 2) be annotated to domain-domain interaction with host, 3) predicted as signal peptides, and 4) have at least one of the following features: extracellular, cellWall, outerMembrane, transmembrane 
+	
+	***3.3 Select interested subset based on specific functions***
+	
+	Setting `prioritization.cfg` as following:
+	
+	```
+	[filtering]
+	# Filter for interested functional vignettes type [Choices: pilin | secreted_system | other user defined | none]
+	vignettes = pilin
+
+	# Filter for significant associations: [required] required item, [optional] optional item, [none] ignoring [ Default: required ]
+MaAsLin2_DA-sig = none
+
+	# biochemical annotation for filtering: [required] required item, [optional] optional item, [none] ignoring
+	ExpAtlas_interaction = optional
+	DOMINE_interaction = optional
+	SIFTS_interaction = optional
+	Denovo_signaling = optional
+	Denovo_transmembrane = optional
+	PSORTb_extracellular = optional
+	PSORTb_cellWall = optional
+	PSORTb_outerMembrane = optional
+	UniRef90_extracellular = optional
+	UniRef90_signaling = optional
+	UniRef90_transmembrane = optional
+	UniRef90_cellWall = optional
+	UniRef90_outerMembrane = optional
+	UniRef90_PfamDomain = optional
+	InterProScan_PfamDomain = optional
+	InterProScan_SUPERFAMILY = optional
+	InterProScan_ProSiteProfiles = optional 
+	InterProScan_ProSitePatterns = optional
+	InterProScan_Gene3D = optional
+	InterProScan_PANTHER = optional
+	InterProScan_TIGRFAM = optional
+	InterProScan_SFLD = optional
+	InterProScan_ProDom = optional
+	InterProScan_Hamap = optional
+	InterProScan_SMART = optional
+	InterProScan_CDD = optional
+	InterProScan_PRINTS = optional
+	InterProScan_PIRSF = optional
+	InterProScan_MobiDBLite = optional
+	```
+	
+	* Re-run prioritization workflow for filtering:
+		* `$ metawibele_workflow prioritize --prioritization-config prioritization.cfg --bypass-mandatory --vignette-config my_vignette_function_file  --selected-output demo_prioritized_pilin.tsv --output $OUTPUT\_DIR/`
+	* Provide your own vignette function file for filtering specific functions.
+	* Output file name: $OUTPUT_DIR/prioritization/demo_prioritized_pilin.tsv
+	* This file is the results of supervised filtering of protein families based on pilin related functions.
 	
 	
 	**4. finalized prioritization**
@@ -766,8 +828,10 @@ A utility workflow in MetaWIBELE package for preprocessing metagenomes reads, us
 
 #### Specific options for preprocessing workflow
 ```
-usage: metawibele_workflow preprocess [-h] [--version] [--threads THREADS]
+usage: preprocess.py [-h] [--version] [--threads THREADS]
                      [--extension-paired EXTENSION_PAIRED]
+                     [--sample-list SAMPLE_LIST]
+                     [--gene-call-type {prokka,prodigal,both}]
                      [--extension {.fastq.gz,.fastq}] [--bypass-assembly]
                      [--bypass-gene-calling] [--bypass-gene-catalog]
                      [--output-basename OUTPUT_BASENAME] -o OUTPUT [-i INPUT]
@@ -788,9 +852,13 @@ optional arguments:
   -h, --help            show this help message and exit
   --version             show program's version number and exit
   --threads THREADS     number of threads/cores for each task to use
-                        [default: 20]
   --extension-paired EXTENSION_PAIRED
                         provide the extension for paired fastq files using comma to seperate, e.g. .R1.fastq.gz,.R2.fastq.gz | .R1.fastq,.R2.fastq
+  --sample-list SAMPLE_LIST
+                        sample list file
+  --gene-call-type {prokka,prodigal,both}
+                        specify which type of gene calls will be used
+                        [default: both]
   --extension {.fastq.gz,.fastq}
                         provide the extension for all fastq files
                         [default: .fastq.gz]
@@ -801,12 +869,11 @@ optional arguments:
                         do not build gene catalogs
   --output-basename OUTPUT_BASENAME
                         provide the basename for output files
-                        [default: metawibele]
   -o OUTPUT, --output OUTPUT
                         Write output to this directory
   -i INPUT, --input INPUT
                         Find inputs in this directory 
-                        [default: /n/home00/yancong/lib/python/lib/python3.7/site-packages/metawibele-0.3-py3.7.egg/metawibele]
+                        [default: /srv/export/hutlab11/share_root/users/yancong/demo]
   --config CONFIG       Find workflow configuration in this folder 
                         [default: only use command line options]
   --local-jobs JOBS     Number of tasks to execute in parallel locally 
@@ -856,13 +923,14 @@ optional arguments:
 * `--output`: the ouput directory. 
 
 #### How to run preprocessing workflow
+* Make sure the `metawibele.cfg` in your working directory.
 * See the section on parallelization options to optimize the workflow run based on your computing resources. 
 * The workflow runs with the default settings for all main tool subtasks. If you need to customize your workflow settings for the preprocessing workflow to determine the optimum seeting, you can change the parameter settings.
-* For example, `--extension-paried="$R1_suffix,$R2_suffix"`, `--extension="$fastq_suffix"` (what are the follwong part after `$SAMPLE` in the input file names) will modify the default settings when running the assembly task.
+* For example, `--extension-paried "$R1_suffix,$R2_suffix"`, `--extension "$fastq_suffix"` (what are the follwong part after `$SAMPLE` in the input file names) will modify the default settings when running the assembly task.
 
 #### Example for running preprocessing workflow
 
-`$ preprocessing_workflow --input /my/path/preprocessing/cleaned_reads/ --output /my/path/preprocessing/ --extension-paired ".R1.fastq.gz,.R2.fastq.gz" --extension ".fastq" --output-basename demo --local-jobs 10`
+`$ preprocessing_workflow --input examples/raw_reads/ --output preprocessing/ --extension-paired "_R1.fastq.gz,_R2.fastq.gz" --extension ".fastq.gz" --sample-list examples/raw_reads/sample.txt --local-jobs 5 --output $OUTPUT_DIR/`
 
 #### Output files of preprocessing workflow
 **1. assembly results**
