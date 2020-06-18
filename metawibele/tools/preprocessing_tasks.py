@@ -309,18 +309,19 @@ def gene_calling (workflow, assembly_dir, assembly_extentsion, input_dir, extens
 	gff_files_tmp = []
 
 	## Using Prodigal
-	for contig in filtered_contigs:
-		contig_base = os.path.basename(contig).split(os.extsep)[0]
-		annotation_dir = os.path.join(prodigal_dir, contig_base)
-		os.system("mkdir -p " + annotation_dir)
-		gff_file = os.path.join(annotation_dir, '%s.gff' % contig_base)
-		cds_file = os.path.join(annotation_dir, '%s.fna' % contig_base)
-		cds_aa = os.path.join(annotation_dir, '%s.faa' % contig_base)
-		score = os.path.join(annotation_dir, '%s.gene_score.txt' % contig_base)
-		stdout_log = os.path.join(annotation_dir, '%s.stdout.log' % contig_base)
-		faa_file_tmp.append(cds_aa)
+	if gene_call_type == "prodigal" or gene_call_type == "both":
+		for contig in filtered_contigs:
+			contig_base = os.path.basename(contig).split(os.extsep)[0]
+			annotation_dir = os.path.join(prodigal_dir, contig_base)
+			os.system("mkdir -p " + annotation_dir)
+			gff_file = os.path.join(annotation_dir, '%s.gff' % contig_base)
+			cds_file = os.path.join(annotation_dir, '%s.fna' % contig_base)
+			cds_aa = os.path.join(annotation_dir, '%s.faa' % contig_base)
+			score = os.path.join(annotation_dir, '%s.gene_score.txt' % contig_base)
+			stdout_log = os.path.join(annotation_dir, '%s.stdout.log' % contig_base)
+			faa_file_tmp.append(cds_aa)
 
-		workflow.add_task_gridable('prodigal -m -p meta -i [depends[0]] '
+			workflow.add_task_gridable('prodigal -m -p meta -i [depends[0]] '
 		                           '-f gff -o [targets[0]] -d [targets[1]] -s [targets[3]] '
 		                           '-a [targets[2]] '
 		                           '>[args[0]] 2>&1',
@@ -332,38 +333,38 @@ def gene_calling (workflow, assembly_dir, assembly_extentsion, input_dir, extens
 								   time = time_equation,
 								   name = contig_base + "__prodigal")
 	
-	for myfile in faa_file_tmp:
-		myname = os.path.basename(myfile)
-		myfile_new = os.path.join(prodigal_dir, myname)
-		faa_file.append(myfile_new)
-		workflow.add_task(
-			"ln -fs [depends[0]] [targets[0]]",
-			depends = [myfile],
-			targets = [myfile_new],
-			cores = 1,
-			name = "ln__" + myname)
-		myfna = re.sub(".faa", ".fna", myfile)
-		myfna_new = re.sub(".faa", ".fna", myfile_new)
-		if gene_call_type == "prodigal":
-			fna_file.append(myfna_new)
-			prokka_dir = prodigal_dir
-		workflow.add_task(
-			"ln -fs [depends[0]] [targets[0]]",
-			depends = [myfna],
-			targets = [myfna_new],
-			cores = 1,
-			name = "ln__" + myname)
-		mygff = re.sub(".faa", ".gff", myfile)
-		mygff_new = re.sub(".faa", ".gff", myfile_new)
-		workflow.add_task(
-			"ln -fs [depends[0]] [targets[0]]",
-			depends = [mygff],
-			targets = [mygff_new],
-			cores = 1,
-			name = "ln__" + myname)
+		for myfile in faa_file_tmp:
+			myname = os.path.basename(myfile)
+			myfile_new = os.path.join(prodigal_dir, myname)
+			faa_file.append(myfile_new)
+			workflow.add_task(
+				"ln -fs [depends[0]] [targets[0]]",
+				depends = [myfile],
+				targets = [myfile_new],
+				cores = 1,
+				name = "ln__" + myname)
+			myfna = re.sub(".faa", ".fna", myfile)
+			myfna_new = re.sub(".faa", ".fna", myfile_new)
+			if gene_call_type == "prodigal":
+				fna_file.append(myfna_new)
+				prokka_dir = prodigal_dir
+			workflow.add_task(
+				"ln -fs [depends[0]] [targets[0]]",
+				depends = [myfna],
+				targets = [myfna_new],
+				cores = 1,
+				name = "ln__" + myname)
+			mygff = re.sub(".faa", ".gff", myfile)
+			mygff_new = re.sub(".faa", ".gff", myfile_new)
+			workflow.add_task(
+				"ln -fs [depends[0]] [targets[0]]",
+				depends = [mygff],
+				targets = [mygff_new],
+				cores = 1,
+				name = "ln__" + myname)
 
 	
-	if gene_call_type == "prokka":
+	if gene_call_type == "prokka" or gene_call_type == "both":
 		## Calling genes with Prokka
 		os.system("mkdir -p " + prokka_dir)
 
@@ -408,6 +409,9 @@ def gene_calling (workflow, assembly_dir, assembly_extentsion, input_dir, extens
 				name = "ln__" + myname)
 			myfaa = re.sub(".ffn", ".faa", myfile)
 			myfaa_new = re.sub(".ffn", ".faa", myfile_new)
+			if gene_call_type == "prokka":
+				faa_file.append(myfaa_new)
+				prodigal_dir = prokka_dir
 			workflow.add_task(
 				"ln -fs [depends[0]] [targets[0]]",
 				depends = [myfaa],
