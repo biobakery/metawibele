@@ -180,9 +180,9 @@ To run MetaWIBELE, one global configuation file `metawibele.cfg` is required to 
 	# Sample list file
 	sample_list = 
 	# The clustering information of non-reduandant gene catalogs saved with an extended fasta file, similar with CD-hit output
-gene_catalog = 
+	gene_catalog = 
 	# The protein sequences of representatives of gene catalogs
-gene_catalog_prot = 
+	gene_catalog_prot = 
 	# The reads counts matrix table across samples of gene catalogs
 	gene_catalog_count = 
 
@@ -307,7 +307,7 @@ By default, MetaWIBELE will perform by using the local configuration files insta
 
 	[abundance]
 	# summary DNA abundance: [label] provide label for DNA abundance, e.g. DNA_abundance, [no] skip this step [ Default: DNA_abundance ]
-dna_abundance = DNA_abundance
+	dna_abundance = DNA_abundance
 	# differential abundance based on DNA abundance: [label] provide label for DA annotation, e.g. MaAsLin2_DA, [no] skip this step [ Default: MaAsLin2_DA ]
 	dna_da = MaAsLin2_DA
 	
