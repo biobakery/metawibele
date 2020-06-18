@@ -31,7 +31,7 @@ Support for HUMAnN is available via [the MetaWIBELE channel](https://forum.bioba
     	* [Download configuration files](#download-configuration-files)
 			* [Download global configuration template](#download-global-configuration-template)
     		* [Download local configuration template](#download-local-configuration-template)
-    		* [Download vignette configuraion template](#download-vignetts-configuration-template)
+    		* [Download vignette configuraion template](#download-vignette-configuration-template)
 * [Quick-start Guide](#quick-start-guide)
     * [How to run](#how-to-run)
     * [Standard Workflows](#standard-workflows)
@@ -313,7 +313,7 @@ By default, MetaWIBELE will perform by using the local configuration files insta
 	
 	[integration]
 	# summarize annotation info: [yes] process this step, [no] skip this step [ Default: yes ]
-summary_ann = yes
+	summary_ann = yes
 	# generate finalized annotations: [yes] process this step, [no] skip this step [ Default: yes ]
 	finalization = yes
 	``` 
@@ -758,7 +758,7 @@ MetaWIBELE can accept user defined vignette functions of interest for further pr
 	vignettes = pilin
 
 	# Filter for significant associations: [required] required item, [optional] optional item, [none] ignoring [ Default: required ]
-MaAsLin2_DA-sig = none
+	MaAsLin2_DA-sig = none
 
 	# biochemical annotation for filtering: [required] required item, [optional] optional item, [none] ignoring
 	ExpAtlas_interaction = optional
