@@ -236,17 +236,17 @@ To run MetaWIBELE, one global configuation file `metawibele.cfg` is required to 
 	# The command of Maaslin2, e.g. /my/path/Maaslin2/R/Maaslin2.R
 	maaslin2_cmmd =
 	# The minimum abundance for each feature [ Default: 0 ]  
-min_abundance = 0 
+	min_abundance = 0 
 	# The minimum percent of samples for which a feature is detected at minimum abundance [ Default: 0.1 ]
-min_prevalence = 0.1  
+	min_prevalence = 0.1  
 	# The q-value threshold for significance [ Default: 0.25 ]
-max_significance = 0.25
+	max_significance = 0.25
 	# The normalization method to apply [ Choices: TSS, CLR, CSS, NONE, TMM ], [ Default: TSS ]
 	normalization = NONE
 	# The transform to apply [ Choices: LOG, LOGIT, AST, NONE ],  [ Default: LOG ]
 	transform = LOG
 	# The analysis method to apply [ Choices: LM, CPLM, ZICP, NEGBIN, ZINB ], [ Default: LM ]
-analysis_method = LM
+	analysis_method = LM
 	# The fixed effects for the model, comma-delimited for multiple effects [ Default: all ]
 	fixed_effects = all
 	# The random effects for the model, comma-delimited for multiple effects [ Default: none ]
