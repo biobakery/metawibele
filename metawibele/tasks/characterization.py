@@ -108,14 +108,12 @@ def clustering (workflow, gene_catalog_seq, threads, output_folder, protein_fami
 
 	# create tasks to run clustering
 	myraw_cluster = clustering_output_seq + ".clstr"
-	workflow.add_task_gridable(
+	workflow.add_task(
 			"cd-hit -i [depends[0]] " + optional_arguments + " -o [targets[0]] > [args[0]] 2>&1",
 			depends = [gene_catalog_seq, TrackedExecutable("cd-hit")],
 			targets = [clustering_output_seq, myraw_cluster],
 			args = [clustering_output_logs],
 			cores = threads,
-			time = time_equation,
-			mem = mem_equation,
 			name = "clustering-proteins")
 
 	workflow.add_task("ln -fs [depends[0]] [targets[0]]",
@@ -241,61 +239,51 @@ def global_homology_annotation (workflow, family_conf, gene_catalog_seq,
 				name = "uniref_annotator")
 
 		# extract mapping info
-		workflow.add_task_gridable(
+		workflow.add_task(
 				"metawibele_uniref_annotator_stat -s [depends[0]] -d [depends[1]] "
 				"-o [targets[0]] >[args[0]] 2>&1",
 				depends = [gene_catalog_seq, myhit, TrackedExecutable("metawibele_uniref_annotator_stat")],
 				targets = [annotation_stat],
 				args = [uniref_log1],
 				cores = 1,
-				time = time_equation,
-				mem = mem_equation,
 				name = "uniref_annotator_stat")
 
 		# uniRef annotation for each ORF
 		protein_family_tmp = os.path.join(tmps_dir, os.path.basename(protein_family_seq))
 		protein_family_seq_tmp = os.path.join(tmps_dir, os.path.basename(protein_family_seq))
-		workflow.add_task_gridable(
+		workflow.add_task(
 				"metawibele_uniref_protein -m [depends[0]] -o [targets[0]] >[args[0]] 2>&1",
 				depends = [annotation_stat, protein_family_tmp, protein_family_seq_tmp, TrackedExecutable("metawibele_uniref_protein")],
 				targets = [uniref_ann_protein],
 				args = [uniref_log2],
 				cores = 1,
-				time = time_equation,
-				mem = mem_equation,
 				name = "uniref_protein")
 
 		# uniRef annotation for each protein family
-		workflow.add_task_gridable(
+		workflow.add_task(
 				"metawibele_uniref_protein_family -u [depends[0]] -m [depends[1]] -f centroid -o [targets[0]] >[args[0]] 2>&1",
 				depends = [uniref_ann_protein, annotation_stat, protein_family_tmp, protein_family_seq_tmp, TrackedExecutable("metawibele_uniref_protein_family")],
 				targets = [uniref_ann_family, uniref_ann],
 				args = [uniref_log3],
 				cores = 1,
-				time = time_equation,
-				mem = mem_equation,
 				name = "uniref_protein_family")
 
 
 		# uniref annotation for homology and taxonomy
-		workflow.add_task_gridable(
+		workflow.add_task(
 				"metawibele_summary_protein_uniref_annotation -a [depends[0]] -m [depends[1]] -t Rep -o [targets[0]] >[args[0]] 2>&1",
 				depends = [uniref_ann, annotation_stat, TrackedExecutable("metawibele_summary_protein_uniref_annotation")],
 				targets = [uniref_taxa],
 				args = [uniref_log4],
 				cores = 1,
-				time = time_equation,
-				mem = mem_equation,
 				name = "summary_protein_uniref_annotation")
 
-		workflow.add_task_gridable(
+		workflow.add_task(
 				"metawibele_summary_protein_family_uniref_annotation -a [depends[0]] -m [depends[1]] -t Rep -o [targets[0]] >[args[0]] 2>&1",
 				depends = [uniref_ann_family, annotation_stat, TrackedExecutable("metawibele_summary_protein_family_uniref_annotation")],
 				targets = [uniref_taxa_family],
 				args = [uniref_log5],
 				cores = 1,
-				time = time_equation,
-				mem = mem_equation,
 				name = "summary_protein_family_uniref_annotation")
 
 		workflow.add_task("ln -fs [depends[0]] [targets[0]]",
@@ -1204,37 +1192,31 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog, gene_catalog_c
 		# filter out bad protein
 		mylog = re.sub(".tsv", ".log", family_count)
 		uniref_taxonomy_family_tmp = os.path.join(tmps_dir, os.path.basename(uniref_taxonomy_family))
-		workflow.add_task_gridable(
+		workflow.add_task(
 			"metawibele_abundance_filtering -i [depends[0]] -f good -a [depends[1]] -o [targets[0]] >[args[0]] 2>&1",
 			depends = [uniref_taxonomy_family_tmp, family_count_all, TrackedExecutable("metawibele_abundance_filtering")],
 			targets = [family_count],
 			args = [mylog],
 			cores = 1,
-			time = time_equation,
-			mem = mem_equation,
 			name = "abundance_filtering")
 
 		# normalized to RPK and relative abundance
 		mylog = re.sub(".tsv", ".log", family_rpk)
-		workflow.add_task_gridable(
+		workflow.add_task(
 			"metawibele_abundance_RPK -i [depends[0]] -o [targets[0]] >[args[0]] 2>&1",
 			depends = [family_count, TrackedExecutable("metawibele_abundance_RPK")],
 			targets = [family_rpk],
 			args = [mylog],
 			cores = 1,
-			time = time_equation,
-			mem = mem_equation,
 			name = "abundance_RPK")
 
 		mylog = re.sub(".tsv", ".log", family_relab)
-		workflow.add_task_gridable(
+		workflow.add_task(
 			"metawibele_abundance_normalization -i [depends[0]] -u [args[0]] -o [targets[0]] >[args[1]] 2>&1",
 			depends = [family_rpk, TrackedExecutable("metawibele_abundance_normalization")],
 			targets = [family_relab],
 			args = [config.normalize, mylog],
 			cores = 1,
-			time = time_equation,
-			mem = mem_equation,
 			name = "abundance_normalization")
 
 		mylog = re.sub(".tsv", ".log", gene_rpk)
@@ -1261,14 +1243,12 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog, gene_catalog_c
 
 		# format abundance annotation
 		mylog = re.sub(".tsv", ".log", abundance_ann_family)
-		workflow.add_task_gridable(
+		workflow.add_task(
 			"metawibele_abundance_annotator -a [depends[0]] -f protein_family -t [args[0]] -o [targets[0]] >[args[1]] 2>&1",
 			depends = [family_relab, TrackedExecutable("metawibele_abundance_annotator")],
 			targets = [abundance_ann_family],
 			args = [abundance_conf["dna_abundance"], mylog],
 			cores = 1,
-			time = time_equation,
-			mem = mem_equation,
 			name = "abundance_annotator")
 
 		mylog = re.sub(".tsv", ".log", abundance_ann)
@@ -1287,6 +1267,11 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog, gene_catalog_c
 		    targets = [protein_family_relab],
 		    cores = 1,
 		    name="ln__proteinfamilies_relab")
+		workflow.add_task("ln -fs [depends[0]] [targets[0]]",
+			depends = [family_relab],
+		    targets = [os.path.join(tmps_dir, os.path.basename(family_relab))],
+		    cores = 1,
+		    name="ln__proteinfamilies_relab")
 
 		myprotein_family_ann[abundance_ann_family] = ""
 		myprotein_ann[abundance_ann] = ""
@@ -1299,9 +1284,10 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog, gene_catalog_c
 
 		## prepare data for maaslin2 ##
 		mylog = re.sub(".tsv", ".log", family_smooth)
+		family_relab_tmp = os.path.join(tmps_dir, os.path.basename(family_relab))
 		workflow.add_task_gridable(
 				"metawibele_abundance_smoothing -i [depends[0]] -f 0 -o [targets[0]] >[args[1]] 2>&1",
-				depends = [family_relab, TrackedExecutable("metawibele_abundance_smoothing")],
+				depends = [family_relab_tmp, TrackedExecutable("metawibele_abundance_smoothing")],
 				targets = [family_smooth],
 				args = [config.tshld_prevalence, mylog],
 				cores = 1,
