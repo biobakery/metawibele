@@ -296,7 +296,7 @@ Expression_Atlas_database = [os.path.join(domain_directory, "32_Uhlen_Lab_colon_
 							os.path.join(domain_directory, "Illumina_Body_Map_colon.txt.gz")]
 
 misc_directory = os.path.join(database_directory, "misc")
-vignettes_database = os.path.join(misc_directory, "vignettes_proteins.txt.gz")
+vignettes_database = os.path.join(misc_directory, "vignette_function.tsv")
 
 # uniref databases
 uniref_database_dir = get_item (config_items, "uniref", "database", "string")
