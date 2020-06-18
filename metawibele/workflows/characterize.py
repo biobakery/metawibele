@@ -197,8 +197,8 @@ def main(workflow):
 	protein_ann_list = {}
 	uniref_taxonomy_family = os.path.join(output_dir, config.basename + "_proteinfamilies_annotation.uniref90_annotation.tsv")
 	uniref_taxonomy = os.path.join(output_dir, config.basename + "_protein_annotation.uniref90_annotation.tsv")
-	taxonomy_annotation_family = os.path.join(output_dir, config.basename + "_proteinfamilies_annotation.MSPminer_taxonomy.tsv")
-	taxonomy_annotation = os.path.join(output_dir, config.basename + "_protein_annotation.MSPminer_taxonomy.tsv")
+	taxonomy_annotation_family = os.path.join(output_dir, config.basename + "_proteinfamilies_annotation.taxonomy.tsv")
+	taxonomy_annotation = os.path.join(output_dir, config.basename + "_protein_annotation.taxonomy.tsv")
 
 
 	### STEP #1: clustering ###
