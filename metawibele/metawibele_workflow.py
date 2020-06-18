@@ -3,7 +3,7 @@
 """
 MeteWIBELE workflow: A collection of AnADAMA2 workflows
 1) characterization workflow: characterize protein families for functional and taxonomic annotation
-2) prioritization workflow: prioritize protein families for unsupervised (overall abundance patterns) and supervised (association with phenotypes) ranking
+2) prioritization workflow: prioritize protein families for unsupervised (ecological properties) and supervised (association with phenotypes) ranking
 
 
 Copyright (c) 2019 Harvard School of Public Health
