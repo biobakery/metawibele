@@ -48,7 +48,7 @@ Support for MetaWIBELE is available via [the MetaWIBELE channel](https://forum.b
     		* [Demo run of MetaWIBELE-prioritize](#demo-run-of-metawibele-prioritize)
     		* [Output files of MetaWIBELE-prioritize](#output-files-of-metawibele-prioritize)
 * [Guides to MetaWIBELE Utilities](#guides-to-metawibele-utilities)
-	* [Preprocessing sequencing reads to build gene catalogs](#preprocessing-sequencing-reads-into-to-build-gene-catalogs)
+	* [Preprocessing sequencing reads to build gene catalogs](#preprocessing-sequencing-reads-to-build-gene-catalogs)
 		* [Preprocessing workflow](#preprocessing-workflow)
 		* [Input files for preprocessing workflow](#input-files-preprocessing-workflow)
 		* [Demo run of preprocessing workflow](#demo-run-of-preprocessing-workflow) 
@@ -137,7 +137,7 @@ Option 2: Development Version
 
 #### Prepare databases
 ##### UniRef database
-UniRef databases are required if you will use MetaWIBELE to do global-homology based annotation and taxonomic annotation. 
+UniRef databases are **required** if you will use MetaWIBELE to do global-homology based annotation and taxonomic annotation. 
 
 Option 1: download uniref databases (Recommended)
 
@@ -177,10 +177,10 @@ Option 2: create local uniref databases
 	`$ metawibele_prepare_uniref_annotation -t uniref90 --output $DATABASE_LOCATION`
 
 * Use `diamond` to index sequences
-	`$ diamond makedb --threads 20 --in uniref90.fasta -d uniref90.fasta`
+	`$ diamond makedb --in uniref90.fasta -d uniref90.fasta`
 
 ##### Domain database
-Protein domain databases are required if you will use MetaWIBELE to do domain based annotations. De default, these databases have already been installed when you install MetaWIBELE package. Alternatively, you can also create these domain databases locally and proved `$DATABASE_LOCATION` as the location to install the database.
+Protein domain databases are required if you will use MetaWIBELE to do domain based annotations. De default, these databases have **already been installed** when you install MetaWIBELE package. Alternatively, you can also create these domain databases locally and proved `$DATABASE_LOCATION` as the location to install the database.
 
 Create local domain databases (Optional)
 
@@ -192,7 +192,7 @@ Create local domain databases (Optional)
 	* Domain-domain interactions from the version 2.0 of [DOMINE](https://manticore.niehs.nih.gov/cgi-bin/Domine?page=start) database will be downloaded.
 
 	
-#### Download configuration files
+#### Prepare configuration files
 
 ##### Download global configuration template
 
@@ -307,7 +307,7 @@ To run MetaWIBELE, one global configuation file `metawibele.cfg` is **required**
 
 
 ##### Download local configuration template
-By default, MetaWIBELE will perform by using the local configuration files installed in the package. **Optionally**, you can also make your own local configuration files and provide them with optional arguments to MetaWIBELE. For example, the local characterization configuration file can be provided with `--characterization-config $characterization_conf` where `$characterization_conf` is the file includes characterization configurations.
+By default, MetaWIBELE will perform by using the local configuration files installed in the package. **Optionally**, you can also make your own local configuration files and provide them with optional arguments to MetaWIBELE. For example, the local characterization configuration file can be provided with `--characterization-config $CHRACTERIZE_CONF` where `$CHRACTERIZE_CONF` is the file includes characterization configurations.
 
 * Download local configuration template files (e.g. `characterization.cfg`, `prioritization.cfg `) into your working directory:
 	* `$ metawibele_download_config --config-type local`
@@ -414,7 +414,7 @@ By default, MetaWIBELE will perform by using the local configuration files insta
 	```
 	
 ##### Download vignette configuration template
-**Optionally**, MetaWIBELE can accept user defined vignette functions of interest for further prioritization. You can make your own vignettes configuration files and provide them with optional argument to MetaWIBELE. For example, the vignette function configurations file can be provided with `--vignette-config $vignettes_function` where `$vignettes_function` is the file includes the interested functions.
+**Optionally**, MetaWIBELE can accept user defined vignette functions of interest for further prioritization. You can make your own vignettes configuration files and provide them with optional argument to MetaWIBELE. For example, the vignette function configurations file can be provided with `--vignette-config $VIGNETTE_FUNC` where `$VIGNETTE_FUNC` is the file includes the interested functions.
 
 * Download local vignettes template file (`vignettes_function.tsv`) into your working directory:
 	* `$ metawibele_download_config --config-type vignette`
@@ -672,7 +672,7 @@ By default, MetaWIBELE will perform by using the local configuration files insta
 	
 	***3.1 Select interested subset annotated with at least one of specific biochemical annotations***
 	 
-	Setting local `$prioritization_conf` file as following:
+	Setting local `$PRIORITIZE_CONF` file as following:
 	
 	```
 	##Binary filtering for selection subset
@@ -716,14 +716,14 @@ By default, MetaWIBELE will perform by using the local configuration files insta
 	```
 	
 	* Re-run prioritization workflow for filtering:
-		* `$ metawibele_workflow prioritize --prioritization-config $prioritization_conf --bypass-mandatory --selected-output demo_prioritized.selected.tsv --output $OUTPUT\_DIR/`
+		* `$ metawibele_workflow prioritize --prioritization-config $PRIORITIZE_CONF --bypass-mandatory --selected-output demo_prioritized.selected.tsv --output $OUTPUT\_DIR/`
 	* Output file name: $OUTPUT_DIR/prioritization/demo_prioritized.selected.tsv
 	* This file is the results of supervised filtering of protein families based on biochemical annotations.
 	* These settings require that each of prioritized protein family should 1) be annotated to domain-domain interaction with host, and 2) have at least one of the following features: signaling, extracellular, cellWall, outerMembrane, transmembrane 
 	
     ***3.2. Select interested subset annotated with multiple specific biochemical annotations simultaneously***
 	 
-	 Setting `$prioritization_conf` as following:
+	 Setting `$PRIORITIZE_CONF` as following:
 	
 	```
 	##Binary filtering for selection subset
@@ -767,14 +767,14 @@ By default, MetaWIBELE will perform by using the local configuration files insta
 	```
 	
 	 * Re-run prioritization workflow for filtering:
-		* `$ metawibele_workflow prioritize --prioritization-config $prioritization_conf --bypass-mandatory --selected-output demo_prioritized.selected.tsv --output $OUTPUT\_DIR/`
+		* `$ metawibele_workflow prioritize --prioritization-config $PRIORITIZE_CONF --bypass-mandatory --selected-output demo_prioritized.selected.tsv --output $OUTPUT\_DIR/`
 	 * Output file name: $OUTPUT_DIR/prioritization demo_prioritized.selected.tsv
 	 * This file is the results of supervised filtering of protein families based on biochemical annotations.
 	 * These settings require that each of prioritized protein family should 1) significantly associated with the main phenotype, 2) be annotated to domain-domain interaction with host, 3) predicted as signal peptides, and 4) have at least one of the following features: extracellular, cellWall, outerMembrane, transmembrane 
 	
 	***3.3 Select interested subset based on specific functions***
 	
-	Setting `$prioritization_conf` as following:
+	Setting `$PRIORITIZE_CONF` as following:
 	
 	```
 	[filtering]
@@ -817,7 +817,7 @@ By default, MetaWIBELE will perform by using the local configuration files insta
 	```
 	
 	* Re-run prioritization workflow for filtering:
-		* `$ metawibele_workflow prioritize --prioritization-config $prioritization_conf --bypass-mandatory --vignette-config my_vignette_function_file  --selected-output demo_prioritized_pilin.tsv --output $OUTPUT\_DIR/`
+		* `$ metawibele_workflow prioritize --prioritization-config $PRIORITIZE_CONF --bypass-mandatory --vignette-config my_vignette_function_file  --selected-output demo_prioritized_pilin.tsv --output $OUTPUT\_DIR/`
 	* Provide your own vignette function file for filtering specific functions.
 	* Output file name: $OUTPUT_DIR/prioritization/demo_prioritized_pilin.tsv
 	* This file is the results of supervised filtering of protein families based on pilin related functions.
