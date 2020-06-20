@@ -71,17 +71,14 @@ def parse_cli_arguments():
 	workflow.add_argument("extension-paired",
 	                      desc = "provide the extension for paired fastq files using comma to seperate, e.g. .R1.fastq.gz,.R2.fastq.gz | .R1.fastq,.R2.fastq",
 						  default = None) 
-	workflow.add_argument("sample-list",
-	                      desc = "sample list file",
-	                      default = None)
-	workflow.add_argument("gene-call-type",
-	                      desc = "specify which type of gene calls will be used",
-						  choices = ['prokka', 'prodigal', 'both'],
-	                      default = 'both')
 	workflow.add_argument("extension",
 	                      desc = "provide the extension for all fastq files",
 						  choices = [".fastq.gz", ".fastq"],
 	                      default = ".fastq.gz")
+	workflow.add_argument("gene-call-type",
+	                      desc = "specify which type of gene calls will be used",
+						  choices = ['prokka', 'prodigal', 'both'],
+	                      default = 'both')
 	workflow.add_argument("bypass-assembly",
 	                      desc = "do not run assembly",
 	                      action = "store_true")
@@ -93,7 +90,7 @@ def parse_cli_arguments():
 	                      action = "store_true")
 	workflow.add_argument("output-basename",
 	                      desc = "provide the basename for output files",
-	                      default = None)
+	                      default = "mgx")
 
 	return workflow
 
@@ -109,10 +106,6 @@ def main(workflow):
 		args.threads = int(args.threads)
 	else:
 		args.threads = int(config.threads)
-	if args.sample_list:
-		args.sample_list = os.path.abspath(args.sample_list)
-	else:
-		args.sample_list = config.sample_list
 	if args.output_basename:
 		args.output_basename = args.output_basename
 	else:
@@ -171,7 +164,7 @@ def main(workflow):
 	### STEP #3: gene-catalog  ###
 	# if gene-catalog action is provided, then build gene catalogs and calculate abundance per gene catalogs across samples
 	if not args.bypass_gene_catalog:
-		mygene_catalog, mycounts = preprocessing_tasks.gene_catalog (workflow, args.sample_list, 
+		mygene_catalog, mycounts = preprocessing_tasks.gene_catalog (workflow, 
 																	 complete_gene, complete_protein,
 																	 input_dir, args.extension, extension_paired,
 		                                                             args.threads,
