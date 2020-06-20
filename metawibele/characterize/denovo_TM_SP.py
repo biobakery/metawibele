@@ -147,17 +147,29 @@ def overlap_annotation(cluster, types, title, outfile):
 	
 	# output info
 	outs = {}
-	for mycat in sorted(phobius.keys()):
-		for myclust in phobius[mycat].keys():
-			myvalue1 = phobius[mycat][myclust]
-			if mycat in other:
+	for mycat in category_t:
+		if mycat in phobius and mycat in other:	# extract overlaps if running both Phobius and SignalP/TMHMM
+			for myclust in phobius[mycat].keys():
+				myvalue1 = phobius[mycat][myclust]
 				if myclust in other[mycat]:
 					myvalue2 = other[mycat][myclust]
 					value = myvalue1 + ";" + myvalue2
 					if not mycat in outs:
 						outs[mycat] = {}
 					outs[mycat][myclust] = value
-		# foreach cluster
+			# foreach cluster
+		if mycat in phobius and not mycat in other: # only Phobius
+			for myclust in phobius[mycat].keys():
+				myvalue1 = phobius[mycat][myclust]
+				if not mycat in outs:
+					outs[mycat] = {}
+				outs[mycat][myclust] = myvalue1
+		if not mycat in phobius and mycat in other: # only SignalP/TMHMM	
+			for myclust in other[mycat].keys():
+				myvalue2 = other[mycat][myclust]
+				if not mycat in outs:
+					outs[mycat] = {}
+				outs[mycat][myclust] = myvalue2
 	# foreach category
 
 	outfile1 = re.sub(".detail.tsv", ".signaling.detail.tsv", outfile)
