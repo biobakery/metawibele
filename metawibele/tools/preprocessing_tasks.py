@@ -497,7 +497,7 @@ def gene_calling (workflow, assembly_dir, assembly_extentsion, input_dir, extens
 	return complete_gene, complete_protein
 
 
-def gene_catalog (workflow, sample_list, complete_gene, complete_protein,
+def gene_catalog (workflow, complete_gene, complete_protein,
                   input_dir, extension, extension_paired, threads,
                   prefix_gene_catalog, gene_catalog, gene_catalog_nuc, gene_catalog_prot,
                   mapping_dir, gene_catalog_saf, gene_catalog_count):
@@ -649,10 +649,10 @@ def gene_catalog (workflow, sample_list, complete_gene, complete_protein,
 	# collect abundance
 	mylog = gene_catalog_count + ".log"
 	workflow.add_task(
-				'metawibele_gene_catalog_abundance -p [args[0]] -s sort.bed -c [args[1]] -l [args[2]] -o [targets[0]] >[args[3]] 2>&1 ',
+				'metawibele_gene_catalog_abundance -p [args[0]] -s sort.bed -c [args[1]] -o [targets[0]] >[args[2]] 2>&1 ',
 				depends = utilities.add_to_list(mappings,TrackedExecutable("metawibele_gene_catalog_abundance")),
 				targets = [gene_catalog_count],
-				args = [mapping_dir, gene_catalog, sample_list, mylog],
+				args = [mapping_dir, gene_catalog, mylog],
 				cores = 1,
 				name = "gene_catalog_abundance")
 
