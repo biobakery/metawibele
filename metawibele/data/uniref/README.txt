@@ -2,13 +2,15 @@
 ---------------------------------------------------------------
 
 taxonomic files from UniProt database for use with taxonomic annotation:
-	1) microbial taxa IDs
-	2) mammalia taxa IDs
-	3) taxon ID and taxon name, taxon lineage mappings
+	1) human Pfams
+	2) microbial taxa IDs
+	3) mammalia taxa IDs
+	4) taxon ID and taxon name, taxon lineage mappings
 ---------------------------------------------------------------
 ---------------------------------------------------------------
 
 
-uniprot_taxaID_bac-arc-vir.txt.gz
+uniprot_human_pfam.tsv.gz
 uniprot_taxaID_mammalia.txt.gz
-uniprot_taxonomy.txt.gz
+uniprot_taxaID_microbiome.txt.gz
+uniprot_taxonomy.tsv.gz
