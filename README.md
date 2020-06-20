@@ -12,7 +12,7 @@ Identifying Novel Bioactive Microbial Gene Products in Inflammatory Bowel Diseas
 
 [http://huttenhower.sph.harvard.edu/MetaWIBELE](http://huttenhower.sph.harvard.edu/MetaWIBELE)
 
-**For additional information, read the** [MetaWIBELE Tutorial](https://github.com/biobakery/metawibele)
+**For additional information, read the** [MetaWIBELE Tutorial](https://github.com/biobakery/metawibele/wiki)
 
 Support for MetaWIBELE is available via [the MetaWIBELE channel](https://forum.biobakery.org/c/Microbial-community-profiling/MetaWIBELE) of the bioBakery Support Forum.
 
@@ -27,10 +27,12 @@ Support for MetaWIBELE is available via [the MetaWIBELE channel](https://forum.b
     * [Installation](#installation)
     	* [Download MetaWIBELE](#download-metawibele)
     	* [Install MetaWIBELE](#install-metawibele)
-    	* [Download databases](#download-databases)
-    	* [Download configuration files](#download-configuration-files)
+    	* [Prepare databases](#prepare-databases)
+    		* [UniRef database](#uniref-database)
+    		* [Domain database](#domain-database)
+    	* [Prepare configuration files](#prepare-configuration-files)
 			* [Download global configuration template](#download-global-configuration-template)
-    		* [Download local configuration template](#download-local-configuration-template)
+    		* [Download local configuration template](#download-local-configuration-template-optional)
     		* [Download vignette configuraion template](#download-vignette-configuration-template)
 * [Quick-start Guide](#quick-start-guide)
     * [How to run](#how-to-run)
@@ -133,10 +135,15 @@ Option 2: Development Version
 		* Similarly, you can also specify the installation directory using --prefix option which will install the python package into the directory `$YOUR_INSTALL_DIR` that is a directory on PYTHONPATH and which Python reads ".pth" files from. You might need to add `$YOUR_INSTALL_DIR/bin` to your `$PATH` as it might not be included by default.
 
 
-#### Download databases
-UniRef databases are required if you will use MetaWIBELE to do global-homology based annotation and taxonomic annotation. These databases have been host by [HUMAnN](https://github.com/biobakery/humann). You can download these databases by using HUMAnN utility scripts and provid `$UNIREF_LOCATION` as the location to install the database.
+#### Prepare databases
+##### UniRef database
+UniRef databases are required if you will use MetaWIBELE to do global-homology based annotation and taxonomic annotation. 
 
-* Download the full UniRef90 database (11.0GB, recommend):
+Option 1: download uniref databases (Recommended)
+
+* We have buit these dependent uniref databases based on UniProt/UniRef 2019_01 sequences and annotations which have also been host by [HUMAnN](https://github.com/biobakery/humann). You can download these databases by using HUMAnN utility scripts and provid `$UNIREF_LOCATION` as the location to install the database.
+
+* Download the full UniRef90 database (11.0GB):
 
 	`$ humann2_databases --download uniref uniref90_diamond $UNIREF_LOCATION`
 
@@ -158,17 +165,42 @@ UniRef databases are required if you will use MetaWIBELE to do global-homology b
 		* Gene names of the UniRef representative 
 	* In most cases, mappings are directly inferred from the annotation of the corresponding UniRef centroid sequence in UniProt.
 
+Option 2: create local uniref databases
+
+* You can also create these databases locally by using MetaWIBELE utility scripts based on the latest release version of UniProt/UniRef, and provid `$DATABASE_LOCATION` as the location to install the database.
+
+* Download and obtain UniProt annotations:
+
+	`$ metawibele_prepare_uniprot_annotation --output $DATABASE_LOCATION`
+
+* Download UniRef sequences and obtain annotations:
+	`$ metawibele_prepare_uniref_annotation -t uniref90 --output $DATABASE_LOCATION`
+
+* Use `diamond` to index sequences
+	`$ diamond makedb --threads 20 --in uniref90.fasta -d uniref90.fasta`
+
+##### Domain database
+Protein domain databases are required if you will use MetaWIBELE to do domain based annotations. De default, these databases have already been installed when you install MetaWIBELE package. Alternatively, you can also create these domain databases locally and proved `$DATABASE_LOCATION` as the location to install the database.
+
+Create local domain databases (Optional)
+
+* Download and obtain dependent protein domains information:
+	`$ metawibele_prepare_domain_databases -t Pfam33.0 --output $DATABASE_LOCATION`
+	
+	* Pfam domains from the specified version of [Pfam](https://pfam.xfam.org/) database will be downloaded.
+	* PDB information from the latested version of [SIFT](https://www.ebi.ac.uk/pdbe/docs/sifts/) database will be downloaded.
+	* Domain-domain interactions from the version 2.0 of [DOMINE](https://manticore.niehs.nih.gov/cgi-bin/Domine?page=start) database will be downloaded.
 
 	
-### Download configuration files
+#### Download configuration files
 
-#### Download global configuration template
+##### Download global configuration template
 
-To run MetaWIBELE, one global configuation file `metawibele.cfg` is required to make basic settings. 
+To run MetaWIBELE, one global configuation file `metawibele.cfg` is **required** to make basic settings. 
 
 * Download `metawibele.cfg` into  your working directory:
 	* `$ metawibele_download_config --config-type global`
-* Make your own configurations:
+* Set required configurations in `metawibele.cfg` to run MetaWIBELE:
 	* Specify your input files and output folder:
 
 	```
@@ -177,10 +209,6 @@ To run MetaWIBELE, one global configuation file `metawibele.cfg` is required to 
 	study = 
 	# Metadata file
 	metadata = 
-	# Sample list file
-	sample_list = 
-	# The clustering information of non-reduandant gene catalogs saved with an extended fasta file, similar with CD-hit output
-	gene_catalog = 
 	# The protein sequences of representatives of gene catalogs
 	gene_catalog_prot = 
 	# The reads counts matrix table across samples of gene catalogs
@@ -205,12 +233,14 @@ To run MetaWIBELE, one global configuation file `metawibele.cfg` is required to 
 	time = 60
 	```
 	
-	* Specify the path of uniref databases:
+	* Specify the path of dependent databases:
 	
 	```
-	[uniref]
+	[database]
 	# The uniref databases used by MetaWIBELE. [data_path] provide the absolute path of the uniref databases folder
-	database = 
+	uniref_db = 
+	# The domain databases used by MetaWIBELE. [data_path] provide the absolute path of the domain databases folder; [none] use the dedault domain databases installed in the metawibele package [ Default: none ]
+	domain_db = none
 	```
 
 	* Specify parameter setteings for annotations
@@ -271,17 +301,15 @@ To run MetaWIBELE, one global configuation file `metawibele.cfg` is required to 
 	effect_size = mean(log)
 	# The main phenotype metadata used for prioritization, e.g. metadata1
 	phenotype =
-	# Set metadata value used as control condition for phenotype metadata varibles; use semicolon to seperate variables, e.g. "metadata1:control_status1;metadata2:control_status2"
-	flag_ref = 
 	# Case and control metadata pairs for phenotype metadata variables; use semicolon to seperate variables, e.g. "metadata1:case_status1|control_status1;metadata2:case_status2|control_status2,case_status3|control_status2"
 	case_control_status =
 	```
 
 
-#### Download local configuration template
-By default, MetaWIBELE will perform by using the local configuration files installed in the package. Optionally, you can also make your own local configuration files and provide them with optional arguments to MetaWIBELE. For example, the local characterization configuration file can be provided with `--characterization-config characterization.cfg`
+##### Download local configuration template
+By default, MetaWIBELE will perform by using the local configuration files installed in the package. **Optionally**, you can also make your own local configuration files and provide them with optional arguments to MetaWIBELE. For example, the local characterization configuration file can be provided with `--characterization-config $characterization_conf` where `$characterization_conf` is the file includes characterization configurations.
 
-* Download local configuration template files into your working directory:
+* Download local configuration template files (e.g. `characterization.cfg`, `prioritization.cfg `) into your working directory:
 	* `$ metawibele_download_config --config-type local`
 * Mofidy and provide your own configurations:
 	* Configurations for characterization in `characterization.cfg` which can be provided with `--characterization-config characterization.cfg`:
@@ -385,13 +413,13 @@ By default, MetaWIBELE will perform by using the local configuration files insta
 
 	```
 	
-#### Download vignette configuration template
-MetaWIBELE can accept user defined vignette functions of interest for further prioritization. You can make your own vignettes configuration files and provide them with optional argument to MetaWIBELE. For example, the vignette function configurations file can be provided with `--vignette-config vignettes_function.tsv`
+##### Download vignette configuration template
+**Optionally**, MetaWIBELE can accept user defined vignette functions of interest for further prioritization. You can make your own vignettes configuration files and provide them with optional argument to MetaWIBELE. For example, the vignette function configurations file can be provided with `--vignette-config $vignettes_function` where `$vignettes_function` is the file includes the interested functions.
 
-* Download local vignettes template file into your working directory:
+* Download local vignettes template file (`vignettes_function.tsv`) into your working directory:
 	* `$ metawibele_download_config --config-type vignette`
 * Make your own configurations:
-	* This is a tab-separated values file.
+	* `vignettes_function.tsv` is a tab-separated values file.
 	* Two required columns: `type` indicates which type of function it is; `annotation` indicates the specific annotations assigned by MetaWIBELE given a annotation type.
 	* Other optional columns: `annotation_type` indicates what tye of annotation it is in MetaWIBELE; `description` indicates detailed descriptions of the annotation.
 	
@@ -423,7 +451,6 @@ MetaWIBELE can accept user defined vignette functions of interest for further pr
 
 	```
 	metawibele_workflow characterize \
-		--characterization-config $characterization_conf \
 		--input $INPUT \
 		--output $OUTPUT
 	```
@@ -432,7 +459,6 @@ MetaWIBELE can accept user defined vignette functions of interest for further pr
 
 	```
 	metawibele_workflow prioritize \
-		--prioritization-config $prioritization_conf \
  		--input $INPUT \
  		--output $OUTPUT 
 	```
@@ -451,17 +477,15 @@ MetaWIBELE can accept user defined vignette functions of interest for further pr
 ### Standard Workflows
 #### MetaWIBELE-characterize workflow
 * ##### Input files for for characterization
-	* clustering information for non-redudant gene catalogs using extended-fasta format, e.g. [demo_genecatalogs.clstr](https://github.com/biobakery/metawibele/examples/input/demo_genecatalogs.clstr)
 	* protein seqeuences for non-redudant gene catalogs, e.g. [demo_genecatalogs.centroid.faa](https://github.com/biobakery/metawibele/examples/input/demo_genecatalogs.centroid.faa)
 	* reads counts table for non-redudant gene catalogs, e.g. [demo\_genecatalogs_counts.all.tsv](https://github.com/biobakery/metawibele/examples/input/demo_genecatalogs_counts.all.tsv)
 	* metadata file, e.g. [demo\_mgx_metadata.tsv](https://github.com/biobakery/metawibele/examples/input/demo_mgx_metadata.tsv)
-	* sample list, e.g. [demo\_mgx_samples.tsv](https://github.com/biobakery/metawibele/examples/input/demo_mgx_samples.tsv)
 	* all the above information can be specified in the `metawibele.cfg` file.
 
 * ##### MetaWIBELE-characterize workflow
 	`$ metawibele_workflow characterize --input $INPUT --output $OUTPUT`
 	* Make sure the global configuration file `metawibele.cfg` is in your working directory.
-	* In the command replace $INPUT with the path to the folder containing your fastq input files and $OUTPUT with the path to the folder to write output files. See the section on parallelization options to optimize the workflow run based on your computing resources. 
+	* In the command replace $INPUT with the path to the folder containing your gene catalog input files and $OUTPUT with the path to the folder to write output files. See the section on parallelization options to optimize the workflow run based on your computing resources. 
 	* The workflow runs with the default settings to run all modules. These settings will work for most data sets. However, if you need to customize your workflow settings for the preprocessing workflow to determine the optimum seeting. You can specify which modules you want to run in your own configuration file.
 	* For example, `--characterization-config $myconfig_file` will modify the default settings when running the characterization modules.
 	
@@ -527,7 +551,7 @@ MetaWIBELE can accept user defined vignette functions of interest for further pr
 	...
 	```
 	
-	* File name: $OUTPUT_DIR/characterization/$BASENAME\_proteinfamilies\_annotation.MSPminer\_taxonomy.tsv
+	* File name: $OUTPUT_DIR/characterization/$BASENAME\_proteinfamilies\_annotation.taxonomy.tsv
 	* These files report the detailed information about taxonomic annotation.
 	* `$BASENAME_proteinfamilies_annotation.MSPminer_taxonomy.all.tsv` shows the taxonomic information at each of taxonomic level.
 	
@@ -576,16 +600,16 @@ MetaWIBELE can accept user defined vignette functions of interest for further pr
 		* MetaWIBELE clusters all representative sequences of gene catalogs into protein families. 
 		* All intermediate results are in the folder `$OUTPUT_DIR/characterization/clustering`.
 		
-	* Protein-family search results
+	* Global-homology based search results
 		* MetaWIBELE queries each sequence in protein families against UniRef90 database by performing protein-level search.
-		* All intermediate results are in the folder `$OUTPUT_DIR/characterization/protein_family_annotation`.
+		* All intermediate results are in the folder `$OUTPUT_DIR/characterization/global_homology_annotation`.
 	
 	* Domain-motif annotation results
-		* MetaWIBELE uses a local-homology approach (domain/motif search) to characterize the secondary structures of protein families.
+		* MetaWIBELE uses local-homology approach (domain/motif search) to characterize the secondary structures of protein families.
 		* All intermediate results are in the folder `$OUTPUT_DIR/characterization/domain_motif_annotation`.
 	
 	* Abundance-based annotation results
-		* MetaWIBELE implements a non-homology based strategy compromising (i) taxonomic annotation with phylogenetic binning, (ii) abundance profiling for protein families and (iii) association with host phenotypes based on differential abundance. 
+		* MetaWIBELE implements non-homology based strategy compromising (i) taxonomic annotation with phylogenetic binning, (ii) abundance profiling for protein families and (iii) association with host phenotypes based on differential abundance. 
 		* All intermediate results are in the folder `$OUTPUT_DIR/characterization/abundance_annotation`.
 	
 
@@ -597,13 +621,13 @@ MetaWIBELE can accept user defined vignette functions of interest for further pr
 * ##### MetaWIBELE-prioritize workflow
 
 	`$ metawibele_workflow prioritize --input $INPUT --output $OUTPUT`
-	* In the command replace $INPUT with the path to the folder containing your fastq input files and $OUTPUT with the path to the folder to write output files. See the section on parallelization options to optimize the workflow run based on your computing resources. 
+	* In the command replace $INPUT with the path to the folder containing your characterization input files and $OUTPUT with the path to the folder to write output files. See the section on parallelization options to optimize the workflow run based on your computing resources. 
 	* The workflow runs with the default settings for all main tool subtasks. These settings will work for most data sets. However, if you need to customize your workflow settings for the preprocessing workflow to determine the optimum seeting. Then apply these settings by using options for each task. You can specify your own configuration file.
 	* For example, `--prioritization-config $myconfig_file` will modify the default settings when running the prioritization tasks.
 	
 * ##### Demo run of MetaWIBELE-prioritize
 
-	`$ metawibele_workflow prioritize --input examples/characterization/ --output $OUTPUT\_DIR/`
+	`$ metawibele_workflow prioritize --input $OUTPUT_DIR/characterization/ --output $OUTPUT\_DIR/`
 
 * ##### Output files of MetaWIBELE-prioritize
 	**1. unsupervised prioritization**
@@ -628,7 +652,7 @@ MetaWIBELE can accept user defined vignette functions of interest for further pr
 	**2. supervised prioritization: numeric ranking**
 	
 	```
-	familyID    DNA_within_phenotype_abundance__value   DNA_within_phenotype_abundance__percentile  DNA_within_phenotype_prevalence__value  DNA_within_phenotype_prevalence__percentile MaAsLin2_DA__coef__value    MaAsLin2_DA__coef__percentile   MaAsLin2_DA__qvalue__value  MaAsLin2_DA__qvalue__percentile priority_score
+	familyID    DNA_within_phenotype_abundance__value   DNA_within_phenotype_abundance__percentile  DNA_within_phenotype_prevalence__value  DNA_within_phenotype_prevalence__percentile MaAsLin2_DA__mean_log__value    MaAsLin2_DA__mean_log__percentile   MaAsLin2_DA__qvalue__value  MaAsLin2_DA__qvalue__percentile priority_score
 	Cluster_14393|CD.dysbiosis_vs_CD.non_dysbiosis  844.0252184037556   0.9995526838966203  0.971830985915493   0.986622572543949   -480.492828810768   0.9995526838966203  4.31866766640033e-11    1.0 0.9963995495816218
 	Cluster_47254|CD.dysbiosis_vs_CD.non_dysbiosis  718.2714984741792   0.9992047713717693  0.9741784037558685  0.9884128602332347  -392.524817430569   0.9993538767395627  4.87065570823145e-09    0.9937619603847205  0.9951628678096055
 	Cluster_53|CD.dysbiosis_vs_CD.non_dysbiosis 357.3594103568074   0.9953280318091451  0.9954233409610984  0.9983340378446925  -143.260405479191   0.9928429423459244  4.93693768852676e-09    0.9936625493948356  0.9950374594865485
@@ -648,7 +672,7 @@ MetaWIBELE can accept user defined vignette functions of interest for further pr
 	
 	***3.1 Select interested subset annotated with at least one of specific biochemical annotations***
 	 
-	Setting `prioritization.cfg` as following:
+	Setting local `$prioritization_conf` file as following:
 	
 	```
 	##Binary filtering for selection subset
@@ -692,14 +716,14 @@ MetaWIBELE can accept user defined vignette functions of interest for further pr
 	```
 	
 	* Re-run prioritization workflow for filtering:
-		* `$ metawibele_workflow prioritize --prioritization-config prioritization.cfg --bypass-mandatory --selected-output demo_prioritized.selected.tsv --output $OUTPUT\_DIR/`
+		* `$ metawibele_workflow prioritize --prioritization-config $prioritization_conf --bypass-mandatory --selected-output demo_prioritized.selected.tsv --output $OUTPUT\_DIR/`
 	* Output file name: $OUTPUT_DIR/prioritization/demo_prioritized.selected.tsv
 	* This file is the results of supervised filtering of protein families based on biochemical annotations.
 	* These settings require that each of prioritized protein family should 1) be annotated to domain-domain interaction with host, and 2) have at least one of the following features: signaling, extracellular, cellWall, outerMembrane, transmembrane 
 	
     ***3.2. Select interested subset annotated with multiple specific biochemical annotations simultaneously***
 	 
-	 Setting `prioritization.cfg` as following:
+	 Setting `$prioritization_conf` as following:
 	
 	```
 	##Binary filtering for selection subset
@@ -743,14 +767,14 @@ MetaWIBELE can accept user defined vignette functions of interest for further pr
 	```
 	
 	 * Re-run prioritization workflow for filtering:
-		* `$ metawibele_workflow prioritize --prioritization-config prioritization.cfg --bypass-mandatory --selected-output demo_prioritized.selected.tsv --output $OUTPUT\_DIR/`
+		* `$ metawibele_workflow prioritize --prioritization-config $prioritization_conf --bypass-mandatory --selected-output demo_prioritized.selected.tsv --output $OUTPUT\_DIR/`
 	 * Output file name: $OUTPUT_DIR/prioritization demo_prioritized.selected.tsv
 	 * This file is the results of supervised filtering of protein families based on biochemical annotations.
 	 * These settings require that each of prioritized protein family should 1) significantly associated with the main phenotype, 2) be annotated to domain-domain interaction with host, 3) predicted as signal peptides, and 4) have at least one of the following features: extracellular, cellWall, outerMembrane, transmembrane 
 	
 	***3.3 Select interested subset based on specific functions***
 	
-	Setting `prioritization.cfg` as following:
+	Setting `$prioritization_conf` as following:
 	
 	```
 	[filtering]
@@ -793,7 +817,7 @@ MetaWIBELE can accept user defined vignette functions of interest for further pr
 	```
 	
 	* Re-run prioritization workflow for filtering:
-		* `$ metawibele_workflow prioritize --prioritization-config prioritization.cfg --bypass-mandatory --vignette-config my_vignette_function_file  --selected-output demo_prioritized_pilin.tsv --output $OUTPUT\_DIR/`
+		* `$ metawibele_workflow prioritize --prioritization-config $prioritization_conf --bypass-mandatory --vignette-config my_vignette_function_file  --selected-output demo_prioritized_pilin.tsv --output $OUTPUT\_DIR/`
 	* Provide your own vignette function file for filtering specific functions.
 	* Output file name: $OUTPUT_DIR/prioritization/demo_prioritized_pilin.tsv
 	* This file is the results of supervised filtering of protein families based on pilin related functions.
@@ -805,7 +829,7 @@ MetaWIBELE can accept user defined vignette functions of interest for further pr
 	TID familyID evidence    value   rank    description note
 	1   Cluster_14393   DNA_within_phenotype_abundance  844.0252184037556   0.9995526838966203	ranking based on single evidence  CD.dysbiosis_vs_CD.non_dysbiosis
 	2   Cluster_14393   DNA_within_phenotype_prevalence 0.971830985915493   0.986622572543949	ranking based on single evidence   CD.dysbiosis_vs_CD.non_dysbiosis
-	3   Cluster_14393   MaAsLin2_DA__coef   -480.492828810768   0.9995526838966203	ranking based on single evidence  CD.dysbiosis_vs_CD.non_dysbiosis
+	3   Cluster_14393   MaAsLin2_DA__mean_log  -480.492828810768   0.9995526838966203	ranking based on single evidence  CD.dysbiosis_vs_CD.non_dysbiosis
 	4   Cluster_14393   MaAsLin2_DA__qvalue 4.31866766640033e-11    1.0	ranking based on single evidence CD.dysbiosis_vs_CD.non_dysbiosis
 	5   Cluster_14393   priority_score  0.9963995495816218  0.9963995495816218  meta ranking based on multiple evidences    CD.dysbiosis_vs_CD.non_dysbiosis
 	...
@@ -823,9 +847,13 @@ MetaWIBELE can accept user defined vignette functions of interest for further pr
 ## Guides to MetaWIBELE Utilities
 
 ### Preprocessing sequencing reads to build gene catalogs
-A utility workflow in MetaWIBELE package for preprocessing metagenomes reads, used for (i) metagenomic assembly, (ii) open reading frame prediction, (iii) non-redundant gene catalogs construction and (iv) gene abundance estimation.
+A utility workflow in MetaWIBELE package for preprocessing metagenomes reads, used for (i) metagenomic assembly, (ii) gene calling, (iii) non-redundant gene catalogs construction, and (iv) gene abundance estimation.
 
 #### Preprocessing workflow
+`metawibele_workflow preprocess --help`
+
+This commond yields:
+
 ```
 usage: preprocess.py [-h] [--version] [--threads THREADS]
                      [--extension-paired EXTENSION_PAIRED]
@@ -922,7 +950,6 @@ optional arguments:
 * `--output`: the ouput directory. 
 
 #### Input files of preprocessing workflow
-* Make sure the `metawibele.cfg` in your working directory.
 * QC'ed shotgun sequencing metagenome file (fastq, fastq.gz, fasta, or fasta.gz format)
 * See the section on parallelization options to optimize the workflow run based on your computing resources. 
 * The workflow runs with the default settings for all main tool subtasks. If you need to customize your workflow settings for the preprocessing workflow to determine the optimum seeting, you can change the parameter settings.
@@ -930,7 +957,7 @@ optional arguments:
 
 #### Demo run of preprocessing workflow
 
-`$ preprocessing_workflow --input examples/raw_reads/ --output preprocessing/ --extension-paired "_R1.fastq.gz,_R2.fastq.gz" --extension ".fastq.gz" --sample-list examples/raw_reads/sample.txt --local-jobs 5 --output $OUTPUT_DIR/`
+`$ metawibele_workflow preprocess --input examples/raw_reads/ --output $OUTPUT_DIR/ --output-basename demo --extension-paired "_R1.fastq.gz,_R2.fastq.gz" --extension ".fastq.gz"`
 
 #### Output files of preprocessing workflow
 **1. assembly results**
