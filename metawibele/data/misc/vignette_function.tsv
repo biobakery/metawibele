@@ -1,4 +1,4 @@
-type	accession	accession_type	description
+type	annotation	annotation_type	description
 pilin	PF11530	PfamDomain	Minor type IV pilin, PilX-like
 pilin	PF14245	PfamDomain	Type IV pilin PilA
 pilin	PF16734	PfamDomain	Type IV pilin-like putative secretion pathway protein G/H
