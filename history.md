@@ -1,6 +1,10 @@
 
 # MetaWIBELE History #
 
+## v0.3.3 2020-06-18 ##
+* Add utilities to build dependent uniref and domain databases
+* Simplify the configuration for case-control status in metawibele.cfg
+* Deprecate sample_list and gene_catalog configs in metawibele.cfg
 
 ## v0.3.2 2020-06-11 ##
 * Use UniRef/UniProt databases in HUMAnN
