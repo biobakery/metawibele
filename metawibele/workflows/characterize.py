@@ -183,7 +183,6 @@ def main(workflow):
 	output_dir = os.path.abspath(output_dir)
 
 	# get all input files
-	gene_catalog = config.gene_catalog
 	gene_catalog_seq = config.gene_catalog_prot
 	gene_catalog_count = config.gene_catalog_count
 
@@ -234,10 +233,10 @@ def main(workflow):
 	if not args.bypass_abundance:
 		print("Run abundance annotation")
 		myprotein_family_ann, myprotein_ann, abundance_output_folder = characterization.abundance_annotation (workflow, abundance_conf,
-		                                                                                                            gene_catalog, gene_catalog_count,
+		                                                                                                             gene_catalog_seq, gene_catalog_count,
 		                                                                                                            uniref_taxonomy_family, uniref_taxonomy,
 		                                                                                                            args.split_number, args.threads,
-		                                                                                                            output_dir, protein_family_relab, taxonomy_annotation_family, taxonomy_annotation,
+		                                                                                                            output_dir, protein_family, protein_family_relab, taxonomy_annotation_family, taxonomy_annotation,
 		                                                                                                            protein_family_ann_list, protein_ann_list)
 
 	### STEP #4: integrate annotations ###
