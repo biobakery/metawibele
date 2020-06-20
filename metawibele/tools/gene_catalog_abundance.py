@@ -49,8 +49,7 @@ def get_args ():
 	parser = argparse.ArgumentParser()
 	parser.add_argument('-p', help='input the working directory path of counts files', required=True)
 	parser.add_argument('-s', help='specify the suffix of counts file, e.g. sort.bed', default="sort.bed")
-	parser.add_argument('-c', help='input non-redundant gene catalog clustering info file', default=None)
-	parser.add_argument('-l', help='speficy the sample list file', default=None)
+	parser.add_argument('-c', help='input non-redundant gene catalog clustering info file', required=True)
 	parser.add_argument('-o', help='output cluster distribution file', required=True)
 	values = parser.parse_args()
 	return values
@@ -84,18 +83,22 @@ def collect_gene_cluster_info (clust_file):	# discovery_cohort.genes.clust
 #==============================================================
 # assign counts to peptide families info
 #==============================================================
-def collect_counts(sample_file, map_path, extension, gene_cluster):
+def collect_counts(map_path, extension, gene_cluster):
 	counts = {}
-	samples = {}
 	mysample = {}
+	
+	'''
+	samples = {}
 	open_file = open(sample_file, "r")
 	for line in open_file:
 		line = line.strip()
 		if not len(line):
 			continue
-		samples[line] = ""
+		samples[line.split("\t")[0]] = ""
 	# foreach sample
 	open_file.close()
+	'''
+
 	filelist = utilities.find_files(map_path, extension, None)
 	for myfile in filelist:
 		mym = re.search("([^\/]+)$", myfile)
@@ -103,8 +106,6 @@ def collect_counts(sample_file, map_path, extension, gene_cluster):
 		sample = re.sub("." + extension, "", sample)
 		if not os.path.isfile(myfile):
 			print("File not exist!\t" + myfile)
-			continue
-		if not sample in samples:
 			continue
 		mysample[sample] = ""
 		open_file = open(myfile, "r")
@@ -160,26 +161,18 @@ def assign_counts (counts, samples, outfile):
 def main():
 	### get arguments ###
 	values = get_args()
-	if values.c:
-		gene_catalog = values.c
-	else:
-		gene_catalog = config.gene_catalog
-	if values.l:
-		sample_list = values.l
-	else:
-		sample_list = config.sample_list
 
 	sys.stderr.write("### Start gene_catalog_abundance.py -p " + values.p + " ####\n")
 
 
 	### collect cluster info ###
 	sys.stderr.write("Get cluster info ......starting\n")
-	gene_cluster = collect_gene_cluster_info (gene_catalog)
+	gene_cluster = collect_gene_cluster_info (values.c)
 	sys.stderr.write("Get cluster info ......done\n")
 	
 	### collect counts info ###
 	sys.stderr.write("Get counts info ......starting\n")
-	counts, samples = collect_counts(sample_list, values.p, values.s, gene_cluster)
+	counts, samples = collect_counts(values.p, values.s, gene_cluster)
 	sys.stderr.write("Get counts info ......done\n")
 
 	### assign counts to peptide families ###
