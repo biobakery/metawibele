@@ -46,7 +46,9 @@ Normalize family abundance to RPK (read counts divided by the length of genes in
 
 def get_args (): 
 	parser = argparse.ArgumentParser(description=description)
-	parser.add_argument('-i', help='input peptide family abundance (read count)', required=True)
+	parser.add_argument('-i', help='input protein abundance (read count)', required=True)
+	parser.add_argument('-l', help='input the file including the protein sequence length', required=True)
+	parser.add_argument('-t', help='specify the type of length file', choices = ['fasta', 'cluster'], default='cluster')
 	parser.add_argument('-o', help='output normalized abundance file', required=True)    
 	values = parser.parse_args()
 	return values
@@ -56,8 +58,9 @@ def get_args ():
 #==============================================================
 # collect cluster info
 #==============================================================
-def collect_cluster_info (clust_file):	# discovery_cohort.peptides.clust
+def collect_cluster_info (clust_file, file_type):	
 	cluster = {}
+	seqs = {}
 	open_file = open(clust_file, "r")
 	myclust = ""
 	for line in open_file.readlines():
@@ -65,17 +68,30 @@ def collect_cluster_info (clust_file):	# discovery_cohort.peptides.clust
 		if not len(line):
 			continue
 		if re.search("^>", line):
-			mym = re.search("cluster=([\d]+)", line)
-			myclust = "Cluster_" + mym.group(1)
-			mym = re.search("length=([\d]+)", line)
-			mylen = mym.group(1)
-			mym = re.search(">([^;]+)", line)
-			myid = mym.group(1)
-			if not myclust in cluster:
-				cluster[myclust] = mylen
-			continue
+			if file_type == "cluster":
+				mym = re.search("cluster=([\d]+)", line)
+				myclust = "Cluster_" + mym.group(1)
+				mym = re.search("length=([\d]+)", line)
+				mylen = mym.group(1)
+				mym = re.search(">([^;]+)", line)
+				myid = mym.group(1)
+				if not myclust in cluster:
+					cluster[myclust] = mylen
+				continue
+			if file_type == "fasta":
+				mym = re.search(">([\S]+)", line)
+				myid = mym.group(1)
+				seqs[myid] = ""
+		if file_type == "fasta":
+			seqs[myid] = seqs[myid] + line
 	# foreach line
 	open_file.close()
+
+	if file_type == "fasta":
+		for myid in seqs.keys():
+			mylen = len(seqs[myid])
+			cluster[myid] = mylen
+
 	return cluster
 # function collect_cluster_info
 
@@ -129,7 +145,7 @@ def main():
 
 	### collect cluster info ###
 	sys.stderr.write("Get cluster info ......starting\n")
-	cluster = collect_cluster_info (config.protein_family)
+	cluster = collect_cluster_info (values.l, values.t)
 	sys.stderr.write("Get cluster info ......done\n")
 	
 	### normalization ###
