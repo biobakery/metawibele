@@ -197,6 +197,18 @@ def collect_annotation (uniref):
 				go = info[titles["GO"]]
 			else:
 				go = "NA"
+			if "GO_BP" in titles:
+				go_bp = info[titles["GO_BP"]]
+			else:
+				go_bp = "NA"
+			if "GO_cc" in titles:
+				go_cc = info[titles["GO_CC"]]
+			else:
+				go_cc = "NA"
+			if "GO_MF" in titles:
+				go_MF = info[titles["GO_MF"]]
+			else:
+				go_mf = "NA"
 			if "KO" in titles:
 				kegg = info[titles["KO"]]
 			else:
@@ -216,7 +228,7 @@ def collect_annotation (uniref):
 			interest_flag = 0
 
 			# based on GO info to define uncharacterized protein
-			if go == "NA":
+			if go == "NA" and go_bp == "NA" and go_cc == "NA" and go_mf == "NA":
 				mytype = unitype + "_uncharacterized"
 				if not myid in annotation:
 					annotation[myid] = []
@@ -229,6 +241,24 @@ def collect_annotation (uniref):
 				if not myid in annotation:
 					annotation[myid] = []
 				annotation[myid].append(mytype + "\t" + go + "\t" + ann + "\n" + myinfo)
+			if go_bp != "NA":
+				interest_flag = 1
+				mytype = unitype + "_GO-BP"
+				if not myid in annotation:
+					annotation[myid] = []
+				annotation[myid].append(mytype + "\t" + go_bp + "\t" + ann + "\n" + myinfo)
+			if go_cc != "NA":
+				interest_flag = 1
+				mytype = unitype + "_GO-CC"
+				if not myid in annotation:
+					annotation[myid] = []
+				annotation[myid].append(mytype + "\t" + go_cc + "\t" + ann + "\n" + myinfo)
+			if go_mf != "NA":
+				interest_flag = 1
+				mytype = unitype + "_GO-MF"
+				if not myid in annotation:
+					annotation[myid] = []
+				annotation[myid].append(mytype + "\t" + go_mf + "\t" + ann + "\n" + myinfo)
 			if kegg != "NA":
 				interest_flag = 1
 				mytype = unitype + "_KEGG-KOs"
@@ -470,52 +500,6 @@ def assign_annotation (identity_cutoff, coverage_cutoff, cutoff, pep_cluster, an
 		# foreach number
 	# foreach peptide cluster
 
-	'''
-	# get number
-	number = {}
-	interest = ["secreted", "cellWall", "outerMembrane", "extracellular", "signaling", "transmembrane", "GO", "KEGG-KOs", "COG"]
-	other = ["cellInnerMembrane", "cellSurface", "cellEnvelop", "cellMembrane", "cytoplasm", "membrane", "cytoplasmicMembrane", "periplasm", "nucleus", "fimbrium", "virion", "sporeCore", "mitochondrion", "bacterialFlagellum"]
-	unknown = ["unknown", "hypothetical"]
-	unchar = ["uncharacterized"]
-	total_num = 0
-	for myclust in anns.keys():
-		total_num = total_num + 1
-		interest_flag = 0
-		other_flag = 0
-		unchar_flag = 0
-		for mytype in anns[myclust]:
-			mym, category = mytype.split("_")
-			category = re.sub("GO\(BP\)", "GO", category)
-			category = re.sub("GO\(MF\)", "GO", category)
-			category = re.sub("GO\(CC\)", "GO", category)
-			if category in interest:
-				interest_flag = 1
-				if not mytype in number:
-					number[mytype] = {}
-				number[mytype][myclust] = ""
-			if category in other:
-				other_flag = 1
-			if category in unchar:
-				unchar_flag = 1
-		# foreach type of annotation
-		if interest_flag == 0 and other_flag == 1:  # other type annotation
-			mytype = unitype + "_others"
-			if not mytype in number:
-				number[mytype] = {}
-			number[mytype][myclust] = ""
-		if interest_flag == 0 and other_flag == 0 and unchar_flag == 1: 
-			mytype = unitype + "_uncharacterized"
-			if not mytype in number:
-				number[mytype] = {}
-			number[mytype][myclust] = ""
-		if interest_flag == 0 and other_flag == 0 and unchar_flag == 0: # unknown type annotation 
-			mytype = unitype + "_unknown"
-			if not mytype in number:
-				number[mytype] = {}
-			number[mytype][myclust] = ""
-    # foreach cluster
-    '''
-
 	#### output info ####
 	outfile1 = re.sub(".detail.tsv", ".ORF.detail.tsv", outfile_detail)
 	open_out = open(outfile_detail, "w")
@@ -541,38 +525,6 @@ def assign_annotation (identity_cutoff, coverage_cutoff, cutoff, pep_cluster, an
 	# foreach peptide family
 	open_out1.close()
 	
-	'''
-	outfile2 = re.sub(".detail.tsv", ".plot.tsv", outfile_detail)
-	open_out = open(outfile2, "w")
-	open_out.write("type\tnumber\tpercentage\n")
-	for mytype in sorted(number.keys()):
-		mynum = len(number[mytype].keys())
-		myper = float(mynum)/float(total_num)
-		open_out.write(mytype + "\t" + str(mynum) + "\t" + str(myper) + "\n")
-	open_out.close()
-	
-	outfile3 = re.sub(".detail.tsv", ".mapping.tsv", outfile_detail)
-	open_out = open(outfile3, "w")
-	open_out.write("type\tcategory\tnumber\n")
-	for mycat in sorted(maps_num.keys()):
-		mytype = mycat
-		mynum = len(maps_num[mycat].keys())
-		open_out.write(mytype + "\t" + mycat + "\t" + str(mynum) + "\n")
-	open_out.close()
-
-	outfile4 = re.sub(".detail.tsv", ".all.spectrum.tsv", outfile_detail)
-	open_file = open(outfile4, "w")
-	title = "percentage\tcluster_size\tnumber"
-	open_file.write(title + "\n")
-	for myper in sorted(pers.keys(), key=float):
-		for mytotal in sorted(pers[myper].keys(), key=int):
-			mynum = 0
-			mynum = len(pers[myper][mytotal].keys())
-			if mynum > 0:
-				open_file.write(str(myper) + "\t" + str(mytotal) + "\t" + str(mynum) + "\n")
-    # foreach percentage
-	open_file.close()
-	'''
 # assign_annotation
 
 
