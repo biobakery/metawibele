@@ -101,8 +101,6 @@ def clustering (workflow, gene_catalog_seq, threads, output_folder, protein_fami
 		for i in tmp:
 			i = re.sub("\"", "", i)
 			optional_arguments = optional_arguments + " " + str(i)
-		#optional_arguments = " ".join([str(i) for i in (config.cd_hit_prot_opts.split("\s+"))])
-		#optional_arguments = config.cd_hit_prot_opts
 	if not threads is None:
 		optional_arguments = "-T " + str(threads) + " " + optional_arguments
 
@@ -207,8 +205,6 @@ def global_homology_annotation (workflow, family_conf, gene_catalog_seq,
 	myname = os.path.basename(uniref_taxonomy_family)
 	uniref_taxa_family = os.path.join(main_folder, myname)
 	uniref_taxa = re.sub("proteinfamilies", "protein", uniref_taxa_family)
-	#antiSMASH_ann_family = os.path.join(main_folder, config.basename + "_antiSMASH_proteinfamilies.detail.tsv")
-	#antiSMASH_ann = os.path.join(main_folder, config.basename + "_antiSMASH_proteinfamilies.ORF.detail.tsv")
 	uniref_log0 = os.path.join(main_folder, "uniref90.mapping.log")
 	uniref_log1 =  os.path.join(main_folder, "uniref90.stat.log")
 	uniref_log2 = os.path.join(main_folder, "uniref90_protein.log")
@@ -228,7 +224,6 @@ def global_homology_annotation (workflow, family_conf, gene_catalog_seq,
 		link_cmd = "ln -fs " + gene_catalog_seq + " " + main_folder + "/" + myname
 		os.system(link_cmd)
 		workflow.add_task_gridable(
-				#link_cmd + " && metawibele_uniref_annotator [depends[0]] --seqtype prot --uniref90db [depends[1]] --uniref50db [depends[2]] --diamond-options \"--threads [args[0]]\" --temp [args[1]] --transitive-map [depends[3]] >[args[2]] 2>&1",
 				link_cmd + " && metawibele_uniref_annotator [depends[0]] --seqtype prot --uniref90db [depends[1]] --diamond-options \"--threads [args[0]]\" --temp [args[1]] >[args[2]] 2>&1",
 				depends = [os.path.join(main_folder, myname), config.uniref_dmnd, TrackedExecutable("metawibele_uniref_annotator")],
 				targets = [myhit],
@@ -311,29 +306,6 @@ def global_homology_annotation (workflow, family_conf, gene_catalog_seq,
 		myprotein_family_ann[uniref_ann_family] = ""
 		myprotein_ann[uniref_ann] = ""
 	# if uniref annotation
-
-	'''
-	## antiSMASH for biosynthesis gene clusters ##
-	if family_conf["antismash"] == "yes" or family_conf["antismash"] == "Yes":
-		workflow.add_task(
-				"metawibele_antiSMASH_annotator -a [depends[0]] -o [targets[0]] >[args[0]] 2>&1",
-				depends = [uniref_taxa, TrackedExecutable("metawibele_antiSMASH_annotator")],
-				targets = [antiSMASH_ann],
-				args = [uniref_log5],
-				cores = threads,
-				name = "antiSMASH_annotator")
-
-		workflow.add_task(
-				"metawibele_antiSMASH_annotator -a [depends[0]] -o [targets[0]] >>[args[0]] 2>&1",
-				depends = [uniref_taxa_family, TrackedExecutable("metawibele_antiSMASH_annotator")],
-				targets = [antiSMASH_ann_family],
-				args = [uniref_log5],
-				cores = threads,
-				name = "antiSMASH_annotator")
-		myprotein_ann[antiSMASH_ann] = ""
-		myprotein_ann_family[antiSMASH_ann_family] = ""
-	# if antiSMASH
-	'''
 
 	if len(myprotein_family_ann.keys()) > 0:
 		for myfile in myprotein_family_ann.keys():
@@ -436,8 +408,6 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 	interProScan_ann = os.path.join(main_folder, config.basename + "_InterProScan_proteinfamilies.ORF.detail.tsv")
 	psortb_ann_family = os.path.join(main_folder, config.basename + "_PSORTb_proteinfamilies.detail.tsv")
 	psortb_ann = os.path.join(main_folder, config.basename + "_PSORTb_proteinfamilies.ORF.detail.tsv")
-	#effectiveT3_ann_family = os.path.join(main_folder, config.basename + "_EffectiveT3_proteinfamilies.detail.tsv")
-	#effectiveT3_ann = os.path.join(main_folder, config.basename + "_EffectiveT3_proteinfamilies.ORF.detail.tsv")
 	myprotein_family_ann = {}
 	myprotein_ann = {}
 	time_equation = config.time  # xxx hours defined in global config
@@ -512,7 +482,6 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 
 		## InterProScan annotation for each ORF
 		mylog = os.path.join(interpro, "interproscan.extract.log")
-		#filelist = utilities.find_files(interpro, "interproscan.txt", None)
 		myout = []
 		for myfile in interpro_list:
 			myfile1 = re.sub("interproscan.txt", "signalp.signaling.tsv", myfile)
@@ -846,76 +815,6 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 		myprotein_family_ann[psortb_ann_family] = ""
 		myprotein_ann[psortb_ann] = ""
 	# if PSORTb
-	
-	'''
-	## run EffectiveT3
-	if domain_motif_conf["effectivet3"] == "yes" or domain_motif_conf["effectivet3"] == "Yes":
-		effectiveT3_list1 = []
-		for myfile, mysplit in zip(file_list, split_list):
-			myout_dir = os.path.join(effectiveT3, mysplit)
-			os.system('mkdir -p ' + myout_dir)
-			myout1 = os.path.join(myout_dir, mysplit + ".effectiveT3.out.txt" )
-			effectiveT3_list1.append(myout1)
-			mylog = os.path.join(myout_dir, os.path.basename(myfile))
-			mylog = re.sub(".fasta", ".log", mylog)
-			myerr = re.sub(".log", ".err", mylog)
-
-			workflow.add_task_gridable(
-					"metawibele_effectiveT3_annotator --split-file [args[0]] --threads [args[1]] -o [args[2]] -i [args[5]] > [args[3]] 2> [args[4]] ",
-					depends = [myfile, protein_family, protein_family_seq, TrackedExecutable("metawibele_effectiveT3_annotator")],
-					targets = [myout1, myout2, myout3],
-					args = [mysplit, threads, myout_dir, mylog, myerr, myfile],
-					cores = threads,
-					time = time_equation,
-					mem = mem_equation,
-					name = utilities.name_task(mysplit, "EffectiveT3"))
-		# foreach split file 
-
-		effectiveT3_list = []
-		myout = [] 
-		for myfile in effectiveT3_list1:
-			myname = os.path.basename(myfile)
-			myfile_new = os.path.join(effectiveT3, myname)
-			effectiveT3_list.append(myfile_new) 
-			myfile1 = re.sub("effectiveT3.out.txt", "effectiveT3.out.effector.tsv", myfile_new)
-			myout.append(myfile1)
-			workflow.add_task_gridable(
-					"ln -fs [depends[0]] [targets[0]]",
-					depends = [myfile],
-					targets = [myfile_new],
-					cores = 1,
-					time = 10,
-					mem = 2 * 1024,
-					name = utilities.name_task(myname, "ln"))
-
-		## EffectiveT3 annotation for each ORF
-		mylog = os.path.join(effectiveT3, "EffectiveT3.extract.log")
-		workflow.add_task_gridable(
-				"metawibele_effectiveT3protein -e [args[0]] -p [args[1]] >[args[2]] 2>&1",
-				depends = utilities.add_to_list(effectiveT3_list, TrackedExecutable("metawibele_effectiveT3_protein")),	
-				targets = myout,
-				args = ["effectiveT3.out.txt", effectiveT3, mylog],
-				cores = 2,
-				time = time_equation,
-				mem = mem_equation,
-				name = "effectiveT3_protein")
-
-		## EffectiveT3 annotation for each family
-		mylog = re.sub(".tsv", ".log", effectiveT3_ann_family)
-		workflow.add_task_gridable(
-				"metawibele_effectiveT3_protein_family -e [args[0]] -p [args[1]] -a consistency -o [targets[0]] >[args[2]] 2>&1",
-				depends = utilities.add_to_list(myout, TrackedExecutable("metawibele_effectiveT3_protein_family")),
-				targets = [effectiveT3_ann_family, effectiveT3_ann],
-				args = ["effectiveT3.out.effector.tsv", effectiveT3, mylog],
-				cores = 2,
-				time = time_equation,
-				mem = mem_equation,
-				name = "effectiveT3_protein_family")
-
-		myprotein_family_ann[effectiveT3_ann_family] = ""
-		myprotein_ann[effectiveT3_ann] = ""
-	# if EffectiveT3
-	'''
 
 	if len(myprotein_family_ann.keys()) > 0:
 		for myfile in myprotein_family_ann.keys():
@@ -927,9 +826,9 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 	return myprotein_family_ann, myprotein_ann, main_folder
 
 
-def abundance_annotation (workflow, abundance_conf, gene_catalog, gene_catalog_count,
+def abundance_annotation (workflow, abundance_conf, gene_catalog_seq, gene_catalog_count,
                                 uniref_taxonomy_family, uniref_taxonomy, split_number,
-                                threads, output_folder, protein_family_relab, taxonomy_annotation_family, taxonomy_annotation,
+                                threads, output_folder, protein_family, protein_family_relab, taxonomy_annotation_family, taxonomy_annotation,
                                 protein_family_ann_list, protein_ann_list):
 	"""
 	This set of tasks will run annotations predicted by abundance.
@@ -938,6 +837,7 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog, gene_catalog_c
 		workflow (anadama2.workflow): An instance of the workflow class.
 		abundance_conf: Methods configuration for abundance-based annotation
 		gene_catalog_seq (fasta file): Fasta file of amino acid sequences for gene catalogs.
+		gene_catalog_count (count table): reads count for gene catalogs.
 		protein_family (protein family file): This extending fasta file for clustering information
 		threads (int): The number of threads/cores for clustering to use.
 		output_folder (string): The path of the output folder.
@@ -1203,8 +1103,8 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog, gene_catalog_c
 		# normalized to RPK and relative abundance
 		mylog = re.sub(".tsv", ".log", family_rpk)
 		workflow.add_task(
-			"metawibele_abundance_RPK -i [depends[0]] -o [targets[0]] >[args[0]] 2>&1",
-			depends = [family_count, TrackedExecutable("metawibele_abundance_RPK")],
+			"metawibele_abundance_RPK -i [depends[0]] -l [depends[1]] -t cluster -o [targets[0]] >[args[0]] 2>&1",
+			depends = [family_count, protein_family, TrackedExecutable("metawibele_abundance_RPK")],
 			targets = [family_rpk],
 			args = [mylog],
 			cores = 1,
@@ -1221,8 +1121,8 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog, gene_catalog_c
 
 		mylog = re.sub(".tsv", ".log", gene_rpk)
 		workflow.add_task_gridable(
-			"metawibele_abundance_RPK_gene -i [depends[0]] -o [targets[0]] >[args[0]] 2>&1",
-			depends = [count_file, TrackedExecutable("metawibele_abundance_RPK_gene")],
+			"metawibele_abundance_RPK -i [depends[0]] -l [depends[1]] -t fasta -o [targets[0]] >[args[0]] 2>&1",
+			depends = [count_file, gene_catalog_seq, TrackedExecutable("metawibele_abundance_RPK")],
 			targets = [gene_rpk],
 			args = [mylog],
 			cores = 1,
@@ -1497,8 +1397,6 @@ def integration_annotation (workflow, integration_conf,
 	utilities.dict_to_file (protein_ann_list, protein_ann_list_file)
 	proteinfamily_list = protein_family_ann_list
 	protein_list = protein_ann_list
-	#proteinfamily_list = utilities.file_to_dict (protein_family_ann_list_file)
-	#protein_list = utilities.file_to_dict (protein_ann_list_file)
 	time_equation = config.time  # xxx hours defined in global config
 	mem_equation = config.memory  # xxx GB defined in global config
 
