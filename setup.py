@@ -76,7 +76,7 @@ import re
 import time
 
 
-VERSION = "0.3.2"
+VERSION = "0.3.3"
 AUTHOR = "MetaWIBELE Development Team"
 MAINTAINER = "Yancong Zhang"
 MAINTAINER_EMAIL = "zhangyc201211@gmail.com"
@@ -269,9 +269,6 @@ setuptools.setup(
 			'metawibele_psortb_annotator = metawibele.characterize.psortb_annotator:main',
 			'metawibele_psortb_protein = metawibele.characterize.psortb_protein:main',
 			'metawibele_psortb_protein_family = metawibele.characterize.psortb_protein_family:main',
-			#'metawibele_effectiveT3_annotator = metawibele.characterize.effectiveT3_annotator:main',
-			#'metawibele_effectiveT3_protein = metawibele.characterize.effectiveT3_protein:main',
-			#'metawibele_effectiveT3_protein_family = metawibele.characterize.effectiveT3_protein_family:main',
 			'metawibele_sum_to_protein_family_abundance = metawibele.characterize.sum_to_protein_family_abundance:main',
 			'metawibele_sum_to_protein_family_stratified_abundance = metawibele.characterize.sum_to_protein_family_stratified_abundance:main',
 			'metawibele_summary_all_annotation = metawibele.characterize.summary_all_annotation:main',
@@ -310,7 +307,12 @@ setuptools.setup(
 			'metawibele_split_family_abundance = metawibele.common.split_family_abundance:main',
 			'metawibele_transpose = metawibele.common.transpose:main',
 			'metawibele_split_fasta_file = metawibele.common.split_fasta_file:main',
-			'metawibele_download_config = metawibele.common.download_config_file:main'
+			'metawibele_download_config = metawibele.common.download_config_file:main',
+			'metawibele_prepare_uniprot_taxonomy = metawibele.common.prepare_uniprot_taxonomy:main',
+			'metawibele_prepare_uniprot_annotation = metawibele.common.prepare_uniprot_annotation:main',
+			'metawibele_prepare_uniref_annotation = metawibele.common.prepare_uniref_annotation:main',
+			'metawibele_prepare_domain_databases = metawibele.common.prepare_domain_databases:main',
+			'metawibele_extract_uniref_maps = metawibele.common.extract_uniref_maps:main'
 		]},
 	package_data={
 		'metawibele': [
@@ -318,7 +320,7 @@ setuptools.setup(
 			'metawibele.cfg',
 			'configs/*',
 			'data/domain/*',
-			'data/taxonomy/*',
+			'data/uniref/*',
 			'data/misc/*',
 			'Rscripts/*'
 		]},
