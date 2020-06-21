@@ -2,7 +2,7 @@
 ---------------------------------------------------------------
 
 taxonomic files from UniProt database for use with taxonomic annotation:
-	1) human Pfams
+	1) human pfams
 	2) microbial taxa IDs
 	3) mammalia taxa IDs
 	4) taxon ID and taxon name, taxon lineage mappings
