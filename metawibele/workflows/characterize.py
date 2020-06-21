@@ -154,6 +154,9 @@ def main(workflow):
 
 	# get arguments
 	args = workflow.parse_args()
+	tmps_dir = os.path.join (os.getcwd(), "temp")
+	if os.path.isdir(tmps_dir):
+		os.system("rm -rf " tmps_dir)
 
 	# get configuration info
 	default_characterization_conf = os.path.join(config.config_directory, "characterization.cfg")
@@ -183,6 +186,7 @@ def main(workflow):
 	output_dir = os.path.abspath(output_dir)
 
 	# get all input files
+	#gene_catalog = config.gene_catalog
 	gene_catalog_seq = config.gene_catalog_prot
 	gene_catalog_count = config.gene_catalog_count
 
