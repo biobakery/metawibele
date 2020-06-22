@@ -152,18 +152,16 @@ Option 1: download uniref databases (Recommended)
 	`$ humann2_databases --download utility_mapping full $UNIREF_LOCATION`
 
 	* Mappings are available for the UniRef90 gene families to the following systems:
-		* MetaCyc Reactions
-		* KEGG Orthogroups (KOs)
-		* Pfam domains
-		* Level-4 enzyme commission (EC) categories
-		* EggNOG (including COGs)
-		* Gene Ontology (GO)
-		* Taxonomic information of the latest common acestor (LCA)
-		* Taxonomic information of the representative
 		* UniProt ID corresponding to the UniRef representative
 		* Protein names of the UniRef representative
-		* Gene names of the UniRef representative 
-	* In most cases, mappings are directly inferred from the annotation of the corresponding UniRef centroid sequence in UniProt.
+		* Gene names of the UniRef representative
+		* Taxon name and taxon ID of the latest common acestor (LCA) for each uniref90 cluster
+		* Taxon name and taxon ID of the representative of each uniref90 cluster
+		* Gene Ontology (GO)
+		* KEGG Orthogroups (KOs)
+		* EggNOG (including COGs)
+		* Pfam domains （Pfams)
+	* In most cases, mappings are directly inferred from the annotation of the corresponding UniRef representative sequence in UniProt.
 
 Option 2: create local uniref databases
 
