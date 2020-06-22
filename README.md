@@ -174,9 +174,11 @@ Option 2: create local uniref databases
 	`$ metawibele_prepare_uniprot_annotation --output $DATABASE_LOCATION`
 
 * Download UniRef sequences and obtain annotations:
+	
 	`$ metawibele_prepare_uniref_annotation -t uniref90 --output $DATABASE_LOCATION`
 
 * Use `diamond` to index sequences
+	
 	`$ diamond makedb --in uniref90.fasta -d uniref90.fasta`
 
 ##### Domain database
@@ -185,6 +187,7 @@ Protein domain databases are required if you will use MetaWIBELE to do domain ba
 Create local domain databases (Optional)
 
 * Download and obtain dependent protein domains information:
+	
 	`$ metawibele_prepare_domain_databases -t Pfam33.0 --output $DATABASE_LOCATION`
 	
 	* Pfam domains from the specified version of [Pfam](https://pfam.xfam.org/) database will be downloaded.
@@ -988,19 +991,22 @@ optional arguments:
 
 ## Download MetaWIBELE resources
 ### Information of gene catalogs
-* [HMP2\_contig_sequence.fasta.tar.gz]() (7.5 GB): contig sequences
+* [HMP2\_contig_sequence.fasta.gz]() (7.5 GB): contig sequences
 * [HMP2\_gene_info.tsv.tar.gz]() (2.3 GB): information of gene calling
-* [HMP2_genecatalogs.clstr.tar.gz]() (279 MB): clustering information for gene catalogs
-* [HMP2_genecatalogs.centroid.fna.tar.gz]() (554 MB): nucleotide sequences of centroids for gene catalogs
-* [HMP2_genecatalogs.centroid.faa.tar.gz]() (335 MB): protein sequences of centroids for gene catalogs
-* [HMP2\_genecatalogs_CPM.tsv.tar.gz]() (2.0 GB): DNA relative abundance of gene catalogs
+* [HMP2_genecatalogs.clstr.gz]() (279 MB): clustering information for gene catalogs
+* [HMP2_genecatalogs.centroid.fna.gz]() (554 MB): nucleotide sequences of centroids for gene catalogs
+* [HMP2_genecatalogs.centroid.faa.gz]() (335 MB): protein sequences of centroids for gene catalogs
+* [HMP2\_genecatalogs_counts.all.tsv.gz]() (2.0 GB): reads counts of gene catalogs
 
 ### Characterization of protein families 
-* [HMP2_proteinfamilies.clstr.tar.gz]() (29 MB): clustering information for protein families
-* [HMP2\_proteinfamilies.centroid.faa.tar.gz]() (270 MB): protein sequences of centroids for protein families
-* [HMP2\_proteinfamilies_CPM.tsv.tar.gz]() (1.5 GB): DNA relative abundance of protein families
-* [HMP2\_proteinfamilies_annotation.tsv.tar.gz]() (1.8 GB): main annotations of protein families
-* [HMP2\_proteinfamilies_annotation.attribute.tsv.tar.gz]() (6.4 GB): attributes of annotation types
+* [HMP2\_proteinfamilies_annotation.tsv.gz]() (1.8 GB): main annotations of protein families
+* [HMP2\_proteinfamilies_annotation.attribute.tsv.gz]() (6.4 GB): attributes of annotation types
+* [HMP2\_proteinfamilies_annotation.taxonomy.tsv.gz]() (500 MB): relative abundance of protein families
+* [HMP2\_proteinfamilies_relab.tsv.gz]() (1.5 GB): relative abundance of protein families
+* [HMP2_proteinfamilies.clstr.gz]() (29 MB): clustering information for protein families
+* [HMP2\_proteinfamilies.centroid.faa.gz]() (270 MB): protein sequences of centroids for protein families
+
+
 
 ### Prioritization of protein families
 * [HMP2\_unsupervised_prioritization.rank.table.tsv.tar.gz]() (14 MB): prioritization based on overall abundance and prevalence
