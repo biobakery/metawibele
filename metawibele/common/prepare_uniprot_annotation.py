@@ -52,8 +52,16 @@ def download_dat (output_path):
 def extract_annotation_info (datfile, output_path):
 	title = "Entry\tEntry name\tGene names\tProtein names\tOrganism\tNCBI_TaxID\tLength\tGene ontology (biological process)\tGene ontology (molecular function)\tGene ontology (cellular component)\tCross-reference (KEGG)\tCross-reference (KO)\tCOG\tInterpro\tTaxonomic lineage (ALL)\tSubcellular location [CC]\tTransmembrane\tSignal peptide\tCross-reference (Pfam)"
 	outfile = os.path.join(output_path, "uniprot_annotation.tsv")
+	outfile1 = os.path.join(output_path, "uniprot_annotation.tsv.gz")
 	if not os.path.isfile(datfile):
 		sys.exit("Error: please download the uniprot dat file!")
+	if os.path.isfile(outfile) and not os.path.isfile(outfile1):
+		os.system("gzip " + outfile)
+		print("Already exist file and skip this step: " + outfile1)
+		return outfile1
+	if os.path.isfile(outfile1):
+		print("Already exist file and skip this step: " + outfile1)
+		return outfile1
 	open_out = open(outfile, "w")
 	open_out.write(title + "\n")
 	entry = "NA"
@@ -264,24 +272,13 @@ def extract_annotation_info (datfile, output_path):
 					trans = "TRANSMEM"
 				else:
 					trans = trans + ";" + "TRANSMEM"
-			elif re.search("^FT\s+SIGNAL\s+", line):	# signal
+			if re.search("^FT\s+SIGNAL\s+", line):	# signal
 				signalflag = 1
 				transflag = 0
 				if signal == "NA":
 					signal = "SIGNAL"
 				else:
 					signal = signal + ";" + "SIGNAL"
-			elif re.search("^FT\s+[\S]+\s+[\S]+\s+[\S]+\s+([\s\S]+)", line):  # not transmembrane and not signal
-				transflag = 0
-				signalflag = 0
-			else:
-				mym = re.search("^FT\s+(\S+[\s\S]+)$", line)
-				mydec = mym.group(1)
-				mydec = re.sub("\.$", "", mydec)
-				if transflag == 1:
-					 trans = trans + " " + mydec
-				if signalflag == 1:
-					 signal = signal + " " + mydec
 			continue
 		# FT info
 	# foreach line
