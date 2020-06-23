@@ -156,7 +156,7 @@ def main(workflow):
 	args = workflow.parse_args()
 	tmps_dir = os.path.join (os.getcwd(), "temp")
 	if os.path.isdir(tmps_dir):
-		os.system("rm -rf " tmps_dir)
+		os.system("rm -rf " + tmps_dir)
 
 	# get configuration info
 	default_characterization_conf = os.path.join(config.config_directory, "characterization.cfg")
