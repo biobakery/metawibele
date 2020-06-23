@@ -310,6 +310,7 @@ vignettes_database = os.path.join(misc_directory, "vignette_function.tsv")
 # update databases by using user provided
 # uniref database
 uniref_database_dir = get_item (config_items, "database", "uniref_db", "string")
+uniref_database_dir = os.path.abspath(uniref_database_dir)
 if not uniref_database_dir.lower() == "none" and not uniref_database_dir == "":
 	files = [os.path.abspath(x) for x in os.listdir(uniref_database_dir)]
 	for i in files:
@@ -387,10 +388,13 @@ priority_dir = os.path.join(working_dir, "prioritization")
 
 study = get_item(config_items, "input", "study", "string")
 metadata = get_item(config_items, "input", "metadata", "string")
+metadata = os.path.abspath(metadata)
 #sample_list = get_item(config_items, "input", "sample_list", "string")
 #gene_catalog = get_item(config_items, "input", "gene_catalog", "string")
 gene_catalog_prot = get_item(config_items, "input", "gene_catalog_prot", "string")
+gene_catalog_prot = os.path.abspath(gene_catalog_prot)
 gene_catalog_count = get_item(config_items, "input", "gene_catalog_count", "string")
+gene_catalog_count = os.path.abspath(gene_catalog_count)
 
 protein_family = os.path.join(annotation_dir, basename + "_proteinfamilies.clstr")
 protein_family_prot_seq = os.path.join(annotation_dir, basename + "_proteinfamilies.centroid.faa")
@@ -514,6 +518,7 @@ if effect_size == "log(fc)":
 	effect_size = "log(FC)"
 nested_effects = "none"
 maaslin2_cmmd = get_item(config_items, "maaslin2", "maaslin2_cmmd", "string")
+maaslin2_cmmd = re.sub("\"", "", maaslin2_cmmd)
 maaslin2_utils = os.path.join(metawibele_install_directory, "Rscripts", "maaslin2_utils.R")
 pcl_utils = os.path.join(metawibele_install_directory, "Rscripts", "pcl_utils.R")
 transpose_cmmd = "metawibele_transpose" 
