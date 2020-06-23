@@ -98,7 +98,7 @@ Bypass options:
 11. [PSORTb](https://psort.org/documentation/index.html) (version >= 3.0) (only required if using PSORTb to predict subcellular localization)
 12. **Optional**: only required if using MetaWIBELE utitlity to preprocess metagenomic sequencing reads
 	* [MEGAHIT](https://github.com/voutcn/megahit) (version >= 1.1.3) 
-	* [Prokka](https://github.com/tseemann/prokka) (version >= 1.14-dev; recommend to close '-c' parameter in setting prodigal parameters)
+	* [Prokka](https://github.com/tseemann/prokka) (version >= 1.14-dev; recommend to not set '-c' parameter when running prodigal with metagenome mode)
 	* [Prodigal](https://github.com/hyattpd/Prodigal) (version >= 2.6)
 	* [USEARCH](http://www.drive5.com/usearch/) (version >= 9.0.2132_i86linux64)
 	* [Bowtie2](http://bowtie-bio.sourceforge.net/bowtie2/index.shtml) (version >= 2.3.2)
