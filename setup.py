@@ -233,7 +233,7 @@ setuptools.setup(
 	#cmdclass={'install': Install},
 	entry_points={
 		'console_scripts': [
-			'metawibele_workflow = metawibele.metawibele_workflow:main',
+			'metawibele = metawibele.metawibele:main',
 			'metawibele_characterize = metawibele.workflows.characterize:main',
 			'metawibele_prioritize = metawibele.workflows.prioritize:main',
 			'metawibele_preprocess = metawibele.workflows.preprocess:main',
