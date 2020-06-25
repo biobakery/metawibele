@@ -114,7 +114,7 @@ You can download the latest MetaWIBELE release or the development version. The s
 
 Option 1: Latest Release (Recommended)
 
-* download [metawibele-master.zip](Mhttps://github.com/biobakery/metawibele/archive/master.zip) and unpack the latest release of MetaWIBELE
+* download [metawibele-master.zip](https://github.com/biobakery/metawibele/archive/master.zip) and unpack the latest release of MetaWIBELE
 
 Option 2: Development Version
 
