@@ -102,7 +102,7 @@ Bypass options:
 	* [Prodigal](https://github.com/hyattpd/Prodigal) (version >= 2.6)
 	* [USEARCH](http://www.drive5.com/usearch/) (version >= 9.0.2132_i86linux64)
 	* [Bowtie2](http://bowtie-bio.sourceforge.net/bowtie2/index.shtml) (version >= 2.3.2)
-	* [SAMtools](https://github.com/samtools/) (version >= 1.5)
+	* [SAMtools](https://github.com/samtools/) (version >= 1.9)
 	* [featureCounts](http://bioinf.wehi.edu.au/featureCounts/) (version >= 1.6.2)
 
 **Note:** Please install the required software in a location in your `$PATH`. If you always run with gene catalogs, the optional softwares are not required. Also if you always run with one or more bypass options (for information on bypass options, see optional arguments to the section [Workflow by bypass mode](#workflow-by-bypass-mode)), the software required for the steps you bypass does not need to be installed.
@@ -114,7 +114,7 @@ You can download the latest MetaWIBELE release or the development version. The s
 
 Option 1: Latest Release (Recommended)
 
-* download [MetaWIBELE.tar.gz](http://huttenhower.sph.harvard.edu/MetaWIBELE/MetaWIBELE.tar.gz) and unpack the latest release of MetaWIBELE
+* download [metawibele-master.zip](Mhttps://github.com/biobakery/metawibele/archive/master.zip) and unpack the latest release of MetaWIBELE
 
 Option 2: Development Version
 
