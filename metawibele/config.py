@@ -250,6 +250,26 @@ c_taxon_delim = "|"	 	 # taxonomic lineage, e.g. g__Faecalibacterium|s__Faecalib
 c_multiname_delim = ";"	 # multiple ietms, e.g. PF00482;PF01841 
 c_msp_unknown = "msp_unknown"
 
+# diamond options
+diamond_database_extension = ".dmnd"
+diamond_cmmd_protein_search = "blastp"
+diamond_cmmd_nucleotide_search = "blastx"
+diamond_identity = 0.9			# identity threshold for uniref90 strong homologies
+diamond_query_coverage = 0.8 	# query and mutual coverage threshold of uniref90 strong homologies
+diamond_mutual_coverage = 0.8
+diamond_version={
+    "flag" : "--version",
+    "major" : 0,
+    "minor" : 8,
+    "second minor" : 22,
+    "line" : 0,
+    "column" : 2}
+
+# CD-hit
+cd_hit_prot_opts = "-d 100 -c 0.9 -aL 0.8 -aS 0.8 -G 0 -M 0 -B 0"	# clustering protein families
+cd_hit_gene_opts = "-d 100 -c 0.95 -aS 0.8 -G 0 -M 0 -B 0"
+featureCounts_opts = " -F SAF "
+
 
 ## User config file ##
 metawibele_install_directory = os.path.dirname(os.path.abspath(__file__))
@@ -269,21 +289,40 @@ config_items = read_user_edit_config_file(full_path_user_edit_config_file)
 # installed databases
 database_directory = os.path.join(metawibele_install_directory, "data")
 uniref_directory = os.path.join(database_directory, "uniref")
-taxonomy_database_choices = ["uniprot_taxonomy.tsv.gz","uniprot_taxaID_microbiome.txt.gz","uniprot_taxaID_mammalia.txt.gz"]
-taxonomy_database = os.path.join(uniref_directory,  taxonomy_database_choices[0])
-microbiome_taxa = os.path.join(uniref_directory, taxonomy_database_choices[1])
-mammalia_taxa = os.path.join(uniref_directory, taxonomy_database_choices[2])
-uniref_dmnd = os.path.join(uniref_directory, "uniref90.fasta.dmnd")
+#taxonomy_database_choices = ["uniprot_taxonomy.tsv.gz","uniprot_taxaID_microbiome.txt.gz","uniprot_taxaID_mammalia.txt.gz"]
+#taxonomy_database = os.path.join(uniref_directory,  taxonomy_database_choices[0])
+#microbiome_taxa = os.path.join(uniref_directory, taxonomy_database_choices[1])
+#mammalia_taxa = os.path.join(uniref_directory, taxonomy_database_choices[2])
+#human_pfam_database = os.path.join(uniref_directory, "uniprot_human_pfam.tsv.gz")
+prefix_taxa = "uniprot_taxonomy"
+prefix_mic_taxa = "uniprot_taxaID_microbiome"
+prefix_mam_taxa = "uniprot_taxaID_mammalia"
+prefix_human_pfam = "uniprot_human_pfam"
+prefix_map = "map_"
+taxonomy_database = ""
+microbiome_taxa = ""
+mammalia_taxa = ""
+human_pfam_database = ""
+uniref_dmnd = ""
 uniref_database = []
 map_file_names = []
 files = [os.path.abspath(x) for x in os.listdir(uniref_directory)]
 for i in files:
 	myname = os.path.basename(i)
 	i = os.path.join(uniref_directory, myname)
-	if re.search("^map_", myname):
+	if myname.endswith(diamond_database_extension):
+		uniref_dmnd = i 
+	if myname.startswith(prefix_taxa):
+		taxonomy_database = i
+	if myname.startswith(prefix_mic_taxa):
+		microbiome_taxa = i
+	if myname.startswith(prefix_mam_taxa):
+		mammalia_taxa = i
+	if myname.startswith(prefix_human_pfam):
+		human_pfam_database = i
+	if myname.startswith(prefix_map):
 		map_file_names.append(myname)
 		uniref_database.append(i)
-human_pfam_database = os.path.join(uniref_directory, "uniprot_human_pfam.tsv.gz")
 
 domain_directory = os.path.join(database_directory, "domain")
 pdb_database_choices = ["pdb_chain_taxonomy.tsv.gz","pdb_chain_pfam.tsv.gz"]
@@ -315,17 +354,17 @@ if not uniref_database_dir.lower() == "none" and not uniref_database_dir == "":
 	files = [os.path.abspath(x) for x in os.listdir(uniref_database_dir)]
 	for i in files:
 		myname = os.path.basename(i)
-		if myname == "uniprot_taxonomy.tsv.gz":
-			taxonomy_database = os.path.join(uniref_database_dir, "uniprot_taxonomy.tsv.gz")
-		if myname == "uniprot_taxaID_microbiome.txt.gz":
-			microbiome_taxa = os.path.join(uniref_database_dir, "uniprot_taxaID_microbiome.txt.gz")
-		if myname == "uniprot_taxaID_mammalia.txt.gz":
-			microbiome_taxa = os.path.join(uniref_database_dir, "uniprot_taxaID_mammalia.txt.gz")
-		if myname == "uniref90.fasta.dmnd":
-			uniref_dmnd = os.path.join(uniref_database_dir, "uniref90.fasta.dmnd")
-		if myname == "uniprot_human_pfam.tsv.gz":
-			human_pfam_database = os.path.join(uniref_database_dir, "uniprot_human_pfam.tsv.gz")
-		if re.search("^map_", myname):
+		if myname.startswith(prefix_taxa):
+			taxonomy_database = os.path.join(uniref_database_dir, myname)
+		if myname.startswith(prefix_mic_taxa):
+			microbiome_taxa = os.path.join(uniref_database_dir, myname)
+		if myname.startswith(prefix_mam_taxa):
+			mammalia_taxa = os.path.join(uniref_database_dir, myname)
+		if myname.startswith(prefix_human_pfam):
+			human_pfam_database = os.path.join(uniref_database_dir, myname)
+		if myname.endswith(diamond_database_extension):
+			uniref_dmnd = os.path.join(uniref_database_dir, myname)
+		if myname.startswith(prefix_map):
 			i = os.path.join(uniref_database_dir, myname)
 			if myname in map_file_names:
 				j = os.path.join(uniref_directory, myname)
@@ -335,21 +374,6 @@ if not uniref_database_dir.lower() == "none" and not uniref_database_dir == "":
 				uniref_database.append(i)
 	uniref_database.sort(reverse=True)
 
-'''	
-uniref_database = [os.path.join(uniref_database_dir, "map_Protein_names_uniref90.txt.gz"),
-                        os.path.join(uniref_database_dir, "map_Gene_names_uniref90.txt.gz"),
-                        os.path.join(uniref_database_dir, "map_UniProtKB_uniref90.txt.gz"),
-                        os.path.join(uniref_database_dir, "map_Tax_uniref90.txt.gz"),
-                        os.path.join(uniref_database_dir, "map_TaxID_uniref90.txt.gz"),
-                        os.path.join(uniref_database_dir, "map_Rep_Tax_uniref90.txt.gz"),
-                        os.path.join(uniref_database_dir, "map_Rep_TaxID_uniref90.txt.gz"),
-                        os.path.join(uniref_database_dir, "map_go_uniref90.txt.gz"),
-                        os.path.join(uniref_database_dir, "map_ko_uniref90.txt.gz"),
-                        os.path.join(uniref_database_dir, "map_eggnog_uniref90.txt.gz"),
-                        os.path.join(uniref_database_dir, "map_level4ec_uniref90.txt.gz"),
-                        os.path.join(uniref_database_dir, "map_pfam_uniref90.txt.gz")]
-'''
-
 # domain database
 domain_database_dir = get_item (config_items, "database", "domain_db", "string")
 if not domain_database_dir.lower() == "none" and not domain_database_dir == "":
@@ -357,21 +381,21 @@ if not domain_database_dir.lower() == "none" and not domain_database_dir == "":
 	for i in files:
 		myname = os.path.basename(i)
 		if myname == "pdb_chain_taxonomy.tsv.gz":
-			pdb_taxonomy  = os.path.join(domain_database_dir, "pdb_chain_taxonomy.tsv.gz")
+			pdb_taxonomy  = os.path.join(domain_database_dir, myname)
 		if myname == "pdb_chain_pfam.tsv.gz":
-			pdb_pfam = os.path.join(domain_database_dir, "pdb_chain_pfam.tsv.gz")
+			pdb_pfam = os.path.join(domain_database_dir, myname)
 		if myname == "pfam_descriptions.txt.gz":
-			pfam_database = os.path.join(domain_database_dir, "pfam_descriptions.txt.gz")
+			pfam_database = os.path.join(domain_database_dir, myname) 
 		if myname == "gene_ontology.txt.gz":
-			pfam2go_database = os.path.join(domain_database_dir, "gene_ontology.txt.gz")
+			pfam2go_database = os.path.join(domain_database_dir, myname) 
 		if myname == "INTERACTION.txt.gz":
-			interaction_database = os.path.join(domain_database_dir, "INTERACTION.txt.gz")
+			interaction_database = os.path.join(domain_database_dir, myname) 
 
 ## Computing resources ##
 threads = get_item (config_items, "computation", "threads", "int")
 memory = get_item(config_items, "computation", "memory", "int")
 time = get_item(config_items, "computation", "time", "int")
-
+cd_hit_memory = memory
 
 ## Input and output ##
 # input folder and files
@@ -389,8 +413,6 @@ priority_dir = os.path.join(working_dir, "prioritization")
 study = get_item(config_items, "input", "study", "string")
 metadata = get_item(config_items, "input", "metadata", "string")
 metadata = os.path.abspath(metadata)
-#sample_list = get_item(config_items, "input", "sample_list", "string")
-#gene_catalog = get_item(config_items, "input", "gene_catalog", "string")
 gene_catalog_prot = get_item(config_items, "input", "gene_catalog_prot", "string")
 gene_catalog_prot = os.path.abspath(gene_catalog_prot)
 gene_catalog_count = get_item(config_items, "input", "gene_catalog_count", "string")
@@ -408,28 +430,6 @@ supervised_rank =  os.path.join(priority_dir, basename + "_supervised_prioritiza
 
 ## characterization ##
 tshld_consistency = 0.75	# the minimum annotation consistency in one protein family
-
-# CD-hit
-# memory used for CD-hit
-cd_hit_memory = memory 
-cd_hit_prot_opts = "-d 100 -c 0.9 -aL 0.8 -aS 0.8 -G 0 -M 0 -B 0"	# clustering protein families
-cd_hit_gene_opts = "-d 100 -c 0.95 -aS 0.8 -G 0 -M 0 -B 0"
-featureCounts_opts = " -F SAF "
-
-# diamond options
-diamond_database_extension = ".dmnd"
-diamond_cmmd_protein_search = "blastp"
-diamond_cmmd_nucleotide_search = "blastx"
-diamond_identity = 0.9			# identity threshold for uniref90 strong homologies
-diamond_query_coverage = 0.8 	# query and mutual coverage threshold of uniref90 strong homologies
-diamond_mutual_coverage = 0.8
-diamond_version={
-    "flag" : "--version",
-    "major" : 0,
-    "minor" : 8,
-    "second minor" : 22,
-    "line" : 0,
-    "column" : 2}
 
 # protein family
 tshld_identity = 0.25	# the minimum identity of homology
@@ -503,14 +503,6 @@ for i in ref_status_tmp.keys():
 	if len(ref_status_tmp[i].keys()) == 1:
 		for j in ref_status_tmp[i].keys():
 			ref_status[i] = j
-#ref_status = get_item(config_items, "maaslin2", "flag_ref", "string")
-#ref_status = re.sub("\"", "", ref_status)
-#tmp = ref_status.split(";")
-#ref_status = {}
-#for item in tmp:
-#	tmp1 = item.split(":")
-#	if len(tmp1) > 1:
-#		ref_status[tmp1[0]] = tmp1[1]
 tshld_prevalence = get_item(config_items, "maaslin2", "tshld_prevalence", "float")
 tshld_qvalue = get_item(config_items, "maaslin2", "tshld_qvalue", "float")
 effect_size = get_item(config_items, "maaslin2", "effect_size", "string")
@@ -538,22 +530,6 @@ heatmap_first_n = get_item(config_items, "maaslin2", "heatmap_first_n", "string"
 plot_scatter = get_item(config_items, "maaslin2", "plot_scatter", "string")
 maaslin2_cores = get_item(config_items, "maaslin2", "maaslin2_cores", "int")
 maaslin2_cmmd_opts = ["--min_abundance", min_abundance, "--min_prevalence", min_prevalence, "--max_significance", max_significance, "--normalization", normalization,  "--transform", transform, "--analysis_method", analysis_method, "--cores", maaslin2_cores, "--fixed_effects", fixed_effects, "--random_effects", random_effects, "--correction", correction, "--standardize", standardize, "--plot_heatmap", plot_heatmap, "--heatmap_first_n", heatmap_first_n, "--plot_scatter", plot_scatter]
-
-
-## assembly workflow
-# bowtie2 options and threshold
-bowtie2_large_index_threshold = 4000000000
-bowtie2_index_ext_list = [".1.bt2",".2.bt2",".3.bt2",".4.bt2",
-    ".rev.1.bt2",".rev.2.bt2"]
-bowtie2_large_index_ext = ".1.bt2l"
-bowtie2_version = {
-    "flag" : "--version",
-    "major" : 2,
-    "minor" : 2,
-    "line" : 0,
-    "column" : 2}
-bowtie2_align_opts = ["--threads", threads] # "--threads "+str(threads)
-bowtie2_index_name = "_bowtie2_index"
 
 
 if __name__=='__main__':
