@@ -502,7 +502,7 @@ def collect_prevalence_info (abundance_file, DA_cluster, meta_case, meta_control
 			pre = 1.0 * (mymeta_yes + mymeta_no) / total_num
 			if not myclust in prevalence:
 				prevalence[myclust] = {}
-			prevalence[myclust][mycmp] = str(pre) + "\t" + str(pre_yes) + "\t" + str(pre_no)
+			prevalence[myclust][mycmp] = str(pre) + "\t" + str(pre_yes) + "\t" + str(pre_no) + "\t" + str(total_num) + "\t" + str(meta_yes_num) + "\t" + str(meta_no_num)
 	# foreach cluster
 	sys.stderr.write("Calculate prevalence info......done\n")
 	pre_meta_case = {}
@@ -530,35 +530,6 @@ def output_DA_info (stats, outfile):
 
 # output abundance
 def output_abundance_info (folds, meta_control, meta_case, outfile):
-	'''
-	for mycmp in sorted(meta_control.keys()):
-		title = "ID"
-		title = title + "\t" + "\t".join(meta_case[mycmp].keys())
-		title = title + "\t" + "\t".join(meta_control[mycmp].keys())
-		outfile1 = re.sub(".tsv", "." + mycmp + ".abundance.tsv", outfile)
-		open_file = open(outfile1, "w")
-		open_file.write(title + "\n")
-		for myclust in sorted(abundance.keys()):
-			mystr = myclust
-			for mys in sorted(meta_case[mycmp].keys()):
-				if mys in abundance[myclust]:
-					mystr = mystr + "\t" + str(abundance[myclust][mys])
-				else:
-					# debug
-					#print("Contrast sample abundance not exist!\t" + myclust + "\t" + mys)
-					mystr = mystr + "\t0"
-			for mys in sorted(meta_control[mycmp].keys()):
-				if mys in abundance[myclust]:
-					mystr = mystr + "\t" + str(abundance[myclust][mys])
-				else:
-					# debug
-					#print("Ref sample abundance not exist!\t" + myclust + "\t" + mys)
-					mystr = mystr + "\t0"
-			open_file.write(mystr + "\n")
-		open_file.close()
-	# foreach cmp type
-	'''
-
 	data_file = re.sub(".tsv", ".fold.tsv", outfile)
 	title = utilities.PROTEIN_FAMILY_ID + "\tcmp_type\tlog(FC)\tCohen's_d\tmean(log)\tmean_abundance\tmean_abundance_case\tmean_abundance_control\tmean_prevalent_abundance\tmean_prevalent_abundance_case\tmean_prevalent_abundance_control"
 	open_file = open(data_file, "w")
@@ -572,7 +543,7 @@ def output_abundance_info (folds, meta_control, meta_case, outfile):
 # output prevalence
 def output_prevalence_info (prevalence, outfile):
 	outfile = re.sub(".tsv", ".prevalence.tsv", outfile)
-	title = utilities.PROTEIN_FAMILY_ID + "\tcmp_type\tprevalence\tprevalence_case\tprevalence_control"
+	title = utilities.PROTEIN_FAMILY_ID + "\tcmp_type\tprevalence\tprevalence_case\tprevalence_control\ttotal_num\tcase_num\tcontrol_num"
 	open_file = open(outfile, "w")
 	open_file.write(title + "\n")
 	for myclust in sorted(prevalence.keys()):
