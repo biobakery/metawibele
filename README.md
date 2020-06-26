@@ -141,27 +141,20 @@ UniRef databases are **required** if you will use MetaWIBELE to do global-homolo
 
 Option 1: download uniref databases (Recommended)
 
-* We have built these dependent uniref databases based on UniProt/UniRef 2019_01 sequences and annotations which have also been host by [HUMAnN](https://github.com/biobakery/humann). You can download these databases by using HUMAnN utility scripts and provid `$UNIREF_LOCATION` as the location to install the database.
-
-* Download the full UniRef90 database (11.0GB):
-
-	`$ humann2_databases --download uniref uniref90_diamond $UNIREF_LOCATION`
-
-* Download additional UniRef90 mapping files (xxx GB):
-
-	`$ humann2_databases --download utility_mapping full $UNIREF_LOCATION`
-
-	* Mappings are available for the UniRef90 gene families to the following systems:
-		* UniProt ID corresponding to the UniRef representative
-		* Protein names of the UniRef representative
-		* Gene names of the UniRef representative
-		* Taxon name and taxon ID of the latest common ancestor (LCA) for each uniref90 cluster
-		* Taxon name and taxon ID of the representative of each uniref90 cluster
-		* Gene Ontology (GO)
-		* KEGG Orthogroups (KOs)
-		* EggNOG (including COGs)
-		* Pfam domains （Pfams)
-	* In most cases, mappings are directly inferred from the annotation of the corresponding UniRef representative sequence in UniProt.
+* We have built these dependent uniref databases based on UniProt/UniRef 2019_01 sequences and annotations which have also been host by [HUMAnN](https://github.com/biobakery/humann). You can download and uncompress these databases and provid `$UNIREF_LOCATION` as the location to install the database.
+	* full UniRef90 database (11.0GB): [uniref90_annotated.tar.gz](http://huttenhower.sph.harvard.edu/humann2_data/uniprot/uniref_annotated/uniref90_annotated_v201901.tar.gz)
+	* additional UniRef90 mapping files (3.0 GB): [full_mapping.tar.gz](http://huttenhower.sph.harvard.edu/humann2_data/full_mapping_v201901.tar.gz)
+		* Mappings are available for the UniRef90 gene families to the following systems:
+			* UniProt ID corresponding to the UniRef representative
+			* Protein names of the UniRef representative
+			* Gene names of the UniRef representative
+			* Taxon name and taxon ID of the latest common ancestor (LCA) for each uniref90 cluster
+			* Taxon name and taxon ID of the representative of each uniref90 cluster
+			* Gene Ontology (GO)
+			* KEGG Orthogroups (KOs)
+			* EggNOG (including COGs)
+			* Pfam domains（Pfams)
+		* In most cases, mappings are directly inferred from the annotation of the corresponding UniRef representative sequence in UniProt. Further information can refer to the uniref mapping files in [HUMAnN](https://github.com/biobakery/humann).
 
 Option 2: create local uniref databases
 
@@ -208,11 +201,11 @@ To run MetaWIBELE, one global configuration file `metawibele.cfg` is **required*
 	[input]
 	# Study name
 	study = 
-	# Metadata file
+	# The absolute path of metadata file
 	metadata = 
-	# The protein sequences of representatives of gene catalogs
+	# The absolute path of protein sequences of representatives of gene catalogs
 	gene_catalog_prot = 
-	# The reads counts matrix table across samples of gene catalogs
+	# The absolute path of reads counts table across samples of gene catalogs
 	gene_catalog_count = 
 
 	[output]
@@ -238,7 +231,7 @@ To run MetaWIBELE, one global configuration file `metawibele.cfg` is **required*
 	
 	```
 	[database]
-	# The uniref databases used by MetaWIBELE. [data_path] provide the absolute path of the uniref databases folder
+	# The absolute path of uniref databases folder.
 	uniref_db = 
 	# The domain databases used by MetaWIBELE. [data_path] provide the absolute path of the domain databases folder; [none] use the dedault domain databases installed in the metawibele package [ Default: none ]
 	domain_db = none
@@ -248,7 +241,7 @@ To run MetaWIBELE, one global configuration file `metawibele.cfg` is **required*
 
 	```
 	[abundance]
-	# The config file used by MSPminer. [config_file] provide the mspminer config file; [none] use the dedault config files installed in the metawibele package [ Default: none ]
+	# The absolute path of config file used by MSPminer. [config_file] provide the mspminer config file; [none] use the dedault config files installed in the metawibele package [ Default: none ]
 	mspminer = none
 	# The method for normalization [Choices: cpm, relab]. [cpm] copies per million units (sum to 1 million); [relab] relative abundance (sum to 1) [ Default: cpm ]  
 	normalize = cpm
@@ -256,7 +249,7 @@ To run MetaWIBELE, one global configuration file `metawibele.cfg` is **required*
 	abundance_detection_level = 0
 
 	[interproscan]
-	# The command of interproscan, e.g. /my/path/interproscan/interproscan.sh
+	# The absolute path of interproscan executable file, e.g. /my/path/interproscan/interproscan.sh
 	interproscan_cmmd = 
 	# The appls used by interroiscan: [appls] comma separated list of analyses, [ Choices: CDD,COILS,Gene3D,HAMAP,MobiDBLite,PANTHER,Pfam,PIRSF,PRINTS,ProDom,PROSITEPATTERNS,PROSITEPROFILES,SFLD,SMART,SUPERFAMILY,TIGRFAM,Phobius,SignalP,TMHMM ]; [none] use all all analyses for running [ Default: Pfam,Phobius,SignalP,TMHMM ]
 	interproscan_appl = "Pfam,Phobius,SignalP,TMHMM"
@@ -264,7 +257,7 @@ To run MetaWIBELE, one global configuration file `metawibele.cfg` is **required*
 	split_number = 1
 	
 	[maaslin2]
-	# The command of Maaslin2, e.g. /my/path/Maaslin2/R/Maaslin2.R
+	# The absolute path of Maaslin2 executable file, e.g. /my/path/Maaslin2/R/Maaslin2.R
 	maaslin2_cmmd =
 	# The minimum abundance for each feature [ Default: 0 ]  
 	min_abundance = 0 
