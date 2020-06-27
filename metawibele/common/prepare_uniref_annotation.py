@@ -308,7 +308,7 @@ def report_each_map (uniref_ann, map_type, uniref_type, output_path):
 		if not len(line):
 			continue
 		info = line.split("\t")
-		if re.search("^ID", line) or re.search("^UniRef", line):
+		if re.search("^ID", line) or re.search("^UniRef\t", line) or re.search("^UniRefID\t", line):
 			for item in info:
 				titles[item] = info.index(item)		
 				titles1[info.index(item)] = item
@@ -321,17 +321,16 @@ def report_each_map (uniref_ann, map_type, uniref_type, output_path):
 		myindex = 0 
 		while myindex < len(info):
 			mykey = titles1[myindex]
-			mykey = re.sub("(", "_", mykey)
-			mykey = re.sub(")", "", mykey)
+			mykey = re.sub("\(", "_", mykey)
+			mykey = re.sub("\)", "", mykey)
 			myvalue = info[myindex]
 			if myvalue == "NA" or myvalue == "na" or myvalue == "NaN":
+				myindex = myindex + 1
 				continue
 			if mykey == map_type:
-				outs[mykey] = {}
 				if not myvalue in outs:
-					outs[myvalue] = {} 
-				else:	
-					outs[myvalue][myuniref] = ""
+					outs[myvalue] = {}
+				outs[myvalue][myuniref] = ""
 			myindex = myindex + 1
     # foreach uniref
 
