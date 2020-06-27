@@ -142,6 +142,7 @@ UniRef databases are **required** if you will use MetaWIBELE to do global-homolo
 Option 1: download uniref databases (Recommended)
 
 * We have built these dependent uniref databases based on UniProt/UniRef 2019_01 sequences and annotations which have also been host by [HUMAnN](https://github.com/biobakery/humann). You can download and uncompress these databases and provid `$UNIREF_LOCATION` as the location to install the database.
+	
 	* full UniRef90 database (11.0GB): [uniref90_annotated.tar.gz](http://huttenhower.sph.harvard.edu/humann2_data/uniprot/uniref_annotated/uniref90_annotated_v201901.tar.gz)
 	* additional UniRef90 mapping files (3.0 GB): [full_mapping.tar.gz](http://huttenhower.sph.harvard.edu/humann2_data/full_mapping_v201901.tar.gz)
 		* Mappings are available for the UniRef90 gene families to the following systems:
