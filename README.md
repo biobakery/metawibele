@@ -250,8 +250,6 @@ To run MetaWIBELE, one global configuration file `metawibele.cfg` is **required*
 	abundance_detection_level = 0
 
 	[interproscan]
-	# The absolute path of interproscan executable file, e.g. /my/path/interproscan/interproscan.sh
-	interproscan_cmmd = 
 	# The appls used by interroiscan: [appls] comma separated list of analyses, [ Choices: CDD,COILS,Gene3D,HAMAP,MobiDBLite,PANTHER,Pfam,PIRSF,PRINTS,ProDom,PROSITEPATTERNS,PROSITEPROFILES,SFLD,SMART,SUPERFAMILY,TIGRFAM,Phobius,SignalP,TMHMM ]; [none] use all all analyses for running [ Default: Pfam,Phobius,SignalP,TMHMM ]
 	interproscan_appl = "Pfam,Phobius,SignalP,TMHMM"
 	# The number of spliting files which can be annotated in parallel 	[ Default: 1 ]
@@ -296,8 +294,8 @@ To run MetaWIBELE, one global configuration file `metawibele.cfg` is **required*
 	effect_size = mean(log)
 	# The main phenotype metadata used for prioritization, e.g. metadata1
 	phenotype =
-	# Case and control metadata pairs for phenotype metadata variables; use semicolon to seperate variables, e.g. "metadata1:case_status1|control_status1;metadata2:case_status2|control_status2,case_status3|control_status2"
-	case_control_status =
+	# Case and control metadata pairs for phenotype metadata variables; use semicolon to seperate variables, e.g. "metadata1:case_status1|control_status1;metadata2:case_status2|control_status2,case_status3|control_status2". [Default: none] where metadata values for the main phenotype will be sorted based on alphabet order and the value with the smallest alphabet order will be treated as control status.
+	case_control_status = none
 	```
 
 
