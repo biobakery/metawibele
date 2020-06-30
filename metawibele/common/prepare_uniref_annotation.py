@@ -120,9 +120,13 @@ def extract_annotation_info (output_path, maps):
 					item = "Signal_peptide"
 				if re.search("Pfam", item):
 					item = "Pfam"
+				if item == "Protein names":
+					item = "Protein_names"
 				if item in items:
 					titles[myindex] = item
 				if "NCBI_TaxID" == item:
+					titles[myindex] = item
+				if "Protein_names" == item:
 					titles[myindex] = item
 				myindex = myindex + 1
 			# foreach item
@@ -157,11 +161,14 @@ def extract_annotation_info (output_path, maps):
 				if myid == "Gene_names" and item != "NA" and item != "":
 					gene = item
 					gene = re.sub(";$", "", gene)
-					gene = re.sub("\{[\S\s]+\}", "", gene)
+					gene = re.sub("\{[^\{]+\}", "", gene)
 					gene = re.sub("\s+", ";", gene)
 				# Protein name
 				if myid == "Protein_names" and item != "NA" and item != "":
 					protein = item
+					protein = re.sub(";$", "", protein)
+					protein = re.sub("\{[^\{]+\}", "", protein)
+					protein = re.sub("\s+$", "", protein)
 				# Organism
 				if myid == "Organism" and item != "NA" and item != "":
 					org = item
@@ -193,7 +200,7 @@ def extract_annotation_info (output_path, maps):
 					if not i in human_pfams:
 						human_pfams[i] = {}
 					if uniprot_id != "NA":
-						human_pfams[i][uniprot_id] = ""
+						human_pfams[i][uniprot_id] = protein + "\t" + gene
 	
 	# foreach line
 	
@@ -201,11 +208,30 @@ def extract_annotation_info (output_path, maps):
 	outfile = os.path.join(output_path, "uniprot_human_pfam.tsv")
 	outfile1 = re.sub(".tsv", ".tsv.gz", outfile)
 	open_out = open(outfile, "w")
-	open_out.write("Pfam\tOrganism\tNCBI_TaxID\tUniProtKB\n")
+	open_out.write("Pfam\tOrganism\tNCBI_TaxID\tUniProtKB\tProtein_names\tGene_names\n")
 	for myid in sorted(human_pfams.keys()):
 		mystr = myid + "\tHomo sapiens (Human)\t9606"
-		mypfam = ";".join(sorted(human_pfams[myid].keys()))
-		open_out.write(mystr + "\t" + mypfam + "\n")
+		#mypfam = ";".join(sorted(human_pfams[myid].keys()))
+		mystr1 = ""
+		mystr2 = ""
+		mystr3 = ""
+		for i in sorted(human_pfams[myid].keys()):
+			mystr1 = mystr1 + i + ";"
+			x, y = human_pfams[myid][i].split("\t")
+			if x != "NA" and x != "":
+				mystr2 = mystr2 + x + ";"
+			if y != "NA" and y != "":
+				mystr3 = mystr3 + y + ";"
+		mystr1 = re.sub(";$", "", mystr1)
+		mystr2 = re.sub(";$", "", mystr2)
+		mystr3 = re.sub(";$", "", mystr3)
+		if mystr1 == "":
+			mystr1 = "NA"
+		if mystr2 == "":
+			mystr2 = "NA"
+		if mystr3 == "":
+			mystr3 = "NA"
+		open_out.write(mystr + "\t" + mystr1 + "\t" + mystr2 + "\t" + mystr3 + "\n")
 	open_out.close()
 	os.system("gzip " + outfile)
 
