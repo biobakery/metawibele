@@ -72,9 +72,40 @@ def get_args():
 
 
 #==============================================================
+# collect phenotypes
+#==============================================================
+def collect_metadata (meta_file):
+	meta = {}
+	titles = {}
+	open_file = open(meta_file, "r")
+	line = open_file.readline()
+	line = line.strip()
+	info = line.split("\t")
+	for i in info:
+		titles[info.index(i)] = i
+	for line in open_file:
+		line = line.strip()
+		if not len(line):
+			continue
+		info = line.split("\t")
+		myindex = 0
+		while myindex < len(info):
+			myhead = titles[myindex]
+			myvalue = info[myindex]
+			if not myhead in meta:
+				meta[myhead] = {}
+			meta[myhead][myvalue] = ""
+			myindex = myindex + 1
+	open_file.close()
+
+	return meta
+# collect_metadata
+
+
+#==============================================================
 # collect statistical results
 #==============================================================
-def collect_DA_info (DA_file):
+def collect_DA_info (DA_file, metas):
 	stats = {}
 	titles = {}
 	cons = {}
@@ -90,6 +121,19 @@ def collect_DA_info (DA_file):
 					cons[mycon] = item
 				else:
 					sys.exit("Not correct format for case-control paris for the specified metadata!\t" + myphe + "\t" + item)
+		else:
+			if myphe in metas:
+				tmp = sorted(metas[myphe].keys())
+				myref = tmp[0]
+				myindex = 1
+				while myindex < len(tmp):
+					myvalue = tmp[myindex]
+					if myvalue == myref:
+						myindex = myindex + 1
+						continue
+					mycmp = myvalue + "_vs_" + myref
+					cons[myvalue] = mycmp
+					myindex = myindex + 1
 
 	open_file = open(DA_file, "r")
 	line = open_file.readline()
@@ -157,7 +201,7 @@ def collect_DA_info (DA_file):
 #==============================================================
 # collect metadata for each sample
 #==============================================================
-def collect_meta_info (meta_file):
+def collect_meta_info (meta_file, metas):
 	meta_case = {}
 	meta_control = {}
 	titles = {}
@@ -176,32 +220,47 @@ def collect_meta_info (meta_file):
 		if myphe in titles:
 			item = myphe
 			myindex = titles[item]
-			if not item in config.contrast_status:
-				sys.exit("No metadata variable in contrast status!\t" + item)
-			mycontrast = config.contrast_status[item].split(",")
-			for x in mycontrast:
-				if re.search("|", x):
-					mym = re.search("([\S]+)\|([\S]+)", x)
-					mycon_tmp = mym.group(1)
-					myref_tmp = mym.group(2)
-					x = re.sub("\|", "_vs_", x)
-					if not myref_tmp in myrefs:
-						myrefs[myref_tmp] = []
-					myrefs[myref_tmp].append(x)
-					if not mycon_tmp in mycons:
-						mycons[mycon_tmp] = []
-					mycons[mycon_tmp].append(x)
-				else:
-					sys.exit("Not correct format for case-control paris for the specified metadata!\t" + config.phenotype + "\t" + item)
-	
+			if item in config.contrast_status:
+				mycontrast = config.contrast_status[item].split(",")
+				for x in mycontrast:
+					if re.search("|", x):
+						mym = re.search("([\S]+)\|([\S]+)", x)
+						mycon_tmp = mym.group(1)
+						myref_tmp = mym.group(2)
+						x = re.sub("\|", "_vs_", x)
+						if not myref_tmp in myrefs:
+							myrefs[myref_tmp] = []
+						myrefs[myref_tmp].append(x)
+						if not mycon_tmp in mycons:
+							mycons[mycon_tmp] = []
+						mycons[mycon_tmp].append(x)
+					else:
+						sys.exit("Not correct format for case-control paris for the specified metadata!\t" + config.phenotype + "\t" + item)
+			else:
+				if myphe in metas:
+					tmp = sorted(metas[myphe].keys())
+					myref_tmp = tmp[0]
+					myindex = 1
+					while myindex < len(tmp):
+						mycon_tmp = tmp[myindex]
+						if mycon_tmp == myref_tmp:
+							myindex = myindex + 1
+							continue
+						mycmp = mycon_tmp + "_vs_" + myref_tmp
+						if not myref_tmp in myrefs:
+							myrefs[myref_tmp] = []
+						myrefs[myref_tmp].append(mycmp)
+						if not mycon_tmp in mycons:
+							mycons[mycon_tmp] = []
+						mycons[mycon_tmp].append(mycmp)
+						myindex = myindex + 1
+
 	for line in open_file:
 		line = line.strip()
 		if not len(line):
 			continue
 		info = line.split("\t")
 		sample = info[0]
-		if re.search("^[\d]+$", sample):
-			sample = config.study + "_" + sample
 		mymeta = ""
 		myindex = 1
 		while myindex < len(info):
@@ -567,11 +626,15 @@ def main():
 	
 	### collect abundance info ###
 	sys.stderr.write("Get stat info......starting\n")
-	DA_cluster, DA_cluster_minQ = collect_DA_info (values.maaslin2_results)
 	if values.metadata == "none":
-		meta_case, meta_control = collect_meta_info (config.metadata)
+		meta_file = config.metadata
 	else:
-		meta_case, meta_control = collect_meta_info (values.metadata)
+		meta_file = values.metadata
+	
+	metas = collect_metadata (meta_file)
+	meta_case, meta_control = collect_meta_info (meta_file, metas)
+	DA_cluster, DA_cluster_minQ = collect_DA_info (values.maaslin2_results, metas)
+	
 	sys.stderr.write("Get stat info......done\n")
 
 	# stat all info
