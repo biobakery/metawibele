@@ -113,8 +113,10 @@ def collect_pfam_info (map_file):	# uniprot_human_pfam.tsv
 				myindex = myindex + 1
 			continue
 		info = line.split("\t")
+		if len(info) != len(titles.keys()):
+			continue
 		pfam = info[titles["Pfam"]]
-		gene = info[titles["Gene_name"]]
+		gene = info[titles["Gene_names"]]
 		taxaID = info[titles["NCBI_TaxID"]]
 		if taxaID != "9606":	# filter out for human pfam
 			continue
@@ -277,43 +279,6 @@ def assign_interaction (cutoff, pfams, expression, interact, title, id_flag, out
 		# foreach id
 	# foreach number
 	open_out3.close()
-
-	"""
-	outfile2 = re.sub(".tsv", ".plot.tsv", outfile1)
-	open_out = open(outfile2, "w")
-	open_out.write("type\tseqID\tPfam1_ID\tPfam2_ID\n")
-	for mytype in sorted(number.keys()):
-		for mypep in sorted(number[mytype].keys()):
-			open_out.write(mytype + "\t" + mypep + "\t" + number[mytype][mypep] + "\n")
-	open_out.close()
-	
-	# percentage summary
-	outfile3 = re.sub(".tsv" ,".score.tsv", outfile1)
-	open_out = open(outfile3, "w")
-	open_out.write("percentage\tnumber\n")
-	out_score = {}
-	for pepid in sorted(pers_all.keys()):
-		max_score = 0
-		mypair = "NA"
-		for pair in sorted(pers_all[pepid].keys()):
-			if float(pers_all[pepid][pair]) > max_score:
-				max_score = float(pers_all[pepid][pair])
-				mypair = pair
-		# foreach pfam pair	
-		if not max_score in out_score:
-			out_score[max_score] = {}
-		out_score[max_score][pepid] = mypair
-	# foreach cluster
-	for myscore in sorted(out_score.keys(), key=float):
-		mynum = 0
-		for tmp_score in out_score:
-			if float(tmp_score) >= myscore:
-				mynum = mynum + len(out_score[tmp_score].keys())
-		open_out.write(str(myscore) + "\t" + str(mynum) + "\n")
-		# foreach pair
-	# foreach family
-	open_out.close()
-	"""
 
 # assign_annotation
 

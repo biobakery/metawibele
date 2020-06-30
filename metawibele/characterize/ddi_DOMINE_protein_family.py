@@ -164,8 +164,9 @@ def collect_DDI_info (cluster_mem, extension, ann_path, level, label, outfile):	
 			ann1 = re.sub(":", "\t", ann1)
 			open_out1.write(myid + "\t" + myt + "\t" + myl + "\t" + pfam1 + "\t" + pfam2 + "\t" + ann1 + "\n")
 			if level != "no":
-				if tmp[0] != level:
-					continue
+				if tmp[0] != "NA":
+					if tmp[0] != level:
+						continue
 			mypfam = mypfam + tmp[1] + ";"
 			mylevel = mylevel + tmp[0] + ";"
 			if tmp[1] in anns:
@@ -215,12 +216,13 @@ def output_info (cutoff, cluster, cluster_id, DDIs, anns, level, assign_flag, la
 			#print(myclust + "\t" + item + "\t" + str(myper))
 			mylevel, mypfam = item.split("\t")
 			if level != "no":
-				if mylevel == level:
-					if not myper in pers:
-						pers[myper] = {}
-					if not mytotal in pers[myper]:
-						pers[myper][mytotal] = {}
-					pers[myper][mytotal][myclust] = ""
+				if mylevel != "NA":
+					if mylevel == level:
+						if not myper in pers:
+							pers[myper] = {}
+						if not mytotal in pers[myper]:
+							pers[myper][mytotal] = {}
+						pers[myper][mytotal][myclust] = ""
 			else:
 				if not myper in pers:
 					pers[myper] = {}
@@ -252,8 +254,9 @@ def output_info (cutoff, cluster, cluster_id, DDIs, anns, level, assign_flag, la
 					outs_detail[myclust][item] = details_rep[myclust][item]
 					mylevel, mypfam = item.split("\t")
 					if level != "no":
-						if mylevel != level:
-							continue
+						if mylevel != "NA":
+							if mylevel != level:
+								continue
 					if not myclust in details_flt:
 						details_flt[myclust] = {}
 					details_flt[myclust][item] = details[myclust][item]
@@ -265,8 +268,9 @@ def output_info (cutoff, cluster, cluster_id, DDIs, anns, level, assign_flag, la
 					outs_detail[myclust][item] = details[myclust][item]
 					mylevel, mypfam = item.split("\t")
 					if level != "no":
-						if mylevel != level:
-							continue
+						if mylevel != "NA":
+							if mylevel != level:
+								continue
 					if not myclust in details_flt:
 						details_flt[myclust] = {}
 					details_flt[myclust][item] = details[myclust][item]
@@ -351,17 +355,6 @@ def output_info (cutoff, cluster, cluster_id, DDIs, anns, level, assign_flag, la
 			open_file2.write(str(myper) + "\t" + str(mem_num) + "\t" + str(mynum) + "\n")
     # foreach percentage
 	open_file2.close()
-
-	""" 
-	outfile2 = re.sub(".tsv", ".plot.tsv", outfile)
-	open_out = open(outfile2, "w")
-	open_out.write("type\tnumber\tpercentage\n")
-	for mytype in sorted(number.keys()):
-		mynum = len(number[mytype].keys())
-		myper = float(mynum)/float(total_num)
-		open_out.write(mytype + "\t" + str(mynum) + "\t" + str(myper) + "\n")
-	open_out.close()
-	"""
 
 # output_info
 

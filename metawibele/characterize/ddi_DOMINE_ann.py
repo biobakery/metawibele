@@ -71,7 +71,7 @@ def collect_DDI_info (DDI_file):	# summary_DOMINE_peptide.tsv
 	line = line.strip()
 	info = line.split("\t")
 	myindex = 0
-	level = "HC"
+	level = ["HC", "NA"]
 	myflag = info[0]
 	while myindex < len(info):
 		item = info[myindex]
@@ -87,7 +87,7 @@ def collect_DDI_info (DDI_file):	# summary_DOMINE_peptide.tsv
 		pfam1 = info[titles["Pfam1_ID"]]
 		pfam2 = info[titles["Pfam2_ID"]]
 		ddi = pfam1 + "\t" + pfam2
-		if interact != level:
+		if not interact in level:
 			continue
 		if not myid in DDIs:
 			DDIs[myid] = {}

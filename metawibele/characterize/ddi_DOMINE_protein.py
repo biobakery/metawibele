@@ -164,8 +164,8 @@ def collect_interaction_info (int_file, filter_flag, human_pfam):	# INTERACTION.
 		id1 = info[0]
 		id2 = info[1]
 		level = info[-2]
-		if level == "NA":
-			continue
+		#if level == "NA":
+		#	continue
 		if id1 == id2:	# self-interaction
 			continue
 		if filter_flag == "yes":
@@ -245,8 +245,9 @@ def assign_interaction (filter_flag, spe_level, pfams, human_pfam, interact, pep
 		for myid in sorted(outs[mypep].keys()):
 			mytype, mylevel  = myid.split("\t")
 			if spe_level != "no":
-				if mylevel != spe_level:	# not specified interaction level
-					continue
+				if mylevel != "NA":
+					if mylevel != spe_level:	# not specified interaction level
+						continue
 			myann = "NA"
 			tmp1 = outs[mypep][myid].split(";")
 			pfam_info = pfam_info + outs[mypep][myid] + ";"
