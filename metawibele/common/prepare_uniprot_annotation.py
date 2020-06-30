@@ -127,12 +127,16 @@ def extract_annotation_info (datfile, output_path):
 			gene_tmp = mym.group(1)
 			gene_tmp = re.sub("\s+", "", gene_tmp)
 			tmps = gene_tmp.split(";")
-			gene_name = ""
+			gene_name_tmp = ""
 			for tmp in tmps:
 				if re.search("\=([^\=]+)", tmp):
 					mym = re.search("\=([^\=]+)", tmp)
-					gene_name = gene_name + mym.group(1) + ";"
-			gene_name = re.sub(";$", "", gene_name)
+					gene_name_tmp = gene_name_tmp + mym.group(1) + ";"
+			gene_name_tmp = re.sub(";$", "", gene_name_tmp)
+			if gene_name == "NA":
+				gene_name = gene_name_tmp 
+			else:
+				gene_name = gene_name + ";" + gene_name_tmp
 			continue
 		if re.search("^DE\s+[\s\S]+Full\=([\S\s]+)", line): # protein name
 			mym = re.search("^DE\s+[\s\S]+Full\=([\S\s]+)", line)
