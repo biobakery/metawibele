@@ -79,10 +79,6 @@ def format_metadata (infile, outfile):
 		if not len(line):
 			continue
 		info = line.split("\t")
-		sample = info[0]
-		if re.search("^[\d]+$", sample):
-			sample = config.study + "_" + sample
-			info[0] = sample
 		for mymeta in config.ref_status.keys():
 			if mymeta in titles:
 				myindex = titles[mymeta]
