@@ -1,11 +1,18 @@
 
 # MetaWIBELE History #
 
+## v0.3.4 2020-06-29 ##
+* Update DDIs which are supported by PDB
+* Update default settings of Maaslin2
+* Update function to build dependent databases
+* Set cases where running DDIs without domain annotations
+
 ## v0.3.3 2020-06-18 ##
 * Add utilities to build dependent uniref and domain databases
-* Simplify the configuration for case-control status in metawibele.cfg
+* Simplify the configurations in metawibele.cfg
 * Deprecate sample_list and gene_catalog configs in metawibele.cfg
 * Replace 'metawibele_workflow' with 'metawibele'
+* Update configuration of depedent databases
 
 ## v0.3.2 2020-06-11 ##
 * Use UniRef/UniProt databases in HUMAnN
