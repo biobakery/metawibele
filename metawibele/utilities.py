@@ -84,9 +84,6 @@ def sample_info (sampleinfo, study):
 			print("Metadata doesn't exist!\t" + config.phenotype[0])
 			continue
 		disease = info[title[config.phenotype[0]]]
-		if re.search("^[\d]+$", sample):
-			sample = study + "_" + sample
-		sample = re.sub("^" + disease + "_", "", sample)
 		samples[sample] = disease
 	# foreac sample
 	open_file.close()
