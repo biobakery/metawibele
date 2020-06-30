@@ -218,7 +218,7 @@ def global_homology_annotation (workflow, family_conf, gene_catalog_seq,
 	mem_equation = config.memory  # xxx GB defined in global config
 
 	# mapping to UniRef database
-	if family_conf["uniref"] == "yes" or family_conf["uniref"] == "Yes":
+	if family_conf["uniref"].lower() == "yes":
 		myname = os.path.basename(gene_catalog_seq)
 		myhit = re.sub(".uniref90.stat.tsv", ".uniref90.hits", annotation_stat)
 		link_cmd = "ln -fs " + gene_catalog_seq + " " + main_folder + "/" + myname
@@ -451,7 +451,7 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 		pfam_list.append(myfile1)
 	
 	## run InterProScan per each protein
-	if domain_motif_conf["interproscan"] == "yes" or domain_motif_conf["interproscan"] == "Yes":
+	if domain_motif_conf["interproscan"].lower() == "yes":
 		for myfile, mysplit in zip(file_list, split_list):
 			myout_dir = os.path.join(interpro, mysplit)
 			os.system('mkdir -p ' + myout_dir)
@@ -588,7 +588,9 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 
 
 	## Pfam2GO info
-	if domain_motif_conf["pfam2go"] == "yes" or domain_motif_conf["pfam2go"] == "Yes":
+	if domain_motif_conf["pfam2go"].lower() == "yes":
+		if domain_motif_conf["interproscan"].lower() == "no":
+			print("WARNING: Please make sure that domain annotations have been assigned by interproscan. Otherwise, errors might be caused!")
 		mylog = re.sub(".tsv", ".log", pfam2go_ann_family)
 		workflow.add_task(
 				"metawibele_pfam2go -i [depends[0]] -o [targets[0]] > [args[0]] 2>&1",
@@ -612,7 +614,9 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 	# if Pfam2GO
 
 	## DOMINE (domain-domain interaction)
-	if domain_motif_conf["domine"] == "yes" or domain_motif_conf["domine"] == "Yes":
+	if domain_motif_conf["domine"].lower() == "yes":
+		if domain_motif_conf["interproscan"].lower() == "no":
+			print("WARNING: Please make sure that domain annotations have been assigned by interproscan. Otherwise, errors might be caused!")
 		# DDI annotation
 		mylog = re.sub(".tsv", ".log", domine_ann)
 		myout = []
@@ -694,7 +698,11 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 	# if DDI
 
 	# DDI + SIFTS annotation
-	if domain_motif_conf["sifts"] == "yes" or domain_motif_conf["sifts"] == "Yes":
+	if domain_motif_conf["sifts"].lower() == "yes":
+		if domain_motif_conf["interproscan"].lower() == "no":
+			print("WARNING: Please make sure that domain annotations have been assigned by interproscan. Otherwise, errors might be caused!")
+		if domain_motif_conf["domine"].lower() == "no":
+			print("WARNING: Please make sure that DDIs have been assigned based on DOMINE. Otherwise, errors might be caused!")
 		mylog = re.sub(".tsv", ".log", SIFTS_ann_family)
 		myout1 = re.sub(".tsv", ".ann.tsv", domine_ann_family)
 		myout2 = re.sub(".tsv", ".ann.tsv", domine_ann)
@@ -720,7 +728,11 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 	# if SIFTS
 
 	# DDI + human expression
-	if domain_motif_conf["expatlas"] == "yes" or domain_motif_conf["expatlas"] == "Yes":
+	if domain_motif_conf["expatlas"].lower() == "yes": 
+		if domain_motif_conf["interproscan"].lower() == "no":
+			print("WARNING: Please make sure that domain annotations have been assigned by interproscan. Otherwise, errors might be caused!")
+		if domain_motif_conf["domine"].lower() == "no":
+			print("WARNING: Please make sure that DDIs have been assigned based on DOMINE. Otherwise, errors might be caused!")
 		mylog = re.sub(".tsv", ".log", ExpAtlas_ann_family)
 		myout1 = re.sub(".tsv", ".ann.tsv", domine_ann_family)
 		myout2 = re.sub(".tsv", ".ann.tsv", domine_ann)
@@ -746,7 +758,7 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 	# if ExpAtlas
 
 	## run PSORTb
-	if domain_motif_conf["psortb"] == "yes" or domain_motif_conf["psortb"] == "Yes":
+	if domain_motif_conf["psortb"].lower() == "yes":
 		psortb_list1 = []
 		for myfile, mysplit in zip(file_list, split_list):
 			myout_dir = os.path.join(psortb, mysplit)
@@ -1401,7 +1413,7 @@ def integration_annotation (workflow, integration_conf,
 	mem_equation = config.memory  # xxx GB defined in global config
 
 	# summarize annotationa
-	if integration_conf["summary_ann"] == "yes" or abundance_conf["summary_ann"] == "Yes":
+	if integration_conf["summary_ann"].lower() == "yes":
 		myinputs = []
 		myinputs.append(protein_family_ann_list_file)
 		myinputs.append(uniref_annotation_family)
@@ -1447,7 +1459,7 @@ def integration_annotation (workflow, integration_conf,
 				name = "summary_all_annotation")
 
 	## finalize annotation
-	if integration_conf["finalization"] == "yes" or abundance_conf["finalization"] == "Yes":
+	if integration_conf["finalization"].lower() == "yes": 
 		mylog = re.sub(".tsv", ".tsv.log", final_ann_family)
 		myinputs = []
 		myinputs.append(protein_family_ann_list_file)
