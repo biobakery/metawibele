@@ -233,7 +233,7 @@ def get_item(config_items, section, name, type=None):
 
 
 ## default option for MetaWIBELE ##
-version = '0.3.3'
+version = '0.3.4'
 log_level = 'DEBUG'
 verbose = 'DEBUG'
 
@@ -437,8 +437,9 @@ tshld_coverage = 0.25	# the minimum coverage of homology
 taxa_source = "Rep"		# the source of taxa for one protein family, representatives vs. LCA
 
 # interporscan
-interproscan_cmmd = get_item(config_items, "interproscan", "interproscan_cmmd", "string")
-interproscan_cmmd = re.sub("\"", "", interproscan_cmmd)
+#interproscan_cmmd = get_item(config_items, "interproscan", "interproscan_cmmd", "string")
+#interproscan_cmmd = re.sub("\"", "", interproscan_cmmd)
+interproscan_cmmd = "interproscan.sh"
 interproscan_appl = get_item(config_items, "interproscan", "interproscan_appl", "string")
 if interproscan_appl.lower() == "none" or interproscan_appl.lower() == "":
 	interproscan_appl = "CDD,COILS,Gene3D,HAMAP,MobiDBLite,PANTHER,Pfam,PIRSF,PRINTS,ProDom,PROSITEPATTERNS,PROSITEPROFILES,SFLD,SMART,SUPERFAMILY,TIGRFAM,Phobius,SignalP,TMHMM"
