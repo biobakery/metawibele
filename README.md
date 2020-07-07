@@ -74,6 +74,18 @@ Bypass options:
 	* do not annotate protein families based on global homology information
 * --bypass-domain-motif
 	* do not annotate protein families based on domain/motif information
+* --bypass-interproscan
+	* do not annotate protein families based on Interproscan for domain/motif characterization
+* --bypass-pfam\_to\_go
+	* do not annotate protein families based on Pfam2GO for domain/motif characterization
+* --bypass-domine
+	* do not annotate protein families based on DOMINE database for domain/motif characterization
+* --bypass-sifts
+	* do not annotate protein families based on SIFTS database for domain/motif characterization
+* --bypass-expatlas
+	* do not annotate protein families based on Expression Atlas database for domain/motif characterization
+* --bypass-psortb
+	* do not annotate protein families based on PSORTb for domain/motif characterization	
 * --bypass-abundance
 	* do not annotate protein families based on abundance information
 * --bypass-integration
