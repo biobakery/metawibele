@@ -82,6 +82,24 @@ def parse_cli_arguments ():
 	workflow.add_argument("bypass-domain-motif",
 	                      desc = "do not annotate protein families based on domain/motif information",
 	                      action = "store_true")
+	workflow.add_argument("bypass-interproscan",
+	                      desc = "do not annotate protein families based on interproscan",
+	                      action = "store_true")
+	workflow.add_argument("bypass-pfam_to_go",
+	                      desc = "do not annotate protein families based on pfam2go",
+	                      action = "store_true")
+	workflow.add_argument("bypass-domine",
+	                      desc = "do not annotate protein families based on DOMINE database",
+	                      action = "store_true")
+	workflow.add_argument("bypass-sifts",
+	                      desc = "do not annotate protein families based on SIFTS database",
+	                      action = "store_true")
+	workflow.add_argument("bypass-expatlas",
+	                      desc = "do not annotate protein families based on Expression Atlas database",
+	                      action = "store_true")
+	workflow.add_argument("bypass-psortb",
+	                      desc = "do not annotate protein families based on psortb",
+	                      action = "store_true")
 	workflow.add_argument("bypass-abundance",
 	                      desc = "do not annotate protein families based on abundance information",
 	                      action = "store_true")
@@ -165,6 +183,8 @@ def main(workflow):
 	else:
 		args.characterization_config = default_characterization_conf
 	print(args.characterization_config)
+	
+	# update configurations of characterization
 	family_conf, domain_motif_conf, abundance_conf, integration_conf = get_method_config(args.characterization_config)
 	if args.threads:
 		args.threads = int(args.threads)
@@ -178,6 +198,23 @@ def main(workflow):
 		abundance_conf["mspminer"] = os.path.abspath(args.mspminer_config)
 	else:
 		abundance_conf["mspminer"] = config.mspminer
+	if args.bypass_interproscan:
+		domain_motif_conf["interproscan"] = "no"
+		domain_motif_conf["pfam2go"] = "no"
+		domain_motif_conf["domine"] = "no"
+		domain_motif_conf["sifts"] = "no"
+		domain_motif_conf["expatlas"] = "no"
+	if args.bypass_pfamtogo:
+		domain_motif_conf["pfam2go"] = "no"
+	if args.bypass_domine:
+		domain_motif_conf["domine"] = "no"
+	if args.bypass_sifts:
+		domain_motif_conf["sifts"] = "no"
+	if args.bypass_expatlas:
+		domain_motif_conf["expatlas"] = "no"
+	if args.bypass_psortb:
+		domain_motif_conf["psortb"] = "no"
+
 
 	# input and output folder
 	input_dir = args.input
