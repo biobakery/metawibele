@@ -6,6 +6,7 @@
 * Update default settings of Maaslin2
 * Update function to build dependent databases
 * Set cases where running DDIs without domain annotations
+* Add bypass modes for each individual domain/motif annotation step
 
 ## v0.3.3 2020-06-18 ##
 * Add utilities to build dependent uniref and domain databases
