@@ -367,7 +367,7 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 	interpro = os.path.join(main_folder, "InterProScan")
 	if len(interpro) >200:
 		# debug
-		print("The path for InterProScan output has more than 230 characters it throws the error you are getting! Change your path to home folder.")
+		sys.stderr.write("The path for InterProScan output has more than 230 characters it throws the error you are getting! Change your path to home folder.")
 		interpro = "~/"
 	psortb = os.path.join(main_folder, "PSORTb")
 	tmps_dir = os.path.join (os.getcwd(), "temp")
@@ -590,7 +590,7 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 	## Pfam2GO info
 	if domain_motif_conf["pfam2go"].lower() == "yes":
 		if domain_motif_conf["interproscan"].lower() == "no":
-			print("WARNING: Please make sure that domain annotations have been assigned by interproscan. Otherwise, errors might be caused!")
+			sys.stderr.write("WARNING: Please make sure that domain annotations have been assigned by interproscan. Otherwise, errors might be caused!")
 		mylog = re.sub(".tsv", ".log", pfam2go_ann_family)
 		workflow.add_task(
 				"metawibele_pfam2go -i [depends[0]] -o [targets[0]] > [args[0]] 2>&1",
@@ -616,7 +616,7 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 	## DOMINE (domain-domain interaction)
 	if domain_motif_conf["domine"].lower() == "yes":
 		if domain_motif_conf["interproscan"].lower() == "no":
-			print("WARNING: Please make sure that domain annotations have been assigned by interproscan. Otherwise, errors might be caused!")
+			sys.stderr.write("WARNING: Please make sure that domain annotations have been assigned by interproscan. Otherwise, errors might be caused!")
 		# DDI annotation
 		mylog = re.sub(".tsv", ".log", domine_ann)
 		myout = []
@@ -700,9 +700,9 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 	# DDI + SIFTS annotation
 	if domain_motif_conf["sifts"].lower() == "yes":
 		if domain_motif_conf["interproscan"].lower() == "no":
-			print("WARNING: Please make sure that domain annotations have been assigned by interproscan. Otherwise, errors might be caused!")
+			sys.stderr.write("WARNING: Please make sure that domain annotations have been assigned by interproscan. Otherwise, errors might be caused!")
 		if domain_motif_conf["domine"].lower() == "no":
-			print("WARNING: Please make sure that DDIs have been assigned based on DOMINE. Otherwise, errors might be caused!")
+			sys.stderr.write("WARNING: Please make sure that DDIs have been assigned based on DOMINE. Otherwise, errors might be caused!")
 		mylog = re.sub(".tsv", ".log", SIFTS_ann_family)
 		myout1 = re.sub(".tsv", ".ann.tsv", domine_ann_family)
 		myout2 = re.sub(".tsv", ".ann.tsv", domine_ann)
@@ -730,9 +730,9 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 	# DDI + human expression
 	if domain_motif_conf["expatlas"].lower() == "yes": 
 		if domain_motif_conf["interproscan"].lower() == "no":
-			print("WARNING: Please make sure that domain annotations have been assigned by interproscan. Otherwise, errors might be caused!")
+			sys.stderr.write("WARNING: Please make sure that domain annotations have been assigned by interproscan. Otherwise, errors might be caused!")
 		if domain_motif_conf["domine"].lower() == "no":
-			print("WARNING: Please make sure that DDIs have been assigned based on DOMINE. Otherwise, errors might be caused!")
+			sys.stderr.write("WARNING: Please make sure that DDIs have been assigned based on DOMINE. Otherwise, errors might be caused!")
 		mylog = re.sub(".tsv", ".log", ExpAtlas_ann_family)
 		myout1 = re.sub(".tsv", ".ann.tsv", domine_ann_family)
 		myout2 = re.sub(".tsv", ".ann.tsv", domine_ann)
