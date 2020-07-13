@@ -137,7 +137,7 @@ def collect_annotation (list_file, id_flag):
 			continue
 		open_file = open(myfile, "r")
 		titles = {}
-		mym = re.search(config.basename + "_([\S]+)_proteinfamilies", myfile)
+		mym = re.search(config.basename + "_([\S]+)_proteinfamilies", os.path.basename(myfile))
 		method = mym.group(1)
 		for line in open_file.readlines():
 			line = line.strip()
