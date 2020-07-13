@@ -81,6 +81,7 @@ def clustering (workflow, gene_catalog_seq, threads, output_folder, protein_fami
 	main_folder = os.path.join(output_folder, "clustering")
 	os.system("mkdir -p " + main_folder)
 	tmps_dir = os.path.join (os.getcwd(), "temp")
+	tmps_dir = os.path.abspath(tmps_dir)
 	if not os.path.isdir(tmps_dir):
 		os.system("mkdir -p " + tmps_dir)
 
@@ -193,6 +194,7 @@ def global_homology_annotation (workflow, family_conf, gene_catalog_seq,
 	main_folder = os.path.join(output_folder, "global_homology_annotation")
 	os.system("mkdir -p " + main_folder)
 	tmps_dir = os.path.join (os.getcwd(), "temp")
+	tmps_dir = os.path.abspath(tmps_dir)
 	if not os.path.isdir(tmps_dir):
 		os.system("mkdir -p " + tmps_dir)
 
@@ -244,8 +246,10 @@ def global_homology_annotation (workflow, family_conf, gene_catalog_seq,
 				name = "uniref_annotator_stat")
 
 		# uniRef annotation for each ORF
-		protein_family_tmp = os.path.join(tmps_dir, os.path.basename(protein_family_seq))
-		protein_family_seq_tmp = os.path.join(tmps_dir, os.path.basename(protein_family_seq))
+		#protein_family_tmp = os.path.join(tmps_dir, os.path.basename(protein_family_seq))
+		#protein_family_seq_tmp = os.path.join(tmps_dir, os.path.basename(protein_family_seq))
+		protein_family_tmp = protein_family_seq
+		protein_family_seq_tmp = protein_family_seq
 		workflow.add_task(
 				"metawibele_uniref_protein -m [depends[0]] -o [targets[0]] >[args[0]] 2>&1",
 				depends = [annotation_stat, protein_family_tmp, protein_family_seq_tmp, TrackedExecutable("metawibele_uniref_protein")],
@@ -371,8 +375,10 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 		interpro = "~/"
 	psortb = os.path.join(main_folder, "PSORTb")
 	tmps_dir = os.path.join (os.getcwd(), "temp")
+	tmps_dir = os.path.abspath(tmps_dir)
 	if not os.path.isdir(tmps_dir):
 		os.system("mkdir -p " + tmps_dir)
+
 	commands = "mkdir -p " + main_folder
 	commands = commands + "; " + "mkdir -p " + interpro
 	commands = commands + "; " + "mkdir -p " + psortb
@@ -890,6 +896,7 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog_seq, gene_catal
 	main_folder = os.path.join(output_folder, "abundance_annotation")
 	os.system("mkdir -p " + main_folder)
 	tmps_dir = os.path.join (os.getcwd(), "temp")
+	tmps_dir = os.path.abspath(tmps_dir)
 	if not os.path.isdir(tmps_dir):
 		os.system("mkdir -p " + tmps_dir)
 
@@ -905,20 +912,20 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog_seq, gene_catal
 	mymsp_detail = os.path.join(main_folder, config.basename + "_MSPminer_proteinfamilies.ORF.detail.tsv")
 	msp_detail_family = os.path.join(main_folder, config.basename + "_MSP_proteinfamilies.detail.tsv")
 	msp_detail = os.path.join(main_folder, config.basename + "_MSP_proteinfamilies.ORF.detail.tsv")
-	mymsp_detail_taxa_family = os.path.join(main_folder, config.basename + "_MSPminer_proteinfamilies_annotation.MSPminer_taxonomy.tsv")
-	mymsp_detail_taxa = os.path.join(main_folder, config.basename + "_MSPminer_protein_annotation.MSPminer_taxonomy.tsv")
+	mymsp_detail_taxa_family = os.path.join(main_folder, config.basename + "_proteinfamilies_annotation.taxonomy.tsv")
+	mymsp_detail_taxa = os.path.join(main_folder, config.basename + "_protein_annotation.taxonomy.tsv")
 
 	gene_rpk = os.path.join(main_folder, config.basename + "_genecatalogs_counts.RPK.tsv")
-	gene_relab = os.path.join(main_folder, config.basename + "_genecatalogs_relab.tsv")
+	gene_relab = os.path.join(main_folder, config.basename + "_genecatalogs_nrm.tsv")
 	family_count_all = os.path.join(main_folder, config.basename + "_proteinfamilies_counts.all.tsv")
 	family_count = os.path.join(main_folder, config.basename + "_proteinfamilies_counts.tsv")
 	family_rpk = os.path.join(main_folder, config.basename + "_proteinfamilies_counts.RPK.tsv")
-	family_relab = os.path.join(main_folder, config.basename + "_proteinfamilies_relab.tsv")
+	family_relab = os.path.join(main_folder, config.basename + "_proteinfamilies_nrm.tsv")
 	abundance_ann_family =  os.path.join(main_folder, config.basename + "_DNA_proteinfamilies.abundance.detail.tsv")
 	abundance_ann = os.path.join(main_folder, config.basename + "_DNA_proteinfamilies.ORF.abundance.detail.tsv")
 
 	DA = os.path.join(main_folder, "DA")
-	family_smooth = os.path.join(DA, config.basename + "_proteinfamilies_relab.smooth.tsv")
+	family_smooth = os.path.join(DA, config.basename + "_proteinfamilies_nrm.smooth.tsv")
 	DA_metadata = os.path.join(DA, "maaslin2_metadata.tsv")
 	DA_results = os.path.join(config.maaslin2_dir, "all_results.tsv")
 	DA_prefix = os.path.join(DA, config.basename + "_stat_diff_family_abundance.tsv")
@@ -1047,7 +1054,7 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog_seq, gene_catal
 		mylog = re.sub(".tsv", ".log", mymsp_detail_family)
 		workflow.add_task(
 			"metawibele_mspminer_protein_family -f centroid -m [depends[0]] -o [targets[0]] >[args[0]] 2>&1",
-			depends = [mymsp_ann, TrackedExecutable("metawibele_mspminer_protein_family")],
+			depends = [mymsp_ann, protein_family, TrackedExecutable("metawibele_mspminer_protein_family")],
 			targets = [mymsp_detail_family, mymsp_detail],
 			args = [mylog],
 			cores = 1,
@@ -1056,7 +1063,7 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog_seq, gene_catal
 		mylog = re.sub(".tsv", ".log", msp_detail_family)
 		workflow.add_task(
 			"metawibele_msp_protein_family -m [depends[0]] -o [targets[0]] >[args[0]] 2>&1",
-			depends = [mymsp_ann_taxa, TrackedExecutable("metawibele_msp_protein_family")],
+			depends = [mymsp_ann_taxa, protein_family, TrackedExecutable("metawibele_msp_protein_family")],
 			targets = [msp_detail_family, msp_detail],
 			args = [mylog],
 			cores = 1,
@@ -1065,7 +1072,7 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog_seq, gene_catal
 		mylog = re.sub(".tsv", ".log", mymsp_detail_taxa_family)
 		workflow.add_task(
 			"metawibele_mspminer_protein_family_taxonomy -a [depends[0]] -s [args[0]] -o [targets[0]] >[args[1]] 2>&1",
-			depends = [mymsp_ann_taxa, TrackedExecutable("metawibele_mspminer_protein_family_taxonomy")],
+			depends = [mymsp_ann_taxa, protein_family, TrackedExecutable("metawibele_mspminer_protein_family_taxonomy")],
 			targets = [mymsp_detail_taxa_family, mymsp_detail_taxa],
 			args = [config.taxa_final, mylog],
 			cores = 1,
@@ -1093,7 +1100,7 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog_seq, gene_catal
 		mylog = re.sub(".tsv", ".log", family_count_all)
 		workflow.add_task_gridable(
 			"metawibele_sum_to_protein_family_abundance -i [depends[0]] -o [targets[0]] >[args[0]] 2>&1",
-			depends = [count_file, TrackedExecutable("metawibele_sum_to_protein_family_abundance")],
+			depends = [count_file, protein_family, TrackedExecutable("metawibele_sum_to_protein_family_abundance")],
 			targets = [family_count_all],
 			args = [mylog],
 			cores = 1,
