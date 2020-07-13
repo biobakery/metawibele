@@ -74,6 +74,7 @@ def sample_info (sampleinfo, study):
 		if not len(line):
 			continue
 		info = line.split("\t")
+		sample = info[0]
 		if "External_ID" in title:
 			sample = info[title["External_ID"]]
 		if "ID" in title:
