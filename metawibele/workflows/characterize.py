@@ -173,6 +173,7 @@ def main(workflow):
 	# get arguments
 	args = workflow.parse_args()
 	tmps_dir = os.path.join (os.getcwd(), "temp")
+	tmps_dir = os.path.abspath(tmps_dir)
 	if os.path.isdir(tmps_dir):
 		os.system("rm -rf " + tmps_dir)
 
