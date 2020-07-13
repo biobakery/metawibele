@@ -76,7 +76,7 @@ import re
 import time
 
 
-VERSION = "0.3.3"
+VERSION = "0.3.4"
 AUTHOR = "MetaWIBELE Development Team"
 MAINTAINER = "Yancong Zhang"
 MAINTAINER_EMAIL = "zhangyc201211@gmail.com"
@@ -228,7 +228,7 @@ setuptools.setup(
 		"Programming Language :: Python :: 3.7",
 		"Topic :: Scientific/Engineering :: Bio-Informatics"
 	],
-	#install_requires=['anadama2>=0.6.3'],
+	#install_requires=['anadama2>=0.7.4'],
 	packages=setuptools.find_packages(),
 	#cmdclass={'install': Install},
 	entry_points={
