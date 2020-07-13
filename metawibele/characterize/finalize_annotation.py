@@ -200,7 +200,7 @@ def collect_annotation (list_file, source):
 			print("File not exist!\t" + myfile)
 			continue
 		open_file = open(myfile, "r")
-		mym = re.search(config.basename + "_([\S]+)_proteinfamilies", myfile)
+		mym = re.search(config.basename + "_([\S]+)_proteinfamilies", os.path.basename(myfile))
 		method = mym.group(1)
 		titles = {}
 		titles_item = {}
