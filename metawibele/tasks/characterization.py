@@ -246,9 +246,9 @@ def global_homology_annotation (workflow, family_conf, gene_catalog_seq,
 				name = "uniref_annotator_stat")
 
 		# uniRef annotation for each ORF
-		#protein_family_tmp = os.path.join(tmps_dir, os.path.basename(protein_family_seq))
+		#protein_family_tmp = os.path.join(tmps_dir, os.path.basename(protein_family))
 		#protein_family_seq_tmp = os.path.join(tmps_dir, os.path.basename(protein_family_seq))
-		protein_family_tmp = protein_family_seq
+		protein_family_tmp = protein_family
 		protein_family_seq_tmp = protein_family_seq
 		workflow.add_task(
 				"metawibele_uniref_protein -m [depends[0]] -o [targets[0]] >[args[0]] 2>&1",
@@ -488,34 +488,34 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 
 		## InterProScan annotation for each ORF
 		mylog = os.path.join(interpro, "interproscan.extract.log")
-		myout = []
+		myout10 = []
 		for myfile in interpro_list:
 			myfile1 = re.sub("interproscan.txt", "signalp.signaling.tsv", myfile)
-			myout.append(myfile1)
+			myout10.append(myfile1)
 			myfile1 = re.sub("interproscan.txt", "tmhmm.transmembrane.tsv", myfile)
-			myout.append(myfile1)
+			myout10.append(myfile1)
 			myfile1 = re.sub("interproscan.txt", "phobius.signaling.tsv", myfile)
-			myout.append(myfile1)
+			myout10.append(myfile1)
 			myfile1 = re.sub("interproscan.txt", "phobius.transmembrane.tsv", myfile)
-			myout.append(myfile1)
+			myout10.append(myfile1)
 			myfile1 = re.sub("interproscan.txt", "interpro.PfamDomain.tsv", myfile)
-			myout.append(myfile1)
+			myout10.append(myfile1)
 		workflow.add_task(
 				"metawibele_interproscan_protein -e [args[0]] -p [args[1]] >[args[2]] 2>&1",
 				depends = utilities.add_to_list(interpro_list, TrackedExecutable("metawibele_interproscan_protein")),
-				targets = myout,
+				targets = myout10,
 				args = ["interproscan.txt", interpro, mylog],
 				cores = 1,
 				name = "interproscan_protein")
 
 		## InterProScan annotation for each family
 		mylog = re.sub(".tsv", ".log", signalp_ann_family)
-		myout2 = myout
-		myout2.append(protein_family)
-		myout2.append(protein_family_seq)
+		myout20 = myout10
+		myout20.append(protein_family)
+		myout20.append(protein_family_seq)
 		workflow.add_task(
 				"metawibele_interproscan_signalp_protein_family -e [args[0]] -p [args[1]] -a consistency -o [targets[0]] >[args[2]] 2>&1",
-				depends = utilities.add_to_list(myout2, TrackedExecutable("metawibele_interproscan_signalp_protein_family")), 
+				depends = utilities.add_to_list(myout20, TrackedExecutable("metawibele_interproscan_signalp_protein_family")), 
 				targets = [signalp_ann_family, signalp_ann],
 				args = ["signalp.signaling.tsv", interpro, mylog],
 				cores = 1,
@@ -524,7 +524,7 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 		mylog = re.sub(".tsv", ".log", tmhmm_ann_family)
 		workflow.add_task(
 				"metawibele_interproscan_tmhmm_protein_family -e [args[0]] -p [args[1]] -a consistency -o [targets[0]] >[args[2]] 2>&1",
-				depends = utilities.add_to_list(myout2, TrackedExecutable("metawibele_interproscan_tmhmm_protein_family")),
+				depends = utilities.add_to_list(myout20, TrackedExecutable("metawibele_interproscan_tmhmm_protein_family")),
 				targets = [tmhmm_ann_family, tmhmm_ann],
 				args = ["tmhmm.transmembrane.tsv", interpro, mylog],
 				cores = 1,
@@ -537,7 +537,7 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 		mylog = re.sub(".tsv", ".log", phobius_ann_family)
 		workflow.add_task(
 				"metawibele_interproscan_phobius_protein_family -e [args[1]] -p [args[2]] -a consistency -o [args[0]] >[args[3]] 2>&1",
-				depends = utilities.add_to_list(myout2, TrackedExecutable("metawibele_interproscan_phobius_protein_family")),
+				depends = utilities.add_to_list(myout20, TrackedExecutable("metawibele_interproscan_phobius_protein_family")),
 				targets = [myfile1, myfile2, myfile3, myfile4],
 				args = [phobius_ann_family, "phobius.signaling.tsv", interpro, mylog],
 				cores = 1,
@@ -546,7 +546,7 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 		mylog = re.sub(".tsv", ".log", pfam_ann_family)
 		workflow.add_task(
 				"metawibele_interproscan_pfam_protein_family -e [args[0]] -p [args[1]] -a consistency -o [targets[0]] >[args[2]] 2>&1",
-				depends = utilities.add_to_list(myout2, TrackedExecutable("metawibele_interproscan_pfam_protein_family")),
+				depends = utilities.add_to_list(myout20, TrackedExecutable("metawibele_interproscan_pfam_protein_family")),
 				targets = [pfam_ann_family, pfam_ann],
 				args = ["interpro.PfamDomain.tsv", interpro, mylog],
 				cores = 1,
@@ -555,7 +555,7 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 		mylog = re.sub(".tsv", ".log", interProScan_ann_family)
 		workflow.add_task(
 				"metawibele_interproscan_protein_family -e [args[0]] -p [args[1]] -a consistency -o [targets[0]] >[args[2]] 2>&1",
-				depends = utilities.add_to_list(myout2, TrackedExecutable("metawibele_interproscan_protein_family")),
+				depends = utilities.add_to_list(myout20, TrackedExecutable("metawibele_interproscan_protein_family")),
 				targets = [interProScan_ann_family, interProScan_ann],
 				args = ["interproscan.txt", interpro, mylog],
 				cores = 1,
@@ -677,22 +677,22 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 				cores = 1,
 				name = "ddi_DOMINE_protein_family")
 
-		myout1 = re.sub(".tsv", ".ann.tsv", domine_ann_family)
-		mylog = re.sub(".tsv", ".log", myout1)
+		myout1_2 = re.sub(".tsv", ".ann.tsv", domine_ann_family)
+		mylog = re.sub(".tsv", ".log", myout1_2)
 		workflow.add_task(
 				"metawibele_ddi_DOMINE_ann -i [depends[0]] -o [targets[0]] >[args[0]] 2>&1",
 				depends = [domine_ann_family_raw, protein_family, protein_family_seq, TrackedExecutable("metawibele_ddi_DOMINE_ann")],
-				targets = [myout1],
+				targets = [myout1_2],
 				args = [mylog],
 				cores = 1,
 				name = "ddi_DOMINE_ann")
 
-		myout2 = re.sub(".tsv", ".ann.tsv", domine_ann)
-		mylog = re.sub(".tsv", ".log", myout2)
+		myout2_2 = re.sub(".tsv", ".ann.tsv", domine_ann)
+		mylog = re.sub(".tsv", ".log", myout2_2)
 		workflow.add_task(
 				"metawibele_ddi_DOMINE_ann -i [depends[0]] -o [targets[0]] >[args[0]] 2>&1",
 				depends = [domine_ann_raw, TrackedExecutable("metawibele_ddi_DOMINE_ann")],
-				targets = [myout2],
+				targets = [myout2_2],
 				args = [mylog],
 				cores = 1,
 				name = "ddi_DOMINE_ann")
@@ -710,11 +710,11 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 		if domain_motif_conf["domine"].lower() == "no":
 			sys.stderr.write("WARNING: Please make sure that DDIs have been assigned based on DOMINE. Otherwise, errors might be caused!")
 		mylog = re.sub(".tsv", ".log", SIFTS_ann_family)
-		myout1 = re.sub(".tsv", ".ann.tsv", domine_ann_family)
-		myout2 = re.sub(".tsv", ".ann.tsv", domine_ann)
+		myout1_1 = re.sub(".tsv", ".ann.tsv", domine_ann_family)
+		myout2_1 = re.sub(".tsv", ".ann.tsv", domine_ann)
 		workflow.add_task(
 				"metawibele_ddi_DOMINE_SIFTS -i [depends[0]] -o [targets[0]] >[args[0]] 2>&1",
-				depends = [myout1, protein_family, protein_family_seq, TrackedExecutable("metawibele_ddi_DOMINE_SIFTS")],
+				depends = [myout1_1, protein_family, protein_family_seq, TrackedExecutable("metawibele_ddi_DOMINE_SIFTS")],
 				targets = [SIFTS_ann_family],
 				args = [mylog],
 				cores = 1,
@@ -723,7 +723,7 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 		mylog = re.sub(".tsv", ".log", SIFTS_ann)
 		workflow.add_task(
 				"metawibele_ddi_DOMINE_SIFTS -i [depends[0]] -o [targets[0]] >[args[0]] 2>&1",
-				depends = [myout2, TrackedExecutable("metawibele_ddi_DOMINE_SIFTS")],
+				depends = [myout2_1, TrackedExecutable("metawibele_ddi_DOMINE_SIFTS")],
 				targets = [SIFTS_ann],
 				args = [mylog],
 				cores = 1,
@@ -740,11 +740,11 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 		if domain_motif_conf["domine"].lower() == "no":
 			sys.stderr.write("WARNING: Please make sure that DDIs have been assigned based on DOMINE. Otherwise, errors might be caused!")
 		mylog = re.sub(".tsv", ".log", ExpAtlas_ann_family)
-		myout1 = re.sub(".tsv", ".ann.tsv", domine_ann_family)
-		myout2 = re.sub(".tsv", ".ann.tsv", domine_ann)
+		myout1_3 = re.sub(".tsv", ".ann.tsv", domine_ann_family)
+		myout2_3 = re.sub(".tsv", ".ann.tsv", domine_ann)
 		workflow.add_task(
 				"metawibele_ddi_DOMINE_ExpAtlas -i [depends[0]] -o [targets[0]] >[args[0]] 2>&1",
-				depends = [myout1, protein_family, protein_family_seq, TrackedExecutable("metawibele_ddi_DOMINE_ExpAtlas")],
+				depends = [myout1_3, protein_family, protein_family_seq, TrackedExecutable("metawibele_ddi_DOMINE_ExpAtlas")],
 				targets = [ExpAtlas_ann_family],
 				args = [mylog],
 				cores = 1,
@@ -753,7 +753,7 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 		mylog = re.sub(".tsv", ".log", ExpAtlas_ann)
 		workflow.add_task(
 				"metawibele_ddi_DOMINE_ExpAtlas -i [depends[0]] -o [targets[0]] >[args[0]] 2>&1",
-				depends = [myout2, TrackedExecutable("metawibele_ddi_DOMINE_ExpAtlas")],
+				depends = [myout2_3, TrackedExecutable("metawibele_ddi_DOMINE_ExpAtlas")],
 				targets = [ExpAtlas_ann],
 				args = [mylog],
 				cores = 1,
@@ -769,12 +769,12 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 		for myfile, mysplit in zip(file_list, split_list):
 			myout_dir = os.path.join(psortb, mysplit)
 			os.system('mkdir -p ' + myout_dir)
-			myout1 = os.path.join(myout_dir, mysplit + ".psortb.gram_positive.out.txt")
-			psortb_list1.append(myout1)
-			myout2 = os.path.join(myout_dir, mysplit + ".psortb.gram_negative.out.txt") 
-			psortb_list1.append(myout2)
-			myout3 = os.path.join(myout_dir, mysplit + ".psortb.archaea.out.txt") 
-			psortb_list1.append(myout3)
+			myout1_4 = os.path.join(myout_dir, mysplit + ".psortb.gram_positive.out.txt")
+			psortb_list1.append(myout1_4)
+			myout2_4 = os.path.join(myout_dir, mysplit + ".psortb.gram_negative.out.txt") 
+			psortb_list1.append(myout2_4)
+			myout3_4 = os.path.join(myout_dir, mysplit + ".psortb.archaea.out.txt") 
+			psortb_list1.append(myout3_4)
 			mylog = os.path.join(myout_dir, os.path.basename(myfile))
 			mylog = re.sub(".fasta", ".log", mylog)
 			myerr = re.sub(".log", ".err", mylog)
@@ -782,7 +782,7 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 			workflow.add_task_gridable(
 					"mkdir -p [args[2]] && metawibele_psortb_annotator --split-file [args[0]] --threads [args[1]] -o [args[2]] -i [depends[0]] > [args[3]] 2> [args[4]] ",
 					depends = [myfile, TrackedExecutable("metawibele_psortb_annotator")],
-					targets = [myout1, myout2, myout3],
+					targets = [myout1_4, myout2_4, myout3_4],
 					args = [mysplit, threads, myout_dir, mylog, myerr],
 					cores = threads,
 					time = time_equation,
@@ -791,7 +791,7 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 		# foreach split file 
 
 		psortb_list = []
-		myout = [] 
+		myout5 = [] 
 		for myfile in psortb_list1:
 			myname = os.path.basename(myfile)
 			myfile_new = os.path.join(psortb, myname)
@@ -799,7 +799,7 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 			myfile1 = re.sub("psortb.gram_positive.out.txt", "psortb.gram_positive.out.location.tsv", myfile_new)
 			myfile1 = re.sub("psortb.gram_negative.out.txt", "psortb.gram_negative.out.location.tsv", myfile_new)
 			myfile1 = re.sub("psortb.archaea.out.txt", "psortb.archaea.out.location.tsv", myfile_new)
-			myout.append(myfile1)
+			myout5.append(myfile1)
 			workflow.add_task(
 					"ln -fs [depends[0]] [targets[0]]",
 					depends = [myfile],
@@ -812,19 +812,19 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 		workflow.add_task(
 				"metawibele_psortb_protein -e [args[0]] -p [args[1]] >[args[2]] 2>&1",
 				depends = utilities.add_to_list(psortb_list, TrackedExecutable("metawibele_psortb_protein")),	
-				targets = myout,
+				targets = myout5,
 				args = ["psortb.gram_positive.out.txt", psortb, mylog],
 				cores = 1,
 				name = "psortb_protein")
 
 		## PSORTb annotation for each family
 		mylog = re.sub(".tsv", ".log", psortb_ann_family)
-		myout2 = myout
-		myout2.append(protein_family)
-		myout2.append(protein_family_seq)
+		myout2_5 = myout5
+		myout2_5.append(protein_family)
+		myout2_5.append(protein_family_seq)
 		workflow.add_task(
 				"metawibele_psortb_protein_family -e [args[0]] -p [args[1]] -a consistency -o [targets[0]] >[args[2]] 2>&1",
-				depends = utilities.add_to_list(myout2, TrackedExecutable("metawibele_psortb_protein_family")),
+				depends = utilities.add_to_list(myout2_5, TrackedExecutable("metawibele_psortb_protein_family")),
 				targets = [psortb_ann_family, psortb_ann],
 				args = ["psortb.gram_positive.out.location.tsv", psortb, mylog],
 				cores = 1,
