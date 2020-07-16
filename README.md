@@ -102,7 +102,7 @@ Bypass options:
 3. [CD-hit](http://weizhongli-lab.org/cd-hit/) (version >= 4.7)
 4. [Diamond](http://www.diamondsearch.org/index.php) (version >= 0.9.5)
 5. [MSPminer](https://www.enterome.com/downloads/) (version >= 2)
-6. [MaAsLin2](https://huttenhower.sph.harvard.edu/maaslin2) (version >= 1.1.2) (only required if using MaAsLin2 to associate with host phenotypes)
+6. [MaAsLin2](https://huttenhower.sph.harvard.edu/maaslin2) (version >= 1.1.2) (only required if using MaAsLin2 to associate with environmental parameters or phenotypes)
 7. [Interproscan](https://github.com/ebi-pf-team/interproscan/wiki) (version >= 5.31-70) (only required if using Interproscan to annotate domains and motifs)
 8. [Signalp](http://www.cbs.dtu.dk/services/SignalP-4.1/) (version >= 4.1) (only required if using Signalp to annotate signal peptides integrated in interproscan)
 9. [TMHMM](http://www.cbs.dtu.dk/services/TMHMM/) (version >= 2.0) (only required if using TMHMM to annotate transmembrane proteins integrated in interproscan)
