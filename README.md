@@ -2,6 +2,7 @@
 
 **MetaWIBELE** (**W**orkflow to **I**dentify novel **B**ioactive **Ele**ments in the microbiome) is a workflow to efficiently and systematically identify uncharacterized microbial community gene products with potential bioactivity. It prioritizes candidate gene products from assembled metagenomes using a combination of sequence homology, secondary-structure-based functional annotations, phylogenetic binning, ecological distribution, and phenotypic population statistics to target candidate bioactives linked to phenotypes such as IBD. MetaWIBELE is available as module of bioBakery [bioBakery repository](https://github.com/biobakery).
 
+
 ## Citing MetaWIBELE
 
 **A manuscript describing MetaWIBELE is currently in prep:**
@@ -10,11 +11,11 @@ Identifying Novel Bioactive Microbial Gene Products in Inflammatory Bowel Diseas
 
 **And feel free to link to MetaWIBELE in your Methods:**
 
-[http://huttenhower.sph.harvard.edu/MetaWIBELE](http://huttenhower.sph.harvard.edu/metawibele)
+[http://huttenhower.sph.harvard.edu/metawibele](http://huttenhower.sph.harvard.edu/metawibele)
 
 **For additional information, read the** [MetaWIBELE Tutorial](https://github.com/biobakery/biobakery/wiki/metawibele)
 
-Support for MetaWIBELE is available via [the MetaWIBELE channel](https://forum.biobakery.org/c/Microbial-community-profiling/MetaWIBELE) of the bioBakery Support Forum.
+Support for MetaWIBELE is available via [the MetaWIBELE channel](https://forum.biobakery.org/c/Microbial-community-profiling/metawibele) of the bioBakery Support Forum.
 
 ***
 
@@ -102,11 +103,11 @@ Bypass options:
 3. [CD-hit](http://weizhongli-lab.org/cd-hit/) (version >= 4.7)
 4. [Diamond](http://www.diamondsearch.org/index.php) (version >= 0.9.5)
 5. [MSPminer](https://www.enterome.com/downloads/) (version >= 2)
-6. [MaAsLin2](https://huttenhower.sph.harvard.edu/maaslin2) (version >= 1.1.2) (only required if using MaAsLin2 to associate with environmental parameters or phenotypes)
+6. [MaAsLin2](https://huttenhower.sph.harvard.edu/maaslin2) (version >= 1.1.2) (only required if using MaAsLin2 to associate with host phenotypes)
 7. [Interproscan](https://github.com/ebi-pf-team/interproscan/wiki) (version >= 5.31-70) (only required if using Interproscan to annotate domains and motifs)
 8. [Signalp](http://www.cbs.dtu.dk/services/SignalP-4.1/) (version >= 4.1) (only required if using Signalp to annotate signal peptides integrated in interproscan)
-9. [TMHMM](http://www.cbs.dtu.dk/services/TMHMM/) (version >= 2.0) (only required if using TMHMM to annotate transmembrane proteins integrated in interproscan)
-10. [Phobius](http://phobius.sbc.su.se/) (version >= 1.01) (only required if using Phobius to annotate both signal peptides and transmembrane proteins integrated in interproscan)
+9. [TMHMM](http://www.cbs.dtu.dk/services/TMHMM/) (version >= 2.0) (only required if using TMHMM to annotate transmembrane proteins integrated by interproscan)
+10. [Phobius](http://phobius.sbc.su.se/) (version >= 1.01) (only required if using Phobius to annotate both signal peptides and transmembrane proteins integrated by interproscan)
 11. [PSORTb](https://psort.org/documentation/index.html) (version >= 3.0) (only required if using PSORTb to predict subcellular localization)
 12. **Optional**: only required if using MetaWIBELE utitlity to preprocess metagenomic sequencing reads
 	* [MEGAHIT](https://github.com/voutcn/megahit) (version >= 1.1.3) 
@@ -304,8 +305,8 @@ To run MetaWIBELE, one global configuration file `metawibele.cfg` is **required*
 	tshld_qvalue = 0.05
 	# The statistic used as effect size [ Choices: coef, mean(log) ]. [coef] represents the coefficient from the model; [mean(log)] represents the difference of mean values between case and control conditions. [  Default: mean(log) ]
 	effect_size = mean(log)
-	# The main phenotype metadata used for prioritization, e.g. metadata1
-	phenotype =
+	# The main phenotype metadata used for prioritization, e.g. metadata1. [ Default: none ]: skip the association with environmental/phenotypic paremeters
+	phenotype = none
 	# Case and control metadata pairs for phenotype metadata variables; use semicolon to seperate variables, e.g. "metadata1:case_status1|control_status1;metadata2:case_status2|control_status2,case_status3|control_status2". [Default: none] where metadata values for the main phenotype will be sorted based on alphabet order and the value with the smallest alphabet order will be treated as control status.
 	case_control_status = none
 	```
@@ -446,7 +447,7 @@ By default, MetaWIBELE will perform by using the local configuration files insta
 	
 * All workflows follow the general command format:
 
-	`$ metawibele $WORKFLOW --input $INPUT --output $OUTPUT`
+	`$ metawibele $WORKFLOW`
 
 * For specific options for workflow, run:
 
@@ -455,17 +456,13 @@ By default, MetaWIBELE will perform by using the local configuration files insta
 * Run **characterization** workflow
 
 	```
-	metawibele characterize \
-		--input $INPUT \
-		--output $OUTPUT
+	metawibele characterize
 	```
 
 * Run **prioritization** workflow
 
 	```
-	metawibele prioritize \
- 		--input $INPUT \
- 		--output $OUTPUT 
+	metawibele prioritize
 	```
 
 * **Parallelization Options**
@@ -485,18 +482,18 @@ By default, MetaWIBELE will perform by using the local configuration files insta
 	* protein seqeuences for non-redudant gene catalogs, e.g. [demo_genecatalogs.centroid.faa](https://github.com/biobakery/metawibele/examples/input/demo_genecatalogs.centroid.faa)
 	* reads counts table for non-redudant gene catalogs, e.g. [demo\_genecatalogs_counts.all.tsv](https://github.com/biobakery/metawibele/examples/input/demo_genecatalogs_counts.all.tsv)
 	* metadata file, e.g. [demo\_mgx_metadata.tsv](https://github.com/biobakery/metawibele/examples/input/demo_mgx_metadata.tsv)
-	* all the above information can be specified in the `metawibele.cfg` file.
+	* all the above input files and output folders can be specified in the `metawibele.cfg` file.
 
 * ##### MetaWIBELE-characterize workflow
-	`$ metawibele characterize --input $INPUT --output $OUTPUT`
+	`$ metawibele characterize`
 	* Make sure the global configuration file `metawibele.cfg` is in your working directory.
-	* In the command replaces $INPUT with the path to the folder containing your gene catalog input files and $OUTPUT with the path to the folder to write output files. See the section on parallelization options to optimize the workflow run based on your computing resources. 
+	* In the command replaces $INPUT with the path to the folder containing your gene catalog input files and `$OUTPUT_DIR` with the path to the folder to write output files specified by the `metawibele.cfg` file. See the section on parallelization options to optimize the workflow run based on your computing resources. 
 	* The workflow runs with the default settings to run all modules. These settings will work for most data sets. However, if you need to customize your workflow settings for the preprocessing workflow to determine the optimum setting. You can specify which modules you want to run in your own configuration file.
 	* For example, `--characterization-config $myconfig_file` will modify the default settings when running the characterization modules.
 	
 * ##### Demo run of MetaWIBELE-characterize
 
-	`$ metawibele characterize --input examples/input/ --output $OUTPUT_DIR`
+	`$ metawibele characterize --local-jobs 2`
 
 * ##### Output files of MetaWIBELE-characterize
 	**1. Annotation file**
@@ -514,7 +511,7 @@ By default, MetaWIBELE will perform by using the local configuration files insta
 	...
 	```
 	
-	* File name: $OUTPUT_DIR/characterization/$BASENAME\_proteinfamilies\_annotation.tsv
+	* File name: `$OUTPUT_DIR/characterization/$BASENAME_proteinfamilies_annotation.tsv`
 	* This is the main characterization results.
 	* This file details the annotation of each protein family in the community. Protein families are groups of evolutionarily-related protein-coding sequences that often perform similar functions.
 	* MetaWIBELE annotate protein family by combining global-homology similarity, local-homology similarity, and non-homology based methods.
@@ -540,7 +537,7 @@ By default, MetaWIBELE will perform by using the local configuration files insta
 	...
 	```
 	
-	* File name: $OUTPUT_DIR/characterization/$BASENAME\_proteinfamilies\_annotation.attribute.tsv
+	* File name: `$OUTPUT_DIR/characterization/$BASENAME_proteinfamilies_annotation.attribute.tsv`
 	* This is the supplementary results for characterization.
 	* Each of item is the supplemental information about the corresponding results. `AID` is the key to connect `$BASENAME_proteinfamilies_annotation.tsv` with `$BASENAME_proteinfamilies_annotation.attribute.tsv`.
 	
@@ -556,9 +553,9 @@ By default, MetaWIBELE will perform by using the local configuration files insta
 	...
 	```
 	
-	* File name: $OUTPUT_DIR/characterization/$BASENAME\_proteinfamilies\_annotation.taxonomy.tsv
+	* File name: `$OUTPUT_DIR/characterization/$BASENAME_proteinfamilies_annotation.taxonomy.tsv`
 	* These files report the detailed information about taxonomic annotation.
-	* `$BASENAME_proteinfamilies_annotation.MSPminer_taxonomy.all.tsv` shows the taxonomic information at each of taxonomic level.
+	* `$BASENAME_proteinfamilies_annotation.taxonomy.all.tsv` shows the taxonomic information at each of taxonomic level.
 	
 	
 	**4. Abundance file**
@@ -574,8 +571,8 @@ By default, MetaWIBELE will perform by using the local configuration files insta
 	...
 	```
 	
-	* File name: $OUTPUT_DIR/characterization/$BASENAME\_proteinfamilies\_relab.tsv
-	* This is the relative abundance per protein family across samples.
+	* File name: `$OUTPUT_DIR/characterization/$BASENAME_proteinfamilies_nrm.tsv`
+	* This is the normlized abundance of each protein family across samples.
 	* Protein family abundance is reported in copies per million (CPM) units, which is "total sum scaling (TSS)"-style normalization: each sample is constrained to sum to 1 million. First, each protein family is normalized to RPK (reads per kilobase) units for gene length normalization; RPK units reflect relative gene (or transcript) copy number in the community. Then, RPK values are further sum-normalized (CPM) to adjust for differences in sequencing depth across samples. Further information can refer to the normalization approach in [HUMAnN](https://github.com/biobakery/humann). 
 	
 	**5. Clustering information for protein families**
@@ -591,12 +588,12 @@ By default, MetaWIBELE will perform by using the local configuration files insta
 	...
 	```
 	
-	* File name: $OUTPUT_DIR/characterization/$BASENAME\_proteinfamilies.clstr
+	* File name: `$OUTPUT_DIR/characterization/$BASENAME_proteinfamilies.clstr`
 	* This is the clustering information for protein families, formatted using extension-fasta style based on the version of CD-hit clustering file.
 	
 	**6. Sequences of protein families**  
 	
-	* File name: $OUTPUT_DIR/characterization/$BASENAME\_proteinfamilies.centroid.faa
+	* File name: `$OUTPUT_DIR/characterization/$BASENAME_proteinfamilies.centroid.faa`
 	* This file is the protein sequence for representatives of protein families.
 
 	**7. Intermediate output files**
@@ -620,19 +617,19 @@ By default, MetaWIBELE will perform by using the local configuration files insta
 
 #### MetaWIBELE-prioritize workflow
 * ##### Input files for prioritiztion
-	* anntation file produced by MetaWIBELE-characterize workflow:$OUTPUT_DIR/characterization/$BASENAME\_proteinfamilies\_annotation.tsv
-	* attribute file produced by MetaWIBELE-characterize workflow: $OUTPUT_DIR/characterization/$BASENAME\_proteinfamilies\_annotation.attribute.tsv
+	* anntation file produced by MetaWIBELE-characterize workflow:`$OUTPUT_DIR/characterization/$BASENAME_proteinfamilies_annotation.tsv`
+	* attribute file produced by MetaWIBELE-characterize workflow: `$OUTPUT_DIR/characterization/$BASENAME_proteinfamilies_annotation.attribute.tsv`
 
 * ##### MetaWIBELE-prioritize workflow
 
-	`$ metawibele prioritize --input $INPUT --output $OUTPUT`
-	* In the command replaces $INPUT with the path to the folder containing your characterization input files and $OUTPUT with the path to the folder to write output files. See the section on parallelization options to optimize the workflow run based on your computing resources. 
+	`$ metawibele prioritize`
+	* In the command replaces $INPUT with `$OUTPUT_DIR/characterization/` and `$OUTPUT_DIR` with the path to the folder to write output files specified in `metawibele.cfg`. See the section on parallelization options to optimize the workflow run based on your computing resources. 
 	* The workflow runs with the default settings for all main tool subtasks. These settings will work for most data sets. However, if you need to customize your workflow settings for the preprocessing workflow to determine the optimum setting. Then apply these settings by using options for each task. You can specify your own configuration file.
 	* For example, `--prioritization-config $myconfig_file` will modify the default settings when running the prioritization tasks.
 	
 * ##### Demo run of MetaWIBELE-prioritize
 
-	`$ metawibele prioritize --input $OUTPUT_DIR/characterization/ --output $OUTPUT\_DIR/`
+	`$ metawibele prioritize`
 
 * ##### Output files of MetaWIBELE-prioritize
 	**1. unsupervised prioritization**
@@ -649,7 +646,7 @@ By default, MetaWIBELE will perform by using the local configuration files insta
 	```
 	
 	* File name: 
-	$OUTPUT\_DIR/prioritization/$BASENAME\_unsupervised\_prioritization.rank.tsv
+	`$OUTPUT_DIR/prioritization/$BASENAME_unsupervised_prioritization.rank.tsv`
 	* These are the results of unsupervised prioritization based on ecological properties. Each protein family has a numeric priority score.
 	* `$BASENAME_unsupervised_prioritization.rank.tsv` is the overall ranking for all protein families.
 
@@ -668,7 +665,7 @@ By default, MetaWIBELE will perform by using the local configuration files insta
 	```
 	
 	* File name: 
-		$OUTPUT\_DIR/prioritization/$BASENAME\_supervised\_prioritization.rank.tsv
+		`$OUTPUT_DIR/prioritization/$BASENAME_supervised_prioritization.rank.tsv`
 	* These are the results of supervised prioritization by combing ecological properties and associations with host phenotypes. Each protein family has a numeric priority score.
 	* `$BASENAME_supervised_prioritization.rank.tsv` is the overall ranking for all protein families.
 
@@ -721,8 +718,8 @@ By default, MetaWIBELE will perform by using the local configuration files insta
 	```
 	
 	* Re-run prioritization workflow for filtering:
-		* `$ metawibele prioritize --prioritization-config $PRIORITIZE_CONF --bypass-mandatory --selected-output demo_prioritized.selected.tsv --output $OUTPUT\_DIR/`
-	* Output file name: $OUTPUT_DIR/prioritization/demo_prioritized.selected.tsv
+		* `$ metawibele prioritize --prioritization-config $PRIORITIZE_CONF --bypass-mandatory --selected-output demo_prioritized.selected.tsv`
+	* Output file name: `$OUTPUT_DIR/prioritization/demo_prioritized.selected.tsv`
 	* This file is the results of supervised filtering of protein families based on biochemical annotations.
 	* These settings require that each of prioritized protein family should 1) be annotated to domain-domain interaction with the host, and 2) have at least one of the following features: signaling, extracellular, cellWall, outerMembrane, transmembrane 
 	
@@ -772,8 +769,8 @@ By default, MetaWIBELE will perform by using the local configuration files insta
 	```
 	
 	 * Re-run prioritization workflow for filtering:
-		* `$ metawibele prioritize --prioritization-config $PRIORITIZE_CONF --bypass-mandatory --selected-output demo_prioritized.selected.tsv --output $OUTPUT\_DIR/`
-	 * Output file name: $OUTPUT_DIR/prioritization demo_prioritized.selected.tsv
+		* `$ metawibele prioritize --prioritization-config $PRIORITIZE_CONF --bypass-mandatory --selected-output demo_prioritized.selected.tsv`
+	 * Output file name: `$OUTPUT_DIR/prioritization demo_prioritized.selected.tsv`
 	 * This file is the results of supervised filtering of protein families based on biochemical annotations.
 	 * These settings require that each of prioritized protein family should 1) significantly associated with the main phenotype, 2) be annotated to domain-domain interaction with the host, 3) predicted as signal peptides, and 4) have at least one of the following features: extracellular, cellWall, outerMembrane, transmembrane 
 	
@@ -822,9 +819,9 @@ By default, MetaWIBELE will perform by using the local configuration files insta
 	```
 	
 	* Re-run prioritization workflow for filtering:
-		* `$ metawibele prioritize --prioritization-config $PRIORITIZE_CONF --bypass-mandatory --vignette-config my_vignette_function_file  --selected-output demo_prioritized_pilin.tsv --output $OUTPUT\_DIR/`
+		* `$ metawibele prioritize --prioritization-config $PRIORITIZE_CONF --bypass-mandatory --vignette-config my_vignette_function_file  --selected-output demo_prioritized_pilin.tsv`
 	* Provide your own vignette function file for filtering specific functions.
-	* Output file name: $OUTPUT_DIR/prioritization/demo_prioritized_pilin.tsv
+	* Output file name: `$OUTPUT_DIR/prioritization/demo_prioritized_pilin.tsv`
 	* This file is the result of supervised filtering of protein families based on pilin related functions.
 	
 	
@@ -841,9 +838,9 @@ By default, MetaWIBELE will perform by using the local configuration files insta
 	```
 	
 	* File name: 
-		$OUTPUT\_DIR/prioritization/$BASENAME\_unsupervised\_prioritization.rank.table.tsv
-		$OUTPUT\_DIR/prioritization/$BASENAME\_supervised\_prioritization.rank.table.tsv
-		$OUTPUT\_DIR/prioritization/$BASENAME\_supervised\_prioritization.rank.selected.table.tsv
+		`$OUTPUT_DIR/prioritization/$BASENAME_unsupervised_prioritization.rank.table.tsv`
+		`$OUTPUT_DIR/prioritization/$BASENAME_supervised_prioritization.rank.table.tsv`
+		`$OUTPUT_DIR/prioritization/$BASENAME_supervised_prioritization.rank.selected.table.tsv`
 	* These files are formated the prioritization results in the same way.
 
 ***
