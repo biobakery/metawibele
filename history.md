@@ -1,6 +1,11 @@
 
 # MetaWIBELE History #
 
+## v0.3.5 2020-07-17 ##
+* Skip phenotypic association by default
+* Skip supervised prioritization if not associating with environmental/phenotypic parameters
+* Turn off input/output options in workflows and only use info from the configuration file
+
 ## v0.3.4 2020-07-13 ##
 * Update DDIs which are supported by PDB
 * Update default settings of Maaslin2
