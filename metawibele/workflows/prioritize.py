@@ -62,7 +62,7 @@ def parse_cli_arguments ():
 	create a workflow instance, providing the version number and description
 	'''
 
-	workflow = Workflow(version = VERSION, description = "A workflow for MetaWIBELE prioritization")
+	workflow = Workflow(version = VERSION, description = "A workflow for MetaWIBELE prioritization", remove_options=["input","output"])
 
 	# add the custom arguments to the workflow
 	workflow.add_argument("threads",
@@ -86,6 +86,9 @@ def parse_cli_arguments ():
 	workflow.add_argument("selected-output",
 	                    desc = "the output file name for the prioritized protein families by binary filtering",
 	                    default = None)
+	workflow.add_argument("output",
+	                    desc = "provide an output folder which the workflow database and log is written. By default, thet be written to the users home directory",
+	                    default = None)
 
 	return workflow
 
@@ -103,10 +106,13 @@ def main(workflow):
 		args.threads = int(config.threads)
 
 	# input and output folder
-	input_dir = args.input
+	#input_dir = args.input
+	#input_dir = os.path.abspath(input_dir)
 	priority_dir = config.priority_dir
-	input_dir = os.path.abspath(input_dir)
 	priority_dir = os.path.abspath(priority_dir)
+	if not args.output:
+		args.output = config.working_dir 
+
 
 	# get config file
 	default_prioritization_conf = os.path.join(config.config_directory, "prioritization.cfg")
@@ -147,7 +153,8 @@ def main(workflow):
 	### STEP #2: optional prioritization: binary filtering ###
 	# if optional action is provided, then prioritize protein families based on interested functions (selection factor)
 	if not args.bypass_optional:
-		myselection = prioritization.optional_prioritization (workflow, args.prioritization_config, args.vignette_config,
+		if not "".join(config.phenotype) == "none":
+			myselection = prioritization.optional_prioritization (workflow, args.prioritization_config, args.vignette_config,
 		                                                             protein_family_ann,
 		                                                             supervised_rank,
 		                                                             priority_dir, selected_priority)
