@@ -233,7 +233,7 @@ def get_item(config_items, section, name, type=None):
 
 
 ## default option for MetaWIBELE ##
-version = '0.3.4'
+version = '0.3.5'
 log_level = 'DEBUG'
 verbose = 'DEBUG'
 
@@ -289,11 +289,6 @@ config_items = read_user_edit_config_file(full_path_user_edit_config_file)
 # installed databases
 database_directory = os.path.join(metawibele_install_directory, "data")
 uniref_directory = os.path.join(database_directory, "uniref")
-#taxonomy_database_choices = ["uniprot_taxonomy.tsv.gz","uniprot_taxaID_microbiome.txt.gz","uniprot_taxaID_mammalia.txt.gz"]
-#taxonomy_database = os.path.join(uniref_directory,  taxonomy_database_choices[0])
-#microbiome_taxa = os.path.join(uniref_directory, taxonomy_database_choices[1])
-#mammalia_taxa = os.path.join(uniref_directory, taxonomy_database_choices[2])
-#human_pfam_database = os.path.join(uniref_directory, "uniprot_human_pfam.tsv.gz")
 prefix_taxa = "uniprot_taxonomy"
 prefix_mic_taxa = "uniprot_taxaID_microbiome"
 prefix_mam_taxa = "uniprot_taxaID_mammalia"
