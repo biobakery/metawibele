@@ -97,8 +97,9 @@ def mandatory_prioritization (workflow, prioritization_conf,
 			name = "quantify_prioritization__unsupervised")
 
 	# run supervised prioritization
-	mylog = re.sub(".tsv", ".log", supervised_rank)
-	workflow.add_task(
+	if not "".join(config.phenotype) == "none":
+		mylog = re.sub(".tsv", ".log", supervised_rank)
+		workflow.add_task(
 			"metawibele_quantify_prioritization -c [depends[0]] -m supervised -w equal -a [depends[1]] -b [depends[2]] -o [args[0]] >[args[1]] 2>&1",
 			depends = [prioritization_conf, protein_family_ann, protein_family_attr, TrackedExecutable("metawibele_quantify_prioritization")],
 			targets = [supervised_rank],
@@ -218,8 +219,9 @@ def finalize_prioritization (workflow,
 			cores = 1,
 			name = "finalize_prioritization__unsupervised_rank")
 
-	mylog = re.sub(".tsv", ".log", final_supervised_rank)
-	workflow.add_task(
+	if not "".join(config.phenotype) == "none":
+		mylog = re.sub(".tsv", ".log", final_supervised_rank)
+		workflow.add_task(
 			"metawibele_finalize_prioritization -i [depends[0]] -o [targets[0]] > [args[0]] 2>&1",
 			depends = [supervised_rank, TrackedExecutable("metawibele_finalize_prioritization")],
 			targets = [final_supervised_rank],
@@ -227,8 +229,8 @@ def finalize_prioritization (workflow,
 			cores = 1,
 			name = "finalize_prioritization__supervised_rank")
 
-	mylog = re.sub(".tsv", ".log", final_selected_priority)
-	workflow.add_task(
+		mylog = re.sub(".tsv", ".log", final_selected_priority)
+		workflow.add_task(
 			"metawibele_finalize_prioritization -i [depends[0]] -o [targets[0]] > [args[0]] 2>&1",
 			depends = [selected_priority, TrackedExecutable("metawibele_finalize_prioritization")],
 			targets = [final_selected_priority],
