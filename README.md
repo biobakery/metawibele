@@ -224,12 +224,22 @@ To run MetaWIBELE, one global configuration file `metawibele.cfg` is **required*
 	gene_catalog_count = 
 
 	[output]
-	# The prefix name for output results
-	basename = 
+	# The prefix name of the output files [ Default: metawibele ]
+	basename = metawibele
 	# The output directory
 	output_dir =
 	``` 
 
+	* Specify the path of dependent databases:
+	
+	```
+	[database]
+	# The absolute path of uniref databases folder.
+	uniref_db = 
+	# The domain databases used by MetaWIBELE. [data_path] provide the absolute path of the domain databases folder; [none] use the default domain databases installed in the metawibele package [ Default: none ]
+	domain_db = none
+	```
+	
 	* Specify applied computational resources:
 
 	```
@@ -240,16 +250,6 @@ To run MetaWIBELE, one global configuration file `metawibele.cfg` is **required*
 	memory = 20000
 	# The amount of time (in minute) that you will be using for your job [ Default: 60 ]
 	time = 60
-	```
-	
-	* Specify the path of dependent databases:
-	
-	```
-	[database]
-	# The absolute path of uniref databases folder.
-	uniref_db = 
-	# The domain databases used by MetaWIBELE. [data_path] provide the absolute path of the domain databases folder; [none] use the default domain databases installed in the metawibele package [ Default: none ]
-	domain_db = none
 	```
 
 	* Specify parameter settings for annotations
