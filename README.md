@@ -90,6 +90,8 @@ Bypass options:
 	* do not annotate protein families based on abundance information
 * --bypass-integration
 	* do not integrate annotations for protein families
+* --bypass-mandatory
+	* do not prioritize protein families to calculate continuous priority scores
 * --bypass-optional
 	* do not prioritize protein families based on selecting our for interested annotations (optional prioritization)
 
