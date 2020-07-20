@@ -69,7 +69,7 @@ def parse_cli_arguments():
 	                      desc = "number of threads/cores for each task to use",
 	                      default = None)
 	workflow.add_argument("extension-paired",
-	                      desc = "provide the extension for paired fastq files using comma to seperate, e.g. .R1.fastq.gz,.R2.fastq.gz | .R1.fastq,.R2.fastq",
+	                      desc = "provide the extension for paired fastq files using comma to separate, e.g. .R1.fastq.gz,.R2.fastq.gz | .R1.fastq,.R2.fastq",
 						  default = None) 
 	workflow.add_argument("extension",
 	                      desc = "provide the extension for all fastq files",
