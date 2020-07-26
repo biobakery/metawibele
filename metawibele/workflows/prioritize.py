@@ -62,7 +62,7 @@ def parse_cli_arguments ():
 	create a workflow instance, providing the version number and description
 	'''
 
-	workflow = Workflow(version = VERSION, description = "A workflow for MetaWIBELE prioritization", remove_options=["input","output"])
+	workflow = Workflow(version = VERSION, description = "A workflow for MetaWIBELE prioritization", remove_options=["output"])
 
 	# add the custom arguments to the workflow
 	workflow.add_argument("threads",
@@ -87,8 +87,8 @@ def parse_cli_arguments ():
 	                    desc = "the output file name for the prioritized protein families by binary filtering",
 	                    default = None)
 	workflow.add_argument("output",
-	                    desc = "provide an output folder which the workflow database and log is written. By default, thet be written to the users home directory",
-	                    default = None)
+	                    desc = "provide an output folder which the workflow database and log is written. By default, thet be written to the anadama2 folder of users' workding directory",
+	                    default = "anadama2")
 
 	return workflow
 
@@ -110,8 +110,8 @@ def main(workflow):
 	#input_dir = os.path.abspath(input_dir)
 	priority_dir = config.priority_dir
 	priority_dir = os.path.abspath(priority_dir)
-	if not args.output:
-		args.output = config.working_dir 
+	if args.output == "anadama2":
+		args.output = os.path.abspath(config.working_dir) 
 
 
 	# get config file

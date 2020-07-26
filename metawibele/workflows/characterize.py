@@ -61,7 +61,7 @@ def parse_cli_arguments ():
 	create a workflow instance, providing the version number and description
 	'''
 
-	workflow = Workflow(version = VERSION, description = "A workflow for MetaWIBELE characterization", remove_options=["input","output"])
+	workflow = Workflow(version = VERSION, description = "A workflow for MetaWIBELE characterization", remove_options=["output"])
 
 	# add the custom arguments to the workflow
 	workflow.add_argument("threads",
@@ -110,8 +110,8 @@ def parse_cli_arguments ():
 	                      desc = "do not integrate annotations for protein families",
 	                      action = "store_true")
 	workflow.add_argument("output",
-	                      desc = "provide an output folder which the workflow database and log is written. By default, thet be written to the users home directory",
-	                      default = None)
+	                      desc = "provide an output folder which the workflow database and log is written. By default, thet be written to the anadama2 folder of users' working directory",
+	                      default = "anadama2")
 
 	return workflow
 
@@ -227,9 +227,9 @@ def main(workflow):
 	#input_dir = os.path.abspath(input_dir)
 	output_dir = config.annotation_dir
 	output_dir = os.path.abspath(output_dir)
-	if not args.output:
-		args.output = config.working_dir
-
+	if args.output == "anadama2":
+		args.output = os.path.abspath(config.working_dir)
+	
 	# get all input files
 	#gene_catalog = config.gene_catalog
 	gene_catalog_seq = config.gene_catalog_prot
