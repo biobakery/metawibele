@@ -60,6 +60,8 @@ def parse_cli_arguments ():
 	the description will appear when running this script with the "--help" option
 	create a workflow instance, providing the version number and description
 	'''
+	
+	tmp_output = os.path.abspath(config.working_dir)
 
 	workflow = Workflow(version = VERSION, description = "A workflow for MetaWIBELE characterization", remove_options=["output"])
 
@@ -111,7 +113,7 @@ def parse_cli_arguments ():
 	                      action = "store_true")
 	workflow.add_argument("output",
 	                      desc = "provide an output folder which the workflow database and log is written. By default, thet be written to the anadama2 folder of users' working directory",
-	                      default = "anadama2")
+	                      default = tmp_output)
 
 	return workflow
 
@@ -227,8 +229,8 @@ def main(workflow):
 	#input_dir = os.path.abspath(input_dir)
 	output_dir = config.annotation_dir
 	output_dir = os.path.abspath(output_dir)
-	if args.output == "anadama2":
-		args.output = os.path.abspath(config.working_dir)
+	#if args.output == "anadama2":
+	#	args.output = os.path.abspath(config.working_dir)
 	
 	# get all input files
 	#gene_catalog = config.gene_catalog
