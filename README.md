@@ -1,4 +1,5 @@
 # MetaWIBELE User Manual
+
 **MetaWIBELE** (**W**orkflow to **I**dentify novel **B**ioactive **Ele**ments in the microbiome) is a workflow to efficiently and systematically identify uncharacterized microbial community gene products with potential bioactivity. It prioritizes candidate gene products from assembled metagenomes using a combination of sequence homology, secondary-structure-based functional annotations, phylogenetic binning, ecological distribution, and phenotypic population statistics to target candidate bioactives linked to phenotypes such as IBD. MetaWIBELE is available as module of bioBakery [bioBakery repository](https://github.com/biobakery).
 
 
@@ -104,7 +105,7 @@ Bypass options:
 3. [CD-hit](http://weizhongli-lab.org/cd-hit/) (version >= 4.7)
 4. [Diamond](http://www.diamondsearch.org/index.php) (version >= 0.9.5)
 5. [MSPminer](https://www.enterome.com/downloads/) (version >= 2)
-6. [MaAsLin2](https://huttenhower.sph.harvard.edu/maaslin2) (version >= 1.1.2) (only required if using MaAsLin2 to associate with host phenotypes)
+6. [MaAsLin2](https://huttenhower.sph.harvard.edu/maaslin2) (version >= 1.1.2) (only required if using MaAsLin2 to associate with environmental parameters or phenotypes)
 7. [Interproscan](https://github.com/ebi-pf-team/interproscan/wiki) (version >= 5.31-70) (only required if using Interproscan to annotate domains and motifs)
 8. [Signalp](http://www.cbs.dtu.dk/services/SignalP-4.1/) (version >= 4.1) (only required if using Signalp to annotate signal peptides integrated in interproscan)
 9. [TMHMM](http://www.cbs.dtu.dk/services/TMHMM/) (version >= 2.0) (only required if using TMHMM to annotate transmembrane proteins integrated by interproscan)
@@ -224,12 +225,12 @@ To run MetaWIBELE, one global configuration file `metawibele.cfg` is **required*
 	gene_catalog_count = 
 
 	[output]
-	# The prefix name of the output files [ Default: metawibele ]
+	# The prefix name for output results [ Default: metawibele ]
 	basename = metawibele
 	# The output directory
 	output_dir =
 	``` 
-
+	
 	* Specify the path of dependent databases:
 	
 	```
@@ -378,7 +379,7 @@ By default, MetaWIBELE will perform by using the local configuration files insta
 	# All [required] items should be true 
 	# At least one [optional] item should be true 
 	# All [none] items will be ignored
-	# Default: select protein families significantly associated with the main clinical phenotype
+	# Default: select protein families significantly associated with the main phenotype
 
 	[filtering]
 	# Filter for interested functional vignettes type [Choices: pilin | secreted_system | other user defined | none]
@@ -516,7 +517,7 @@ By default, MetaWIBELE will perform by using the local configuration files insta
 	* This is the main characterization result.
 	* This file details the annotation of each protein family in the community. Protein families are groups of evolutionarily-related protein-coding sequences that often perform similar functions.
 	* MetaWIBELE annotates protein family by combining global-homology similarity, local-homology similarity, and non-homology based methods.
-	* The annotations for each protein family coming from multiple information sources, e.g. biochemical annotation, taxonomic annotation, ecological properties and association with host phenotypes, etc.
+	* The annotations for each protein family coming from multiple information sources, e.g. biochemical annotation, taxonomic annotation, ecological properties and association with environmental parameters or phenotypes, etc.
 			
 	**2. Attribute file**
 	
@@ -612,7 +613,7 @@ By default, MetaWIBELE will perform by using the local configuration files insta
 		* All intermediate results are in the folder `$OUTPUT_DIR/characterization/domain_motif_annotation`.
 	
 	* Abundance-based annotation results
-		* MetaWIBELE implements non-homology based strategy compromising (i) taxonomic annotation with phylogenetic binning, (ii) abundance profiling for protein families, and (iii) association with host phenotypes based on differential abundance. 
+		* MetaWIBELE implements non-homology based strategy compromising (i) taxonomic annotation with phylogenetic binning, (ii) abundance profiling for protein families, and (iii) association with environmental parameters or phenotypes based on differential abundance. 
 		* All intermediate results are in the folder `$OUTPUT_DIR/characterization/abundance_annotation`.
 	
 
@@ -636,38 +637,42 @@ By default, MetaWIBELE will perform by using the local configuration files insta
 	**1. unsupervised prioritization**
 	
 	```
-	familyID    DNA_nonIBD_abundance__value DNA_nonIBD_abundance__percentile    DNA_nonIBD_prevalence__value    DNA_nonIBD_prevalence__percentile   priority_score
-	Cluster_24570   2694.0590678779345  0.9999793230362054  1.0 1.0 0.9999896614112173
-	Cluster_41147   2431.225870892018   0.9999586460724107  1.0 1.0 0.9999793226086595
-	Cluster_22422   1336.999313239437   0.9998966151810268  1.0 1.0 0.9999483049182701
-	Cluster_40049   1109.6718042394361  0.9998759382172322  1.0 1.0 0.9999379652605459
-	Cluster_29449   803.4913150469486   0.9997311994706697  0.9976525821596244  0.9993898213934824  0.999560481284518
-	Cluster_21419   383.6281626291082   0.9983458428964291  1.0 1.0 0.9991722368230451
+	TID familyID    evidence    value   rank    description note 
+	1   Cluster_2   DNA_abundance   6728.564309677419   0.9994472084024323  ranking based on single evidence    
+	2   Cluster_2   DNA_prevalence  0.9741935483870968  0.9994472084024323  ranking based on single evidence    
+	3   Cluster_2   priority_score  0.9994472084024324  0.9994472084024324  meta ranking based on multiple evidences    
+	4   Cluster_269 DNA_abundance   4748.32714451613    0.9983416252072969  ranking based on single evidence    
+	5   Cluster_269 DNA_prevalence  0.9483870967741935  0.9964068546158098  ranking based on single evidence    
+	6   Cluster_269 priority_score  0.9973733016134971  0.9973733016134971  meta ranking based on multiple evidences 
 	...
 	```
 	
 	* File name: 
-	`$OUTPUT_DIR/prioritization/$BASENAME_unsupervised_prioritization.rank.tsv`
-	* These are the results of unsupervised prioritization based on ecological properties. Each protein family has a numeric priority score.
+	`$OUTPUT_DIR/prioritization/$BASENAME_unsupervised_prioritization.rank.table.tsv`
+	* These are the results of unsupervised prioritization based on ecological properties. Each protein family has a numeric priority score based on meta ranking.
 	* `$BASENAME_unsupervised_prioritization.rank.tsv` is the overall ranking for all protein families.
 
 	
 	**2. supervised prioritization: numeric ranking**
 	
 	```
-	familyID    DNA_within_phenotype_abundance__value   DNA_within_phenotype_abundance__percentile  DNA_within_phenotype_prevalence__value  DNA_within_phenotype_prevalence__percentile MaAsLin2_DA__mean_log__value    MaAsLin2_DA__mean_log__percentile   MaAsLin2_DA__qvalue__value  MaAsLin2_DA__qvalue__percentile priority_score
-	Cluster_14393|CD.dysbiosis_vs_CD.non_dysbiosis  844.0252184037556   0.9995526838966203  0.971830985915493   0.986622572543949   -480.492828810768   0.9995526838966203  4.31866766640033e-11    1.0 0.9963995495816218
-	Cluster_47254|CD.dysbiosis_vs_CD.non_dysbiosis  718.2714984741792   0.9992047713717693  0.9741784037558685  0.9884128602332347  -392.524817430569   0.9993538767395627  4.87065570823145e-09    0.9937619603847205  0.9951628678096055
-	Cluster_53|CD.dysbiosis_vs_CD.non_dysbiosis 357.3594103568074   0.9953280318091451  0.9954233409610984  0.9983340378446925  -143.260405479191   0.9928429423459244  4.93693768852676e-09    0.9936625493948356  0.9950374594865485
-	Cluster_7|CD.dysbiosis_vs_CD.non_dysbiosis  438.19562671167034  0.9975646123260438  0.9741784037558685  0.9884128602332347  -250.126179947757   0.9979622266401591  3.60646971240824e-09    0.9947063647886274  0.9946467984814091
-	Cluster_14|CD.dysbiosis_vs_CD.non_dysbiosis 428.82273066590415  0.9973658051689861  0.9624413145539906  0.9785911430489594  -256.077370752594   0.9982107355864811  3.00504043491864e-09    0.9950294505057534  0.9922342227131524
-	Cluster_42|CD.dysbiosis_vs_CD.non_dysbiosis 437.4689617025174   0.9975149105367793  0.9765258215962441  0.9895317900390382  -220.208838202021   0.9974652087475149  1.33219876365297e-07    0.979198250366578   0.9908703385076423
+	TID familyID    evidence    value   rank    description note 
+	1   Cluster_1058    DNA_within_phenotype_abundance  1455.2607352941177  0.857379767827529   ranking based on single evidence    CD_vs_nonIBD
+	2   Cluster_1058    DNA_within_phenotype_prevalence 1.0 1.0 ranking based on single evidence    CD_vs_nonIBD
+	3   Cluster_1058    MaAsLin2_DA__mean_log   -3.7441751012074533 0.9336650082918739  ranking based on single evidence    CD_vs_nonIBD
+	4   Cluster_1058    MaAsLin2_DA__qvalue 5.01463564253508e-05    0.85437430786268    ranking based on single evidence    CD_vs_nonIBD
+	5   Cluster_1058    priority_score  0.9074740723963038  0.9074740723963038  meta ranking based on multiple evidences    CD_vs_nonIBD
+	6   Cluster_1152    DNA_within_phenotype_abundance  1617.4002382352937  0.9364289662797125  ranking based on single evidence    CD_vs_nonIBD
+	7   Cluster_1152    DNA_within_phenotype_prevalence 1.0 1.0 ranking based on single evidence    CD_vs_nonIBD
+	8   Cluster_1152    MaAsLin2_DA__mean_log   -3.7580207457514616 0.9380873410724156  ranking based on single evidence    CD_vs_nonIBD
+	9   Cluster_1152    MaAsLin2_DA__qvalue 0.000106062753712042    0.7574750830564784  ranking based on single evidence    CD_vs_nonIBD
+	10  Cluster_1152    priority_score  0.8980568683016749  0.8980568683016749  meta ranking based on multiple evidences    CD_vs_nonIBD
 	...
 	```
 	
 	* File name: 
-		`$OUTPUT_DIR/prioritization/$BASENAME_supervised_prioritization.rank.tsv`
-	* These are the results of supervised prioritization by combining ecological properties and environmental/phenotypic properties. Each protein family has a numeric priority score.
+		`$OUTPUT_DIR/prioritization/$BASENAME_supervised_prioritization.rank.table.tsv`
+	* * These are the results of supervised prioritization by combing ecological properties and environmental/phenotypic properties. Each protein family has a numeric priority score based on meta-ranking.
 	* `$BASENAME_supervised_prioritization.rank.tsv` is the overall ranking for all protein families.
 
 
@@ -1001,7 +1006,7 @@ optional arguments:
 * [HMP2\_proteinfamilies_annotation.tsv.gz]() (1.8 GB): main annotations of protein families
 * [HMP2\_proteinfamilies_annotation.attribute.tsv.gz]() (6.4 GB): attributes of annotation types
 * [HMP2\_proteinfamilies_annotation.taxonomy.tsv.gz]() (500 MB): relative abundance of protein families
-* [HMP2\_proteinfamilies_relab.tsv.gz]() (1.5 GB): relative abundance of protein families
+* [HMP2\_proteinfamilies_nrm.tsv.gz]() (1.5 GB): relative abundance of protein families
 * [HMP2_proteinfamilies.clstr.gz]() (29 MB): clustering information for protein families
 * [HMP2\_proteinfamilies.centroid.faa.gz]() (270 MB): protein sequences of centroids for protein families
 
