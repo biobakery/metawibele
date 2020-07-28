@@ -159,7 +159,7 @@ UniRef databases are **required** if you will use MetaWIBELE to do global-homolo
 * We have built these dependent uniref databases based on UniProt/UniRef 2019_01 sequences and annotations. You can download and uncompress these databases and provide `$UNIREF_LOCATION` as the location to install the database.
 	
 	* UniRef90 sequence file (20 GB): 
-		* If you are using Diamond v0.9.5, just download and uncompress the indexed version of sequences: [uniref90.fasta.dmnd.gz](http://huttenhower.sph.harvard.edu/MetaWIBELE_data/uniref90.fasta.dmnd.gz.gz)
+		* If you are using Diamond v0.9.5, just download and uncompress the indexed version of sequences: [uniref90.fasta.dmnd.gz](http://huttenhower.sph.harvard.edu/MetaWIBELE_data/uniref90.fasta.dmnd.gz)
 		* If you are using different version of Diamond, download raw sequences in fasta format: [uniref90.fasta.gz](http://huttenhower.sph.harvard.edu/MetaWIBELE_data/uniref90.fasta.gz) and index it using your local Diamond: `$ diamond makedb --in uniref90.fasta -d uniref90.fasta` 
 	* UniRef90 annotation files (5.3 GB): [uniref_annotations.tar.gz](http://huttenhower.sph.harvard.edu/MetaWIBELE_data/uniref_annotations.tar.gz)
 		* Annotations are available for the UniRef90 gene families to the following systems:
