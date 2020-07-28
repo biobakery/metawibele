@@ -127,11 +127,11 @@ Bypass options:
 #### Download MetaWIBELE
 You can download the latest MetaWIBELE release or the development version. The source contains example files.
 
-Option 1: Latest Release (Recommended)
+**Option 1**: Latest Release (Recommended)
 
 * download [metawibele-master.zip](https://github.com/biobakery/metawibele/archive/master.zip) and unpack the latest release of MetaWIBELE
 
-Option 2: Development Version
+**Option 2**: Development Version
 
 * Create a clone of the Git repository 
 	* `$ git clone https://github.com/biobakery/metawibele.git`
@@ -154,13 +154,15 @@ Option 2: Development Version
 ##### UniRef database
 UniRef databases are **required** if you will use MetaWIBELE to do global-homology based annotation and taxonomic annotation. 
 
-Option 1: download uniref databases (Recommended)
+**Option 1**: download uniref databases (Recommended)
 
-* We have built these dependent uniref databases based on UniProt/UniRef 2019_01 sequences and annotations which have also been used by [HUMAnN](https://github.com/biobakery/humann). You can download and uncompress these databases and provide `$UNIREF_LOCATION` as the location to install the database.
+* We have built these dependent uniref databases based on UniProt/UniRef 2019_01 sequences and annotations. You can download and uncompress these databases and provide `$UNIREF_LOCATION` as the location to install the database.
 	
-	* full UniRef90 database (11.0GB): [uniref90_annotated.tar.gz](http://huttenhower.sph.harvard.edu/humann2_data/uniprot/uniref_annotated/uniref90_annotated_v201901.tar.gz)
-	* UniRef90 mapping files (3.0 GB): [full_mapping.tar.gz](http://huttenhower.sph.harvard.edu/humann2_data/full_mapping_v201901.tar.gz)
-		* Mappings are available for the UniRef90 gene families to the following systems:
+	* UniRef90 sequence file (20 GB): 
+		* If you are using Diamond v0.9.5, just download and uncompress the indexed version of sequences: [uniref90.fasta.dmnd.gz](http://huttenhower.sph.harvard.edu/MetaWIBELE_data/uniref90.fasta.dmnd.gz.gz)
+		* If you are using different version of Diamond, download raw sequences in fasta format: [uniref90.fasta.gz](http://huttenhower.sph.harvard.edu/MetaWIBELE_data/uniref90.fasta.gz) and index it using your local Diamond: `$ diamond makedb --in uniref90.fasta -d uniref90.fasta` 
+	* UniRef90 annotation files (5.3 GB): [uniref_annotations.tar.gz](http://huttenhower.sph.harvard.edu/MetaWIBELE_data/uniref_annotations.tar.gz)
+		* Annotations are available for the UniRef90 gene families to the following systems:
 			* UniProt ID corresponding to the UniRef representative
 			* Protein names of the UniRef representative
 			* Gene names of the UniRef representative
@@ -170,9 +172,9 @@ Option 1: download uniref databases (Recommended)
 			* KEGG Orthogroups (KOs)
 			* EggNOG (including COGs)
 			* Pfam domains（Pfams)
-		* In most cases, mappings are directly inferred from the annotation of the corresponding UniRef representative sequence in UniProt. Further information can refer to the uniref mapping files in [HUMAnN](https://github.com/biobakery/humann).
+		* In most cases, mappings are directly inferred from the annotation of the corresponding UniRef representative sequence in UniProt.
 
-Option 2: create local uniref databases
+**Option 2**: create local uniref databases
 
 * You can also create these databases locally by using MetaWIBELE utility scripts based on the latest release version of UniProt/UniRef, and provide `$DATABASE_LOCATION` as the location to install the database.
 
@@ -230,7 +232,7 @@ To run MetaWIBELE, one global configuration file `metawibele.cfg` is **required*
 	# The output directory
 	output_dir =
 	``` 
-	
+
 	* Specify the path of dependent databases:
 	
 	```
@@ -994,23 +996,23 @@ optional arguments:
 
 
 ## Download MetaWIBELE resources
-### Information of gene catalogs
-* [HMP2\_contig_sequence.fasta.gz]() (7.5 GB): contig sequences
-* [HMP2\_gene_info.tsv.tar.gz]() (2.3 GB): information of gene calling
-* [HMP2_genecatalogs.clstr.gz]() (279 MB): clustering information for gene catalogs
-* [HMP2_genecatalogs.centroid.fna.gz]() (554 MB): nucleotide sequences of centroids for gene catalogs
-* [HMP2_genecatalogs.centroid.faa.gz]() (335 MB): protein sequences of centroids for gene catalogs
-* [HMP2\_genecatalogs_counts.all.tsv.gz]() (2.0 GB): reads counts of gene catalogs
+### Gene families assembled from 1595 metagenomes in HMP2
+* [HMP2\_contig_sequence.fasta.gz](http://huttenhower.sph.harvard.edu/MetaWIBELE_data/HMP2/HMP2_contig_sequence.fasta.gz) (26 GB): metagenomic contig sequences
+* [HMP2\_gene_info.tsv.gz](http://huttenhower.sph.harvard.edu/MetaWIBELE_data/HMP2/HMP2_gene_info.tsv.gz) (2.3 GB): information of open reading frames
+* [HMP2_genefamilies.clstr.gz](http://huttenhower.sph.harvard.edu/MetaWIBELE_data/HMP2/HMP2_genefamilies.clstr.gz) (279 MB): clustering information for gene families
+* [HMP2_genefamilies.centroid.fna.gz](http://huttenhower.sph.harvard.edu/MetaWIBELE_data/HMP2/HMP2_genefamilies.centroid.fna.gz) (554 MB): nucleotide sequences of representatives for gene families
+* [HMP2_genefamilies.centroid.faa.gz](http://huttenhower.sph.harvard.edu/MetaWIBELE_data/HMP2/HMP2_genefamilies.centroid.faa.gz) (335 MB): protein sequences of representatives of gene families
+* [HMP2\_genefamilies_counts.tsv.gz](http://huttenhower.sph.harvard.edu/MetaWIBELE_data/HMP2/HMP2_genefamilies_counts.tsv.gz) (699 MB): reads counts of gene families
 
 ### Characterization of protein families 
-* [HMP2\_proteinfamilies_annotation.tsv.gz]() (1.8 GB): main annotations of protein families
-* [HMP2\_proteinfamilies_annotation.attribute.tsv.gz]() (6.4 GB): attributes of annotation types
-* [HMP2\_proteinfamilies_annotation.taxonomy.tsv.gz]() (500 MB): relative abundance of protein families
-* [HMP2\_proteinfamilies_nrm.tsv.gz]() (1.5 GB): relative abundance of protein families
-* [HMP2_proteinfamilies.clstr.gz]() (29 MB): clustering information for protein families
-* [HMP2\_proteinfamilies.centroid.faa.gz]() (270 MB): protein sequences of centroids for protein families
+* [HMP2\_proteinfamilies_annotation.tsv.gz](http://huttenhower.sph.harvard.edu/MetaWIBELE_data/HMP2/HMP2_proteinfamilies_annotation.tsv.gz) (675 MB): main annotations of protein families
+* [HMP2\_proteinfamilies_annotation.attribute.tsv.gz](http://huttenhower.sph.harvard.edu/MetaWIBELE_data/HMP2/HMP2_proteinfamilies_annotation.attribute.tsv.gz) (2.8 GB): attributes of annotation types
+* [HMP2\_proteinfamilies_annotation.taxonomy.tsv.gz](http://huttenhower.sph.harvard.edu/MetaWIBELE_data/HMP2/HMP2_proteinfamilies_annotation.taxonomy.tsv.gz) (96 MB): relative abundance of protein families
+* [HMP2\_proteinfamilies_nrm.tsv.gz](http://huttenhower.sph.harvard.edu/MetaWIBELE_data/HMP2/HMP2_proteinfamilies_nrm.tsv.gz) (1.5 GB): relative abundance of protein families
+* [HMP2_proteinfamilies.clstr.gz](http://huttenhower.sph.harvard.edu/MetaWIBELE_data/HMP2/HMP2_proteinfamilies.clstr.gz) (29 MB): clustering information for protein families
+* [HMP2\_proteinfamilies.centroid.faa.gz](http://huttenhower.sph.harvard.edu/MetaWIBELE_data/HMP2/HMP2_proteinfamilies.centroid.faa.gz) (270 MB): protein sequences of centroids for protein families
 
 
 ### Prioritization of protein families
-* [HMP2\_unsupervised_prioritization.rank.table.tsv.tar.gz]() (14 MB): prioritization based on ecological properties
-* [HMP2\_supervised_prioritization.rank.table.tsv.tar.gz]() (13 MB): prioritization based on ecological and phenotypic properties 
+* [HMP2\_unsupervised_prioritization.rank.table.tsv.gz](http://huttenhower.sph.harvard.edu/MetaWIBELE_data/HMP2/HMP2_unsupervised_prioritization.rank.table.tsv.gz) (76 MB): prioritization based on ecological properties
+* [HMP2\_supervised_prioritization.rank.table.tsv.gz](http://huttenhower.sph.harvard.edu/MetaWIBELE_data/HMP2/HMP2_supervised_prioritization.rank.table.tsv.gz) (134 MB): prioritization based on ecological and phenotypic properties 
