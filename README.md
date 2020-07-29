@@ -1,6 +1,6 @@
 # MetaWIBELE User Manual
 
-**MetaWIBELE** (**W**orkflow to **I**dentify novel **B**ioactive **Ele**ments in the microbiome) is a workflow to efficiently and systematically identify uncharacterized microbial community gene products with potential bioactivity. It prioritizes candidate gene products from assembled metagenomes using a combination of sequence homology, secondary-structure-based functional annotations, phylogenetic binning, ecological distribution, and phenotypic population statistics to target candidate bioactives linked to phenotypes such as IBD. MetaWIBELE is available as module of bioBakery [bioBakery repository](https://github.com/biobakery).
+**MetaWIBELE** (**W**orkflow to **I**dentify novel **B**ioactive **Ele**ments in the microbiome) is a workflow to efficiently and systematically identify uncharacterized microbial community gene products with potential bioactivity. It prioritizes candidate gene products from assembled metagenomes using a combination of sequence homology, secondary-structure-based functional annotations, phylogenetic binning, ecological distribution, and phenotypic population statistics to target candidate bioactives linked to phenotypes such as IBD. MetaWIBELE is available as a module of bioBakery [bioBakery repository](https://github.com/biobakery).
 
 
 ## Citing MetaWIBELE
@@ -101,18 +101,18 @@ Bypass options:
 2. [AnADAMA2](https://huttenhower.sph.harvard.edu/anadama2) (version >= 0.7.4-devel)
 3. [CD-hit](http://weizhongli-lab.org/cd-hit/) (version >= 4.7)
 4. [Diamond](http://www.diamondsearch.org/index.php) (version >= 0.9.5)
-5. [MSPminer](https://www.enterome.com/downloads/) (version >= 2)
+5. [MSPminer](https://www.enterome.com/downloads/) (version >= 2; licensed software)
 6. [MaAsLin2](https://huttenhower.sph.harvard.edu/maaslin2) (version >= 1.1.2) (only required if using MaAsLin2 to associate with environmental parameters or phenotypes)
 7. [Interproscan](https://github.com/ebi-pf-team/interproscan/wiki) (version >= 5.31-70) (only required if using Interproscan to annotate domains and motifs)
-8. [Signalp](http://www.cbs.dtu.dk/services/SignalP-4.1/) (version >= 4.1) (only required if using Signalp to annotate signal peptides integrated in interproscan)
-9. [TMHMM](http://www.cbs.dtu.dk/services/TMHMM/) (version >= 2.0) (only required if using TMHMM to annotate transmembrane proteins integrated by interproscan)
-10. [Phobius](http://phobius.sbc.su.se/) (version >= 1.01) (only required if using Phobius to annotate both signal peptides and transmembrane proteins integrated by interproscan)
-11. [PSORTb](https://psort.org/documentation/index.html) (version >= 3.0) (only required if using PSORTb to predict subcellular localization)
+8. [Signalp](http://www.cbs.dtu.dk/services/SignalP-4.1/) (version >= 4.1) (only required if using Signalp to annotate signal peptides integrated in interproscan; licensed software)
+9. [TMHMM](http://www.cbs.dtu.dk/services/TMHMM/) (version >= 2.0) (only required if using TMHMM to annotate transmembrane proteins integrated by interproscan; licensed software)
+10. [Phobius](http://phobius.sbc.su.se/) (version >= 1.01) (only required if using Phobius to annotate both signal peptides and transmembrane proteins integrated by interproscan; licensed software)
+11. [PSORTb](https://psort.org/documentation/index.html) (version >= 3.0) (only required if using PSORTb to predict subcellular localization; licensed software)
 12. **Optional**: only required if using MetaWIBELE utility to preprocess metagenomic sequencing reads
 	* [MEGAHIT](https://github.com/voutcn/megahit) (version >= 1.1.3) 
 	* [Prokka](https://github.com/tseemann/prokka) (version >= 1.14-dev; recommend to not set '-c' parameter when running prodigal with metagenome mode)
 	* [Prodigal](https://github.com/hyattpd/Prodigal) (version >= 2.6)
-	* [USEARCH](http://www.drive5.com/usearch/) (version >= 9.0.2132_i86linux64)
+	* [USEARCH](http://www.drive5.com/usearch/) (version >= 9.0.2132_i86linux64; licensed software)
 	* [Bowtie2](http://bowtie-bio.sourceforge.net/bowtie2/index.shtml) (version >= 2.3.2)
 	* [SAMtools](https://github.com/samtools/) (version >= 1.9)
 	* [featureCounts](http://bioinf.wehi.edu.au/featureCounts/) (version >= 1.6.2)
@@ -124,11 +124,11 @@ Bypass options:
 #### Download MetaWIBELE
 You can download the latest MetaWIBELE release or the development version. The source contains example files.
 
-**Option 1**: Latest Release (Recommended)
+Option 1: Latest Release (Recommended)
 
 * download [metawibele-master.zip](https://github.com/biobakery/metawibele/archive/master.zip) and unpack the latest release of MetaWIBELE
 
-**Option 2**: Development Version
+Option 2: Development Version
 
 * Create a clone of the Git repository 
 	* `$ git clone https://github.com/biobakery/metawibele.git`
@@ -136,16 +136,30 @@ You can download the latest MetaWIBELE release or the development version. The s
 	* `$ git pull --update`
 
 #### Install MetaWIBELE
+##### Installing from pypi
+* `$ pip install metawibele`
+* If you do not have write permissions to `/usr/lib/`, then add the option --user to the install command. This will install the python package into subdirectories of `~/.local/`. Please note when using the --user install option on some platforms, you might need to add `~/.local/bin/` to your $PATH as it might not be included by default. You will know if it needs to be added if you see the following message `metawibele: command not found` when trying to run MetaWIBELE after installing with the --user option.
 
-* Installing from source
-	* Move to the MetaWIBELE directory
-		* `$ cd $MetaWIBELE_PATH`
+##### Installing with conda
+* `$ conda install -c biobakery metawibele`
 
-	* Install MetaWIBELE package
-		* `$ python setup.py install`
-		* If you do not have write permissions to `/usr/lib/`, then add the option --user to the install command. This will install the python package into subdirectories of `~/.local/`. Please note when using the --user install option on some platforms, you might need to add `~/.local/bin/` to your $PATH as it might not be included by default. You will know if it needs to be added if you see the following message `metawibele: command not found` when trying to run MetaWIBELE after installing with the --user option. 
-		* Similarly, you can also specify the installation directory using --prefix option which will install the python package into the directory `$YOUR_INSTALL_DIR` that is a directory on PYTHONPATH and which Python reads ".pth" files from. You might need to add `$YOUR_INSTALL_DIR/bin` to your `$PATH` as it might not be included by default.
+##### Installing from source
+* Move to the MetaWIBELE directory
+	* `$ cd $MetaWIBELE_PATH`
 
+* Install MetaWIBELE package
+	* `$ python setup.py install`
+	* If you do not have write permissions to `/usr/lib/`, then add the option --user to the install command. This will install the python package into subdirectories of `~/.local/`. Please note when using the --user install option on some platforms, you might need to add `~/.local/bin/` to your $PATH as it might not be included by default. You will know if it needs to be added if you see the following message `metawibele: command not found` when trying to run MetaWIBELE after installing with the --user option. 
+	* Similarly, you can also specify the installation directory using --prefix option which will install the python package into the directory `$YOUR_INSTALL_DIR` that is a directory on PYTHONPATH and which Python reads ".pth" files from. You might need to add `$YOUR_INSTALL_DIR/bin` to your `$PATH` as it might not be included by default.
+
+##### Installing from dockerhub
+* `$ docker pull biobakery/metawibele`
+* This docker image includes most of the dependent software packages.
+* Large software packages and those with licences are not included in this image:
+	* Softwares with the licence : mspimer, signalp, TMHMM, phobius, psortb
+	* Software with large size: interproscan
+	* Users should review the licence terms and install these packages manually. 
+ 
 
 #### Prepare databases
 ##### UniRef database
@@ -460,13 +474,13 @@ By default, MetaWIBELE will perform by using the local configuration files insta
 * Run **characterization** workflow
 
 	```
-	metawibele characterize
+	$ metawibele characterize
 	```
 
 * Run **prioritization** workflow
 
 	```
-	metawibele prioritize
+	$ metawibele prioritize
 	```
 
 * **Parallelization Options**
@@ -593,7 +607,7 @@ By default, MetaWIBELE will perform by using the local configuration files insta
 	```
 	
 	* File name: `$OUTPUT_DIR/characterization/$BASENAME_proteinfamilies.clstr`
-	* This is the clustering information for protein families, formatted using extension-fasta style based on the version of CD-hit clustering file.
+	* This is the clustering information for protein families, formatted using an extension-fasta style based on the version of CD-hit clustering file.
 	
 	**6. Sequences of protein families**  
 	
@@ -841,7 +855,7 @@ By default, MetaWIBELE will perform by using the local configuration files insta
 A utility workflow in MetaWIBELE package for preprocessing metagenomes reads, used for (i) metagenomic assembly, (ii) gene calling, (iii) gene families (non-redundant gene catalogs) construction, and (iv) gene abundance estimation.
 
 #### Preprocessing workflow
-`metawibele preprocess --help`
+`$ metawibele preprocess --help`
 
 This command yields:
 
