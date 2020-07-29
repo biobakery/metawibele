@@ -49,21 +49,18 @@ Support for MetaWIBELE is available via [the MetaWIBELE channel](https://forum.b
     		* [Demo run of MetaWIBELE-prioritize](#demo-run-of-metawibele-prioritize)
     		* [Output files of MetaWIBELE-prioritize](#output-files-of-metawibele-prioritize)
 * [Guides to MetaWIBELE Utilities](#guides-to-metawibele-utilities)
-	* [Preprocessing sequencing reads to build gene catalogs](#preprocessing-sequencing-reads-to-build-gene-catalogs)
+	* [Preprocessing sequencing reads to build gene families](#preprocessing-sequencing-reads-to-build-gene-families)
 		* [Preprocessing workflow](#preprocessing-workflow)
 		* [Input files for preprocessing workflow](#input-files-preprocessing-workflow)
 		* [Demo run of preprocessing workflow](#demo-run-of-preprocessing-workflow) 
 		* [Output files of preprocessing workflow](#output-files-of-preprocessing-workflow)
-* [Download MetaWIBELE resources](#download-metawibele-resources)
-	* [Information of gene catalogs](#information-of-gene-catalogs)
-	* [Characterization of protein families](#characterization-of-protein-families)
-	* [Prioritization of protein families](#prioritization-of-protein-families)
     	
 ***
 
 
 ## Workflow
-![workflow.png](https://www.dropbox.com/s/vsg7baww6utske1/MetaWIBELE_overview.png?raw=1)
+![workflow.png](https://www.dropbox.com/s/unfdsabl3y4wvty/MetaWIBELE_overview.png?raw=1)
+
 ***
 
 ### Workflow by bypass mode
@@ -120,7 +117,7 @@ Bypass options:
 	* [SAMtools](https://github.com/samtools/) (version >= 1.9)
 	* [featureCounts](http://bioinf.wehi.edu.au/featureCounts/) (version >= 1.6.2)
 
-**Note:** Please install the required software in a location in your `$PATH`. If you always run with gene catalogs, the optional softwares are not required. Also if you always run with one or more bypass options (for information on bypass options, see optional arguments to the section [Workflow by bypass mode](#workflow-by-bypass-mode)), the software required for the steps you bypass does not need to be installed.
+**Note:** Please install the required software in a location in your `$PATH`. If you always run with gene families (non-redundant gene catalogs), the optional softwares are not required. Also if you always run with one or more bypass options (for information on bypass options, see optional arguments to the section [Workflow by bypass mode](#workflow-by-bypass-mode)), the software required for the steps you bypass does not need to be installed.
 
 
 ### Installation
@@ -162,7 +159,8 @@ UniRef databases are **required** if you will use MetaWIBELE to do global-homolo
 		* If you are using Diamond v0.9.5, just download and uncompress the indexed version of sequences: [uniref90.fasta.dmnd.gz](http://huttenhower.sph.harvard.edu/MetaWIBELE_data/uniref90.fasta.dmnd.gz)
 		* If you are using different version of Diamond, 
 			* download raw sequences in fasta format: [uniref90.fasta.gz](http://huttenhower.sph.harvard.edu/MetaWIBELE_data/uniref90.fasta.gz) 
-			* index the sequences using your local Diamond: `$ diamond makedb --in uniref90.fasta -d uniref90.fasta` 
+			* index the sequences using your local Diamond: 
+			`$ diamond makedb --in uniref90.fasta -d uniref90.fasta`
 	* UniRef90 annotation files (5.3 GB): [uniref_annotations.tar.gz](http://huttenhower.sph.harvard.edu/MetaWIBELE_data/uniref_annotations.tar.gz)
 		* Annotations are available for the UniRef90 gene families to the following systems:
 			* UniProt ID corresponding to the UniRef representative
@@ -223,9 +221,9 @@ To run MetaWIBELE, one global configuration file `metawibele.cfg` is **required*
 	study = 
 	# The absolute path of metadata file
 	metadata = 
-	# The absolute path of protein sequences of representatives of gene catalogs
+	# The absolute path of protein sequences of representatives of gene families
 	gene_catalog_prot = 
-	# The absolute path of reads counts table across samples of gene catalogs
+	# The absolute path of reads counts table across samples of gene families
 	gene_catalog_count = 
 
 	[output]
@@ -485,15 +483,15 @@ By default, MetaWIBELE will perform by using the local configuration files insta
 ### Standard Workflows
 #### MetaWIBELE-characterize workflow
 * ##### Input files for for characterization
-	* protein sequences for non-redundant gene catalogs, e.g. [demo_genecatalogs.centroid.faa](https://github.com/biobakery/metawibele/examples/input/demo_genecatalogs.centroid.faa)
-	* reads counts table for non-redundant gene catalogs, e.g. [demo\_genecatalogs_counts.all.tsv](https://github.com/biobakery/metawibele/examples/input/demo_genecatalogs_counts.all.tsv)
+	* protein sequences for non-redundant gene families, e.g. [demo_genefamilies.centroid.faa](https://github.com/biobakery/metawibele/examples/input/demo_genefamilies.centroid.faa)
+	* reads counts table for non-redundant gene families, e.g. [demo\_genefamilies_counts.all.tsv](https://github.com/biobakery/metawibele/examples/input/demo_genefamilies_counts.all.tsv)
 	* metadata file, e.g. [demo\_mgx_metadata.tsv](https://github.com/biobakery/metawibele/examples/input/demo_mgx_metadata.tsv)
 	* all the above input files and output folders can be specified in the `metawibele.cfg` file.
 
 * ##### MetaWIBELE-characterize workflow
 	`$ metawibele characterize`
 	* Make sure the global configuration file `metawibele.cfg` is in your working directory.
-	* The command replaces $INPUT with the path to the folder containing your gene catalog input files and `$OUTPUT_DIR` with the path to the folder to write output files specified by the `metawibele.cfg` file. See the section on parallelization options to optimize the workflow run based on your computing resources. 
+	* The command replaces $INPUT with the path to the folder containing your gene families input files and `$OUTPUT_DIR` with the path to the folder to write output files specified by the `metawibele.cfg` file. See the section on parallelization options to optimize the workflow run based on your computing resources. 
 	* The workflow runs with the default settings to run all modules. These settings will work for most data sets. However, if you need to customize your workflow settings for the preprocessing workflow to determine the optimum setting. You can specify which modules you want to run in your own configuration file.
 	* For example, `--characterization-config $myconfig_file` will modify the default settings when running the characterization modules.
 	
@@ -605,7 +603,7 @@ By default, MetaWIBELE will perform by using the local configuration files insta
 	**7. Intermediate output files**
 	
 	* Clustering results
-		* MetaWIBELE clusters all representative sequences of gene catalogs into protein families. 
+		* MetaWIBELE clusters all representative sequences of gene families into protein families. 
 		* All intermediate results are in the folder `$OUTPUT_DIR/characterization/clustering`.
 		
 	* Global-homology based search results
@@ -676,7 +674,7 @@ By default, MetaWIBELE will perform by using the local configuration files insta
 	
 	* File name: 
 		`$OUTPUT_DIR/prioritization/$BASENAME_supervised_prioritization.rank.table.tsv`
-	* * These are the results of supervised prioritization by combing ecological properties and environmental/phenotypic properties. Each protein family has a numeric priority score based on meta-ranking.
+	* * These are the results of supervised prioritization by combing ecological properties and environmental/phenotypic properties. Each protein family has a numeric priority score based on meta ranking.
 	* `$BASENAME_supervised_prioritization.rank.tsv` is the overall ranking for all protein families.
 
 
@@ -833,33 +831,14 @@ By default, MetaWIBELE will perform by using the local configuration files insta
 	* Provide your own vignette function file for filtering specific functions.
 	* Output file name: `$OUTPUT_DIR/prioritization/demo_prioritized_pilin.tsv`
 	* This file is the result of supervised filtering of protein families based on pilin related functions.
-	
-	
-	**4. finalized prioritization**
-	
-	```
-	TID familyID evidence    value   rank    description note
-	1   Cluster_14393   DNA_within_phenotype_abundance  844.0252184037556   0.9995526838966203	ranking based on single evidence  CD.dysbiosis_vs_CD.non_dysbiosis
-	2   Cluster_14393   DNA_within_phenotype_prevalence 0.971830985915493   0.986622572543949	ranking based on single evidence   CD.dysbiosis_vs_CD.non_dysbiosis
-	3   Cluster_14393   MaAsLin2_DA__mean_log  -480.492828810768   0.9995526838966203	ranking based on single evidence  CD.dysbiosis_vs_CD.non_dysbiosis
-	4   Cluster_14393   MaAsLin2_DA__qvalue 4.31866766640033e-11    1.0	ranking based on single evidence CD.dysbiosis_vs_CD.non_dysbiosis
-	5   Cluster_14393   priority_score  0.9963995495816218  0.9963995495816218  meta ranking based on multiple evidences    CD.dysbiosis_vs_CD.non_dysbiosis
-	...
-	```
-	
-	* File name: 
-		`$OUTPUT_DIR/prioritization/$BASENAME_unsupervised_prioritization.rank.table.tsv`
-		`$OUTPUT_DIR/prioritization/$BASENAME_supervised_prioritization.rank.table.tsv`
-		`$OUTPUT_DIR/prioritization/$BASENAME_supervised_prioritization.rank.selected.table.tsv`
-	* These files are formatted the prioritization results in the same way.
 
 ***
 
 
 ## Guides to MetaWIBELE Utilities
 
-### Preprocessing sequencing reads to build gene catalogs
-A utility workflow in MetaWIBELE package for preprocessing metagenomes reads, used for (i) metagenomic assembly, (ii) gene calling, (iii) non-redundant gene catalogs construction, and (iv) gene abundance estimation.
+### Preprocessing sequencing reads to build gene families
+A utility workflow in MetaWIBELE package for preprocessing metagenomes reads, used for (i) metagenomic assembly, (ii) gene calling, (iii) gene families (non-redundant gene catalogs) construction, and (iv) gene abundance estimation.
 
 #### Preprocessing workflow
 `metawibele preprocess --help`
@@ -885,7 +864,7 @@ usage: preprocess.py [-h] [--version] [--threads THREADS]
                      [--exclude-target EXCLUDE_TARGET]
                      [--log-level {DEBUG,INFO,WARNING,ERROR,CRITICAL}]
 
-A workflow to preprocess shotgun sequencing reads of metagenomes with tasks of metagenomic assembly, gene calling, building gene catalogs, and generating gene abundance for each sample.
+A workflow to preprocess shotgun sequencing reads of metagenomes with tasks of metagenomic assembly, gene calling, building gene families, and generating gene abundance for each sample.
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -979,42 +958,19 @@ optional arguments:
 **2. gene-calling results**
 	
 * `$OUTPUT_DIR/$BASENMAE_gene_info.tsv`: all gene calls information
-* `$OUTPUT_DIR/$BASENMAE_combined_gene_protein_coding.sorted.fna`: nucleotide sequences for all ORFs sorted.
-* `$OUTPUT_DIR/$BASENMAE_combined_protein.sorted.faa`: protein sequences for all ORFs sorted by gene length.
 * `$OUTPUT_DIR/$BASENMAE_combined_gene_protein_coding.complete.sorted.fna`: nucleotide sequences for all complete ORFs sorted by gene length.
-* `$OUTPUT_DIR/$BASENMAE_combined_protein.complete.sorted.faa`: protein sequences for all complete ORFs sorted by gene length.
+* `$OUTPUT_DIR/$BASENMAE_combined_protein.complete.sorted.faa`: protein sequences for all complete ORFs sorted by protein length.
+* `$OUTPUT_DIR/$BASENMAE_combined_gene_protein_coding.sorted.fna`: nucleotide sequences for all ORFs (including partial genes) sorted by gene length.
+* `$OUTPUT_DIR/$BASENMAE_combined_protein.sorted.faa`: protein sequences for all ORFs (including partial genes) sorted by protein length.
 * The gene-calling outputs from prodigal are in the `$OUTPUT_DIR/gene_calls` folder. 
 * The gene-annotation outputs from prokka are in the `$OUTPUT_DIR/gene_annotation` folder.
 	
-**3. gene catalogs**
+**3. gene families**
 	
-* `$OUTPUT_DIR/$BASENMAE_genecatalogs.clstr`: clustering information for non-redundant gene catalogs
-* `$OUTPUT_DIR/$BASENMAE_genecatalogs.centroid.fna`: nucleotide sequences of representatives for gene catalogs.
-* `$OUTPUT_DIR/$BASENMAE_genecatalogs.centroid.faa`: protein sequences of representatives for gene catalogs.
-* `$OUTPUT_DIR/$BASENMAE_genecatalogs_counts.all.tsv`: reads counts of gene catalogs across samples.
+* `$OUTPUT_DIR/$BASENMAE_genecatalogs.clstr`: clustering information for non-redundant gene families
+* `$OUTPUT_DIR/$BASENMAE_genecatalogs_counts.all.tsv`: reads counts of gene families per sample.
+* `$OUTPUT_DIR/$BASENMAE_genecatalogs.centroid.fna`: nucleotide sequences of representatives for gene families.
+* `$OUTPUT_DIR/$BASENMAE_genecatalogs.centroid.faa`: protein sequences of representatives for gene families.
 * All mapping outputs for each sample are in the `$OUTPUT_DIR/mapping` folder. 
 	
 ----
-
-
-## Download MetaWIBELE resources
-### Gene families assembled from 1595 metagenomes in HMP2
-* [HMP2\_contig_sequence.fasta.gz](http://huttenhower.sph.harvard.edu/MetaWIBELE_data/HMP2/HMP2_contig_sequence.fasta.gz) (26 GB): metagenomic contig sequences
-* [HMP2\_gene_info.tsv.gz](http://huttenhower.sph.harvard.edu/MetaWIBELE_data/HMP2/HMP2_gene_info.tsv.gz) (2.3 GB): information of open reading frames
-* [HMP2_genefamilies.clstr.gz](http://huttenhower.sph.harvard.edu/MetaWIBELE_data/HMP2/HMP2_genefamilies.clstr.gz) (279 MB): clustering information for gene families
-* [HMP2_genefamilies.centroid.fna.gz](http://huttenhower.sph.harvard.edu/MetaWIBELE_data/HMP2/HMP2_genefamilies.centroid.fna.gz) (554 MB): nucleotide sequences of representatives for gene families
-* [HMP2_genefamilies.centroid.faa.gz](http://huttenhower.sph.harvard.edu/MetaWIBELE_data/HMP2/HMP2_genefamilies.centroid.faa.gz) (335 MB): protein sequences of representatives of gene families
-* [HMP2\_genefamilies_counts.tsv.gz](http://huttenhower.sph.harvard.edu/MetaWIBELE_data/HMP2/HMP2_genefamilies_counts.tsv.gz) (699 MB): reads counts of gene families
-
-### Characterization of protein families 
-* [HMP2\_proteinfamilies_annotation.tsv.gz](http://huttenhower.sph.harvard.edu/MetaWIBELE_data/HMP2/HMP2_proteinfamilies_annotation.tsv.gz) (675 MB): main annotations of protein families
-* [HMP2\_proteinfamilies_annotation.attribute.tsv.gz](http://huttenhower.sph.harvard.edu/MetaWIBELE_data/HMP2/HMP2_proteinfamilies_annotation.attribute.tsv.gz) (2.8 GB): attributes of annotation types
-* [HMP2\_proteinfamilies_annotation.taxonomy.tsv.gz](http://huttenhower.sph.harvard.edu/MetaWIBELE_data/HMP2/HMP2_proteinfamilies_annotation.taxonomy.tsv.gz) (96 MB): relative abundance of protein families
-* [HMP2\_proteinfamilies_nrm.tsv.gz](http://huttenhower.sph.harvard.edu/MetaWIBELE_data/HMP2/HMP2_proteinfamilies_nrm.tsv.gz) (1.5 GB): relative abundance of protein families
-* [HMP2_proteinfamilies.clstr.gz](http://huttenhower.sph.harvard.edu/MetaWIBELE_data/HMP2/HMP2_proteinfamilies.clstr.gz) (29 MB): clustering information for protein families
-* [HMP2\_proteinfamilies.centroid.faa.gz](http://huttenhower.sph.harvard.edu/MetaWIBELE_data/HMP2/HMP2_proteinfamilies.centroid.faa.gz) (270 MB): protein sequences of centroids for protein families
-
-
-### Prioritization of protein families
-* [HMP2\_unsupervised_prioritization.rank.table.tsv.gz](http://huttenhower.sph.harvard.edu/MetaWIBELE_data/HMP2/HMP2_unsupervised_prioritization.rank.table.tsv.gz) (76 MB): prioritization based on ecological properties
-* [HMP2\_supervised_prioritization.rank.table.tsv.gz](http://huttenhower.sph.harvard.edu/MetaWIBELE_data/HMP2/HMP2_supervised_prioritization.rank.table.tsv.gz) (134 MB): prioritization based on ecological and phenotypic properties 
