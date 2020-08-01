@@ -430,7 +430,7 @@ By default, MetaWIBELE will perform by using the local configuration files insta
 	```
 	
 ##### Download vignette configuration template
-**Optionally**, MetaWIBELE can accept user-defined vignette functions of interest for further prioritization. You can make your own vignettes configuration files and provide them with an optional argument to MetaWIBELE. For example, the vignette function configuration file can be provided with `--vignette-config $VIGNETTE_FUNC` where `$VIGNETTE_FUNC` is the file including the functions of interest.
+Optionally, MetaWIBELE can accept user-defined vignette functions of interest for further prioritization. You can make your own vignettes configuration files and provide them with an optional argument to MetaWIBELE. For example, the vignette function configuration file can be provided with `--vignette-config $VIGNETTE_FUNC` where `$VIGNETTE_FUNC` is the file including the functions of interest.
 
 * Download local vignettes template file (`vignettes_function.tsv`) into your working directory:
 	* `$ metawibele_download_config --config-type vignette`
@@ -465,15 +465,11 @@ By default, MetaWIBELE will perform by using the local configuration files insta
 
 * Run **characterization** workflow
 
-	```
-	$ metawibele characterize --input-sequence <file> --input-count <file> --input-metadata <file> --output <path>
-	```
+	`$ metawibele characterize --input-sequence <file> --input-count <file> --input-metadata <file> --output <path>`
 
 * Run **prioritization** workflow
 
-	```
-	$ metawibele prioritize --input-annotation <file> --input-attribute <file> --output <path>
-	```
+	`$ metawibele prioritize --input-annotation <file> --input-attribute <file> --output <path>`
 
 * **Parallelization Options**
 
@@ -964,7 +960,7 @@ optional arguments:
 #### Output files of preprocessing workflow
 **1. assembly results**
 	
-* `$OUTPUT_DIR/assembly/$BASENMAE_contig_sequence.fasta`: contig sequences
+* `$OUTPUT_DIR/$BASENMAE_contig_sequence.fasta`: contig sequences
 * The assembly outputs for each sample are in the `$OUTPUT_DIR/assembly/` folder.
 	
 **2. gene-calling results**
