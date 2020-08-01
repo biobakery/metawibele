@@ -55,7 +55,7 @@ BIOM_FILE_EXTENSION = ".biom"  # the extension used for biom files
 # ==============================================================
 # utilities used for metadata, cluster, GO info collection
 # ==============================================================
-def sample_info (sampleinfo, study):
+def sample_info (sampleinfo):
 	""" Collect metadata info and return sample info"""
 
 	samples = {}
@@ -81,10 +81,11 @@ def sample_info (sampleinfo, study):
 			sample = info[title["ID"]]
 		if "SID" in title:
 			sample = info[title["SID"]]
+		disease = "overall"
 		if not config.phenotype[0] in title:
-			print("Metadata doesn't exist!\t" + config.phenotype[0])
-			continue
-		disease = info[title[config.phenotype[0]]]
+			print("Metadata for the main phenotype or environmental parameter doesn't exist and treat all samples as the same type\t" + config.phenotype[0])
+		else:
+			disease = info[title[config.phenotype[0]]]
 		samples[sample] = disease
 	# foreac sample
 	open_file.close()
