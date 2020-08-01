@@ -405,8 +405,8 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 	pfam_ann = os.path.join(main_folder, basename + "_Pfam_proteinfamilies.ORF.detail.tsv")
 	domine_ann_family = os.path.join(main_folder, basename + "_DOMINE_proteinfamilies.detail.tsv")
 	domine_ann = os.path.join(main_folder, basename + "_DOMINE_proteinfamilies.ORF.detail.tsv")
-	domine_ann_family_all = os.path.join(main_folder, basename + "_DOMINE_proteinfamilies.all.detail.tsv")
-	domine_ann_all = os.path.join(main_folder, basename + "_DOMINE_proteinfamilies.ORF.all.detail.tsv")
+	domine_ann_family_sub = os.path.join(main_folder, basename + "_DOMINE_proteinfamilies.sub.detail.tsv")
+	domine_ann_sub = os.path.join(main_folder, basename + "_DOMINE_proteinfamilies.ORF.sub.detail.tsv")
 	SIFTS_ann_family = os.path.join(main_folder, basename + "_SIFTS_proteinfamilies.detail.tsv")
 	SIFTS_ann = os.path.join(main_folder, basename + "_SIFTS_proteinfamilies.ORF.detail.tsv")
 	ExpAtlas_ann_family = os.path.join(main_folder, basename + "_ExpAtlas_proteinfamilies.detail.tsv")
@@ -628,37 +628,37 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 			sys.stderr.write("WARNING: Please make sure that domain annotations have been assigned by interproscan. Otherwise, errors might be caused!")
 		# DDI annotation
 		mylog = re.sub(".tsv", ".log", domine_ann)
-		myout = []
-		myout_all = []
+		myout_ddi = []
+		myout_sub = []
 		for myfile in interpro_list:
-			myfile = re.sub("interproscan.txt", "interpro.DDI.tsv", myfile)
-			myout.append(myfile)
-			myfile = re.sub("interproscan.txt", "interpro.all.DDI.tsv", myfile)
-			myout_all.append(myfile)
+			myfile1 = re.sub("interproscan.txt", "interpro.DDI.tsv", myfile)
+			myout_ddi.append(myfile1)
+			myfile2 = re.sub("interproscan.txt", "interpro.sub.DDI.tsv", myfile)
+			myout_sub.append(myfile2)
 		
 		workflow.add_task(
-				"metawibele_ddi_DOMINE_protein -e [args[0]] -p [args[2]] -f [args[3]] -s [args[1]] >[args[4]] 2>&1 ",
+				"metawibele_ddi_DOMINE_protein -e [args[0]] -p [args[2]] -f [args[3]] -s [args[1]] >>[args[4]] 2>&1 ",
 				depends = utilities.add_to_list(pfam_list, TrackedExecutable("metawibele_ddi_DOMINE_protein")),
-				targets = myout,
-				args = ["interpro.PfamDomain.tsv", "interpro.DDI.tsv", interpro, "yes", mylog],
+				targets = myout_ddi,
+				args = ["interpro.PfamDomain.tsv", "interpro.DDI.tsv", interpro, "no", mylog],
 				cores = 1,
 				name = "ddi_DOMINE_protein")
 		
 		workflow.add_task(
 				"metawibele_ddi_DOMINE_protein -e [args[0]] -p [args[2]] -f [args[3]] -s [args[1]] >> [args[4]] 2>&1 ",
 				depends = utilities.add_to_list(pfam_list, TrackedExecutable("metawibele_ddi_DOMINE_protein")),
-				targets = myout_all,
-				args = ["interpro.PfamDomain.tsv", "interpro.all.DDI.tsv", interpro, "no", mylog],
+				targets = myout_sub,
+				args = ["interpro.PfamDomain.tsv", "interpro.sub.DDI.tsv", interpro, "yes", mylog],
 				cores = 1,
 				name = "ddi_DOMINE_protein")
 
 		mylog = re.sub(".tsv", ".log", domine_ann_family)
 		domine_ann_family_raw = re.sub(".detail", "", domine_ann_family)
 		domine_ann_raw = re.sub(".detail", "", domine_ann)
-		myout2 = myout
+		myout2 = myout_ddi
 		myout2.append(protein_family)
 		myout2.append(protein_family_seq)
-		myout3 = myout_all
+		myout3 = myout_sub
 		myout3.append(protein_family)
 		myout3.append(protein_family_seq)
 		workflow.add_task(
@@ -669,14 +669,14 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 				cores = 1,
 				name = "ddi_DOMINE_protein_family")
 		
-		mylog = re.sub(".tsv", ".log", domine_ann_family_all)
-		domine_ann_family_all_raw = re.sub(".detail", "", domine_ann_family_all)
-		domine_ann_all_raw = re.sub(".detail", "", domine_ann_all)
+		mylog = re.sub(".tsv", ".log", domine_ann_family_sub)
+		domine_ann_family_sub_raw = re.sub(".detail", "", domine_ann_family_sub)
+		domine_ann_sub_raw = re.sub(".detail", "", domine_ann_sub)
 		workflow.add_task(
-				"metawibele_ddi_DOMINE_protein_family -e [args[0]] -p [args[1]] -a consistency -c [args[2]] -o [targets[0]] >[args[3]] 2>&1 ",
+				"metawibele_ddi_DOMINE_protein_family -e [args[0]] -p [args[1]] -a consistency -c [args[2]] -l [args[3]] -o [targets[0]] >[args[4]] 2>&1 ",
 				depends = utilities.add_to_list(myout3, TrackedExecutable("metawibele_ddi_DOMINE_protein_family")),
-				targets = [domine_ann_family_all_raw, domine_ann_all_raw, domine_ann_family_all, domine_ann_all],
-				args = ["interpro.all.DDI.tsv", interpro, protein_family, mylog],
+				targets = [domine_ann_family_sub_raw, domine_ann_sub_raw, domine_ann_family_sub, domine_ann_sub],
+				args = ["interpro.sub.DDI.tsv", interpro, protein_family, "DOMINE_interaction-human", mylog],
 				cores = 1,
 				name = "ddi_DOMINE_protein_family")
 
@@ -699,11 +699,32 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 				args = [mylog],
 				cores = 1,
 				name = "ddi_DOMINE_ann")
+		
+		myout1_3 = re.sub(".tsv", ".ann.tsv", domine_ann_family_sub)
+		mylog = re.sub(".tsv", ".log", myout1_3)
+		workflow.add_task(
+				"metawibele_ddi_DOMINE_ann -i [depends[0]] -o [targets[0]] >[args[0]] 2>&1",
+				depends = [domine_ann_family_sub_raw, protein_family, protein_family_seq, TrackedExecutable("metawibele_ddi_DOMINE_ann")],
+				targets = [myout1_3],
+				args = [mylog],
+				cores = 1,
+				name = "ddi_DOMINE_ann")
+
+		myout2_3 = re.sub(".tsv", ".ann.tsv", domine_ann_sub)
+		mylog = re.sub(".tsv", ".log", myout2_3)
+		workflow.add_task(
+				"metawibele_ddi_DOMINE_ann -i [depends[0]] -o [targets[0]] >[args[0]] 2>&1",
+				depends = [domine_ann_sub_raw, TrackedExecutable("metawibele_ddi_DOMINE_ann")],
+				targets = [myout2_3],
+				args = [mylog],
+				cores = 1,
+				name = "ddi_DOMINE_ann")
+
 
 		myprotein_family_ann[domine_ann_family] = ""
 		myprotein_ann[domine_ann] = ""
-		myprotein_family_ann[domine_ann_family_all] = ""
-		myprotein_ann[domine_ann_all] = ""
+		myprotein_family_ann[domine_ann_family_sub] = ""
+		myprotein_ann[domine_ann_sub] = ""
 	# if DDI
 
 	# DDI + SIFTS annotation
@@ -743,8 +764,8 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 		if domain_motif_conf["domine"].lower() == "no":
 			sys.stderr.write("WARNING: Please make sure that DDIs have been assigned based on DOMINE. Otherwise, errors might be caused!")
 		mylog = re.sub(".tsv", ".log", ExpAtlas_ann_family)
-		myout1_3 = re.sub(".tsv", ".ann.tsv", domine_ann_family)
-		myout2_3 = re.sub(".tsv", ".ann.tsv", domine_ann)
+		myout1_3 = re.sub(".tsv", ".ann.tsv", domine_ann_family_sub)
+		myout2_3 = re.sub(".tsv", ".ann.tsv", domine_ann_sub)
 		workflow.add_task(
 				"metawibele_ddi_DOMINE_ExpAtlas -i [depends[0]] -o [targets[0]] >[args[0]] 2>&1",
 				depends = [myout1_3, protein_family, protein_family_seq, TrackedExecutable("metawibele_ddi_DOMINE_ExpAtlas")],
