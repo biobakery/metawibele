@@ -60,6 +60,12 @@ def get_args():
 	                    help='specify the type of features',
 	                    choices=["protein", "protein_family"],
 	                    required=True)
+	parser.add_argument('-m', "--metadata",
+	                    help='input metadata file',
+	                    default=None)
+	parser.add_argument('-c', "--cluster",
+	                    help='input the cluster file for protein families',
+	                    default=None)
 	parser.add_argument('-o', "--output",
 	                    help='output annotated file',
 	                    required=True)
@@ -245,14 +251,20 @@ def output_info (cluster, sample_num, phe_category, abundance, myflag, flag, out
 def main():
 	### get arguments ###
 	values = get_args()
-
-
+	mymeta = config.metadata
+	myfamily = config.protein_family
+	if values.metadata:
+		mymeta = values.metadata
+	if values.cluster:
+		myfamily = values.cluster
+	
+	
 	sys.stderr.write("### Start abundance_annotator.py -a " + values.abundance + " ####\n")
 
 	### collect info ###
 	sys.stderr.write("Get info ......starting\n")
-	sample_info = utilities.sample_info (config.metadata, config.study)
-	cluster = collect_cluster_info (config.protein_family, values.flag)
+	sample_info = utilities.sample_info (mymeta)
+	cluster = collect_cluster_info (myfamily, values.flag)
 	sample_num, phe_category, abundance = collect_cluster_abundance (values.abundance, sample_info)
 	sys.stderr.write("Get info ......done\n")
 
