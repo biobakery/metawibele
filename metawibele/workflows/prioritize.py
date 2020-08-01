@@ -88,6 +88,15 @@ def parse_cli_arguments ():
 	workflow.add_argument("selected-output",
 	                    desc = "the output file name for the prioritized protein families by binary filtering",
 	                    default = None)
+	workflow.add_argument("basename",
+						desc="specify the basename for output files",
+						default = None)
+	workflow.add_argument("input-annotation",
+	                    desc = "provide the annotation file for protein families",
+	                    required = True)
+	workflow.add_argument("input-attribute",
+	                    desc = "provide the annotation attribute file for protein families",
+						required = True)
 	workflow.add_argument("output",
 	                    desc = "provide an output folder which the workflow database and log is written. By default, thet be written to the anadama2 folder of users' workding directory",
 	                    default = tmp_output)
@@ -107,13 +116,6 @@ def main(workflow):
 	else:
 		args.threads = int(config.threads)
 
-	# input and output folder
-	#input_dir = args.input
-	#input_dir = os.path.abspath(input_dir)
-	priority_dir = config.priority_dir
-	priority_dir = os.path.abspath(priority_dir)
-
-
 	# get config file
 	default_prioritization_conf = os.path.join(config.config_directory, "prioritization.cfg")
 	if args.prioritization_config:
@@ -122,23 +124,37 @@ def main(workflow):
 		args.prioritization_config = default_prioritization_conf
 	print(args.prioritization_config)
 
-	# collect input files
-	protein_family = config.protein_family
-	protein_family_seq = config.protein_family_prot_seq
-	protein_family_relab = config.protein_family_relab
-	protein_family_ann = config.protein_family_ann
-	protein_family_attr = config.protein_family_attr
+	# input files
+	study = config.study
+	basename = config.basename
+	if args.basename:
+		basename = args.basename
+	annotation_dir = os.path.abspath(config.annotation_dir)
+	protein_family_ann = os.path.join(annotation_dir, basename + "_proteinfamilies_annotation.tsv")
+	protein_family_attr = os.path.join(annotation_dir, basename + "_proteinfamilies_annotation.attribute.tsv")
+	if args.input_annotation:
+		protein_family_ann = os.path.abspath(args.input_annotation)
+	if args.input_attribute:
+		protein_family_attr = os.path.abspath(args.input_attribute)
+	if not os.path.isfile(protein_family_ann):
+		sys.exit("Please input your annotation file for protein families!")
+	if not os.path.isfile(protein_family_attr):
+		sys.exit("Please input your annotation attribute file for protein families!")
 
 	# output files
-	unsupervised_rank = os.path.join(priority_dir, config.basename + "_unsupervised_prioritization.rank.tsv")
-	supervised_rank = os.path.join(priority_dir, config.basename + "_supervised_prioritization.rank.tsv")
+	priority_dir = config.priority_dir
+	priority_dir = os.path.abspath(priority_dir)
+	if args.output:
+		#priority_dir = os.path.joint(os.path.abspath(args.output), "prioritization")
+		priority_dir = os.path.abspath(args.output)
+	unsupervised_rank = os.path.join(priority_dir, basename + "_unsupervised_prioritization.rank.tsv")
+	supervised_rank = os.path.join(priority_dir, basename + "_supervised_prioritization.rank.tsv")
 	if args.selected_output:
 		selected_priority = os.path.join(priority_dir, os.path.basename(args.selected_output))
 	else:	
-		selected_priority = os.path.join(priority_dir, config.basename + "_supervised_prioritization.rank.selected.tsv") 
-
-	final_unsupervised_rank = os.path.join(priority_dir, config.basename + "_unsupervised_prioritization.rank.table.tsv")
-	final_supervised_rank = os.path.join(priority_dir, config.basename + "_supervised_prioritization.rank.table.tsv")
+		selected_priority = os.path.join(priority_dir, basename + "_supervised_prioritization.rank.selected.tsv") 
+	final_unsupervised_rank = os.path.join(priority_dir, basename + "_unsupervised_prioritization.rank.table.tsv")
+	final_supervised_rank = os.path.join(priority_dir, basename + "_supervised_prioritization.rank.table.tsv")
 	final_selected_priority = re.sub(".tsv", ".table.tsv", selected_priority)
 
 

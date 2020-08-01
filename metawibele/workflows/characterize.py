@@ -111,6 +111,21 @@ def parse_cli_arguments ():
 	workflow.add_argument("bypass-integration",
 	                      desc = "do not integrate annotations for protein families",
 	                      action = "store_true")
+	workflow.add_argument("study",
+	                      desc="specify the study name", 
+	                      default = None)
+	workflow.add_argument("basename",
+	                      desc="specify the basename for output files", 
+	                      default = None)
+	workflow.add_argument("input-sequence",
+	                      desc="input the sequence file for gene families (non-redundant catalogs)",
+	                      required = True)
+	workflow.add_argument("input-count",
+	                      desc="input the count file for gene families (non-redundant catalogs)",
+	                      required = True)
+	workflow.add_argument("input-metadata",
+	                      desc="input the metadata file", 
+	                      default = True)
 	workflow.add_argument("output",
 	                      desc = "provide an output folder which the workflow database and log is written. By default, thet be written to the anadama2 folder of users' working directory",
 	                      default = tmp_output)
@@ -222,33 +237,49 @@ def main(workflow):
 		domain_motif_conf["psortb"] = "no"
 	if "".join(config.phenotype) == "none":
 		abundance_conf["dna_da"] = "no"
-
-
-	# input and output folder
-	#input_dir = args.input
-	#input_dir = os.path.abspath(input_dir)
-	output_dir = config.annotation_dir
-	output_dir = os.path.abspath(output_dir)
-	#if args.output == "anadama2":
-	#	args.output = os.path.abspath(config.working_dir)
+	
 	
 	# get all input files
-	#gene_catalog = config.gene_catalog
 	gene_catalog_seq = config.gene_catalog_prot
 	gene_catalog_count = config.gene_catalog_count
+	metadata = config.metadata
+	study = config.study
+	basename = config.basename
+	if args.input_sequence:
+		gene_catalog_seq = os.path.abspath(args.input_sequence)
+	if args.input_count:
+		gene_catalog_count = os.path.abspath(args.input_count)
+	if args.input_metadata:
+		metadata = os.path.abspath(args.input_metadata)
+	if args.study:
+		study = args.study
+	if args.basename:
+		basename = args.basename
+	if not os.path.isfile(gene_catalog_seq):
+		sys.exit("Please input your sequence file for gene families!")
+	if not os.path.isfile(gene_catalog_count):
+		sys.exit("Please input your count file for gene families!")
+	if not os.path.isfile(metadata):
+		sys.exit("Please input your metadata file!")
 
 	# get all output files
-	protein_family = config.protein_family
-	protein_family_seq = config.protein_family_prot_seq
-	protein_family_relab = config.protein_family_relab
-	protein_family_ann = config.protein_family_ann
-	protein_family_attr = config.protein_family_attr
+	output_dir = config.annotation_dir
+	output_dir = os.path.abspath(output_dir)
+	if args.output:
+		#output_dir = os.path.joint(os.path.abspath(args.output), "characterization")
+		output_dir = os.path.abspath(args.output)
+	annotation_dir = output_dir
+	protein_family = os.path.join(annotation_dir, basename + "_proteinfamilies.clstr")
+	protein_family_seq = os.path.join(annotation_dir, basename + "_proteinfamilies.centroid.faa")
+	protein_family_relab = os.path.join(annotation_dir, basename + "_proteinfamilies_nrm.tsv")
+	protein_family_ann = os.path.join(annotation_dir, basename + "_proteinfamilies_annotation.tsv")
+	protein_family_attr = os.path.join(annotation_dir, basename + "_proteinfamilies_annotation.attribute.tsv")
+	uniref_taxonomy_family = os.path.join(output_dir, basename + "_proteinfamilies_annotation.uniref90_annotation.tsv")
+	uniref_taxonomy = os.path.join(output_dir, basename + "_protein_annotation.uniref90_annotation.tsv")
+	taxonomy_annotation_family = os.path.join(output_dir, basename + "_proteinfamilies_annotation.taxonomy.tsv")
+	taxonomy_annotation = os.path.join(output_dir, basename + "_protein_annotation.taxonomy.tsv")
 	protein_family_ann_list = {}
 	protein_ann_list = {}
-	uniref_taxonomy_family = os.path.join(output_dir, config.basename + "_proteinfamilies_annotation.uniref90_annotation.tsv")
-	uniref_taxonomy = os.path.join(output_dir, config.basename + "_protein_annotation.uniref90_annotation.tsv")
-	taxonomy_annotation_family = os.path.join(output_dir, config.basename + "_proteinfamilies_annotation.taxonomy.tsv")
-	taxonomy_annotation = os.path.join(output_dir, config.basename + "_protein_annotation.taxonomy.tsv")
 
 
 	### STEP #1: clustering ###
@@ -264,9 +295,8 @@ def main(workflow):
 	if not args.bypass_global_homology:
 		print("Run global-homology annotation")
 		myprotein_family_ann, myprotein_ann, homology_output_folder = characterization.global_homology_annotation (workflow, family_conf,
-		                                                                                                          gene_catalog_seq,
-		                                                                                                          args.threads,
-		                                                                                                          output_dir, uniref_taxonomy_family, uniref_taxonomy,
+		                                                                                                          gene_catalog_seq, metadata, study, basename, args.threads,
+																												  output_dir, uniref_taxonomy_family, uniref_taxonomy,
 		                                                                                                          protein_family_ann_list, protein_ann_list, protein_family, protein_family_seq)
 
 	### STEP #3: domain-motif annotation ###
@@ -275,7 +305,7 @@ def main(workflow):
 		print("Run domain_motif annotation")
 		myprotein_family_ann, myprotein_ann, sequence_output_folder = characterization.domain_motif_annotation (workflow, domain_motif_conf,
 		                                                                                                          gene_catalog_seq,
-		                                                                                                          args.split_number, args.threads,
+		                                                                                                          args.split_number, metadata, study, basename, args.threads,
 		                                                                                                          output_dir, protein_family_ann_list, protein_ann_list, protein_family, protein_family_seq)
 
 
@@ -286,7 +316,7 @@ def main(workflow):
 		myprotein_family_ann, myprotein_ann, abundance_output_folder = characterization.abundance_annotation (workflow, abundance_conf,
 		                                                                                                             gene_catalog_seq, gene_catalog_count,
 		                                                                                                            uniref_taxonomy_family, uniref_taxonomy,
-		                                                                                                            args.split_number, args.threads,
+		                                                                                                            args.split_number, metadata, study, basename, args.threads,
 		                                                                                                            output_dir, protein_family, protein_family_relab, taxonomy_annotation_family, taxonomy_annotation,
 		                                                                                                            protein_family_ann_list, protein_ann_list)
 
@@ -297,7 +327,7 @@ def main(workflow):
 		                                                                                                               protein_family_ann_list, protein_ann_list,
 		                                                                                                               uniref_taxonomy_family, uniref_taxonomy,
 		                                                                                                               taxonomy_annotation_family, taxonomy_annotation,
-		                                                                                                               args.threads,
+		                                                                                                               metadata, study, basename, protein_family, args.threads,
 		                                                                                                               output_dir, protein_family_ann, protein_family_attr)
 
 	### start the workflow
