@@ -233,7 +233,7 @@ def get_item(config_items, section, name, type=None):
 
 
 ## default option for MetaWIBELE ##
-version = '0.3.5'
+version = '0.3.6'
 log_level = 'DEBUG'
 verbose = 'DEBUG'
 
@@ -394,8 +394,9 @@ cd_hit_memory = memory
 
 ## Input and output ##
 # input folder and files
-basename = get_item(config_items, "output", "basename", "string")
-working_dir = get_item(config_items, "output", "output_dir", "string")
+basename = get_item(config_items, "basic", "basename", "string")
+#working_dir = get_item(config_items, "output", "output_dir", "string")
+working_dir = ""
 if working_dir.lower() == "none" or working_dir.lower() == "":
 	working_dir = os.getcwd()
 working_dir = os.path.abspath (working_dir)
@@ -406,13 +407,16 @@ domain_motif_dir = os.path.join(annotation_dir, "doamin_motif_annotation")
 abundance_dir = os.path.join(annotation_dir, "abundance_annotation")
 priority_dir = os.path.join(working_dir, "prioritization")
 
-study = get_item(config_items, "input", "study", "string")
-metadata = get_item(config_items, "input", "metadata", "string")
-metadata = os.path.abspath(metadata)
-gene_catalog_prot = get_item(config_items, "input", "gene_catalog_prot", "string")
-gene_catalog_prot = os.path.abspath(gene_catalog_prot)
-gene_catalog_count = get_item(config_items, "input", "gene_catalog_count", "string")
-gene_catalog_count = os.path.abspath(gene_catalog_count)
+study = get_item(config_items, "basic", "study", "string")
+#metadata = get_item(config_items, "input", "metadata", "string")
+#metadata = os.path.abspath(metadata)
+#gene_catalog_prot = get_item(config_items, "input", "gene_catalog_prot", "string")
+#gene_catalog_prot = os.path.abspath(gene_catalog_prot)
+#gene_catalog_count = get_item(config_items, "input", "gene_catalog_count", "string")
+#gene_catalog_count = os.path.abspath(gene_catalog_count)
+metadata = ""
+gene_catalog_prot = ""
+gene_catalog_count = ""
 
 protein_family = os.path.join(annotation_dir, basename + "_proteinfamilies.clstr")
 protein_family_prot_seq = os.path.join(annotation_dir, basename + "_proteinfamilies.centroid.faa")
