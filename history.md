@@ -1,6 +1,10 @@
 
 # MetaWIBELE History #
 
+## v0.3.6 2020-07-30 ##
+* Make input/output options available for metawibele on the command line instead of the config file
+* Add options for dependent files for each individual step
+
 ## v0.3.5 2020-07-17 ##
 * Skip phenotypic association by default
 * Skip supervised prioritization if not associating with environmental/phenotypic parameters
