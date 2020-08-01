@@ -61,7 +61,7 @@ def get_args():
 	                    required=True)
 	parser.add_argument('-m', "--metadata",
 	                    help='input the metadata file',
-	                    default="none")
+	                    default=None)
 	parser.add_argument('-o', "--output",
 	                    help='output DA stat file',
 	                    required=True)
@@ -626,10 +626,10 @@ def main():
 	
 	### collect abundance info ###
 	sys.stderr.write("Get stat info......starting\n")
-	if values.metadata == "none":
-		meta_file = config.metadata
-	else:
+	if values.metadata:
 		meta_file = values.metadata
+	else:
+		meta_file = config.metadata
 	
 	metas = collect_metadata (meta_file)
 	meta_case, meta_control = collect_meta_info (meta_file, metas)

@@ -59,6 +59,12 @@ def get_args ():
 						choices = ["LCA", "Rep"],
 	                    required=True,
 	                    default="Rep")
+	parser.add_argument('-c', "--cluster",
+	                    help='input the cluster file for protein families',
+	                    default=None)
+	parser.add_argument('-s', "--study",
+	                    help='specify the study name',
+	                    default=None)
 	parser.add_argument('-o', "--output",
 	                    help='output cluster distribution file',
 	                    required=True)
@@ -527,13 +533,19 @@ def main():
 	
 	### get arguments ###
 	values = get_args ()
+	myfamily = config.protein_family
+	mystudy = config.study
+	if values.cluster:
+		myfamily = values.cluster
+	if values.study:
+		mystudy = values.study
 
 
 	sys.stderr.write("### Start summary_protein_uniref_annotation.py -a " + values.annotation + " ####\n")
 
 	### collect cluster info ###
 	sys.stderr.write("Get info ......starting\n")
-	pep_cluster = collect_pep_cluster_info (config.protein_family)
+	pep_cluster = collect_pep_cluster_info (myfamily)
 	anns, ann_type, hits, uniref_taxa, taxa_hits = collect_ann_info (values.annotation, values.type)
 	taxa, taxa_map = collect_taxonomy_info (config.taxonomy_database, taxa_hits)
 	uniref = collect_uniref_mapping_info (values.mapping, uniref_taxa, taxa, taxa_map)
@@ -541,7 +553,7 @@ def main():
 
 	### assign annotation to peptide families ###
 	sys.stderr.write("\nAssign annotation to peptide families ......starting\n")
-	assign_annotation (config.tshld_identity, config.tshld_coverage, pep_cluster, uniref, anns, ann_type, taxa, taxa_map, config.study, values.output)
+	assign_annotation (config.tshld_identity, config.tshld_coverage, pep_cluster, uniref, anns, ann_type, taxa, taxa_map, mystudy, values.output)
 	sys.stderr.write("\nAssign annotation to peptide families ......done\n")
 
 	sys.stderr.write("### Finish summary_protein_uniref_annotation.py ####\n\n\n")
