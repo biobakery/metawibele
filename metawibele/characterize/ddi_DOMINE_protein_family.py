@@ -62,6 +62,9 @@ def get_args ():
 	parser.add_argument('-l', "--label",
 	                    help='spefify the label name for DDI',
 	                    default="DOMINE_interaction")
+	parser.add_argument('-c', "--cluster",
+	                    help='input the cluster file for protein families',
+	                    default=None)
 	parser.add_argument('-o', "--output",
 	                    help='output annotation summary file',
 	                    required=True)
@@ -366,12 +369,15 @@ def main():
 	
 	### get arguments ###
 	values = get_args ()
+	myfamily = config.protein_family
+	if values.cluster:
+		myfamily = values.cluster
 
 	sys.stderr.write("### Start ddi_DOMINE_protein_family.py -p " + values.path + " ####\n")
 	
 	### collect sample info ###
 	sys.stderr.write("Get info ......starting\n")
-	cluster, cluster_id, cluster_mem = collect_cluster_info (config.protein_family)
+	cluster, cluster_id, cluster_mem = collect_cluster_info (myfamily)
 
 	### collect annotation info and do stat ###
 	sys.stderr.write("Get pfam info ......starting\n")

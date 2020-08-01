@@ -55,6 +55,9 @@ def get_args ():
 	                    required=True,
 	                    choices=["centroid", "consistency"],
 	                    default="centroid")
+	parser.add_argument('-c', "--cluster",
+	                    help='input the cluster file for protein families',
+	                    default=None)
 	parser.add_argument('-o', "--output",
 	                    help='output annotation detailed file for MSP annotation',
 	                    required=True)
@@ -518,13 +521,16 @@ def main():
 	
 	### get arguments ###
 	values = get_args ()
+	myfamily = config.protein_family
+	if values.cluster:
+		myfamily = values.cluster
 
 	sys.stderr.write("### Start mspminer_protein_family.py -m " + values.msp + " ####\n")
 	
 
 	### collect cluster info ###
 	sys.stderr.write("Get cluster info ......starting\n")
-	pep_cluster = collect_protein_cluster_info (config.protein_family)
+	pep_cluster = collect_protein_cluster_info (myfamily)
 	sys.stderr.write("Get cluster info ......done\n")
 	
 	### collect annotation info ###

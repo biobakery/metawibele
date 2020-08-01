@@ -57,6 +57,9 @@ def get_args ():
 	                    help='specify the source of taxonomy for protein family',
 	                    choices=["LCA", "Rep"],
 	                    default="Rep")
+	parser.add_argument('-c', "--cluster",
+	                    help='input the cluster file for protein families',
+	                    default=None)
 	parser.add_argument('-o', "--output",
 	                    help='output taxonomy annotation of protein family',
 	                    required=True)
@@ -424,13 +427,16 @@ def main():
 	
 	### get arguments ###
 	values = get_args ()
+	myfamily = config.protein_family
+	if values.cluster:
+		myfamily = values.cluster
 
 	sys.stderr.write("### Start mspminer_protein_family_taxonomy.py -a " + values.annotation + " ####\n")
 	
 
 	### collect cluster info ###
 	sys.stderr.write("Get info ......starting\n")
-	pep_cluster = collect_pep_cluster_info (config.protein_family)
+	pep_cluster = collect_pep_cluster_info (myfamily)
 	taxa_map = collect_taxonomy_info (config.taxonomy_database)
 	genes, taxa, ann_title = extract_taxon_info (values.annotation)
 	taxonomy_annotation (genes, taxa, ann_title, config.tshld_lca, taxa_map, values.source, pep_cluster, values.output)

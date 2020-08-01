@@ -60,6 +60,9 @@ def get_args ():
 	                    choices=["centroid", "consistency"],
 	                    required=True,
 	                    default="consistency")
+	parser.add_argument('-c', "--cluster",
+	                    help='input the cluster file for protein families',
+	                    default=None)
 	parser.add_argument('-o', "--output",
 	                    help='output annotation summary file',
 	                    required=True)
@@ -284,11 +287,14 @@ def main():
 
 	### get arguments ###
 	values = get_args ()
+	myfamily = config.protein_family
+	if values.cluster:
+		myfamily = values.cluster
 
 	sys.stderr.write("### Start interproscan_signalp_protein_family.py -p " + values.path + " ####\n")
 
 	sys.stderr.write("Get info ......starting\n")
-	cluster, cluster_mem = collect_cluster_info (config.protein_family)
+	cluster, cluster_mem = collect_cluster_info (myfamily)
 	sys.stderr.write("Get info ......done\n")
 
 	### collect annotation info and do stat ###

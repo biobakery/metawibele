@@ -50,6 +50,9 @@ def get_args ():
 	parser.add_argument('-m', "--msp",
 	                    help='input MSP taxonomy annotation file',
 	                    required=True)
+	parser.add_argument('-c', "--cluster",
+	                    help='input the cluster file for protein families',
+	                    default=None)
 	parser.add_argument('-o', "--output",
 	                    help='output taxonomy novelty annotation detailed file',
 	                    required=True)
@@ -257,13 +260,16 @@ def main():
 	
 	### get arguments ###
 	values = get_args ()
+	myfamily = config.protein_family
+	if values.cluster:
+		myfamily = values.cluster
 
 	sys.stderr.write("### Start msp_protein_family.py -m " + values.msp + " ####\n")
 	
 
 	### collect cluster info ###
 	sys.stderr.write("Get cluster info ......starting\n")
-	propt_cluster = collect_protein_cluster_info (config.protein_family)
+	propt_cluster = collect_protein_cluster_info (myfamily)
 	sys.stderr.write("Get cluster info ......done\n")
 	
 	### collect annotation info ###

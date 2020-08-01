@@ -51,6 +51,9 @@ def get_args ():
 	parser = argparse.ArgumentParser()
 	parser.add_argument('-i', help='input gene catalog abundance', required=True)
 	parser.add_argument('-t', help='specify the type of data tables, e.g. count | RPK | relab | CPM', default="count")
+	parser.add_argument('-c', "--cluster",
+						help='input the cluster file for protein families', 
+						default=None)
 	parser.add_argument('-o', help='output abundance file', required=True)
 	values = parser.parse_args()
 	return values
@@ -176,14 +179,16 @@ def main():
 	
 	### get arguments ###
 	values = get_args()
-
+	myfamily = config.protein_family
+	if values.cluster:
+		myfamily = values.cluster
 
 	sys.stderr.write("### Start sum_to_protein_family_abundance.py -i " + values.i + " ####\n")
 	
 
 	### collect cluster info ###
 	sys.stderr.write("Get cluster info ......starting\n")
-	pep_cluster = collect_protein_cluster_info (config.protein_family)
+	pep_cluster = collect_protein_cluster_info (myfamily)
 	sys.stderr.write("Get cluster info ......done\n")
 
 	### assign counts to protein families ###

@@ -52,6 +52,9 @@ def get_args ():
 	parser.add_argument('-m', "--mapping",
 	                    help='input the annotated stat file based on UniRef DB',
 	                    required=True)
+	parser.add_argument('-c', "--cluster",
+	                    help='input the cluster file for protein families', 
+	                    default=None)
 	parser.add_argument('-o', "--output",
 	                    help='output the annotation results',
 	                    required=True)
@@ -307,13 +310,16 @@ def main():
 	
 	### get arguments ###
 	values = get_args ()
+	myfamily = config.protein_family
+	if values.cluster:
+		myfamily = values.cluster
 
 
 	sys.stderr.write("### Start uniref_protein.py -m " + values.mapping+ " ####\n")
 	
 	### collect uniref and annotation info ###
 	sys.stderr.write("Get UniRef DB and annotation info ......starting\n")
-	member = collect_peptide_cluster_info (config.protein_family)
+	member = collect_peptide_cluster_info (myfamily)
 	mapping, hits = collect_uniref_mapping (values.mapping, member)
 	pfam = collect_pfam_info (config.pfam_database)
 	uniref, names = collect_basic_info(config.uniref_database, hits)
