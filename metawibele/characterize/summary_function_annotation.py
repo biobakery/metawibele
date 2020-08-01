@@ -54,6 +54,15 @@ def get_args ():
 	parser.add_argument('-a', "--uniref-annotation",
 	                    help='input uniref90 annotation file',
 	                    required=True)
+	parser.add_argument('-b', "--basename",
+	                    help='specify the basename for output file',
+	                    default=None)
+	parser.add_argument('-c', "--cluster",
+	                    help='input the cluster file for protein families',
+	                    default=None)
+	parser.add_argument('-s', "--study",
+	                    help='specify the study name',
+	                    default=None)
 	parser.add_argument('-o', "--output",
 	                    help='output functional annotation file',
 	                    required=True)
@@ -121,7 +130,7 @@ def collect_uniref_info (clust_file):   # summary_peptide_family_annotation.unir
 #==============================================================
 # assign annotation to peptide families info
 #==============================================================
-def collect_annotation (list_file, id_flag):
+def collect_annotation (list_file, id_flag, mybase):
 	annotation = {}
 	anns = {}
 	note = {}
@@ -137,7 +146,7 @@ def collect_annotation (list_file, id_flag):
 			continue
 		open_file = open(myfile, "r")
 		titles = {}
-		mym = re.search(config.basename + "_([\S]+)_proteinfamilies", os.path.basename(myfile))
+		mym = re.search(mybase + "_([\S]+)_proteinfamilies", os.path.basename(myfile))
 		method = mym.group(1)
 		for line in open_file.readlines():
 			line = line.strip()
@@ -341,29 +350,37 @@ def main():
 	
 	### get arguments ###
 	values = get_args ()
-
+	myfamily = config.protein_family
+	mybase = config.basename
+	mystudy = config.study
+	if values.cluster:
+		myfamily = values.cluster
+	if values.basename:
+		mybase = values.basename
+	if values.study:
+		mystudy = values.study
 
 	sys.stderr.write("### Start summary_function_annotation.py -l " + values.list + " ####\n")
 	
 
 	### collect cluster info ###
 	sys.stderr.write("Get cluster info ......starting\n")
-	pep_cluster = collect_cluster_info (config.protein_family)
+	pep_cluster = collect_cluster_info (myfamily)
 	sys.stderr.write("Get cluster info ......done\n")
 	
 	### collect annotation info ###
 	sys.stderr.write("Get annotation info ......starting\n")
 	note1, id_flag = collect_uniref_info (values.uniref_annotation)
-	annotation, anns_uniref, anns_non_uniref, note2 = collect_annotation (values.list, id_flag)
+	annotation, anns_uniref, anns_non_uniref, note2 = collect_annotation (values.list, id_flag, mybase)
 	sys.stderr.write("Get annotation info ......done\n")
 
 	### assign annotation to peptide families ###
 	sys.stderr.write("\nAssign annotation......starting\n")
-	assign_annotation (id_flag, pep_cluster, annotation, config.study, note1, note2, values.output)
+	assign_annotation (id_flag, pep_cluster, annotation, mystudy, note1, note2, values.output)
 	uniref_out = re.sub(".tsv", ".uniref.tsv", values.output)
-	assign_annotation (id_flag, pep_cluster, anns_uniref, config.study, note1, note2, uniref_out)
+	assign_annotation (id_flag, pep_cluster, anns_uniref, mystudy, note1, note2, uniref_out)
 	uniref_non = re.sub(".tsv", ".non_uniref.tsv", values.output)
-	assign_annotation (id_flag, pep_cluster, anns_non_uniref, config.study, note1, note2, uniref_non)
+	assign_annotation (id_flag, pep_cluster, anns_non_uniref, mystudy, note1, note2, uniref_non)
 	sys.stderr.write("\nAssign annotation......done\n")
 
 	sys.stderr.write("### Finish summary_function_annotation.py ####\n\n\n")

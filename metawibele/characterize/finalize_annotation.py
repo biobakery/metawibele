@@ -61,6 +61,12 @@ def get_args ():
 	                    choices=["protein", "protein_family"],
 	                    required=True,
 	                    default="protein_family")
+	parser.add_argument('-b', "--basename",
+	                    help='specify the basename for output file', 
+						default=None)
+	parser.add_argument('-c', "--cluster",
+	                    help='input the cluster file for protein families', 
+						default=None)
 	parser.add_argument('-o', "--output",
 	                    help='output annotation file',
 	                    required=True)
@@ -187,7 +193,7 @@ def collect_taxonomy_annotation (taxa_ann):
 #==============================================================
 # collect functional annotation for protein families
 #==============================================================
-def collect_annotation (list_file, source):
+def collect_annotation (list_file, source, mybase):
 	annotation = {}
 	open_list = open(list_file, "r")
 	for myfile in open_list.readlines():
@@ -200,7 +206,7 @@ def collect_annotation (list_file, source):
 			print("File not exist!\t" + myfile)
 			continue
 		open_file = open(myfile, "r")
-		mym = re.search(config.basename + "_([\S]+)_proteinfamilies", os.path.basename(myfile))
+		mym = re.search(mybase + "_([\S]+)_proteinfamilies", os.path.basename(myfile))
 		method = mym.group(1)
 		titles = {}
 		titles_item = {}
@@ -428,19 +434,24 @@ def main():
 	
 	### get arguments ###
 	values = get_args ()
-
+	myfamily = config.protein_family
+	mybase = config.basename
+	if values.cluster:
+		myfamily = values.cluster
+	if values.basename:
+		mybase = values.basename
 
 	sys.stderr.write("### Start finalize_annotation.py -l " + values.list + " ####\n")
 	
 
 	### collect cluster info ###
 	sys.stderr.write("Get cluster info ......starting\n")
-	pep_cluster = collect_cluster_info (config.protein_family, values.source)
+	pep_cluster = collect_cluster_info (myfamily, values.source)
 	sys.stderr.write("Get cluster info ......done\n")
 	
 	### collect annotation info ###
 	sys.stderr.write("Get annotation info ......starting\n")
-	annotation = collect_annotation (values.list, values.source)
+	annotation = collect_annotation (values.list, values.source, mybase)
 	taxonomy, mapping_tmp = collect_taxonomy_annotation (values.taxonomy)
 	taxonomy_tmp, mapping = collect_taxonomy_annotation (values.uniref)
 	sys.stderr.write("Get annotation info ......done\n")
