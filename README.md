@@ -1,6 +1,6 @@
 # MetaWIBELE User Manual
 
-**MetaWIBELE** (**W**orkflow to **I**dentify novel **B**ioactive **Ele**ments in the microbiome) is a workflow to efficiently and systematically identify uncharacterized microbial community gene products with potential bioactivity. It prioritizes candidate gene products from assembled metagenomes using a combination of sequence homology, secondary-structure-based functional annotations, phylogenetic binning, ecological distribution, and phenotypic population statistics to target candidate bioactives linked to phenotypes such as IBD.
+**MetaWIBELE** (**W**orkflow to **I**dentify novel **B**ioactive **Ele**ments in the microbiome) is a workflow to efficiently and systematically identify and prioritize potentially bioactive (and often uncharacterized) gene products in microbial communities. It prioritizes candidate gene products from assembled metagenomes using a combination of sequence homology, secondary-structure-based functional annotations, phylogenetic binning, ecological distribution, and association with environmental parameters or phenotypes to target candidate bioactives.
 
 
 ## Citing MetaWIBELE
