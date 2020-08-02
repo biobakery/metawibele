@@ -112,7 +112,7 @@ Bypass options:
 	* [MEGAHIT](https://github.com/voutcn/megahit) (version >= 1.1.3) 
 	* [Prokka](https://github.com/tseemann/prokka) (version >= 1.14-dev; recommend to not set '-c' parameter when running prodigal with metagenome mode)
 	* [Prodigal](https://github.com/hyattpd/Prodigal) (version >= 2.6)
-	* [USEARCH](http://www.drive5.com/usearch/) (version >= 9.0.2132_i86linux64; licensed software)
+	* [USEARCH](http://www.drive5.com/usearch/) (version >= 9.0.2132; licensed software)
 	* [Bowtie2](http://bowtie-bio.sourceforge.net/bowtie2/index.shtml) (version >= 2.3.2)
 	* [SAMtools](https://github.com/samtools/) (version >= 1.9)
 	* [featureCounts](http://bioinf.wehi.edu.au/featureCounts/) (version >= 1.6.2)
@@ -171,7 +171,7 @@ UniRef databases are **required** if you will use MetaWIBELE to do global-homolo
 * We have built these dependent uniref databases based on UniProt/UniRef 2019_01 sequences and annotations. You can download and uncompress these databases and provide `$UNIREF_LOCATION` as the location to install the database.
 	
 	* UniRef90 sequence file (20 GB): 
-		* If you are using Diamond v0.9.5, just download and uncompress the indexed version of sequences: [uniref90.fasta.dmnd.gz](http://huttenhower.sph.harvard.edu/MetaWIBELE_data/uniref90.fasta.dmnd.gz)
+		* If you are using Diamond v0.9.5, just download and uncompress the indexed version of sequences to `$UNIREF_LOCATION`: [uniref90.fasta.dmnd.gz](http://huttenhower.sph.harvard.edu/MetaWIBELE_data/uniref90.fasta.dmnd.gz)
 		* If you are using different version of Diamond, 
 			* download raw sequences in fasta format: [uniref90.fasta.gz](http://huttenhower.sph.harvard.edu/MetaWIBELE_data/uniref90.fasta.gz) 
 			* index the sequences using your local Diamond: 
