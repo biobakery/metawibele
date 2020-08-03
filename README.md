@@ -97,7 +97,7 @@ Bypass options:
 ## Install MetaWIBELE
 ### Requirements
 
-1. [Python](https://www.python.org/) (version >= 3.7, required pandas,scipy packages)
+1. [Python](https://www.python.org/) (version >= 3.7, required numpy, pandas, scipy packages)
 2. [AnADAMA2](https://huttenhower.sph.harvard.edu/anadama2) (version >= 0.7.4-devel)
 3. [CD-hit](http://weizhongli-lab.org/cd-hit/) (version >= 4.7)
 4. [Diamond](http://www.diamondsearch.org/index.php) (version >= 0.9.5)
