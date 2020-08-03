@@ -100,7 +100,7 @@ Bypass options:
 1. [Python](https://www.python.org/) (version >= 3.7, required numpy, pandas, scipy packages)
 2. [AnADAMA2](https://huttenhower.sph.harvard.edu/anadama2) (version >= 0.7.4-devel)
 3. [CD-hit](http://weizhongli-lab.org/cd-hit/) (version >= 4.7)
-4. [Diamond](http://www.diamondsearch.org/index.php) (version >= 0.9.5)
+4. [Diamond](http://www.diamondsearch.org/index.php) (version >= 0.9.24)
 5. [MSPminer](https://www.enterome.com/downloads/) (version >= 2; licensed software)
 6. [MaAsLin2](https://huttenhower.sph.harvard.edu/maaslin2) (version >= 1.1.2) (only required if using MaAsLin2 to associate with environmental parameters or phenotypes)
 7. [Interproscan](https://github.com/ebi-pf-team/interproscan/wiki) (version >= 5.31-70) (only required if using Interproscan to annotate domains and motifs)
@@ -171,7 +171,7 @@ UniRef databases are **required** if you will use MetaWIBELE to do global-homolo
 * We have built these dependent uniref databases based on UniProt/UniRef 2019_01 sequences and annotations. You can download and uncompress these databases and provide `$UNIREF_LOCATION` as the location to install the database.
 	
 	* UniRef90 sequence file (20 GB): 
-		* If you are using Diamond v0.9.5, just download and uncompress the indexed version of sequences to `$UNIREF_LOCATION`: [uniref90.fasta.dmnd.gz](http://huttenhower.sph.harvard.edu/MetaWIBELE_data/uniref90.fasta.dmnd.gz)
+		* If you are using Diamond v0.9.24, just download and uncompress the indexed version of sequences to `$UNIREF_LOCATION`: [uniref90.fasta.dmnd.gz](http://huttenhower.sph.harvard.edu/MetaWIBELE_data/uniref90.fasta.dmnd.gz)
 		* If you are using different version of Diamond, 
 			* download raw sequences in fasta format: [uniref90.fasta.gz](http://huttenhower.sph.harvard.edu/MetaWIBELE_data/uniref90.fasta.gz) 
 			* index the sequences using your local Diamond: 
