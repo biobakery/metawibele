@@ -109,7 +109,7 @@ def run_maaslin2 (feature, metadata, split_num, workdir, output, outfile):
 	myutils = config.maaslin2_utils
 
 	if split_num == 1:
-		mycmd = "Rscript " + myexe + " " + feature + " " + metadata + " " + output + " " + myopt
+		mycmd = myexe + " " + feature + " " + metadata + " " + output + " " + myopt
 		print(mycmd)
 		os.system(mycmd)
 	else:
@@ -141,7 +141,7 @@ def run_maaslin2 (feature, metadata, split_num, workdir, output, outfile):
 			os.system(mycmd)
 			myoutput = re.sub(".pcl", "", i)
 			myoutput = output + "/" + myoutput
-			mycmd = "Rscript " + myexe + " " + myinput + " " + metadata + " " + myoutput + " " + myopt
+			mycmd = myexe + " " + myinput + " " + metadata + " " + myoutput + " " + myopt
 			print(mycmd)
 			os.system(mycmd)
 			if not os.path.isfile(myout):
