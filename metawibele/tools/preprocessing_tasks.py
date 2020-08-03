@@ -300,7 +300,6 @@ def gene_calling (workflow, assembly_dir, assembly_extentsion, input_dir, extens
 	# ================================================
 	# Gene calling
 	# ================================================
-	os.system("mkdir -p " + prodigal_dir)
 	fna_file = []
 	faa_file = []
 	gff_files = []
@@ -310,6 +309,7 @@ def gene_calling (workflow, assembly_dir, assembly_extentsion, input_dir, extens
 
 	## Using Prodigal
 	if gene_call_type == "prodigal" or gene_call_type == "both":
+		os.system("mkdir -p " + prodigal_dir)
 		for contig in filtered_contigs:
 			contig_base = os.path.basename(contig).split(os.extsep)[0]
 			annotation_dir = os.path.join(prodigal_dir, contig_base)
@@ -367,7 +367,6 @@ def gene_calling (workflow, assembly_dir, assembly_extentsion, input_dir, extens
 	if gene_call_type == "prokka" or gene_call_type == "both":
 		## Calling genes with Prokka
 		os.system("mkdir -p " + prokka_dir)
-
 		for contig in filtered_contigs:
 			contig_base = os.path.basename(contig).split(os.extsep)[0]
 			sample = os.path.basename(contig_base)
