@@ -30,14 +30,12 @@ import os
 
 # Try to load one of the MetaWIBELE src modules to check the installation
 try:
-	from metawibele import config, check
+	from metawibele import config
 except ImportError:
 	sys.exit("CRITICAL ERROR: Unable to find the MetaWIBELE python package." +
 	         " Please check your install.")
 
 
-# Check the python version
-check.python_version()
 
 import argparse
 
