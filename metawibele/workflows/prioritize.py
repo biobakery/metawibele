@@ -153,9 +153,11 @@ def main(workflow):
 		selected_priority = os.path.join(priority_dir, os.path.basename(args.selected_output))
 	else:	
 		selected_priority = os.path.join(priority_dir, basename + "_supervised_prioritization.rank.selected.tsv") 
+	selected_unsup_priority = os.path.join(priority_dir, basename + "_unsupervised_prioritization.rank.selected.tsv") 
 	final_unsupervised_rank = os.path.join(priority_dir, basename + "_unsupervised_prioritization.rank.table.tsv")
 	final_supervised_rank = os.path.join(priority_dir, basename + "_supervised_prioritization.rank.table.tsv")
 	final_selected_priority = re.sub(".tsv", ".table.tsv", selected_priority)
+	final_selected_unsup_priority = re.sub(".tsv", ".table.tsv", selected_unsup_priority)
 
 
 	### STEP #1: mandatory prioritization: quantification-based ranking ###
@@ -169,6 +171,10 @@ def main(workflow):
 	### STEP #2: optional prioritization: binary filtering ###
 	# if optional action is provided, then prioritize protein families based on interested functions (selection factor)
 	if not args.bypass_optional:
+		myselection = prioritization.optional_prioritization (workflow, args.prioritization_config, args.vignette_config,
+		                                                             protein_family_ann,
+		                                                             unsupervised_rank,
+		                                                             priority_dir, selected_unsup_priority)
 		if not "".join(config.phenotype) == "none":
 			myselection = prioritization.optional_prioritization (workflow, args.prioritization_config, args.vignette_config,
 		                                                             protein_family_ann,
@@ -180,10 +186,10 @@ def main(workflow):
 	# if finalized action is provided, then format and fianlize prioritizations
 	if not args.bypass_finalized:
 		prioritization.finalize_prioritization (workflow,
-		                                        unsupervised_rank,
+		                                        unsupervised_rank, selected_unsup_priority,
 		                                        supervised_rank, selected_priority,
 		                                        priority_dir,
-		                                        final_unsupervised_rank,
+		                                        final_unsupervised_rank, final_selected_unsup_priority,
 		                                        final_supervised_rank, final_selected_priority)
 
 	### start the workflow
