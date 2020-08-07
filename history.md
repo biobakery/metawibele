@@ -1,6 +1,10 @@
 
 # MetaWIBELE History #
 
+## v0.3.7 2020-08-06 ##
+* Added functions for downloading databases
+* Added binary filtering for unsupervised prioritization
+
 ## v0.3.6 2020-07-30 ##
 * Make input/output options available for metawibele on the command line instead of the config file
 * Add options for dependent files for each individual step
