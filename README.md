@@ -105,7 +105,7 @@ Bypass options:
 4. [Diamond](http://www.diamondsearch.org/index.php) (version >= 0.9.24)
 5. [MSPminer](https://www.enterome.com/downloads/) (version >= 2; licensed software)
 6. [MaAsLin2](https://huttenhower.sph.harvard.edu/maaslin2) (version >= 1.1.2) (only required if using MaAsLin2 to associate with environmental parameters or phenotypes)
-7. [Interproscan](https://github.com/ebi-pf-team/interproscan/wiki) (version >= 5.31-70) (only required if using Interproscan to annotate domains and motifs)
+7. [Interproscan](https://github.com/ebi-pf-team/interproscan/wiki) (version >= 5.31-70) (only required if using Interproscan to annotate domains and motifs; installing with activating Phobius/SignalP/TMHMM analyses)
 8. [Signalp](http://www.cbs.dtu.dk/services/SignalP-4.1/) (version >= 4.1) (only required if using Signalp to annotate signal peptides integrated in interproscan; licensed software)
 9. [TMHMM](http://www.cbs.dtu.dk/services/TMHMM/) (version >= 2.0) (only required if using TMHMM to annotate transmembrane proteins integrated by interproscan; licensed software)
 10. [Phobius](http://phobius.sbc.su.se/) (version >= 1.01) (only required if using Phobius to annotate both signal peptides and transmembrane proteins integrated by interproscan; licensed software)
