@@ -167,10 +167,10 @@ def optional_prioritization (workflow, prioritization_conf, interested_function,
 
 
 def finalize_prioritization (workflow,
-                             unsupervised_rank,
+                             unsupervised_rank, selected_unsup_priority,
                              supervised_rank, selected_priority,
                              output_folder,
-                             final_unsupervised_rank,
+                             final_unsupervised_rank, final_selected_unsup_priority,
                              final_supervised_rank, final_selected_priority):
 
 	"""
@@ -218,6 +218,14 @@ def finalize_prioritization (workflow,
 			args = [mylog],
 			cores = 1,
 			name = "finalize_prioritization__unsupervised_rank")
+	mylog = re.sub(".tsv", ".log", final_selected_unsup_priority)
+	workflow.add_task(
+			"metawibele_finalize_prioritization -i [depends[0]] -o [targets[0]] > [args[0]] 2>&1",
+			depends = [selected_unsup_priority, TrackedExecutable("metawibele_finalize_prioritization")],
+			targets = [final_selected_unsup_priority],
+			args = [mylog],
+			cores = 1,
+			name = "finalize_prioritization__selected_unsupervised_priority")
 
 	if not "".join(config.phenotype) == "none":
 		mylog = re.sub(".tsv", ".log", final_supervised_rank)
@@ -236,5 +244,5 @@ def finalize_prioritization (workflow,
 			targets = [final_selected_priority],
 			args = [mylog],
 			cores = 1,
-			name = "finalize_prioritization__selected_priority")
+			name = "finalize_prioritization__selected_supervised_priority")
 
