@@ -76,7 +76,7 @@ import re
 import time
 
 
-VERSION = "0.3.6"
+VERSION = "0.3.7"
 AUTHOR = "MetaWIBELE Development Team"
 MAINTAINER = "Yancong Zhang"
 MAINTAINER_EMAIL = "zhangyc201211@gmail.com"
@@ -308,6 +308,7 @@ setuptools.setup(
 			'metawibele_transpose = metawibele.common.transpose:main',
 			'metawibele_split_fasta_file = metawibele.common.split_fasta_file:main',
 			'metawibele_download_config = metawibele.common.download_config_file:main',
+			'metawibele_download_database = metawibele.common.download_database:main',
 			'metawibele_prepare_uniprot_taxonomy = metawibele.common.prepare_uniprot_taxonomy:main',
 			'metawibele_prepare_uniprot_annotation = metawibele.common.prepare_uniprot_annotation:main',
 			'metawibele_prepare_uniref_annotation = metawibele.common.prepare_uniref_annotation:main',
