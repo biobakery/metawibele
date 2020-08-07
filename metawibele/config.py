@@ -233,7 +233,7 @@ def get_item(config_items, section, name, type=None):
 
 
 ## default option for MetaWIBELE ##
-version = '0.3.6'
+version = '0.3.7'
 log_level = 'DEBUG'
 verbose = 'DEBUG'
 
