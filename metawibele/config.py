@@ -437,9 +437,9 @@ tshld_coverage = 0.25	# the minimum coverage of homology
 taxa_source = "Rep"		# the source of taxa for one protein family, representatives vs. LCA
 
 # interporscan
-#interproscan_cmmd = get_item(config_items, "interproscan", "interproscan_cmmd", "string")
-#interproscan_cmmd = re.sub("\"", "", interproscan_cmmd)
-interproscan_cmmd = "interproscan.sh"
+interproscan_cmmd = get_item(config_items, "interproscan", "interproscan_cmmd", "string")
+interproscan_cmmd = re.sub("\"", "", interproscan_cmmd)
+#interproscan_cmmd = "interproscan.sh"
 interproscan_appl = get_item(config_items, "interproscan", "interproscan_appl", "string")
 if interproscan_appl.lower() == "none" or interproscan_appl.lower() == "":
 	interproscan_appl = "CDD,COILS,Gene3D,HAMAP,MobiDBLite,PANTHER,Pfam,PIRSF,PRINTS,ProDom,PROSITEPATTERNS,PROSITEPROFILES,SFLD,SMART,SUPERFAMILY,TIGRFAM,Phobius,SignalP,TMHMM"
@@ -530,7 +530,10 @@ plot_heatmap = get_item(config_items, "maaslin2", "plot_heatmap", "string")
 heatmap_first_n = get_item(config_items, "maaslin2", "heatmap_first_n", "string")
 plot_scatter = get_item(config_items, "maaslin2", "plot_scatter", "string")
 maaslin2_cores = get_item(config_items, "maaslin2", "maaslin2_cores", "int")
-maaslin2_cmmd_opts = ["--min_abundance", min_abundance, "--min_prevalence", min_prevalence, "--max_significance", max_significance, "--normalization", normalization,  "--transform", transform, "--analysis_method", analysis_method, "--cores", maaslin2_cores, "--fixed_effects", fixed_effects, "--random_effects", random_effects, "--correction", correction, "--standardize", standardize, "--plot_heatmap", plot_heatmap, "--heatmap_first_n", heatmap_first_n, "--plot_scatter", plot_scatter]
+if fixed_effects == "all":
+	maaslin2_cmmd_opts = ["--min_abundance", min_abundance, "--min_prevalence", min_prevalence, "--max_significance", max_significance, "--normalization", normalization,  "--transform", transform, "--analysis_method", analysis_method, "--cores", maaslin2_cores, "--random_effects", random_effects, "--correction", correction, "--standardize", standardize, "--plot_heatmap", plot_heatmap, "--heatmap_first_n", heatmap_first_n, "--plot_scatter", plot_scatter]
+else:
+	maaslin2_cmmd_opts = ["--min_abundance", min_abundance, "--min_prevalence", min_prevalence, "--max_significance", max_significance, "--normalization", normalization,  "--transform", transform, "--analysis_method", analysis_method, "--cores", maaslin2_cores, "--fixed_effects", fixed_effects, "--random_effects", random_effects, "--correction", correction, "--standardize", standardize, "--plot_heatmap", plot_heatmap, "--heatmap_first_n", heatmap_first_n, "--plot_scatter", plot_scatter]
 
 
 if __name__=='__main__':
