@@ -41,7 +41,7 @@ import argparse
 config_types={
     "global" : "metawibele.cfg",
     "local" : "characterization.cfg,prioritization.cfg,MSPminer_setting.cfg",
-	"vignette": "vignettes_proteins.txt.gz"
+	"vignette": "vignette_function.tsv"
 }
 
 def download_config(config_type, config_types):
