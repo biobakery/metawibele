@@ -40,12 +40,12 @@ If you have questions, please direct it to:[the MetaWIBELE channel](https://foru
 * [Quick-start Guide](#quick-start-guide)
     * [How to run](#how-to-run)
     * [Standard Workflows](#standard-workflows)
-    	* [MetaWIBELE-characterize workflow](#metawibele-characterize-workflow)
+    	* [MetaWIBELE-characterize](#metawibele-characterize)
     		* [Input files for characterization](#input-files-for-characterization)
     		* [MetaWIBELE-characterize workflow](#metawibele-characterize-workflow)
     		* [Demo run of MetaWIBELE-characterize](#demo-run-of-metawibele-characterize)
     		* [Output files of MetaWIBELE-characterize](#output-files-of-metawibele-characterize)
-    	* [MetaWIBELE-prioritize workflow](#metawibele-prioritize-workflow)
+    	* [MetaWIBELE-prioritize](#metawibele-prioritize)
     		* [Input files for prioritization](#input-files-for-prioritization)
     		* [MetaWIBELE-prioritize workflow](#metawibele-prioritize-workflow)
     		* [Demo run of MetaWIBELE-prioritize](#demo-run-of-metawibele-prioritize)
@@ -180,7 +180,7 @@ UniRef databases are **required** if you will use MetaWIBELE to do global-homolo
 
 Option 1: download uniref databases (Recommended)
 
-* We have built these dependent UniRef databases based on UniProt/UniRef 2019_01 sequences and annotations. You can download and uncompress these databases (both sequences and annotations) and provide `$UNIREF_LOCATION` as the location to install the database.
+* We have built the dependent UniRef databases based on UniProt/UniRef 2019_01 sequences and annotations. You can download and uncompress these databases (both sequences and annotations) and provide `$UNIREF_LOCATION` as the location to install the database.
 	
 	* UniRef90 sequence file (20 GB): 
 		* If you are using Diamond v0.9.24, just download and uncompress the indexed version of sequences to `$UNIREF_LOCATION`: [uniref90.fasta.dmnd.gz](http://huttenhower.sph.harvard.edu/MetaWIBELE_data/uniref90.fasta.dmnd.gz). Or run the following command to download the indexed sequence file into `$UNIREF_LOCATION`:
@@ -190,7 +190,7 @@ Option 1: download uniref databases (Recommended)
 	`$ metawibele_download_database --database uniref --build uniref90_fasta --install-location $UNIREF_LOCATION` 
 			* index the sequences using your local Diamond: 
 			`$ diamond makedb --in $UNIREF_LOCATION/uniref90.fasta -d $UNIREF_LOCATION/uniref90.fasta`
-	* UniRef90 annotation files (5.3 GB): [uniref90_annotations.tar.gz](http://huttenhower.sph.harvard.edu/MetaWIBELE_data/uniref90_annotations.tar.gz). Or run the following command to download the sequence file into `$UNIREF_LOCATION`:
+	* UniRef90 annotation files (5.3 GB): [uniref90_annotations.tar.gz](http://huttenhower.sph.harvard.edu/MetaWIBELE_data/uniref90_annotations.tar.gz). Or run the following command to download the annotation files into `$UNIREF_LOCATION`:
 	`$ metawibele_download_database --database uniref --build uniref90_annotation --install-location $UNIREF_LOCATION`
 		* Annotations are available for the UniRef90 gene families to the following systems:
 			* UniProt ID corresponding to the UniRef representative
@@ -240,7 +240,7 @@ To run MetaWIBELE, you are **required** to customize the global configuration fi
 ##### Download global configuration template
 
 * Download `metawibele.cfg` into your working directory:
-	* Option 1) run command line to download global configuration file:
+	* Option 1) run this command to download global configuration file:
 		* `$ metawibele_download_config --config-type global`
 	* Option 2) obtain copies by right-clicking the link and selecting "save link as":
 		* [metawibele.cfg](http://huttenhower.sph.harvard.edu/MetaWIBELE_data/configs/metawibele.cfg)
@@ -478,6 +478,7 @@ By default, MetaWIBELE will perform by using the local configuration files insta
 ## Quick-start Guide
 ### How to run
 * For a list of all available workflows, run:
+
 	`$ metawibele preprocess --help`
 
 	This command yields:
@@ -499,7 +500,9 @@ By default, MetaWIBELE will perform by using the local configuration files insta
 
 	`$ metawibele $WORKFLOW`
 
-* For specific options for workflow, run:
+* For specific options of workflow, run:
+
+	`$ metawibele $WORKFLOW --help`
 	
 	For example: `$ metawibele characterize --help`
 	
@@ -554,7 +557,7 @@ By default, MetaWIBELE will perform by using the local configuration files insta
 
 
 ### Standard Workflows
-#### MetaWIBELE-characterize workflow
+#### MetaWIBELE-characterize
 * ##### Input files for for characterization
 	* protein sequences for non-redundant gene families (Fasta format file), e.g. [demo_genefamilies.centroid.faa](https://github.com/biobakery/metawibele/examples/input/demo_genefamilies.centroid.faa)
 	* reads counts table for non-redundant gene families (TSV format file), e.g. [demo\_genefamilies_counts.all.tsv](https://github.com/biobakery/metawibele/examples/input/demo_genefamilies_counts.all.tsv)
@@ -695,7 +698,7 @@ By default, MetaWIBELE will perform by using the local configuration files insta
 		* All intermediate results are in the folder `$OUTPUT_DIR/abundance_annotation`.
 	
 
-#### MetaWIBELE-prioritize workflow
+#### MetaWIBELE-prioritize
 * ##### Input files for prioritization
 	* annotation file produced by MetaWIBELE-characterize workflow (TSV format file):`$BASENAME_proteinfamilies_annotation.tsv`
 	* annotation attribute file produced by MetaWIBELE-characterize workflow (TSV format file): `$BASENAME_proteinfamilies_annotation.attribute.tsv`
@@ -1104,4 +1107,4 @@ PRISM_7122_50124	26	3	3	16	6	35	2139	191	22
 * `$OUTPUT_DIR/$BASENMAE_genecatalogs.centroid.faa`: protein sequences of representatives for gene families.
 * All mapping outputs for each sample are in the `$OUTPUT_DIR/mapping` folder. 
 	
----- 
+----
