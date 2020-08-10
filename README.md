@@ -571,7 +571,8 @@ By default, MetaWIBELE will perform by using the local configuration files insta
 	* protein sequences for non-redundant gene families (Fasta format file), e.g. [demo_genecatalogs.centroid.faa](https://github.com/biobakery/metawibele/tree/master/examples/input/demo_genecatalogs.centroid.faa)
 	* reads counts table for non-redundant gene families (TSV format file), e.g. [demo\_genecatalogs_counts.all.tsv](https://github.com/biobakery/metawibele/tree/master/examples/input/demo_genecatalogs_counts.all.tsv)
 	* metadata file (TSV format file), e.g. [demo\_mgx_metadata.tsv](https://github.com/biobakery/metawibele/tree/master/examples/input/demo_mgx_metadata.tsv)
-	* all the above input files and output folders can be specified in the `metawibele.cfg` file.
+	* the global configuration file in your working directory, e.g. [metawibele.cfg](https://github.com/biobakery/metawibele/tree/master/examples/metawibele.cfg)
+
 
 * ##### MetaWIBELE-characterize workflow
 	`$ metawibele characterize --input-sequence $INPUT_SEQUENCE --input-count $INPUT_COUNT --input-metadata $INPUT_METADATA --output $OUTPUT_DIR`
