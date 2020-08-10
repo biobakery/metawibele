@@ -568,9 +568,9 @@ By default, MetaWIBELE will perform by using the local configuration files insta
 ### Standard Workflows
 #### MetaWIBELE-characterize
 * ##### Input files for for characterization
-	* protein sequences for non-redundant gene families (Fasta format file), e.g. [demo_genefamilies.centroid.faa](https://github.com/biobakery/metawibele/examples/input/demo_genefamilies.centroid.faa)
-	* reads counts table for non-redundant gene families (TSV format file), e.g. [demo\_genefamilies_counts.all.tsv](https://github.com/biobakery/metawibele/examples/input/demo_genefamilies_counts.all.tsv)
-	* metadata file (TSV format file), e.g. [demo\_mgx_metadata.tsv](https://github.com/biobakery/metawibele/examples/input/demo_mgx_metadata.tsv)
+	* protein sequences for non-redundant gene families (Fasta format file), e.g. [demo_genecatalogs.centroid.faa](https://github.com/biobakery/metawibele/tree/master/examples/input/demo_genecatalogs.centroid.faa)
+	* reads counts table for non-redundant gene families (TSV format file), e.g. [demo\_genecatalogs_counts.all.tsv](https://github.com/biobakery/metawibele/tree/master/examples/input/demo_genecatalogs_counts.all.tsv)
+	* metadata file (TSV format file), e.g. [demo\_mgx_metadata.tsv](https://github.com/biobakery/metawibele/tree/master/examples/input/demo_mgx_metadata.tsv)
 	* all the above input files and output folders can be specified in the `metawibele.cfg` file.
 
 * ##### MetaWIBELE-characterize workflow
@@ -1032,10 +1032,10 @@ optional arguments:
 
 #### Input files of preprocessing workflow
 * QC'ed shotgun sequencing metagenome file (fastq, fastq.gz, fasta, or fasta.gz format), e.g. 
-	- [sample1_R1.fastq.gz](https://github.com/biobakery/metawibele/examples/input/raw_reads/sample1_R1.fastq.gz)
-	- [sample1_R2.fastq.gz](https://github.com/biobakery/metawibele/examples/input/raw_reads/sample1_R2.fastq.gz)
-	- [sample2_R1.fastq.gz](https://github.com/biobakery/metawibele/examples/input/raw_reads/sample2_R1.fastq.gz)
-	- [sample2_R2.fastq.gz](https://github.com/biobakery/metawibele/examples/input/raw_reads/sample2_R2.fastq.gz)
+	- [sample1_R1.fastq.gz](https://github.com/biobakery/metawibele/tree/master/examples/raw_reads/sample1_R1.fastq.gz)
+	- [sample1_R2.fastq.gz](https://github.com/biobakery/metawibele/tree/master/examples/raw_reads/sample1_R2.fastq.gz)
+	- [sample2_R1.fastq.gz](https://github.com/biobakery/metawibele/tree/master/examples/raw_reads/sample2_R1.fastq.gz)
+	- [sample2_R2.fastq.gz](https://github.com/biobakery/metawibele/tree/master/examples/raw_reads/sample2_R2.fastq.gz)
 * See the section on parallelization options to optimize the workflow run based on your computing resources. 
 * The workflow runs with the default settings for all main tool subtasks. If you need to customize your workflow settings for the preprocessing workflow to modify the default settings, you can change the parameter settings.
 	* For example, `--extension-paired "$R1_suffix,$R2_suffix"`, `--extension "$fastq_suffix"` (what are the following part after `$SAMPLE` in the input file names) will modify the default settings when running the assembly task.
