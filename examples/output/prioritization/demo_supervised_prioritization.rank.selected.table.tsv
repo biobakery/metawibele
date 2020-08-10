@@ -1,0 +1,286 @@
+TID	familyID	evidence	value	rank	description	note
+1	Cluster_665	DNA_within_phenotype_abundance	1903.0428735294122	0.8553459119496856	ranking based on single evidence	CD_vs_nonIBD
+2	Cluster_665	DNA_within_phenotype_prevalence	1.0	1.0	ranking based on single evidence	CD_vs_nonIBD
+3	Cluster_665	MaAsLin2_DA__mean_log	-3.6068703608965857	0.909853249475891	ranking based on single evidence	CD_vs_nonIBD
+4	Cluster_665	MaAsLin2_DA__qvalue	1.82288194004205e-05	0.906927921623513	ranking based on single evidence	CD_vs_nonIBD
+5	Cluster_665	priority_score	0.9151602006121271	0.9151602006121271	meta ranking based on multiple evidences	CD_vs_nonIBD
+6	Cluster_535	DNA_within_phenotype_abundance	2278.881032352942	0.9650593990216632	ranking based on single evidence	CD_vs_nonIBD
+7	Cluster_535	DNA_within_phenotype_prevalence	1.0	1.0	ranking based on single evidence	CD_vs_nonIBD
+8	Cluster_535	MaAsLin2_DA__mean_log	-3.480698435188194	0.859538784067086	ranking based on single evidence	CD_vs_nonIBD
+9	Cluster_535	MaAsLin2_DA__qvalue	0.000126271558299362	0.7137858642407278	ranking based on single evidence	CD_vs_nonIBD
+10	Cluster_535	priority_score	0.8694516831838088	0.8694516831838088	meta ranking based on multiple evidences	CD_vs_nonIBD
+11	Cluster_36	DNA_within_phenotype_abundance	1664.6560147058822	0.7847658979734451	ranking based on single evidence	CD_vs_nonIBD
+12	Cluster_36	DNA_within_phenotype_prevalence	1.0	1.0	ranking based on single evidence	CD_vs_nonIBD
+13	Cluster_36	MaAsLin2_DA__mean_log	-3.5689401501685043	0.8951781970649895	ranking based on single evidence	CD_vs_nonIBD
+14	Cluster_36	MaAsLin2_DA__qvalue	8.52759337109597e-05	0.7557732680195941	ranking based on single evidence	CD_vs_nonIBD
+15	Cluster_36	priority_score	0.8484445681246076	0.8484445681246076	meta ranking based on multiple evidences	CD_vs_nonIBD
+16	Cluster_89	DNA_within_phenotype_abundance	1930.989823529412	0.8644304682040531	ranking based on single evidence	CD_vs_nonIBD
+17	Cluster_89	DNA_within_phenotype_prevalence	0.9705882352941176	0.8460987831066571	ranking based on single evidence	CD_vs_nonIBD
+18	Cluster_89	MaAsLin2_DA__mean_log	-3.6142316966396306	0.9126484975541579	ranking based on single evidence	CD_vs_nonIBD
+19	Cluster_89	MaAsLin2_DA__qvalue	8.18951202672685e-05	0.7585724282715185	ranking based on single evidence	CD_vs_nonIBD
+20	Cluster_89	priority_score	0.8416261711676816	0.8416261711676816	meta ranking based on multiple evidences	CD_vs_nonIBD
+21	Cluster_675	DNA_within_phenotype_abundance	1820.0980588235295	0.8259958071278826	ranking based on single evidence	CD_vs_nonIBD
+22	Cluster_675	DNA_within_phenotype_prevalence	0.9705882352941176	0.8460987831066571	ranking based on single evidence	CD_vs_nonIBD
+23	Cluster_675	MaAsLin2_DA__mean_log	-3.4525812954061634	0.8455625436757512	ranking based on single evidence	CD_vs_nonIBD
+24	Cluster_675	MaAsLin2_DA__qvalue	9.11873105742839e-05	0.7438768369489154	ranking based on single evidence	CD_vs_nonIBD
+25	Cluster_675	priority_score	0.8130894092227829	0.8130894092227829	meta ranking based on multiple evidences	CD_vs_nonIBD
+26	Cluster_628	DNA_within_phenotype_abundance	1788.7261176470583	0.8176100628930818	ranking based on single evidence	CD_vs_nonIBD
+27	Cluster_628	DNA_within_phenotype_prevalence	0.9705882352941176	0.8460987831066571	ranking based on single evidence	CD_vs_nonIBD
+28	Cluster_628	MaAsLin2_DA__mean_log	-3.308893874919711	0.7714884696016772	ranking based on single evidence	CD_vs_nonIBD
+29	Cluster_628	MaAsLin2_DA__qvalue	0.000143602495701172	0.6997900629811057	ranking based on single evidence	CD_vs_nonIBD
+30	Cluster_628	priority_score	0.7797016118412777	0.7797016118412777	meta ranking based on multiple evidences	CD_vs_nonIBD
+31	Cluster_721	DNA_within_phenotype_abundance	1788.2179411764705	0.816911250873515	ranking based on single evidence	CD_vs_nonIBD
+32	Cluster_721	DNA_within_phenotype_prevalence	0.9705882352941176	0.8460987831066571	ranking based on single evidence	CD_vs_nonIBD
+33	Cluster_721	MaAsLin2_DA__mean_log	-3.64589804353514	0.9217330538085255	ranking based on single evidence	CD_vs_nonIBD
+34	Cluster_721	MaAsLin2_DA__qvalue	0.000431106685512872	0.5528341497550735	ranking based on single evidence	CD_vs_nonIBD
+35	Cluster_721	priority_score	0.754746623093642	0.754746623093642	meta ranking based on multiple evidences	CD_vs_nonIBD
+36	Cluster_353	DNA_within_phenotype_abundance	2021.948041176471	0.8944793850454228	ranking based on single evidence	CD_vs_nonIBD
+37	Cluster_353	DNA_within_phenotype_prevalence	1.0	1.0	ranking based on single evidence	CD_vs_nonIBD
+38	Cluster_353	MaAsLin2_DA__mean_log	-3.148131849869271	0.6575821104122991	ranking based on single evidence	CD_vs_nonIBD
+39	Cluster_353	MaAsLin2_DA__qvalue	0.000293479271613794	0.6011196641007698	ranking based on single evidence	CD_vs_nonIBD
+40	Cluster_353	priority_score	0.7543961966081146	0.7543961966081146	meta ranking based on multiple evidences	CD_vs_nonIBD
+41	Cluster_363	DNA_within_phenotype_abundance	994.1658547058822	0.5639412997903563	ranking based on single evidence	CD_vs_nonIBD
+42	Cluster_363	DNA_within_phenotype_prevalence	0.9558823529411765	0.7154617036506801	ranking based on single evidence	CD_vs_nonIBD
+43	Cluster_363	MaAsLin2_DA__mean_log	3.42340542096111	0.8294898672257163	ranking based on single evidence	CD_vs_nonIBD
+44	Cluster_363	MaAsLin2_DA__qvalue	1.18847805048273e-05	0.9328201539538139	ranking based on single evidence	CD_vs_nonIBD
+45	Cluster_363	priority_score	0.7341454916192811	0.7341454916192811	meta ranking based on multiple evidences	CD_vs_nonIBD
+46	Cluster_849	DNA_within_phenotype_abundance	1074.3620055882352	0.6079664570230608	ranking based on single evidence	CD_vs_nonIBD
+47	Cluster_849	DNA_within_phenotype_prevalence	0.9117647058823529	0.6306370794559771	ranking based on single evidence	CD_vs_nonIBD
+48	Cluster_849	MaAsLin2_DA__mean_log	3.3413268810384094	0.7889587700908456	ranking based on single evidence	CD_vs_nonIBD
+49	Cluster_849	MaAsLin2_DA__qvalue	1.39136237176998e-05	0.92407277816655	ranking based on single evidence	CD_vs_nonIBD
+50	Cluster_849	priority_score	0.7168221305377807	0.7168221305377807	meta ranking based on multiple evidences	CD_vs_nonIBD
+51	Cluster_13	DNA_within_phenotype_abundance	1543.9245000000003	0.7707896575821104	ranking based on single evidence	CD_vs_nonIBD
+52	Cluster_13	DNA_within_phenotype_prevalence	0.9705882352941176	0.8460987831066571	ranking based on single evidence	CD_vs_nonIBD
+53	Cluster_13	MaAsLin2_DA__mean_log	-3.094040536326297	0.6219426974143956	ranking based on single evidence	CD_vs_nonIBD
+54	Cluster_13	MaAsLin2_DA__qvalue	0.000254848969721507	0.6151154653603919	ranking based on single evidence	CD_vs_nonIBD
+55	Cluster_13	priority_score	0.7001768869767342	0.7001768869767342	meta ranking based on multiple evidences	CD_vs_nonIBD
+56	Cluster_355	DNA_within_phenotype_abundance	1112.1913	0.6324248777078966	ranking based on single evidence	CD_vs_nonIBD
+57	Cluster_355	DNA_within_phenotype_prevalence	0.8970588235294118	0.5909090909090909	ranking based on single evidence	CD_vs_nonIBD
+58	Cluster_355	MaAsLin2_DA__mean_log	3.2256025768561725	0.7071977638015374	ranking based on single evidence	CD_vs_nonIBD
+59	Cluster_355	MaAsLin2_DA__qvalue	5.90530114055347e-06	0.9555633310006998	ranking based on single evidence	CD_vs_nonIBD
+60	Cluster_355	priority_score	0.6975862597352769	0.6975862597352769	meta ranking based on multiple evidences	CD_vs_nonIBD
+61	Cluster_377	DNA_within_phenotype_abundance	2111.498032352941	0.9196366177498253	ranking based on single evidence	CD_vs_nonIBD
+62	Cluster_377	DNA_within_phenotype_prevalence	1.0	1.0	ranking based on single evidence	CD_vs_nonIBD
+63	Cluster_377	MaAsLin2_DA__mean_log	-3.2972058471054835	0.7645003494060097	ranking based on single evidence	CD_vs_nonIBD
+64	Cluster_377	MaAsLin2_DA__qvalue	0.0013845755326276	0.4160251924422673	ranking based on single evidence	CD_vs_nonIBD
+65	Cluster_377	priority_score	0.6897585788016795	0.6897585788016795	meta ranking based on multiple evidences	CD_vs_nonIBD
+66	Cluster_483	DNA_within_phenotype_abundance	860.7981470588234	0.46261355695317957	ranking based on single evidence	CD_vs_nonIBD
+67	Cluster_483	DNA_within_phenotype_prevalence	0.9705882352941176	0.8460987831066571	ranking based on single evidence	CD_vs_nonIBD
+68	Cluster_483	MaAsLin2_DA__mean_log	-3.9308459050006186	0.9741439552760307	ranking based on single evidence	CD_vs_nonIBD
+69	Cluster_483	MaAsLin2_DA__qvalue	0.000156162823116674	0.6815955213435969	ranking based on single evidence	CD_vs_nonIBD
+70	Cluster_483	priority_score	0.6852583389597342	0.6852583389597342	meta ranking based on multiple evidences	CD_vs_nonIBD
+71	Cluster_1012	DNA_within_phenotype_abundance	1153.8091872058826	0.6617749825296995	ranking based on single evidence	CD_vs_nonIBD
+72	Cluster_1012	DNA_within_phenotype_prevalence	0.8970588235294118	0.5909090909090909	ranking based on single evidence	CD_vs_nonIBD
+73	Cluster_1012	MaAsLin2_DA__mean_log	3.2448633614695463	0.7260656883298393	ranking based on single evidence	CD_vs_nonIBD
+74	Cluster_1012	MaAsLin2_DA__qvalue	6.66329176247345e-05	0.7802659202239328	ranking based on single evidence	CD_vs_nonIBD
+75	Cluster_1012	priority_score	0.682326568721884	0.682326568721884	meta ranking based on multiple evidences	CD_vs_nonIBD
+76	Cluster_597	DNA_within_phenotype_abundance	1314.3819411764707	0.7225716282320056	ranking based on single evidence	CD_vs_nonIBD
+77	Cluster_597	DNA_within_phenotype_prevalence	0.9117647058823529	0.6306370794559771	ranking based on single evidence	CD_vs_nonIBD
+78	Cluster_597	MaAsLin2_DA__mean_log	3.187803582088152	0.684136967155835	ranking based on single evidence	CD_vs_nonIBD
+79	Cluster_597	MaAsLin2_DA__qvalue	0.00014489500718198	0.6906927921623512	ranking based on single evidence	CD_vs_nonIBD
+80	Cluster_597	priority_score	0.6803691654263939	0.6803691654263939	meta ranking based on multiple evidences	CD_vs_nonIBD
+81	Cluster_623	DNA_within_phenotype_abundance	929.137055	0.5178197064989518	ranking based on single evidence	CD_vs_nonIBD
+82	Cluster_623	DNA_within_phenotype_prevalence	0.8823529411764706	0.5468861846814602	ranking based on single evidence	CD_vs_nonIBD
+83	Cluster_623	MaAsLin2_DA__mean_log	3.5176223259739166	0.8742138364779874	ranking based on single evidence	CD_vs_nonIBD
+84	Cluster_623	MaAsLin2_DA__qvalue	2.04152783520264e-06	0.9846046186144157	ranking based on single evidence	CD_vs_nonIBD
+85	Cluster_623	priority_score	0.6757636713200351	0.6757636713200351	meta ranking based on multiple evidences	CD_vs_nonIBD
+86	Cluster_703	DNA_within_phenotype_abundance	1950.6399411764705	0.8707197763801537	ranking based on single evidence	CD_vs_nonIBD
+87	Cluster_703	DNA_within_phenotype_prevalence	0.9705882352941176	0.8460987831066571	ranking based on single evidence	CD_vs_nonIBD
+88	Cluster_703	MaAsLin2_DA__mean_log	-3.183614581983374	0.6785464709993012	ranking based on single evidence	CD_vs_nonIBD
+89	Cluster_703	MaAsLin2_DA__qvalue	0.000882768240550652	0.4667599720083975	ranking based on single evidence	CD_vs_nonIBD
+90	Cluster_703	priority_score	0.6726603605005896	0.6726603605005896	meta ranking based on multiple evidences	CD_vs_nonIBD
+91	Cluster_881	DNA_within_phenotype_abundance	1138.6343035294115	0.6540880503144654	ranking based on single evidence	CD_vs_nonIBD
+92	Cluster_881	DNA_within_phenotype_prevalence	0.8676470588235294	0.5035790980672871	ranking based on single evidence	CD_vs_nonIBD
+93	Cluster_881	MaAsLin2_DA__mean_log	3.4809314100812982	0.8602375960866527	ranking based on single evidence	CD_vs_nonIBD
+94	Cluster_881	MaAsLin2_DA__qvalue	0.000146505882062269	0.6889433170048985	ranking based on single evidence	CD_vs_nonIBD
+95	Cluster_881	priority_score	0.6526776874057278	0.6526776874057278	meta ranking based on multiple evidences	CD_vs_nonIBD
+96	Cluster_330	DNA_within_phenotype_abundance	1450.9105710294116	0.7554157931516422	ranking based on single evidence	CD_vs_nonIBD
+97	Cluster_330	DNA_within_phenotype_prevalence	0.9117647058823529	0.6306370794559771	ranking based on single evidence	CD_vs_nonIBD
+98	Cluster_330	MaAsLin2_DA__mean_log	3.1489262001398433	0.6582809224318659	ranking based on single evidence	CD_vs_nonIBD
+99	Cluster_330	MaAsLin2_DA__qvalue	0.000514081298450604	0.5325402379286214	ranking based on single evidence	CD_vs_nonIBD
+100	Cluster_330	priority_score	0.6342790051101506	0.6342790051101506	meta ranking based on multiple evidences	CD_vs_nonIBD
+101	Cluster_478	DNA_within_phenotype_abundance	864.1717945588235	0.46540880503144655	ranking based on single evidence	CD_vs_nonIBD
+102	Cluster_478	DNA_within_phenotype_prevalence	0.8823529411764706	0.5468861846814602	ranking based on single evidence	CD_vs_nonIBD
+103	Cluster_478	MaAsLin2_DA__mean_log	3.370021915614841	0.806429070580014	ranking based on single evidence	CD_vs_nonIBD
+104	Cluster_478	MaAsLin2_DA__qvalue	1.62197892988972e-05	0.9111266620013996	ranking based on single evidence	CD_vs_nonIBD
+105	Cluster_478	priority_score	0.6334366251442669	0.6334366251442669	meta ranking based on multiple evidences	CD_vs_nonIBD
+106	Cluster_657	DNA_within_phenotype_abundance	1063.8345954411764	0.6002795248078266	ranking based on single evidence	CD_vs_nonIBD
+107	Cluster_657	DNA_within_phenotype_prevalence	0.8970588235294118	0.5909090909090909	ranking based on single evidence	CD_vs_nonIBD
+108	Cluster_657	MaAsLin2_DA__mean_log	2.9778283025807855	0.559748427672956	ranking based on single evidence	CD_vs_nonIBD
+109	Cluster_657	MaAsLin2_DA__qvalue	4.42289673714422e-05	0.8128061581525542	ranking based on single evidence	CD_vs_nonIBD
+110	Cluster_657	priority_score	0.6274489375236714	0.6274489375236714	meta ranking based on multiple evidences	CD_vs_nonIBD
+111	Cluster_357	DNA_within_phenotype_abundance	1920.0780588235295	0.8602375960866527	ranking based on single evidence	CD_vs_nonIBD
+112	Cluster_357	DNA_within_phenotype_prevalence	0.9705882352941176	0.8460987831066571	ranking based on single evidence	CD_vs_nonIBD
+113	Cluster_357	MaAsLin2_DA__mean_log	-3.0500356680346723	0.5925925925925926	ranking based on single evidence	CD_vs_nonIBD
+114	Cluster_357	MaAsLin2_DA__qvalue	0.00130256998978474	0.42477256822953113	ranking based on single evidence	CD_vs_nonIBD
+115	Cluster_357	priority_score	0.6263637486619451	0.6263637486619451	meta ranking based on multiple evidences	CD_vs_nonIBD
+116	Cluster_807	DNA_within_phenotype_abundance	842.0573624999998	0.45143256464011183	ranking based on single evidence	CD_vs_nonIBD
+117	Cluster_807	DNA_within_phenotype_prevalence	0.9117647058823529	0.6306370794559771	ranking based on single evidence	CD_vs_nonIBD
+118	Cluster_807	MaAsLin2_DA__mean_log	3.074135310093874	0.6051712089447938	ranking based on single evidence	CD_vs_nonIBD
+119	Cluster_807	MaAsLin2_DA__qvalue	4.38627898133052e-06	0.9688593421973408	ranking based on single evidence	CD_vs_nonIBD
+120	Cluster_807	priority_score	0.6167666605544968	0.6167666605544968	meta ranking based on multiple evidences	CD_vs_nonIBD
+121	Cluster_513	DNA_within_phenotype_abundance	862.0250154411766	0.4647099930118798	ranking based on single evidence	CD_vs_nonIBD
+122	Cluster_513	DNA_within_phenotype_prevalence	0.8823529411764706	0.5468861846814602	ranking based on single evidence	CD_vs_nonIBD
+123	Cluster_513	MaAsLin2_DA__mean_log	3.127958361438865	0.6464011180992313	ranking based on single evidence	CD_vs_nonIBD
+124	Cluster_513	MaAsLin2_DA__qvalue	3.26597963035023e-06	0.9762071378586424	ranking based on single evidence	CD_vs_nonIBD
+125	Cluster_513	priority_score	0.6105179870105008	0.6105179870105008	meta ranking based on multiple evidences	CD_vs_nonIBD
+126	Cluster_354	DNA_within_phenotype_abundance	2148.8439117647054	0.9350104821802935	ranking based on single evidence	CD_vs_nonIBD
+127	Cluster_354	DNA_within_phenotype_prevalence	0.9705882352941176	0.8460987831066571	ranking based on single evidence	CD_vs_nonIBD
+128	Cluster_354	MaAsLin2_DA__mean_log	-2.7784343308642514	0.4451432564640112	ranking based on single evidence	CD_vs_nonIBD
+129	Cluster_354	MaAsLin2_DA__qvalue	0.000819324561588462	0.4800559832050385	ranking based on single evidence	CD_vs_nonIBD
+130	Cluster_354	priority_score	0.6078140560065048	0.6078140560065048	meta ranking based on multiple evidences	CD_vs_nonIBD
+131	Cluster_726	DNA_within_phenotype_abundance	1008.2713294117643	0.570230607966457	ranking based on single evidence	CD_vs_nonIBD
+132	Cluster_726	DNA_within_phenotype_prevalence	0.8382352941176471	0.4169649248389406	ranking based on single evidence	CD_vs_nonIBD
+133	Cluster_726	MaAsLin2_DA__mean_log	3.050062678499255	0.5932914046121593	ranking based on single evidence	CD_vs_nonIBD
+134	Cluster_726	MaAsLin2_DA__qvalue	4.33149179875395e-05	0.824702589223233	ranking based on single evidence	CD_vs_nonIBD
+135	Cluster_726	priority_score	0.5673734370207153	0.5673734370207153	meta ranking based on multiple evidences	CD_vs_nonIBD
+136	Cluster_1051	DNA_within_phenotype_abundance	1046.0659882352938	0.593990216631726	ranking based on single evidence	CD_vs_nonIBD
+137	Cluster_1051	DNA_within_phenotype_prevalence	0.8529411764705882	0.4574087329992842	ranking based on single evidence	CD_vs_nonIBD
+138	Cluster_1051	MaAsLin2_DA__mean_log	2.7732271829878825	0.44234800838574423	ranking based on single evidence	CD_vs_nonIBD
+139	Cluster_1051	MaAsLin2_DA__qvalue	3.00205085606195e-05	0.8614415675297411	ranking based on single evidence	CD_vs_nonIBD
+140	Cluster_1051	priority_score	0.5486015552005793	0.5486015552005793	meta ranking based on multiple evidences	CD_vs_nonIBD
+141	Cluster_578	DNA_within_phenotype_abundance	849.9173852941178	0.4549266247379455	ranking based on single evidence	CD_vs_nonIBD
+142	Cluster_578	DNA_within_phenotype_prevalence	0.9705882352941176	0.8460987831066571	ranking based on single evidence	CD_vs_nonIBD
+143	Cluster_578	MaAsLin2_DA__mean_log	-3.4047785381711746	0.8232005590496156	ranking based on single evidence	CD_vs_nonIBD
+144	Cluster_578	MaAsLin2_DA__qvalue	0.00399822975989355	0.32995101469559135	ranking based on single evidence	CD_vs_nonIBD
+145	Cluster_578	priority_score	0.5245505740024972	0.5245505740024972	meta ranking based on multiple evidences	CD_vs_nonIBD
+146	Cluster_740	DNA_within_phenotype_abundance	727.8920154411763	0.36827393431167016	ranking based on single evidence	CD_vs_nonIBD
+147	Cluster_740	DNA_within_phenotype_prevalence	0.7647058823529411	0.2999284180386543	ranking based on single evidence	CD_vs_nonIBD
+148	Cluster_740	MaAsLin2_DA__mean_log	4.202457911172107	0.9916142557651991	ranking based on single evidence	CD_vs_nonIBD
+149	Cluster_740	MaAsLin2_DA__qvalue	4.72794287688157e-06	0.9643107067879636	ranking based on single evidence	CD_vs_nonIBD
+150	Cluster_740	priority_score	0.4941342730869029	0.4941342730869029	meta ranking based on multiple evidences	CD_vs_nonIBD
+151	Cluster_384	DNA_within_phenotype_abundance	578.0888210294116	0.29979035639413	ranking based on single evidence	CD_vs_nonIBD
+152	Cluster_384	DNA_within_phenotype_prevalence	0.9117647058823529	0.6306370794559771	ranking based on single evidence	CD_vs_nonIBD
+153	Cluster_384	MaAsLin2_DA__mean_log	2.8103567941876286	0.4605171208944794	ranking based on single evidence	CD_vs_nonIBD
+154	Cluster_384	MaAsLin2_DA__qvalue	8.6590763244242e-06	0.946815955213436	ranking based on single evidence	CD_vs_nonIBD
+155	Cluster_384	priority_score	0.4908574243539238	0.4908574243539238	meta ranking based on multiple evidences	CD_vs_nonIBD
+156	Cluster_1279	DNA_within_phenotype_abundance	1082.6101029411766	0.6121593291404612	ranking based on single evidence	CD_vs_nonIBD
+157	Cluster_1279	DNA_within_phenotype_prevalence	0.8529411764705882	0.4574087329992842	ranking based on single evidence	CD_vs_nonIBD
+158	Cluster_1279	MaAsLin2_DA__mean_log	-2.5699114679622257	0.36547868623340324	ranking based on single evidence	CD_vs_nonIBD
+159	Cluster_1279	MaAsLin2_DA__qvalue	0.000514567256813834	0.5314905528341498	ranking based on single evidence	CD_vs_nonIBD
+160	Cluster_1279	priority_score	0.4740780756787831	0.4740780756787831	meta ranking based on multiple evidences	CD_vs_nonIBD
+161	Cluster_643	DNA_within_phenotype_abundance	506.59682029411766	0.2585604472396925	ranking based on single evidence	CD_vs_nonIBD
+162	Cluster_643	DNA_within_phenotype_prevalence	0.9705882352941176	0.8460987831066571	ranking based on single evidence	CD_vs_nonIBD
+163	Cluster_643	MaAsLin2_DA__mean_log	-2.7461825203439076	0.4276729559748428	ranking based on single evidence	CD_vs_nonIBD
+164	Cluster_643	MaAsLin2_DA__qvalue	4.177938492483e-05	0.8334499650104968	ranking based on single evidence	CD_vs_nonIBD
+165	Cluster_643	priority_score	0.46579167544822675	0.46579167544822675	meta ranking based on multiple evidences	CD_vs_nonIBD
+166	Cluster_217	DNA_within_phenotype_abundance	457.73214698529415	0.2348008385744235	ranking based on single evidence	CD_vs_nonIBD
+167	Cluster_217	DNA_within_phenotype_prevalence	0.9117647058823529	0.6306370794559771	ranking based on single evidence	CD_vs_nonIBD
+168	Cluster_217	MaAsLin2_DA__mean_log	2.9847467012877535	0.5618448637316562	ranking based on single evidence	CD_vs_nonIBD
+169	Cluster_217	MaAsLin2_DA__qvalue	2.42069618070911e-05	0.8887333799860042	ranking based on single evidence	CD_vs_nonIBD
+170	Cluster_217	priority_score	0.4571598771546392	0.4571598771546392	meta ranking based on multiple evidences	CD_vs_nonIBD
+171	Cluster_514	DNA_within_phenotype_abundance	1157.4675711764705	0.663172606568833	ranking based on single evidence	CD_vs_nonIBD
+172	Cluster_514	DNA_within_phenotype_prevalence	0.8529411764705882	0.4574087329992842	ranking based on single evidence	CD_vs_nonIBD
+173	Cluster_514	MaAsLin2_DA__mean_log	-3.046806860547408	0.5918937805730259	ranking based on single evidence	CD_vs_nonIBD
+174	Cluster_514	MaAsLin2_DA__qvalue	0.01024146505696	0.26522043386983907	ranking based on single evidence	CD_vs_nonIBD
+175	Cluster_514	priority_score	0.43696398933104386	0.43696398933104386	meta ranking based on multiple evidences	CD_vs_nonIBD
+176	Cluster_40	DNA_within_phenotype_abundance	611.3671860294116	0.3116701607267645	ranking based on single evidence	CD_vs_nonIBD
+177	Cluster_40	DNA_within_phenotype_prevalence	0.9264705882352942	0.6639226914817467	ranking based on single evidence	CD_vs_nonIBD
+178	Cluster_40	MaAsLin2_DA__mean_log	2.649838709467293	0.39622641509433965	ranking based on single evidence	CD_vs_nonIBD
+179	Cluster_40	MaAsLin2_DA__qvalue	0.000637837942400322	0.5045486354093772	ranking based on single evidence	CD_vs_nonIBD
+180	Cluster_40	priority_score	0.43381601705456724	0.43381601705456724	meta ranking based on multiple evidences	CD_vs_nonIBD
+181	Cluster_470	DNA_within_phenotype_abundance	517.990710882353	0.2641509433962264	ranking based on single evidence	CD_vs_nonIBD
+182	Cluster_470	DNA_within_phenotype_prevalence	0.7058823529411765	0.25125268432355047	ranking based on single evidence	CD_vs_nonIBD
+183	Cluster_470	MaAsLin2_DA__mean_log	3.325259370401417	0.7812718378756115	ranking based on single evidence	CD_vs_nonIBD
+184	Cluster_470	MaAsLin2_DA__qvalue	3.23262025888873e-05	0.8533939818054583	ranking based on single evidence	CD_vs_nonIBD
+185	Cluster_470	priority_score	0.3914841545850445	0.3914841545850445	meta ranking based on multiple evidences	CD_vs_nonIBD
+186	Cluster_59	DNA_within_phenotype_abundance	1121.463904647059	0.6401118099231307	ranking based on single evidence	CD_vs_nonIBD
+187	Cluster_59	DNA_within_phenotype_prevalence	0.8823529411764706	0.5468861846814602	ranking based on single evidence	CD_vs_nonIBD
+188	Cluster_59	MaAsLin2_DA__mean_log	-2.6834076821924264	0.4074074074074074	ranking based on single evidence	CD_vs_nonIBD
+189	Cluster_59	MaAsLin2_DA__qvalue	0.0264508643478371	0.21483554933519944	ranking based on single evidence	CD_vs_nonIBD
+190	Cluster_59	priority_score	0.3809513038676909	0.3809513038676909	meta ranking based on multiple evidences	CD_vs_nonIBD
+191	Cluster_664	DNA_within_phenotype_abundance	722.6977452941175	0.36617749825296997	ranking based on single evidence	CD_vs_nonIBD
+192	Cluster_664	DNA_within_phenotype_prevalence	0.8088235294117647	0.3647100930565497	ranking based on single evidence	CD_vs_nonIBD
+193	Cluster_664	MaAsLin2_DA__mean_log	2.7632164623296918	0.43535988819007687	ranking based on single evidence	CD_vs_nonIBD
+194	Cluster_664	MaAsLin2_DA__qvalue	0.00629208876670935	0.2998600419874038	ranking based on single evidence	CD_vs_nonIBD
+195	Cluster_664	priority_score	0.3602091618579521	0.3602091618579521	meta ranking based on multiple evidences	CD_vs_nonIBD
+196	Cluster_565	DNA_within_phenotype_abundance	1250.449611764706	0.70020964360587	ranking based on single evidence	CD_vs_nonIBD
+197	Cluster_565	DNA_within_phenotype_prevalence	0.8235294117647058	0.38976377952755903	ranking based on single evidence	CD_vs_nonIBD
+198	Cluster_565	MaAsLin2_DA__mean_log	-2.8336502717560488	0.469601677148847	ranking based on single evidence	CD_vs_nonIBD
+199	Cluster_565	MaAsLin2_DA__qvalue	0.0384756067960918	0.19104268719384185	ranking based on single evidence	CD_vs_nonIBD
+200	Cluster_565	priority_score	0.35218408018879893	0.35218408018879893	meta ranking based on multiple evidences	CD_vs_nonIBD
+201	Cluster_215	DNA_within_phenotype_abundance	340.61191351470586	0.16911250873515024	ranking based on single evidence	CD_vs_nonIBD
+202	Cluster_215	DNA_within_phenotype_prevalence	0.9264705882352942	0.6639226914817467	ranking based on single evidence	CD_vs_nonIBD
+203	Cluster_215	MaAsLin2_DA__mean_log	2.435311442090097	0.33752620545073375	ranking based on single evidence	CD_vs_nonIBD
+204	Cluster_215	MaAsLin2_DA__qvalue	0.00123117135075285	0.4275717284814556	ranking based on single evidence	CD_vs_nonIBD
+205	Cluster_215	priority_score	0.3144420631783757	0.3144420631783757	meta ranking based on multiple evidences	CD_vs_nonIBD
+206	Cluster_620	DNA_within_phenotype_abundance	503.05747941176463	0.2557651991614256	ranking based on single evidence	CD_vs_nonIBD
+207	Cluster_620	DNA_within_phenotype_prevalence	0.8235294117647058	0.38976377952755903	ranking based on single evidence	CD_vs_nonIBD
+208	Cluster_620	MaAsLin2_DA__mean_log	1.9467501188545948	0.2348008385744235	ranking based on single evidence	CD_vs_nonIBD
+209	Cluster_620	MaAsLin2_DA__qvalue	0.00351442552229095	0.33869839048285516	ranking based on single evidence	CD_vs_nonIBD
+210	Cluster_620	priority_score	0.292250242329961	0.292250242329961	meta ranking based on multiple evidences	CD_vs_nonIBD
+211	Cluster_864	DNA_within_phenotype_abundance	292.13772288235293	0.13626834381551362	ranking based on single evidence	CD_vs_nonIBD
+212	Cluster_864	DNA_within_phenotype_prevalence	0.6470588235294118	0.19720830350751611	ranking based on single evidence	CD_vs_nonIBD
+213	Cluster_864	MaAsLin2_DA__mean_log	2.9324683726383123	0.527603074772886	ranking based on single evidence	CD_vs_nonIBD
+214	Cluster_864	MaAsLin2_DA__qvalue	0.00306448964480616	0.35059482155353394	ranking based on single evidence	CD_vs_nonIBD
+215	Cluster_864	priority_score	0.23314232934813278	0.23314232934813278	meta ranking based on multiple evidences	CD_vs_nonIBD
+216	Cluster_1205	DNA_within_phenotype_abundance	815.0581132352941	0.42697414395527605	ranking based on single evidence	CD_vs_nonIBD
+217	Cluster_1205	DNA_within_phenotype_prevalence	0.7647058823529411	0.2999284180386543	ranking based on single evidence	CD_vs_nonIBD
+218	Cluster_1205	MaAsLin2_DA__mean_log	-1.6676393002442333	0.1816911250873515	ranking based on single evidence	CD_vs_nonIBD
+219	Cluster_1205	MaAsLin2_DA__qvalue	0.0756193277794491	0.14730580825752274	ranking based on single evidence	CD_vs_nonIBD
+220	Cluster_1205	priority_score	0.22261011044495424	0.22261011044495424	meta ranking based on multiple evidences	CD_vs_nonIBD
+221	Cluster_389	DNA_within_phenotype_abundance	1196.0809135294119	0.6792452830188679	ranking based on single evidence	CD_vs_nonIBD
+222	Cluster_389	DNA_within_phenotype_prevalence	0.8529411764705882	0.4574087329992842	ranking based on single evidence	CD_vs_nonIBD
+223	Cluster_389	MaAsLin2_DA__mean_log	-1.81318338902059	0.20405310971348709	ranking based on single evidence	CD_vs_nonIBD
+224	Cluster_389	MaAsLin2_DA__qvalue	0.145356836483547	0.09097270818754374	ranking based on single evidence	CD_vs_nonIBD
+225	Cluster_389	priority_score	0.20458847630258378	0.20458847630258378	meta ranking based on multiple evidences	CD_vs_nonIBD
+226	Cluster_1401	DNA_within_phenotype_abundance	257.34327397058814	0.1090146750524109	ranking based on single evidence	CD_vs_nonIBD
+227	Cluster_1401	DNA_within_phenotype_prevalence	0.6323529411764706	0.1896921975662133	ranking based on single evidence	CD_vs_nonIBD
+228	Cluster_1401	MaAsLin2_DA__mean_log	2.030580717059574	0.25506638714185886	ranking based on single evidence	CD_vs_nonIBD
+229	Cluster_1401	MaAsLin2_DA__qvalue	0.00014489500718198	0.6906927921623512	ranking based on single evidence	CD_vs_nonIBD
+230	Cluster_1401	priority_score	0.20188617546402332	0.20188617546402332	meta ranking based on multiple evidences	CD_vs_nonIBD
+231	Cluster_230	DNA_within_phenotype_abundance	147.4874989705882	0.047519217330538085	ranking based on single evidence	CD_vs_nonIBD
+232	Cluster_230	DNA_within_phenotype_prevalence	0.7941176470588235	0.3403722261989979	ranking based on single evidence	CD_vs_nonIBD
+233	Cluster_230	MaAsLin2_DA__mean_log	3.1927649762811363	0.686932215234102	ranking based on single evidence	CD_vs_nonIBD
+234	Cluster_230	MaAsLin2_DA__qvalue	6.32139552154979e-05	0.7830650804758572	ranking based on single evidence	CD_vs_nonIBD
+235	Cluster_230	priority_score	0.1497294101398246	0.1497294101398246	meta ranking based on multiple evidences	CD_vs_nonIBD
+236	Cluster_937	DNA_within_phenotype_abundance	489.8168535294118	0.24807826694619148	ranking based on single evidence	CD_vs_nonIBD
+237	Cluster_937	DNA_within_phenotype_prevalence	0.47058823529411764	0.08911954187544739	ranking based on single evidence	CD_vs_nonIBD
+238	Cluster_937	MaAsLin2_DA__mean_log	-1.464263726000019	0.14395527603074773	ranking based on single evidence	CD_vs_nonIBD
+239	Cluster_937	MaAsLin2_DA__qvalue	0.112329035952674	0.11161651504548635	ranking based on single evidence	CD_vs_nonIBD
+240	Cluster_937	priority_score	0.12837910229657387	0.12837910229657387	meta ranking based on multiple evidences	CD_vs_nonIBD
+241	Cluster_663	DNA_within_phenotype_abundance	199.91716794117647	0.07617051013277429	ranking based on single evidence	CD_vs_nonIBD
+242	Cluster_663	DNA_within_phenotype_prevalence	0.5294117647058824	0.11739441660701504	ranking based on single evidence	CD_vs_nonIBD
+243	Cluster_663	MaAsLin2_DA__mean_log	1.4825266533585955	0.1474493361285814	ranking based on single evidence	CD_vs_nonIBD
+244	Cluster_663	MaAsLin2_DA__qvalue	0.0173010052101818	0.2344296710986704	ranking based on single evidence	CD_vs_nonIBD
+245	Cluster_663	priority_score	0.12234512900264292	0.12234512900264292	meta ranking based on multiple evidences	CD_vs_nonIBD
+246	Cluster_214	DNA_within_phenotype_abundance	101.86429902941175	0.03424178895877009	ranking based on single evidence	CD_vs_nonIBD
+247	Cluster_214	DNA_within_phenotype_prevalence	0.8676470588235294	0.5035790980672871	ranking based on single evidence	CD_vs_nonIBD
+248	Cluster_214	MaAsLin2_DA__mean_log	2.971413027399953	0.5562543675751223	ranking based on single evidence	CD_vs_nonIBD
+249	Cluster_214	MaAsLin2_DA__qvalue	0.00022805886242291	0.6368089573128062	ranking based on single evidence	CD_vs_nonIBD
+250	Cluster_214	priority_score	0.11574765560693324	0.11574765560693324	meta ranking based on multiple evidences	CD_vs_nonIBD
+251	Cluster_220	DNA_within_phenotype_abundance	134.09445180882355	0.041928721174004195	ranking based on single evidence	CD_vs_nonIBD
+252	Cluster_220	DNA_within_phenotype_prevalence	0.7941176470588235	0.3403722261989979	ranking based on single evidence	CD_vs_nonIBD
+253	Cluster_220	MaAsLin2_DA__mean_log	1.9982835088137787	0.24528301886792453	ranking based on single evidence	CD_vs_nonIBD
+254	Cluster_220	MaAsLin2_DA__qvalue	0.0159879801804103	0.23792862141357593	ranking based on single evidence	CD_vs_nonIBD
+255	Cluster_220	priority_score	0.1140646755355867	0.1140646755355867	meta ranking based on multiple evidences	CD_vs_nonIBD
+256	Cluster_216	DNA_within_phenotype_abundance	219.71019264705885	0.0859538784067086	ranking based on single evidence	CD_vs_nonIBD
+257	Cluster_216	DNA_within_phenotype_prevalence	0.6617647058823529	0.20830350751610593	ranking based on single evidence	CD_vs_nonIBD
+258	Cluster_216	MaAsLin2_DA__mean_log	1.2771726931626528	0.1243885394828791	ranking based on single evidence	CD_vs_nonIBD
+259	Cluster_216	MaAsLin2_DA__qvalue	0.36666367590496	0.05108467459762071	ranking based on single evidence	CD_vs_nonIBD
+260	Cluster_216	priority_score	0.09080692912010731	0.09080692912010731	meta ranking based on multiple evidences	CD_vs_nonIBD
+261	Cluster_374	DNA_within_phenotype_abundance	279.0139865588235	0.12858141160027953	ranking based on single evidence	CD_vs_nonIBD
+262	Cluster_374	DNA_within_phenotype_prevalence	0.5294117647058824	0.11739441660701504	ranking based on single evidence	CD_vs_nonIBD
+263	Cluster_374	MaAsLin2_DA__mean_log	0.8743351201445955	0.07826694619147449	ranking based on single evidence	CD_vs_nonIBD
+264	Cluster_374	MaAsLin2_DA__qvalue	0.260697906208448	0.06508047585724283	ranking based on single evidence	CD_vs_nonIBD
+265	Cluster_374	priority_score	0.09001336847652665	0.09001336847652665	meta ranking based on multiple evidences	CD_vs_nonIBD
+266	Cluster_813	DNA_within_phenotype_abundance	159.9027805882353	0.05660377358490566	ranking based on single evidence	CD_vs_nonIBD
+267	Cluster_813	DNA_within_phenotype_prevalence	0.5882352941176471	0.15497494631352898	ranking based on single evidence	CD_vs_nonIBD
+268	Cluster_813	MaAsLin2_DA__mean_log	-1.6564884928852748	0.18099231306778477	ranking based on single evidence	CD_vs_nonIBD
+269	Cluster_813	MaAsLin2_DA__qvalue	0.288932728747014	0.06088173547935619	ranking based on single evidence	CD_vs_nonIBD
+270	Cluster_813	priority_score	0.08682495091324179	0.08682495091324179	meta ranking based on multiple evidences	CD_vs_nonIBD
+271	Cluster_1021	DNA_within_phenotype_abundance	55.82370205882352	0.02166317260656883	ranking based on single evidence	CD_vs_nonIBD
+272	Cluster_1021	DNA_within_phenotype_prevalence	0.6176470588235294	0.18110236220472442	ranking based on single evidence	CD_vs_nonIBD
+273	Cluster_1021	MaAsLin2_DA__mean_log	-1.4649521758060173	0.14465408805031446	ranking based on single evidence	CD_vs_nonIBD
+274	Cluster_1021	MaAsLin2_DA__qvalue	0.00269028480687799	0.3631910426871938	ranking based on single evidence	CD_vs_nonIBD
+275	Cluster_1021	priority_score	0.06520026404515021	0.06520026404515021	meta ranking based on multiple evidences	CD_vs_nonIBD
+276	Cluster_407	DNA_within_phenotype_abundance	294.7602264705882	0.13976240391334732	ranking based on single evidence	CD_vs_nonIBD
+277	Cluster_407	DNA_within_phenotype_prevalence	0.36764705882352944	0.051181102362204724	ranking based on single evidence	CD_vs_nonIBD
+278	Cluster_407	MaAsLin2_DA__mean_log	-0.35513197081076	0.0286512928022362	ranking based on single evidence	CD_vs_nonIBD
+279	Cluster_407	MaAsLin2_DA__qvalue	0.718879984588965	0.013995801259622114	ranking based on single evidence	CD_vs_nonIBD
+280	Cluster_407	priority_score	0.030064812091751544	0.030064812091751544	meta ranking based on multiple evidences	CD_vs_nonIBD
+281	Cluster_233	DNA_within_phenotype_abundance	272.23827026470593	0.12368972746331237	ranking based on single evidence	CD_vs_nonIBD
+282	Cluster_233	DNA_within_phenotype_prevalence	0.29411764705882354	0.03614889047959914	ranking based on single evidence	CD_vs_nonIBD
+283	Cluster_233	MaAsLin2_DA__mean_log	-0.2624773518419731	0.02445842068483578	ranking based on single evidence	CD_vs_nonIBD
+284	Cluster_233	MaAsLin2_DA__qvalue	0.720157344156672	0.013296011196641007	ranking based on single evidence	CD_vs_nonIBD
+285	Cluster_233	priority_score	0.026342764342908796	0.026342764342908796	meta ranking based on multiple evidences	CD_vs_nonIBD
