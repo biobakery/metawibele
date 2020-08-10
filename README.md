@@ -183,10 +183,10 @@ Option 1: Download uniref databases (Recommended)
 * We have built the dependent UniRef databases based on UniProt/UniRef 2019_01 sequences and annotations. You can download and uncompress these databases (both sequences and annotations) and provide `$UNIREF_LOCATION` as the location to install the databases.
 	
 	* UniRef90 sequence file (20 GB): 
-		* If you are using Diamond v0.9.24, just download and uncompress the indexed version of sequences to `$UNIREF_LOCATION`: [uniref90.fasta.dmnd.gz](http://huttenhower.sph.harvard.edu/MetaWIBELE_data/uniref90.fasta.dmnd.gz). Or run the following command to download the indexed sequence file into `$UNIREF_LOCATION`:
+		* If you are using Diamond v0.9.24, just download and uncompress the indexed version of sequences to `$UNIREF_LOCATION`: [uniref90.fasta.dmnd.tar.gz](http://huttenhower.sph.harvard.edu/MetaWIBELE_data/uniref90.fasta.dmnd.tar.gz). Or run the following command to download the indexed sequence file into `$UNIREF_LOCATION`:
 	`$ metawibele_download_database --database uniref --build uniref90_diamond --install-location $UNIREF_LOCATION`
 		* If you are using different version of Diamond, 
-			* download raw sequences in fasta format: [uniref90.fasta.gz](http://huttenhower.sph.harvard.edu/MetaWIBELE_data/uniref90.fasta.gz). Or run the following command to download the sequence file into `$UNIREF_LOCATION`:
+			* download raw sequences in fasta format: [uniref90.fasta.tar.gz](http://huttenhower.sph.harvard.edu/MetaWIBELE_data/uniref90.fasta.tar.gz). Or run the following command to download the sequence file into `$UNIREF_LOCATION`:
 	`$ metawibele_download_database --database uniref --build uniref90_fasta --install-location $UNIREF_LOCATION` 
 			* index the sequences using your local Diamond: 
 			`$ diamond makedb --in $UNIREF_LOCATION/uniref90.fasta -d $UNIREF_LOCATION/uniref90.fasta`
