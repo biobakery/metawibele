@@ -17,7 +17,7 @@ Identifying Novel Bioactive Microbial Gene Products in Inflammatory Bowel Diseas
 **For additional information, read the [MetaWIBELE Tutorial](https://github.com/biobakery/biobakery/wiki/metawibele).**
 
 
-If you have questions, please direct it to:[the MetaWIBELE channel](https://forum.biobakery.org/c/Microbial-community-profiling/metawibele) of the bioBakery Support Forum.
+If you have questions, please direct it to [the MetaWIBELE channel](https://forum.biobakery.org/c/Microbial-community-profiling/metawibele) of the bioBakery Support Forum.
 
 ***
 
