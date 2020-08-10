@@ -33,10 +33,10 @@ If you have questions, please direct it to:[the MetaWIBELE channel](https://foru
     	* [Install databases](#install-databases)
     		* [UniRef database](#uniref-database)
     		* [Domain database](#domain-database)
-    	* [Download configuration files](#download-configuration-files)
-			* [Download global configuration template](#download-global-configuration-template)
-    		* [Download local configuration template](#download-local-configuration-template-optional)
-    		* [Download vignette configuration template](#download-vignette-configuration-template)
+    	* [Prepare configuration files](#prepare-configuration-files)
+			* [Prepare global configuration file](#prepare-global-configuration-file)
+    		* [Prepare local configuration file](#prepare-local-configuration-file)
+    		* [Prepare vignette configuration file](#prepare-vignette-configuration-file)
 * [Quick-start Guide](#quick-start-guide)
     * [How to run](#how-to-run)
     * [Standard Workflows](#standard-workflows)
@@ -139,7 +139,7 @@ Option 2: Development Version
 
 
 #### Install MetaWIBELE
-You can choose one of the following options to install the MetaWIBELE package.
+You only need to do **any one** of the following options to install the MetaWIBELE package.
 
 
 Option 1: Installing with pip
@@ -176,11 +176,11 @@ Option 4: Installing from source
 To run metawibele, you need to install the dependent databases: 1) uniref databases (**required**); 2) domain databases (optional).
 
 ##### UniRef database
-UniRef databases are **required** if you will use MetaWIBELE to do global-homology based annotation and taxonomic annotation. 
+UniRef databases are **required** if you will use MetaWIBELE to do global-homology based annotation and taxonomic annotation. You can use **any one** of the following options to install these databases.
 
-Option 1: download uniref databases (Recommended)
+Option 1: Download uniref databases (Recommended)
 
-* We have built the dependent UniRef databases based on UniProt/UniRef 2019_01 sequences and annotations. You can download and uncompress these databases (both sequences and annotations) and provide `$UNIREF_LOCATION` as the location to install the database.
+* We have built the dependent UniRef databases based on UniProt/UniRef 2019_01 sequences and annotations. You can download and uncompress these databases (both sequences and annotations) and provide `$UNIREF_LOCATION` as the location to install the databases.
 	
 	* UniRef90 sequence file (20 GB): 
 		* If you are using Diamond v0.9.24, just download and uncompress the indexed version of sequences to `$UNIREF_LOCATION`: [uniref90.fasta.dmnd.gz](http://huttenhower.sph.harvard.edu/MetaWIBELE_data/uniref90.fasta.dmnd.gz). Or run the following command to download the indexed sequence file into `$UNIREF_LOCATION`:
@@ -204,7 +204,7 @@ Option 1: download uniref databases (Recommended)
 			* Pfam domains（Pfams)
 		* In most cases, mappings are directly inferred from the annotation of the corresponding UniRef representative sequence in UniProt.
 
-Option 2: create local uniref databases
+Option 2: Create local uniref databases
 
 * You can also create these databases locally by using MetaWIBELE utility scripts based on the latest release version of UniProt/UniRef, and provide `$DATABASE_LOCATION` as the location to install the database.
 
@@ -220,10 +220,11 @@ Option 2: create local uniref databases
 	
 	`$ diamond makedb --in uniref90.fasta -d uniref90.fasta`
 
-##### Domain database
-Protein domain databases are required if you will use MetaWIBELE to do domain-based annotations. De default, these databases have **already been installed** when you install the MetaWIBELE package and you can skip this step. Alternatively, you can also create these domain databases locally and provide `$DATABASE_LOCATION` as the location to install the database.
 
-Create local domain databases (Optional)
+##### Domain database
+De default, the dependent domain databases **have already been automatically installed** when you install the MetaWIBELE package and you can skip this step. Alternatively, you can also create these domain databases locally and provide `$DATABASE_LOCATION` as the location to install the database.
+
+Create local domain databases (**optional**)
 
 * Download and obtain dependent protein domains information:
 	
@@ -234,19 +235,21 @@ Create local domain databases (Optional)
 	* Domain-domain interactions from version 2.0 of [DOMINE](https://manticore.niehs.nih.gov/cgi-bin/Domine?page=start) database will be downloaded.
 
 	
-#### Download configuration files
+#### Prepare configuration files
+##### Prepare global configuration file
 To run MetaWIBELE, you are **required** to customize the global configuration file `metawibele.cfg` and make sure that it's in your working directory. 
-
-##### Download global configuration template
 
 * Download `metawibele.cfg` into your working directory:
 	* Option 1) run this command to download global configuration file:
 		* `$ metawibele_download_config --config-type global`
 	* Option 2) obtain copies by right-clicking the link and selecting "save link as":
 		* [metawibele.cfg](http://huttenhower.sph.harvard.edu/MetaWIBELE_data/configs/metawibele.cfg)
-* Set required configurations in `metawibele.cfg` to run MetaWIBELE:
+
+* Customize your configurations in `metawibele.cfg` before running MetaWIBELE:
 	
-	* Customize the path of dependent databases (required):
+	Setting the path of dependent databases is the most important to pay attention to and is required for customizing, and most of other sections can leave as defaults.
+	
+	* Customize the path of dependent databases (**required**):
 	
 	```
 	[database]
@@ -256,7 +259,7 @@ To run MetaWIBELE, you are **required** to customize the global configuration fi
 	domain_db = none
 	```
 
-	* Customize basic information (optional):
+	* Customize basic information for outputs (e.g. prefix name of output files, etc.) (**optional**):
 
 	```
 	[basic]
@@ -266,7 +269,7 @@ To run MetaWIBELE, you are **required** to customize the global configuration fi
 	basename = metawibele
 	``` 
 		
-	* Customize applied computational resources (optional):
+	* Customize applied computational resources (e.g. CPU cores, memory, etc.) (**optional**):
 
 	```
 	[computation]
@@ -278,11 +281,11 @@ To run MetaWIBELE, you are **required** to customize the global configuration fi
 	time = 60
 	```
 
-	* Customize parameter settings for annotations (optional, but you are required to specify your settings when you run MetaWIBELE for supervised prioritization):
+	* Customize parameter settings for abundance-based and domain/motif-based annotations (**optional**):
 
 	```
 	[abundance]
-	# The absolute path of config file used by MSPminer. [config_file] provide the mspminer config file; [none] use the default config files installed in the metawibele package [ Default: none ]
+	# The absolute path of the config file used by MSPminer. [config_file] provide the mspminer config file; [none] use the default config files installed in the metawibele package [ Default: none ]
 	mspminer = none
 	# The method for normalization [Choices: cpm, relab]. [cpm] copies per million units (sum to 1 million); [relab] relative abundance (sum to 1) [ Default: cpm ]  
 	normalize = cpm
@@ -290,11 +293,17 @@ To run MetaWIBELE, you are **required** to customize the global configuration fi
 	abundance_detection_level = 0
 
 	[interproscan]
+	# Interproscan executable file, e.g. /my/path/interproscan/interproscan.sh [ Default: interproscan.sh ]
+	interproscan_cmmd = interproscan.sh
 	# The appls used by interproscan: [appls] comma separated list of analyses, [ Choices: CDD,COILS,Gene3D,HAMAP,MobiDBLite,PANTHER,Pfam,PIRSF,PRINTS,ProDom,PROSITEPATTERNS,PROSITEPROFILES,SFLD,SMART,SUPERFAMILY,TIGRFAM,Phobius,SignalP,TMHMM ]; [none] use all all analyses for running [ Default: Pfam,Phobius,SignalP,TMHMM ]
 	interproscan_appl = "Pfam,Phobius,SignalP,TMHMM"
 	# The number of splitting files which can be annotated in parallel 	[ Default: 1 ]
 	split_number = 1
+	```
 	
+	* Customize parameter settings for association with environmental/host phenotypes (**optional**; but you **need** to specify your settings for maaslin2 if you run MetaWIBELE for supervised prioritization, and at least the main phenotype metadata used for prioritization is **required** to set):
+
+	```
 	[maaslin2]
 	# The absolute path of Maaslin2 executable file, e.g. /my/path/Maaslin2/R/Maaslin2.R [ Default: Maaslin2.R ]
 	maaslin2_cmmd = Maaslin2.R
@@ -339,7 +348,7 @@ To run MetaWIBELE, you are **required** to customize the global configuration fi
 	```
 
 
-##### Download local configuration template
+##### Prepare local configuration file
 By default, MetaWIBELE will perform by using the local configuration files installed in the package. **Optionally**, you can also make your own local configuration files and provide them with optional arguments to MetaWIBELE. For example, the local characterization configuration file can be provided with `--characterization-config $CHRACTERIZE_CONF` where `$CHRACTERIZE_CONF` is the file including characterization configurations.
 
 * Download local configuration template files (e.g. `characterization.cfg`, `prioritization.cfg `) into your working directory:
@@ -451,13 +460,13 @@ By default, MetaWIBELE will perform by using the local configuration files insta
 
 	```
 	
-##### Download vignette configuration template
+##### Prepare vignette configuration file
 **Optionally**, MetaWIBELE can accept user-defined vignette functions of interest for further prioritization. You can make your own vignettes configuration files and provide them with an optional argument to MetaWIBELE. For example, the vignette function configuration file can be provided with `--vignette-config $VIGNETTE_FUNC` where `$VIGNETTE_FUNC` is the file including the functions of interest.
 
 * Download local vignettes template file (`vignettes_function.tsv`) into your working directory:
-	* Option 1) run command line to download vignette configuration files:
+	* Option 1) Run command line to download vignette configuration files:
 		* `$ metawibele_download_config --config-type vignette`
-	* Option 2) obtain copies by right-clicking the link and selecting "save link as":
+	* Option 2) Obtain copies by right-clicking the link and selecting "save link as":
 		* [vignette_function.tsv](http://huttenhower.sph.harvard.edu/MetaWIBELE_data/configs/vignette_function.tsv)
 
 * Make your own configurations:
