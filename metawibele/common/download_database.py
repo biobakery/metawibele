@@ -121,12 +121,12 @@ def download_file(url, filename, folder):
 	print("Download URL: " + url)
 
 	try:
-		url_handle = urlretrieve(url, filename, reporthook=ReportHook().report)
-		#os.system("wget " + url)
+		#url_handle = urlretrieve(url, filename, reporthook=ReportHook().report)
+		os.system("wget " + url + " --no-check-certificate ")
 		print("\nExtracting: " + filename)
-		#os.system("tar zxf " + filename)
-		tarfile_handle = tarfile.open(filename)
-		tarfile_handle.extractall(path=folder)
+		os.system("tar zxf " + filename)
+		#tarfile_handle = tarfile.open(filename)
+		#tarfile_handle.extractall(path=folder)
 	except (EnvironmentError, tarfile.ReadError):
 		sys.exit("CRITICAL ERROR: Unable to download and extract from URL: " + url)
 
