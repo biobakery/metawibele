@@ -572,7 +572,7 @@ By default, MetaWIBELE will perform by using the local configuration files insta
 	* reads counts table for non-redundant gene families (TSV format file), e.g. [demo\_genecatalogs_counts.all.tsv](https://github.com/biobakery/metawibele/tree/master/examples/input/demo_genecatalogs_counts.all.tsv)
 	* metadata file (TSV format file), e.g. [demo\_mgx_metadata.tsv](https://github.com/biobakery/metawibele/tree/master/examples/input/demo_mgx_metadata.tsv)
 	* the global configuration file in your working directory, e.g. [metawibele.cfg](https://github.com/biobakery/metawibele/tree/master/examples/metawibele.cfg)
-
+	
 
 * ##### MetaWIBELE-characterize workflow
 	`$ metawibele characterize --input-sequence $INPUT_SEQUENCE --input-count $INPUT_COUNT --input-metadata $INPUT_METADATA --output $OUTPUT_DIR`
@@ -710,8 +710,8 @@ By default, MetaWIBELE will perform by using the local configuration files insta
 
 #### MetaWIBELE-prioritize
 * ##### Input files for prioritization
-	* annotation file produced by MetaWIBELE-characterize workflow (TSV format file):`$BASENAME_proteinfamilies_annotation.tsv`
-	* annotation attribute file produced by MetaWIBELE-characterize workflow (TSV format file): `$BASENAME_proteinfamilies_annotation.attribute.tsv`
+	* annotation file produced by MetaWIBELE-characterize workflow (TSV format file), e.g. [demo\_proteinfamilies_annotation.tsv](https://github.com/biobakery/metawibele/tree/master/examples/output/characterization/demo_proteinfamilies_annotation.tsv)
+	* annotation attribute file produced by MetaWIBELE-characterize workflow (TSV format file), e.g. [demo\_proteinfamilies\_annotation.attribute.tsv](https://github.com/biobakery/metawibele/tree/master/examples/output/characterization/demo_proteinfamilies_annotation.attribute.tsv)
 
 * ##### MetaWIBELE-prioritize workflow
 
@@ -723,7 +723,7 @@ By default, MetaWIBELE will perform by using the local configuration files insta
 	
 * ##### Demo run of MetaWIBELE-prioritize
 
-	`$ metawibele prioritize --input-annotation $BASENAME_proteinfamilies_annotation.tsv --input-attribute $BASENAME_proteinfamilies_annotation.attribute.tsv --output $OUTPUT_DIR`
+	`$ metawibele prioritize --input-annotation demo_proteinfamilies_annotation.tsv --input-attribute demo_proteinfamilies_annotation.attribute.tsv --output $OUTPUT_DIR`
 
 * ##### Output files of MetaWIBELE-prioritize
 	**1. unsupervised prioritization**
