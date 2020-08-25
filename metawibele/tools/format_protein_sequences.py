@@ -70,6 +70,7 @@ def collect_sequence (ann_path, extension, partial_path, outfile):
 		if not os.path.isfile(mygff):
 			print("Gff file doesn't exist!\t" + mygff)
 			continue
+		print("Read gff file: " + mygff)
 		open_gff = open(mygff, "r")
 		for line in open_gff:
 			line = line.strip()
@@ -96,8 +97,11 @@ def collect_sequence (ann_path, extension, partial_path, outfile):
 			strand = info[6]
 			desc = info[8]
 			myinfo = desc.split(";")
-			myid = re.search("ID\=([^\;]+)", desc)
-			myid = myid.group(1)
+			if re.search("ID\=([^\;]+)", desc):
+				myid = re.search("ID\=([^\;]+)", desc)
+				myid = myid.group(1)
+			else:
+				continue
 			gene_name = "NA"
 			gene_id = "NA"
 			gene_num = "NA"
