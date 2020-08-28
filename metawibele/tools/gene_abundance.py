@@ -70,7 +70,7 @@ def bowtie2_mapping (work_dir, ref_seq, input_file, thread, sample):
 
 	# Mapping
 	sam = sample + ".sam"
-	print("bowtie2 -x " + base_name + " -U " + input_file + " --threads " + thread + " -S " + sam + " --very-sensitive" + "\n") 
+	print("bowtie2 -x " + base_name + " -U " + input_file + " --threads " + thread + " -S " + sam + "  --very-sensitive" + "\n") 
 	os.system("bowtie2 -x " + base_name + " -U " + input_file + " --threads " + thread + " -S " + sam + " --very-sensitive") 
 	
 	return sam
