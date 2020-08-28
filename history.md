@@ -6,6 +6,8 @@
 * Added binary filtering for unsupervised prioritization
 * Added config for interproscan executable file
 * Fixed issue when formatting assembled protein sequences
+* Added bowtie2 options "--very-sensitive"
+* Fixed issue of summarizing uniref annotations
 
 ## v0.3.6 2020-07-30 ##
 * Make input/output options available for metawibele on the command line instead of the config file
