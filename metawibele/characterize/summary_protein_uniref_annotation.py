@@ -246,7 +246,7 @@ def collect_uniref_mapping_info (uniref_stat, uniref_taxa, taxa, taxa_map):
 		map_iden = info[titles["identity"]]
 		map_cov1 = info[titles["query_coverage"]]
 		map_cov2 = info[titles["mutual_coverage"]]
-		mytaxa = "NA\nNA\tNA\tNA\tNA\tNA\tNA\tNA"
+		mytaxa = "NA\nNA\tNA\tNA\tNA\tNA\tNA"
 		if uniref_id in uniref_taxa:
 			mytaxa = uniref_taxa[uniref_id]
 
