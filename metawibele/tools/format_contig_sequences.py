@@ -72,8 +72,9 @@ def format_contig_info (contig_path, extension, outfile):
 			if re.search("^>", line):
 				mym = re.search(">([\S]+)", line)
 				myid_old = mym.group(1)
-				myid_new = sample + "_contig_" + mym.group(1) + "|" + sample + "|"
-				myid = re.sub(myid_old + "[\s]+", myid_new, line)
+				#myid_new = sample + "_contig_" + mym.group(1) + "|" + sample + "|"
+				#myid = re.sub(myid_old + "[\s]+", myid_new, line)
+				myid = ">" + sample + "_contig_" + mym.group(1)
 				if not myid in contigs:
 					contig_order.append(myid)
 					contigs[myid] = ""
