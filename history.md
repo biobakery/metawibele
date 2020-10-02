@@ -1,13 +1,15 @@
 
 # MetaWIBELE History #
 
+## v0.3.8 2020-10-02 ##
+* Added bowtie2 options "--very-sensitive"
+* Fixed issue of summarizing uniref annotations and contig sequences
+
 ## v0.3.7 2020-08-25 ##
 * Added functions for downloading databases
 * Added binary filtering for unsupervised prioritization
 * Added config for interproscan executable file
 * Fixed issue when formatting assembled protein sequences
-* Added bowtie2 options "--very-sensitive"
-* Fixed issue of summarizing uniref annotations and contig sequences
 
 ## v0.3.6 2020-07-30 ##
 * Make input/output options available for metawibele on the command line instead of the config file
