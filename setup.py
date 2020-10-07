@@ -8,9 +8,9 @@ import os
 import sys
 
 # check for either of the required versions
-# required python versions (3.7+)
+# required python versions (3.6+)
 required_python_version_major = [3]
-required_python_version_minor = [7]
+required_python_version_minor = [6]
 pass_check = False
 try:
 	for major, minor in zip(required_python_version_major, required_python_version_minor):
@@ -225,7 +225,7 @@ setuptools.setup(
 		"Environment :: Console",
 		"Operating System :: MacOS",
 		"Operating System :: Unix",
-		"Programming Language :: Python :: 3.7",
+		"Programming Language :: Python :: 3.6",
 		"Topic :: Scientific/Engineering :: Bio-Informatics"
 	],
 	#install_requires=['anadama2>=0.7.4'],
