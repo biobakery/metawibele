@@ -5,9 +5,9 @@
 
 ## Citing MetaWIBELE
 
-**A manuscript describing MetaWIBELE is currently in prep:**
+**If you use the MetaWIBELE software, please cite our manuscript:**
 
-Identifying Novel Bioactive Microbial Gene Products in Inflammatory Bowel Disease
+Yancong et.al (2020+). ["Identifying Novel Bioactive Microbial Gene Products in Inflammatory Bowel Disease."](http://huttenhower.sph.harvard.edu/metawibele) [In Submission]
 
 **And feel free to link to MetaWIBELE in your Methods:**
 
