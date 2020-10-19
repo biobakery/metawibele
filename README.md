@@ -7,7 +7,7 @@
 
 **If you use the MetaWIBELE software, please cite our manuscript:**
 
-Yancong et.al (2020+). ["Identifying Novel Bioactive Microbial Gene Products in Inflammatory Bowel Disease."](http://huttenhower.sph.harvard.edu/metawibele) [In Submission]
+Yancong et.al (2020+). ["Identifying Novel Bioactive Microbial Gene Products in Inflammatory Bowel Disease."](http://huttenhower.sph.harvard.edu/metawibele) [submitted]
 
 **And feel free to link to MetaWIBELE in your Methods:**
 
