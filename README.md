@@ -190,7 +190,7 @@ Option 1: Download uniref databases (Recommended)
 	`$ metawibele_download_database --database uniref --build uniref90_fasta --install-location $UNIREF_LOCATION` 
 			* index the sequences using your local Diamond: 
 			`$ diamond makedb --in $UNIREF_LOCATION/uniref90.fasta -d $UNIREF_LOCATION/uniref90.fasta`
-	* UniRef90 annotation files (5.3 GB): [uniref90_annotations.tar.gz](http://huttenhower.sph.harvard.edu/MetaWIBELE_data/uniref90_annotations.tar.gz). Or run the following command to download the annotation files into `$UNIREF_LOCATION`:
+	* UniRef90 annotation files (2.8 GB): [uniref90_annotations.tar.gz](http://huttenhower.sph.harvard.edu/MetaWIBELE_data/uniref90_annotations.tar.gz). Or run the following command to download the annotation files into `$UNIREF_LOCATION`:
 	`$ metawibele_download_database --database uniref --build uniref90_annotation --install-location $UNIREF_LOCATION`
 		* Annotations are available for the UniRef90 gene families to the following systems:
 			* UniProt ID corresponding to the UniRef representative
