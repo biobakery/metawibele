@@ -4,6 +4,7 @@
 ## v0.3.8 2020-10-02 ##
 * Added bowtie2 options "--very-sensitive"
 * Fixed issue of summarizing uniref annotations and contig sequences
+* Fixed eggNOG issue
 
 ## v0.3.7 2020-08-25 ##
 * Added functions for downloading databases

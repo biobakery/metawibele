@@ -112,6 +112,8 @@ def extract_annotation_info (output_path, maps):
 					item = "KEGG"
 				if re.search("\(KO\)", item):
 					item = "KEGG-KO"
+				if re.search("COG", item):
+					item = "eggNOG"
 				if re.search("Taxonomic", item):
 					item = "Taxonomic_lineage"
 				if re.search("Subcellular location", item):
