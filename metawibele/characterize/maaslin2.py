@@ -160,12 +160,12 @@ def run_maaslin2 (feature, metadata, split_num, workdir, output, outfile):
 # run_maaslin2
 
 
-def fdr_correction (output, outfile):
+def fdr_correction (output, outfile, mycorr):
 	myin = output + "/" + outfile
 	myout = re.sub(".tsv", ".fdr_correction.tsv", myin)
 	mypcl = config.pcl_utils
 	myutils = config.maaslin2_utils
-	mycmd = "Rscript " + myutils + " " + "correct" + " " + myin + " " + myout + " " + mypcl + " 0 "
+	mycmd = "Rscript " + myutils + " " + "correct" + " " + myin + " " + myout + " " + mypcl + " 0 " + " " + mycorr
 	print(mycmd)
 	os.system(mycmd)
 	myout1 = myout
@@ -194,6 +194,7 @@ def main():
 	sys.stderr.write("### Start maaslin2.py -i " + values.feature_table + " ####\n")
 	
 	### Run MaAsLin2 info ###
+	mycorr = config.correction
 	if config.nested_effects != "none":
 		out1 = []
 		out2 = []
@@ -211,7 +212,7 @@ def main():
 			run_maaslin2 (values.feature_table, mymeta_file, values.split_num, values.workdir, output, outfile)
 			sys.stderr.write("Run MaAsLin2 ......done\n")
 			sys.stderr.write("FDR correction ......" + outfile + "\n")
-			myout1, myout2, myout3 = fdr_correction (values.workdir, outfile)
+			myout1, myout2, myout3 = fdr_correction (values.workdir, outfile, mycorr)
 			sys.stderr.write("FDR correction ......done\n")
 			out1.append(myout1)
 			out2.append(myout2)
@@ -240,7 +241,7 @@ def main():
 		sys.stderr.write("Run MaAsLin2 ......done\n")
 
 		sys.stderr.write("FDR correction ......starting\n")
-		fdr_correction (values.workdir, values.output)
+		fdr_correction (values.workdir, values.output, mycorr)
 		sys.stderr.write("FDR correction ......done\n")
 	
 	sys.stderr.write("### Finish maaslin2.py ####\n\n\n")

@@ -12,6 +12,7 @@ data_in = args[2]
 data_out = args[3]
 pcl_utils = args[4]
 split_num = args[5]
+correction = args[6]
 
 source(pcl_utils)
 
@@ -103,25 +104,25 @@ filter_feature <- function(pclfile, outfile) {
 
 ##########################################
 # Combine results and multiplicity correction
-multiplicity_correction <- function (infile, outfile) {
+multiplicity_correction <- function (infile, outfile, correction) {
 	print(infile)
 	paras <- read.table(infile, header=TRUE, sep="\t", quote="", comment.char = "", check.names = FALSE)
 	new_col_name <- c(colnames(paras), "qvalue")
 
 	# multiplicity correction based on all metadata
-	paras$qvalue <- as.numeric(p.adjust(as.numeric(paras$pval), "BH"))
+	paras$qvalue <- as.numeric(p.adjust(as.numeric(paras$pval), correction))
 	write.table(t(new_col_name), file = outfile, append = FALSE, sep = "\t", eol = "\n", na = "NA", row.names = FALSE, col.names = FALSE, quote=FALSE)
 	write.table(paras, file = outfile, append = TRUE, sep = "\t", eol = "\n", na = "NA", row.names = FALSE, col.names = FALSE, quote=FALSE)
 	
 	# multiplicity correction based on each variable
 	outfile_per <- gsub(".tsv", ".correct_per_variable.tsv", outfile)
-	paras_per <- ddply(paras, .(metadata), transform, qvalue=as.numeric(p.adjust(as.numeric(pval), "BH")))
+	paras_per <- ddply(paras, .(metadata), transform, qvalue=as.numeric(p.adjust(as.numeric(pval), correction)))
 	write.table(t(new_col_name), file = outfile_per, append = FALSE, sep = "\t", eol = "\n", na = "NA", row.names = FALSE, col.names = FALSE, quote=FALSE)
 	write.table(paras_per, file = outfile_per, append = TRUE, sep = "\t", eol = "\n", na = "NA", row.names = FALSE, col.names = FALSE, quote=FALSE)
 	
 	# multiplicity correction based on each level
 	outfile_per <- gsub(".tsv", ".correct_per_level.tsv", outfile)
-	paras_per <- ddply(paras, .(metadata, value), transform, qvalue=as.numeric(p.adjust(as.numeric(pval), "BH")))
+	paras_per <- ddply(paras, .(metadata, value), transform, qvalue=as.numeric(p.adjust(as.numeric(pval), correction)))
 	write.table(t(new_col_name), file = outfile_per, append = FALSE, sep = "\t", eol = "\n", na = "NA", row.names = FALSE, col.names = FALSE, quote=FALSE)
 	write.table(paras_per, file = outfile_per, append = TRUE, sep = "\t", eol = "\n", na = "NA", row.names = FALSE, col.names = FALSE, quote=FALSE)
 }
@@ -136,9 +137,15 @@ if (action == "filter")
 }
 
 # Multiplicity correction
+if (! exists ("correction")) {
+	correction <- "BH"
+}
+if (is.na(correction)) {
+	correction <- "BH"
+}
 if (action == "correct")
 {
-	multiplicity_correction (data_in, data_out)
+	multiplicity_correction (data_in, data_out, correction)
 }
 
 # Modify metadata: add nested effect
