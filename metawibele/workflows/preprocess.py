@@ -78,7 +78,7 @@ def parse_cli_arguments():
 	workflow.add_argument("gene-call-type",
 	                      desc = "specify which type of gene calls will be used",
 						  choices = ['prokka', 'prodigal', 'both'],
-	                      default = 'both')
+	                      default = 'prodigal')
 	workflow.add_argument("bypass-assembly",
 	                      desc = "do not run assembly",
 	                      action = "store_true")
