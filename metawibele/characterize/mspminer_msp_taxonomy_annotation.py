@@ -56,6 +56,12 @@ def get_args ():
 	                    choices=["no", "UniRef90_strong_homology", "UniRef90_homology"],
 	                    required=True,
 	                    default="UniRef90_homology")
+	parser.add_argument('-u', "--tshld-classified",
+						help = 'the minimum percentile of classified genes in each MSP',
+						default = "none")
+	parser.add_argument('-d', "--tshld-diff",
+						help = 'the minimum difference between most and second dominant taxa in the MSP',
+						default = "none")
 	parser.add_argument('-o', "--output",
 	                    help='output taxonomy annotation of MSP file',
 	                    required=True)
@@ -332,6 +338,14 @@ def main():
 	
 	### get arguments ###
 	values = get_args ()
+	if values.tshld_classified == "none":
+		tshld_classified = config.tshld_classified
+	else:
+		tshld_classified = values.tshld_classified
+	if values.tshld_diff == "none":
+		tshld_diff = config.tshld_diff
+	else:
+		tshld_diff = values.tshld_diff
 
 	sys.stderr.write("### Start mspminer_msp_taxonomy_annotation.py -a " + values.msp_annotation + " ####\n")
 	
@@ -342,7 +356,7 @@ def main():
 	msp, taxa = extract_taxon_info (values.msp_annotation, values.homology_type)
 	normalized_known = "yes"
 	cutoff_type = "diff"
-	taxonomy_annotation (msp, taxa, normalized_known, config.tshld_unclassified, config.tshld_diff, cutoff_type, taxa_map, values.output)
+	taxonomy_annotation (msp, taxa, normalized_known, float(tshld_classified), float(tshld_diff), cutoff_type, taxa_map, values.output)
 	sys.stderr.write("Get info ......done\n")
 
 	sys.stderr.write("### Finish mspminer_msp_taxonomy_annotation.py ####\n\n\n")
