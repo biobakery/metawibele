@@ -1,6 +1,13 @@
 
 # MetaWIBELE History #
 
+## v0.3.9 2021-03-18 ##
+* Added options for msp-based taxonomy assignment "--tshld-diff" "--tshld-classified"
+* Renamed the name of config option for taxonomy assignment
+* Fixed option setting for interproscan
+* Added option for FDR correction
+* Fixed issue when preprocessing contigs
+
 ## v0.3.8 2020-10-02 ##
 * Added bowtie2 options "--very-sensitive"
 * Fixed issue of summarizing uniref annotations and contig sequences

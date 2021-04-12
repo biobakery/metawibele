@@ -233,7 +233,7 @@ def get_item(config_items, section, name, type=None):
 
 
 ## default option for MetaWIBELE ##
-version = '0.3.8'
+version = '0.3.9'
 log_level = 'DEBUG'
 verbose = 'DEBUG'
 
@@ -441,6 +441,7 @@ interproscan_cmmd = get_item(config_items, "interproscan", "interproscan_cmmd", 
 interproscan_cmmd = re.sub("\"", "", interproscan_cmmd)
 #interproscan_cmmd = "interproscan.sh"
 interproscan_appl = get_item(config_items, "interproscan", "interproscan_appl", "string")
+interproscan_appl = re.sub("\"", "", interproscan_appl)
 if interproscan_appl.lower() == "none" or interproscan_appl.lower() == "":
 	interproscan_appl = "CDD,COILS,Gene3D,HAMAP,MobiDBLite,PANTHER,Pfam,PIRSF,PRINTS,ProDom,PROSITEPATTERNS,PROSITEPROFILES,SFLD,SMART,SUPERFAMILY,TIGRFAM,Phobius,SignalP,TMHMM"
 interproscan_appl = re.sub("\"", "", interproscan_appl)
