@@ -217,7 +217,7 @@ def assembly (workflow, input_dir, extension, extension_paired, threads, output_
 
 
 	## combine contigs sequences
-	mylog = contig + ".log" 
+	mylog = contigs + ".log" 
 	workflow.add_task(
 		"metawibele_format_contig_sequences -p [args[0]] -e contigs.fa -o [targets[0]] > [args[1]] 2>&1",
 		depends=utilities.add_to_list(contigs_list, TrackedExecutable("metawibele_format_contig_sequences")),
