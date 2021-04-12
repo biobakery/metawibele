@@ -82,7 +82,6 @@ def format_metadata (infile, outfile):
 		for mymeta in config.ref_status.keys():
 			if mymeta in titles:
 				myindex = titles[mymeta]
-				myindex = titles[mymeta]
 				item = info[myindex]
 				tmp2 = config.ref_status[mymeta].split(",")
 				myrefs = []
