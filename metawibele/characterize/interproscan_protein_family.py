@@ -112,9 +112,8 @@ def collect_ann_info (cluster_mem, extension, ann_path, types, outfile):	# list.
 	for myfile in filelist:
 		for suffix in types:
 			myfile1 = re.sub(extension, suffix, myfile)
-			#myfile = ann_path + "/" + samplelist + "/" + samplelist + "." + suffix # split1.interpro.SUPERFAMILY.tsv
 			if not os.path.isfile(myfile1):
-				print ("File not exist!\t" + myfile1)
+				#print ("File not exist!\t" + myfile1)
 				continue
 			open_file = open(myfile1, "r")
 			mym = re.search("interpro.([\S]+).tsv", suffix)

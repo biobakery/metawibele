@@ -459,6 +459,8 @@ for item in tmp:
 		continue
 	if item == "Pfam":
 		item = "PfamDomain"
+	if item == "COILS":
+		item = "Coils"
 	if item == "SignalP":
 		item = "signalp.signaling"
 	if item == "TMHMM":

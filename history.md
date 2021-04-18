@@ -7,6 +7,7 @@
 * Fixed option setting for interproscan
 * Added option for FDR correction
 * Fixed issue when preprocessing contigs
+* Fixed warnings when summarizing interproscan output
 
 ## v0.3.8 2020-10-02 ##
 * Added bowtie2 options "--very-sensitive"
