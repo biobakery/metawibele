@@ -97,7 +97,7 @@ def read_config_file (conf_file):
 	Output: evidence_conf = {signaling:1, interaction:1, extracellular:1 ...}
 	"""
 
-	print('read_config_file')
+	config.logger.info ("Start read_config_file")
 
 	config_items = config.read_user_edit_config_file(conf_file)
 	required_conf = {}
@@ -112,7 +112,7 @@ def read_config_file (conf_file):
 			if name == "vignettes" or name == "clusters":
 				if myvalue.lower() == "none":
 					continue
-				print("Required filtering item: " + name + "\t" + myvalue)
+				config.logger.info ("Required filtering item: " + name + "\t" + myvalue)
 				required_conf[name] = myvalue
 				if name == "vignettes":
 					specific_annotation[myvalue] = ""
@@ -120,16 +120,18 @@ def read_config_file (conf_file):
 					specific_cluster[myvalue] = ""
 			else:
 				if not myvalue in values:
-					print("Please use valid value for the config item " + name + ": e.g. required | optional | none")
+					config.logger.info ("WARNING! Please use valid value for the config item " + name + ": e.g. required | optional | none")
 					continue
 				if myvalue.lower() == "none":
 					continue
 				if myvalue.lower()  == "required":
-					print("Required filtering item: " + name + "\t" + myvalue)
+					config.logger.info ("Required filtering item: " + name + "\t" + myvalue)
 					required_conf[name] = myvalue
 				if myvalue.lower() == "optional": 
-					print("Optional filtering item: " + name + "\t" + myvalue)
+					config.logger.info ("Optional filtering item: " + name + "\t" + myvalue)
 					optional_conf[name] = myvalue
+
+	config.logger.info ("Finish read_config_file")
 
 	return required_conf, optional_conf, specific_annotation, specific_cluster
 
@@ -140,7 +142,7 @@ def read_vignettes_file (vignettes_file, specific_annotation):
 	Input: vignettes filename
 	Output: vignettes = [ann1, ann2, ann3, ..]
 	"""
-	print('read_vignettes_file')
+	config.logger.info ("Start read_vignettes_file")
 
 	vignettes = {}
 	titles = {}
@@ -160,11 +162,13 @@ def read_vignettes_file (vignettes_file, specific_annotation):
 			continue
 		if not "annotation" in titles:
 			# debug
-			print("No annotation info!\t" + line)
+			config.logger.info ("WARNING! No annotation info!\t" + line)
 			continue
 		myid = info[titles["annotation"]]
 		vignettes[myid] = ""
 	# foreach line
+
+	config.logger.info ("Finish read_vignettes_file")
 
 	return vignettes
 
@@ -176,14 +180,14 @@ def read_cluster_file (specific_cluster):
 	Output: clusters = [ann1, ann2, ann3, ..]
 	"""
 
-	print('read_cluster_file')
+	config.logger.info ("Start read_cluster_file")
 
 	cluster = {}
 	titles = {}
 	for myfile in specific_cluster.keys():
 		if not myfile.exists():
 			# debug
-			print("File not exist!\t" + myfile)
+			config.logger.info ("ERROR! File not exist: " + myfile)
 			continue
 		open_file = open(myfile, "r")
 		line = open_file.readline()
@@ -204,8 +208,9 @@ def read_cluster_file (specific_cluster):
 		open_file.close()
 	# foreach file
 
-	return cluster
+	config.logger.info("Finish read_cluster_file")
 
+	return cluster
 
 
 def read_annotation_file (ann_file, required_conf, optional_conf, specific_ann, specific_cluster):
@@ -215,7 +220,7 @@ def read_annotation_file (ann_file, required_conf, optional_conf, specific_ann, 
 	Output: ann_score = {Cluster_XYZ: 3, ...}
 	"""
 
-	print('read_annotation_file')
+	config.logger.info ("Start read_annotation_file")
 
 	ann = {}
 	ann_types = {}
@@ -292,6 +297,8 @@ def read_annotation_file (ann_file, required_conf, optional_conf, specific_ann, 
 		if myid in cluster2:
 			cluster[myid] = ""
 
+	config.logger.info ("Finish read_annotation_file")
+
 	return cluster
 
 
@@ -303,7 +310,7 @@ def filter_prioritization (priority_file, cluster, outfile):
 	Output: prioritized list after filtering
 	"""
 
-	print('filter_prioritization')
+	config.logger.info ("Start filter_prioritization")
 
 	open_file = open(priority_file, "r")
 	open_out = open(outfile, "w")
@@ -328,6 +335,8 @@ def filter_prioritization (priority_file, cluster, outfile):
 	open_file.close()
 	open_out.close()
 
+	config.logger.info ("Finish filter_prioritization")
+
 
 def main():
 	args_value = parse_arguments()
@@ -337,20 +346,20 @@ def main():
 		vignettes_database = args_value.function
 
 	if config.verbose == 'DEBUG':
-		print ("--- Collect config information ---")
+		config.logger.info ("--- Collect config information ---")
 	required_conf, optional_conf, specific_annotation, specific_cluster = read_config_file (args_value.config)
 	spe_ann = read_vignettes_file (vignettes_database, specific_annotation)
 	spe_cluster = read_cluster_file (specific_cluster)
 	clusters = read_annotation_file (args_value.annotation, required_conf, optional_conf, spe_ann, spe_cluster)
 
 	if config.verbose == 'DEBUG':
-		print ("--- Filter for subset of prioritized protein families ---")
+		config.logger.info ("--- Filter for subset of prioritized protein families ---")
 	filter_prioritization (args_value.priority, clusters, args_value.outfile)
 
 
 	if config.verbose == 'DEBUG':
-		print ("--- The filter_prioritization output is written in %s ..." % (args_value.outfile))
-		print ("--- Prioritization-filter process is successfully completed ---")
+		config.logger.info ("--- The filter_prioritization output is written in %s ..." % (args_value.outfile))
+		config.logger.info ("--- Prioritization-filter process is successfully completed ---")
 
 
 if __name__ == '__main__':

@@ -144,7 +144,7 @@ def assign_uniref_info (ann_file, msp_file, taxa_map, taxa_level, outfile):
 					info[titles["taxa_lineage"]] = taxa_lineage
 				else:
 					# debug
-					print("No taxon info for this taxon name!\t" + myname)
+					config.logger.info ("WARNING! No taxon info for this taxon name: " + myname)
 		# if taxa_level
 		line = "\t".join(info)
 		anns[myid] = line
@@ -172,7 +172,7 @@ def assign_uniref_info (ann_file, msp_file, taxa_map, taxa_level, outfile):
 			open_out.write(mystr + "\n")
 		else:
 			# debug
-			print("No corresponding unref annotation info!\t" + myid)
+			config.logger.info ("WARNING! No corresponding unref annotation info: " + myid)
 			#open_out.write(line + "\n")
 	# foreach line
 	open_out.close()
@@ -188,18 +188,16 @@ def main():
 	### get arguments ###
 	values = get_args ()
 
-	sys.stderr.write("### Start mspminer_msp_uniref_annotation.py -i " + values.msp + " ####\n")
-	
+	config.logger.info ("### Start mspminer_msp_uniref_annotation step ####")
 
 	### collect cluster info ###
-	sys.stderr.write("Get info ......starting\n")
+	config.logger.info ("Get info ......starting")
 	taxa_level = "no"
 	taxa_map = collect_taxonomy_info (config.taxonomy_database)
 	assign_uniref_info (values.annotation, values.msp, taxa_map, taxa_level, values.output)
-	sys.stderr.write("Get info ......done\n")
+	config.logger.info ("Get info ......done")
 
-
-	sys.stderr.write("### Finish mspminer_msp_uniref_annotation.py ####\n\n\n")
+	config.logger.info ("### Finish mspminer_msp_uniref_annotation step ####")
 
 # end: main
 

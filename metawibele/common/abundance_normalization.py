@@ -33,7 +33,7 @@ import argparse
 
 try:
 	from metawibele.common import utils
-	#import utils
+	from metawibele import config
 except ImportError:
 	sys.exit("CRITICAL ERROR: Unable to find the MetaWIBELE python package." +
 	         " Please check your install.")
@@ -95,7 +95,7 @@ def normalize(table, method, levelwise, special=True):
 		test = [rowhead.split( util.c_strat_delim )[0] not in c_special for rowhead in table.rowheads]
 		for flag, rowhead in zip( test, table.rowheads ):
 			if not flag:
-				print( "Excluding special feature:" + rowhead )
+				config.logger.info ( "Excluding special feature:" + rowhead )
 		table.rowheads = [rowhead for i, rowhead in enumerate( table.rowheads ) if test[i]]
 		table.data = [row for i, row in enumerate( table.data ) if test[i]]
 	
@@ -115,7 +115,7 @@ def normalize(table, method, levelwise, special=True):
 			if total == 0:
 				#totals[j] = 1
 				totals_by_level[level][j] = 1
-				print("WARNING: Column {} ({}) has zero sum at level {}".format(j + 1, table.colheads[j], level))
+				config.logger.info ("WARNING: Column {} ({}) has zero sum at level {}".format(j + 1, table.colheads[j], level))
 	
 	# compute totals by delim taxon
 	totals_by_taxon = {}

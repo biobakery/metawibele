@@ -30,6 +30,13 @@ import os
 import re
 import argparse
 
+try:
+	from metawibele import config
+except ImportError:
+	sys.exit("CRITICAL ERROR: Unable to find the MetaWIBELE python package." +
+	         " Please check your install.")
+
+
 #==============================================================
 # collect protein coding IDs
 #==============================================================
@@ -88,20 +95,19 @@ def main():
 	parser.add_argument('-o', help='output protein coding nucleotide sequence file', required=True)
 	values=parser.parse_args()
 
-
-	sys.stderr.write("### Start extract_protein_coding_genes.py -g " + values.g + " ####\n")
+	config.logger.info ("### Start extract_protein_coding_genes step ####")
 	
 	### collect sequence id info ###
-	sys.stderr.write("Get seq id info ......starting\n")
+	config.logger.info ("Get seq id info ......starting")
 	seqid = collect_seq_id (values.p)
-	sys.stderr.write("Get seq id info ......done\n")
+	config.logger.info ("Get seq id info ......done")
 	
 	### Output protein coding gene nuclotide sequence
-	sys.stderr.write("\nOutput sequence info ......starting\n")
+	config.logger.info ("Output sequence info ......starting")
 	output_info (values.g, seqid, values.o)
-	sys.stderr.write("Output sequence info ......done\n")
+	config.logger.info ("Output sequence info ......done")
 
-	sys.stderr.write("### Finish extract_protein_coding_genes.py ####\n\n\n")
+	config.logger.info ("### Finish extract_protein_coding_genes step ####")
 
 # end: main
 

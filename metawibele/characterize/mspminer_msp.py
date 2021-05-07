@@ -31,6 +31,11 @@ import os.path
 import re
 import argparse
 
+try:
+	from metawibele import config
+except ImportError:
+	sys.exit("CRITICAL ERROR: Unable to find the MetaWIBELE python package." +
+	         " Please check your install.")
 
 # ---------------------------------------------------------------
 # Description and arguments
@@ -165,18 +170,15 @@ def main():
 	### get arguments ###
 	values = get_args ()
 
-
-	sys.stderr.write("### Start mspminer_msp.py -a " + values.annotation + " ####\n")
-	
+	config.logger.info ("### Start mspminer_msp step ####")
 
 	### collect cluster info ###
-	sys.stderr.write("Get info ......starting\n")
+	config.logger.info ("Get info ......starting")
 	uniref = collect_uniref_info (values.annotation)
 	collect_msp_info (values.msp_dir, uniref, values.output)
-	sys.stderr.write("Get info ......done\n")
+	config.logger.info ("Get info ......done")
 
-
-	sys.stderr.write("### Finish mspminer_msp.py ####\n\n\n")
+	config.logger.info ("### Finish mspminer_msp step ####")
 
 # end: main
 

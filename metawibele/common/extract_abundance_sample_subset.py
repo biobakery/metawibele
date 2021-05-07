@@ -32,6 +32,12 @@ import re
 import argparse
 import math
 
+try:
+	from metawibele import config
+except ImportError:
+	sys.exit("CRITICAL ERROR: Unable to find the MetaWIBELE python package." +
+	         " Please check your install.")
+
 def get_args():
 	parser = argparse.ArgumentParser()
 	parser.add_argument('-i', help='input abundance table file', required=True)
@@ -111,7 +117,7 @@ def extract_subset_info (raw_file, sample_file, outfile):
 
 	# debug
 	for mys in sorted(sample_flt.keys()):
-		print(mys)
+		config.logger.info (mys)
 # extract_subset_info
 
 
@@ -122,16 +128,14 @@ def main():
 	### get arguments ###
 	values = get_args()
 
-
-	sys.stderr.write("### Start extract_abundance_sample_subset.py -i " + values.i + " ####\n")
+	config.logger.info ("### Start extract_abundance_sample_subset step ####")
 	
 	### collect abundance info ###
-	sys.stderr.write("Get abundance info ......starting\n")
+	config.logger.info ("Get abundance info ......starting")
 	extract_subset_info (values.i, values.s, values.o)
-	sys.stderr.write("Get abundance info ......done\n")
-	
+	config.logger.info ("Get abundance info ......done")
 
-	sys.stderr.write("### Finish extract_abundance_sample_subset.py ####\n\n\n")
+	config.logger.info ("### Finish extract_abundance_sample_subset step ####")
 
 # end: main
 

@@ -30,13 +30,20 @@ import os
 import re
 import argparse
 
+try:
+	from metawibele import config
+except ImportError:
+	sys.exit("CRITICAL ERROR: Unable to find the MetaWIBELE python package." +
+	         " Please check your install.")
+
+
 #==============================================================
 # index with bowtie2
 #==============================================================
 def bowtie2_index (ref_seq, base_name):
-	print(">>Running botwie2 to index reference...")
+	config.logger.info (">>Running botwie2 to index reference...")
 	# Index reference sequences
-	print("bowtie2-build " + ref_seq + " " + base_name + "\n")
+	config.logger.info ("Run command: " + "bowtie2-build " + ref_seq + " " + base_name + "\n")
 	os.system("bowtie2-build " + ref_seq + " " + base_name)
 # function bowtie2_index
 
@@ -83,21 +90,20 @@ def main():
 	parser.add_argument('-o', help='the output file for simplified annotation file', required=True)
 	values=parser.parse_args()
 
-
-	sys.stderr.write("### Start gene_abundance_indexRef.py -r " + values.r + " ####\n")
+	config.logger.info ("### Start gene_abundance_indexRef step ####")
 	
 	### Index ###
-	sys.stderr.write("Bowtie2 index......starting\n")
+	config.logger.info ("Bowtie2 index......starting")
 	bowtie2_index (values.r, values.b) 
-	sys.stderr.write("Bowtie2 index......done\n")
+	config.logger.info ("Bowtie2 index......done")
 	
 	### Getting SAF ###
-	sys.stderr.write("\nExtract SAF info......starting\n")
+	config.logger.info ("Extract SAF info......starting")
 	if values.t == "gene":
 		extract_SAF_info_gene (values.r, values.o)
-	sys.stderr.write("\nExtract SAF info......done\n")
+	config.logger.info ("Extract SAF info......done")
 
-	sys.stderr.write("### Finish gene_abundance_indexRef.py ####\n\n\n")
+	config.logger.info ("### Finish gene_abundance_indexRef step ####")
 
 # end: main
 

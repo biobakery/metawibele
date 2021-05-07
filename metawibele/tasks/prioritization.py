@@ -74,6 +74,8 @@ def mandatory_prioritization (workflow, prioritization_conf,
 		workflow.go()
 	"""
 
+	config.logger.info("###### Start mandatory_prioritization module ######")
+
 	# get the clustering output files
 	priority_dir = output_folder
 	unsupervised_rank = os.path.join(priority_dir, config.basename + "_unsupervised_prioritization.rank.tsv")
@@ -106,6 +108,7 @@ def mandatory_prioritization (workflow, prioritization_conf,
 			args = [priority_dir, mylog],
 			cores = 1,
 			name = "quantify_prioritization__supervised")
+
 
 	return unsupervised_rank, supervised_rank
 
@@ -145,6 +148,8 @@ def optional_prioritization (workflow, prioritization_conf, interested_function,
 		workflow.go()
 	"""
 
+	config.logger.info("###### Start optional_prioritization module ######")
+
 	time_equation = config.time  # xxx hours defined in global config
 	mem_equation = config.memory  # xxx GB defined in global config
 
@@ -162,6 +167,7 @@ def optional_prioritization (workflow, prioritization_conf, interested_function,
 			args = [interested_function, mylog],
 			cores = 1,
 			name = "filter_prioritization")
+
 
 	return selected_priority
 
@@ -202,6 +208,9 @@ def finalize_prioritization (workflow,
 		# run the workflow
 		workflow.go()
 	"""
+
+	config.logger.info("###### Start finalize_prioritization module ######")
+
 	time_equation = config.time  # xxx hours defined in global config
 	mem_equation = config.memory  # xxx GB defined in global config
 

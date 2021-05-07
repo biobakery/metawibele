@@ -409,11 +409,11 @@ def assign_annotation (identity_cutoff, coverage_cutoff, cluster, uniref, anns, 
 				if "UniRef90_unknown" in ann_type[myclust]:
 					if mytype == "UniRef90_characterized":
 						# debug
-						print("Change characterized type to unknown!\t" + myclust)
+						config.logger.info ("Change characterized type to unknown!\t" + myclust)
 						mytype = "UniRef90_weak_homology"
 					if mytype == "UniRef90_uncharacterized":
 						# debug
-						print("Change uncharacterized type to unknown!\t" + myclust)
+						config.logger.info ("Change uncharacterized type to unknown!\t" + myclust)
 						mytype = "UniRef90_weak_homology"
 				if mytype == "UniRef90_weak_homology":
 					anns[myclust] = mystr
@@ -516,10 +516,10 @@ def assign_annotation (identity_cutoff, coverage_cutoff, cluster, uniref, anns, 
 						taxa_rank = myl
 						open_out2.write(pre_line + "\t" + taxa_id + "\t" + taxa_name + "\t" + taxa_rank + "\t" + taxa_lineage + "\t" + mynote + "\n")
 			else:
-				print("No uniref ID info!\t" + myclust)
+				config.logger.info ("WARNING! No uniref ID info!\t" + myclust)
 		# cluster name
 		else:
-			print("No cluster info!\t" + myclust)
+			config.logger.info ("WARNING! No cluster info!\t" + myclust)
 	# foreach peptide cluster
 	open_out.close()	
 	open_out2.close()	
@@ -541,22 +541,22 @@ def main():
 		mystudy = values.study
 
 
-	sys.stderr.write("### Start summary_protein_uniref_annotation.py -a " + values.annotation + " ####\n")
+	config.logger.info ("### Start summary_protein_uniref_annotation step ####")
 
 	### collect cluster info ###
-	sys.stderr.write("Get info ......starting\n")
+	config.logger.info ("Get info ......starting")
 	pep_cluster = collect_pep_cluster_info (myfamily)
 	anns, ann_type, hits, uniref_taxa, taxa_hits = collect_ann_info (values.annotation, values.type)
 	taxa, taxa_map = collect_taxonomy_info (config.taxonomy_database, taxa_hits)
 	uniref = collect_uniref_mapping_info (values.mapping, uniref_taxa, taxa, taxa_map)
-	sys.stderr.write("Get info ......done\n")
+	config.logger.info ("Get info ......done")
 
 	### assign annotation to peptide families ###
-	sys.stderr.write("\nAssign annotation to peptide families ......starting\n")
+	config.logger.info ("Assign annotation to peptide families ......starting")
 	assign_annotation (config.tshld_identity, config.tshld_coverage, pep_cluster, uniref, anns, ann_type, taxa, taxa_map, mystudy, values.output)
-	sys.stderr.write("\nAssign annotation to peptide families ......done\n")
+	config.logger.info ("Assign annotation to peptide families ......done")
 
-	sys.stderr.write("### Finish summary_protein_uniref_annotation.py ####\n\n\n")
+	config.logger.info ("### Finish summary_protein_uniref_annotation step ####")
 
 # end: main
 

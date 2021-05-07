@@ -50,7 +50,7 @@ def download_config(config_type, config_types):
 	"""
 	if config_type in config_types:
 		files = config_types[config_type].split(",")
-		print("Downloading template configuration files...")
+		config.logger.info ("Downloading template configuration files...")
 		for i in files:
 			file_location = os.path.join(config.config_directory, i)
 			if os.path.isfile(file_location):
@@ -60,9 +60,9 @@ def download_config(config_type, config_types):
 				if os.path.isfile(file_location):
 					os.system("cp " + file_location + " " + os.getcwd())
 				else:
-					print("The configuration file selected does not exist! " + file_location)
+					config.logger.info ("The configuration file selected does not exist! " + file_location)
 
-		print("\nFinished downloading configuration files!\n")
+		config.logger.info ("Successfully finished downloading configuration files!")
 	else:
 		sys.exit("ERROR: Please select an available type of configuration file.")
 

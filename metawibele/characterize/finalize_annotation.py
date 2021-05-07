@@ -203,7 +203,7 @@ def collect_annotation (list_file, source, mybase):
 		if re.search("^#", myfile):
 			continue
 		if not os.path.isfile(myfile):
-			print("File not exist!\t" + myfile)
+			config.logger.info ("ERROR! File not exist: " + myfile)
 			continue
 		open_file = open(myfile, "r")
 		mym = re.search(mybase + "_([\S]+)_proteinfamilies", os.path.basename(myfile))
@@ -236,7 +236,7 @@ def collect_annotation (list_file, source, mybase):
 			myindex = 3
 			while myindex < len(info):
 				if not myindex in titles_item:
-					print("No title item info!\t" + myfile + "\t" + myid + "\t" + str(myindex))
+					config.logger.info ("WARNING! No title item info: " + myfile + "\t" + myid + "\t" + str(myindex))
 					continue
 				myname = titles_item[myindex]
 				if mystr == "NA":
@@ -266,7 +266,7 @@ def output_attributes (line, mynum, output_fh):
 	for item in tmp2:
 		if not re.search("([^=]+)=([^=]+)", item):
 			# debug
-			print("Item with format error!\t" + myattr + "\t" + item)
+			config.logger.info ("WARNING! Item with format error: " + myattr + "\t" + item)
 			continue
 		mym = re.search("([^=]+)=([^=]+)", item)
 		mykey = mym.group(1)
@@ -332,7 +332,7 @@ def finalize_annotation (source, pep_cluster, annotation, taxonomy, mapping, ann
 			
 			if not myclust in pep_cluster:
 				# debug
-				print("No cluster information!\t" + myclust)
+				config.logger.info ("WARNING! No cluster information: " + myclust)
 				mystr = myclust_new + "\t" + "NA" + "\t" + "protein_family" + "\t" + "Denovo_clustering" + "\t" + "CD-hit\tNA"
 				open_out.write(mystr + "\n")
 			else:
@@ -350,7 +350,7 @@ def finalize_annotation (source, pep_cluster, annotation, taxonomy, mapping, ann
 			# mapping info
 			if not myclust in mapping:
 				# debug
-				print("No taxonomy information!\t" + myclust)
+				config.logger.info ("WANING! No taxonomy information: " + myclust)
 				mystr = myclust_new + "\t" + "NA" + "\t" + "worse_homology" + "\t" + "UniRef90_homology" + "\t" + "UniRef90" + "\tNA"
 				open_out.write(mystr + "\n")
 			else:
@@ -441,27 +441,27 @@ def main():
 	if values.basename:
 		mybase = values.basename
 
-	sys.stderr.write("### Start finalize_annotation.py -l " + values.list + " ####\n")
+	config.logger.info ("### Start finalize_annotation step ####")
 	
 
 	### collect cluster info ###
-	sys.stderr.write("Get cluster info ......starting\n")
+	config.logger.info ("Get cluster info ......starting")
 	pep_cluster = collect_cluster_info (myfamily, values.source)
-	sys.stderr.write("Get cluster info ......done\n")
+	config.logger.info ("Get cluster info ......done")
 	
 	### collect annotation info ###
-	sys.stderr.write("Get annotation info ......starting\n")
+	config.logger.info ("Get annotation info ......starting")
 	annotation = collect_annotation (values.list, values.source, mybase)
 	taxonomy, mapping_tmp = collect_taxonomy_annotation (values.taxonomy)
 	taxonomy_tmp, mapping = collect_taxonomy_annotation (values.uniref)
-	sys.stderr.write("Get annotation info ......done\n")
+	config.logger.info ("Get annotation info ......done")
 
 	### finalize annotation for protein families ###
-	sys.stderr.write("\nFinalize annotation for prioritization families ......starting\n")
+	config.logger.info ("Finalize annotation for prioritization families ......starting")
 	finalize_annotation (values.source, pep_cluster, annotation, taxonomy, mapping, values.annotation, values.output)
-	sys.stderr.write("\nFinalize annotation for prioritization families ......done\n")
+	config.logger.info ("Finalize annotation for prioritization families ......done")
 
-	sys.stderr.write("### Finish finalize_annotation.py ####\n\n\n")
+	config.logger.info ("### Finish finalize_annotation step ####")
 
 # end: main
 

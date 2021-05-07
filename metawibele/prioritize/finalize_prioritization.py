@@ -32,6 +32,7 @@ import argparse
 
 try:
 	from metawibele import utilities
+	from metawibele import config
 except ImportError:
 	sys.exit("CRITICAL ERROR: Unable to find the MetaWIBELE python package." +
 	         " Please check your install.")
@@ -132,16 +133,14 @@ def main():
 	### get arguments ###
 	values = get_args ()
 
-
-	sys.stderr.write("### Start finalize_prioritization.py -i " + values.input + " ####\n")
-
+	config.logger.info ("### Start finalize_prioritization step ####")
 
 	### finalize prioritization for peptide families ###
-	sys.stderr.write("\nFinalize prioritization for protein families ......starting\n")
+	config.logger.info ("Finalize prioritization for protein families ......starting")
 	finalize_prioritization (values.input, values.output)
-	sys.stderr.write("\nFinalize prioritization for protein families ......done\n")
+	config.logger.info ("Finalize prioritization for protein families ......done")
 
-	sys.stderr.write("### Finish finalize_prioritization.py ####\n\n\n")
+	config.logger.info ("### Finish finalize_prioritization step ####")
 
 # end: main
 

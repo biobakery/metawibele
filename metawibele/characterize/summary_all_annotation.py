@@ -31,6 +31,11 @@ import os.path
 import re
 import argparse
 
+try:
+	from metawibele import config
+except ImportError:
+	sys.exit("CRITICAL ERROR: Unable to find the MetaWIBELE python package." +
+	         " Please check your install.")
 
 # ---------------------------------------------------------------
 # Description and arguments
@@ -196,20 +201,20 @@ def main():
 	values = get_args ()
 
 
-	sys.stderr.write("### Start summary_all_annotation.py -a " + values.annotation + " ####\n")
+	config.logger.info ("### Start summary_all_annotation step ####")
 	
 
 	### collect annotation info ###
-	sys.stderr.write("Get annotation info ......starting\n")
+	config.logger.info ("Get annotation info ......starting")
 	anns, dna, rna, note = collect_function_info (values.annotation)
-	sys.stderr.write("Get annotation info ......done\n")
+	config.logger.info ("Get annotation info ......done")
 
 	### combine functional and taxonomic annotation
-	sys.stderr.write("\nCombine annotation......starting\n")
+	config.logger.info ("Combine annotation......starting")
 	combine_annotation (anns, dna, rna, note, values.taxonomy, values.output)
-	sys.stderr.write("\nCombine annotation......done\n")
+	config.logger.info ("Combine annotation......done")
 
-	sys.stderr.write("### Finish summary_all_annotation.py ####\n\n\n")
+	config.logger.info ("### Finish summary_all_annotation step ####")
 
 # end: main
 

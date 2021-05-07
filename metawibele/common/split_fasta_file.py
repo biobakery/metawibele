@@ -32,6 +32,11 @@ import os.path
 import re
 import argparse
 
+try:
+	from metawibele import config
+except ImportError:
+	sys.exit("CRITICAL ERROR: Unable to find the MetaWIBELE python package." +
+	         " Please check your install.")
 
 #==============================================================
 # split files
@@ -108,11 +113,11 @@ def main():
 	parser.add_argument('-l', help='output file of splited flags', required=True)
 	values=parser.parse_args()
 
-	sys.stderr.write("### Start split_fasta_file.py -i " + values.i + " ####\n")
+	config.logger.info ("### Start split_fasta_file step ####")
 
 	split_fasta_file (values.i, values.n, values.p, values.w, values.o, values.l)
 
-	sys.stderr.write("### Finish split_fasta_file.py ####\n\n\n")
+	config.logger.info ("### Finish split_fasta_file step ####")
 
 # end: main
 

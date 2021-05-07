@@ -30,6 +30,11 @@ import os
 import re
 import argparse
 
+try:
+	from metawibele import config
+except ImportError:
+	sys.exit("CRITICAL ERROR: Unable to find the MetaWIBELE python package." +
+	         " Please check your install.")
 
 # ---------------------------------------------------------------
 # Description and arguments
@@ -55,7 +60,7 @@ def get_args ():
 #==============================================================
 def bowtie2_mapping (work_dir, ref_seq, input_file, thread, sample):
 	# Prepare directory
-	print(">>Running botwie2...")
+	config.logger.info (">>Running botwie2...")
 	os.system("mkdir -p " + work_dir)
 	os.chdir(work_dir)
 
@@ -70,7 +75,7 @@ def bowtie2_mapping (work_dir, ref_seq, input_file, thread, sample):
 
 	# Mapping
 	sam = sample + ".sam"
-	print("bowtie2 -x " + base_name + " -U " + input_file + " --threads " + thread + " -S " + sam + "  --very-sensitive" + "\n") 
+	config.logger.info ("Run command: " + "bowtie2 -x " + base_name + " -U " + input_file + " --threads " + thread + " -S " + sam + " --very-sensitive" +  "\n")
 	os.system("bowtie2 -x " + base_name + " -U " + input_file + " --threads " + thread + " -S " + sam + " --very-sensitive") 
 	
 	return sam
@@ -90,10 +95,10 @@ def extract_count_info (work_dir, sam_file, ref_seq, thread):
 	flt_bam = re.sub(".sam", ".flt.bam", sam_file)
 	sort_bam = re.sub(".sam", ".sort.bam", sam_file)
 	#print("\n>>Filtering low mappping quality...")
-	print("samtools view -b " + sam_file + " > " + bam_file)
+	config.logger.info ("Run command:" + "samtools view -b " + sam_file + " > " + bam_file)
 	#print("samtools view -bq " + q_cutoff + " " + bam_file + " > " + flt_bam)
-	print("samtools sort " + bam_file + " -o " + sort_bam)
-	print("samtools index " + sort_bam)
+	config.logger.info ("Run command:" + "samtools sort " + bam_file + " -o " + sort_bam)
+	config.logger.info ("Run command:" + "samtools index " + sort_bam)
 	os.system("samtools view -b " + sam_file + " > " + bam_file)
 	#os.system("samtools view -bq " + q_cutoff + " " + bam_file + " > " + flt_bam)
 	os.system("samtools sort " + bam_file + " -o  " + sort_bam)
@@ -103,8 +108,8 @@ def extract_count_info (work_dir, sam_file, ref_seq, thread):
 
 	# Extract abundance
 	bed = re.sub(".bam", ".bed", sort_bam)
-	print("\n>>Get abundance...")
-	print("featureCounts -F SAF -T " + thread + " -a  " + ann_file +  " -o " +  bed + " " + sort_bam)	
+	config.logger.info (">>Get abundance...")
+	config.logger.info ("Run command:" + "featureCounts -F SAF -T " + thread + " -a  " + ann_file +  " -o " +  bed + " " + sort_bam)
 	os.system("featureCounts -F SAF -T " + thread + " -a " + ann_file +  " -o " +  bed + " " + sort_bam)	
 	#print("bedtools multicov -bams " + sort_bam + " -bed " + bed_file)	
 	#os.system("bedtools multicov -bams " + sort_bam + " -bed " + bed_file)	
@@ -118,19 +123,19 @@ def main():
 	### get arguments ###
 	values = get_args()
 
-	sys.stderr.write("### Start gene_abundance.py -r " + values.r + " ####\n")
+	config.logger.info ("### Start gene_abundance step ####")
 	
 	### Mapping ###
-	sys.stderr.write("Bowtie2 mapping......starting\n")
+	config.logger.info ("Bowtie2 mapping......starting")
 	sam_file = bowtie2_mapping (values.w, values.r, values.u, values.t, values.s)
-	sys.stderr.write("Bowtie2 mapping......done\n")
+	config.logger.info ("Bowtie2 mapping......done")
 	
 	### Getting abundance ###
-	sys.stderr.write("\nExtract gene abundance......starting\n")
+	config.logger.info ("Extract gene abundance......starting")
 	extract_count_info (values.w, sam_file, values.r, values.t)
-	sys.stderr.write("\nExtract gene abundance......done\n")
+	config.logger.info ("Extract gene abundance......done")
 	
-	sys.stderr.write("### Finish gene_abundance.py ####\n\n\n")
+	config.logger.info ("### Finish gene_abundance.py ####")
 
 # end: main
 

@@ -32,6 +32,7 @@ import argparse
 
 try:
 	from metawibele.common import utils
+	from metawibele import config
 except ImportError:
 	sys.exit("CRITICAL ERROR: Unable to find the MetaWIBELE python package." +
 			" Please check your install.")
@@ -43,7 +44,7 @@ except ImportError:
 def download_dat (output_path):
 	dat_file = os.path.join(output_path, "uniprot.dat.gz")
 	if os.path.isfile(dat_file):
-		print("Already exist file and skip this step: " + dat_file)
+		config.logger.info ("WARNING! Already exist file and skip this step: " + dat_file)
 		return dat_file
 
 	os.chdir(output_path)
@@ -77,10 +78,10 @@ def extract_annotation_info (datfile, output_path):
 		sys.exit("Error: please download the uniprot dat file!")
 	if os.path.isfile(outfile) and not os.path.isfile(outfile1):
 		os.system("gzip " + outfile)
-		print("Already exist file and skip this step: " + outfile1)
+		config.logger.info ("WARNING! Already exist file and skip this step: " + outfile1)
 		return outfile1
 	if os.path.isfile(outfile1):
-		print("Already exist file and skip this step: " + outfile1)
+		config.logger.info ("WARNING! Already exist file and skip this step: " + outfile1)
 		return outfile1
 	open_out = open(outfile, "w")
 	open_out.write(title + "\n")
@@ -327,18 +328,18 @@ def main():
 						required=True)
 	values=parser.parse_args()
 
-
-	sys.stderr.write("### Start prepare_uniprot_annotation.py -o " + values.output + " ####\n\n")
+	config.logger.info ("### Start prepare_uniprot_annotation step ####")
 	
 	### Extraction ###
-	sys.stderr.write("Download uniprot info......starting\n")
+	config.logger.info ("Download uniprot info......starting")
 	datfile = download_dat (values.output)
-	sys.stderr.write("Download uniprot info......done\n")
-	sys.stderr.write("Extract uniprot info......starting\n")
+	config.logger.info ("Download uniprot info......done")
+
+	config.logger.info ("Extract uniprot info......starting")
 	extract_annotation_info (datfile, values.output)
-	sys.stderr.write("Extract uniprot info......done\n\n")
+	config.logger.info ("Extract uniprot info......done")
 	
-	sys.stderr.write("### Finish  prepare_uniprot_annotation.py  ####\n\n")
+	config.logger.info ("### Finish prepare_uniprot_annotation step ####")
 
 # end: main
 

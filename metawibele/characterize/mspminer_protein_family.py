@@ -186,7 +186,7 @@ def assign_annotation (cutoff, pep_cluster, annotation, ann_title, assign_flag, 
 			clust_id = pep_cluster[pepid][member]
 			if not gene_id in annotation:	# no corresponding annotation
 				# debug
-				print("No MSP annotation info for the member!\t" + gene_id)
+				config.logger.info ("No MSP annotation info for the member: " + gene_id)
 				continue
 			for myall in annotation[gene_id]:
 				myid, myinfo, mynote = myall.split("\n")
@@ -525,25 +525,25 @@ def main():
 	if values.cluster:
 		myfamily = values.cluster
 
-	sys.stderr.write("### Start mspminer_protein_family.py -m " + values.msp + " ####\n")
+	config.logger.info ("### Start mspminer_protein_family step ####")
 	
 
 	### collect cluster info ###
-	sys.stderr.write("Get cluster info ......starting\n")
+	config.logger.info ("Get cluster info ......starting")
 	pep_cluster = collect_protein_cluster_info (myfamily)
-	sys.stderr.write("Get cluster info ......done\n")
+	config.logger.info ("Get cluster info ......done")
 	
 	### collect annotation info ###
-	sys.stderr.write("Get annotation info ......starting\n")
+	config.logger.info ("Get annotation info ......starting")
 	annotation, ann_title = collect_annotation(values.msp)
-	sys.stderr.write("Get annotation info ......done")
+	config.logger.info ("Get annotation info ......done")
 
 	### assign annotation to protein families ###
-	sys.stderr.write("\nAssign annotation to protein families ......starting\n")
+	config.logger.info ("Assign annotation to protein families ......starting")
 	assign_annotation (config.tshld_consistency, pep_cluster, annotation, ann_title, values.method, values.output)
-	sys.stderr.write("\nAssign annotation to protein families ......done\n")
+	config.logger.info ("Assign annotation to protein families ......done")
 
-	sys.stderr.write("### Finish mspminer_protein_family.py ####\n\n\n")
+	config.logger.info ("### Finish mspminer_protein_family step ####")
 
 # end: main
 

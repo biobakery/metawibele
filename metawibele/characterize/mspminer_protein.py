@@ -33,6 +33,7 @@ import argparse
 
 try:
 	from metawibele import utilities
+	from metawibele import config
 except ImportError:
 	sys.exit("CRITICAL ERROR: Unable to find the MetaWIBELE python package." +
 	         " Please check your install.")
@@ -164,7 +165,7 @@ def assign_msp (gene_file, msp, anns, outfile):
 				myann = anns[mymsp]
 			else:
 				# debug
-				print("No MSP annotation info!\t" + mymsp)
+				config.logger.info ("No MSP annotation info: " + mymsp)
 			mystr = myid + "\t" + mymsp + "\t" + myinfo + "\t" + myann
 			open_out.write(mystr + "\n")
 		else:	# not grouped into MSP
@@ -201,7 +202,7 @@ def assign_msp (gene_file, msp, anns, outfile):
 						mystr = tmp_line + "\tUniRef90_unclassified_MSP\t" + mymsp + "\t" + tmp1[2] + "\t" + tmp1[1]
 					else:
 						# debug
-						print("No MSP annotation info!\t" + mymsp)
+						config.logger.info ("No MSP annotation info: " + mymsp)
 						if info[titles["taxa_rank"]] == "Unclassified" or re.search("Kingdom", info[titles["taxa_rank"]]):	
 							info[titles["taxa_id"]] = "NA"
 							info[titles["taxa_name"]] = "NA"
@@ -232,7 +233,7 @@ def assign_msp (gene_file, msp, anns, outfile):
 					mystr = tmp_line + "\tUniRef90_unclassified_MSP\t" + mymsp + "\t" + tmp1[2] + "\t" + tmp1[1]
 				else:
 					# debug
-					print("No MSP annotation info!\t" + mymsp)
+					config.logger.info ("No MSP annotation info: " + mymsp)
 					info[titles["taxa_id"]] = "NA"
 					info[titles["taxa_name"]] = "NA"
 					info[titles["taxa_rank"]] = "Unclassified"
@@ -260,18 +261,16 @@ def main():
 	### get arguments ###
 	values = get_args ()
 
-	sys.stderr.write("### Start extract_MSPminer_annotation.py -a " + values.annotation + " ####\n")
-	
+	config.logger.info ("### Start extract_MSPminer_annotation step ####")
 
 	### collect cluster info ###
-	sys.stderr.write("Get info ......starting\n")
+	config.logger.info ("Get info ......starting")
 	anns = collect_taxonomy_info (values.annotation, values.type)
 	msp = collect_msp_info (values.msp)
 	assign_msp (values.gene, msp, anns, values.output)
-	sys.stderr.write("Get info ......done\n")
+	config.logger.info ("Get info ......done")
 
-
-	sys.stderr.write("### Finish extract_MSPminer_annotation.py ####\n\n\n")
+	config.logger.info ("### Finish extract_MSPminer_annotation step ####")
 
 # end: main
 

@@ -47,7 +47,7 @@ def download_seq (output_path, uniref_type):
 	uncomp_file = os.path.join(output_path, os.path.basename(uncomp_seq))
 	comp_file = os.path.join(output_path, os.path.basename(comp_seq))
 	if os.path.isfile(uncomp_file):
-		print("File exist and skipe this step: " + uncomp_file)
+		config.logger.info ("WARNING! File exist and skipe this step: " + uncomp_file)
 		return uncomp_file
 	if os.path.isfile(comp_file) and not os.path.isfile(uncomp_file):
 		os.sytem("gunzip " + comp_file)
@@ -274,7 +274,7 @@ def extract_info (ann_info, ann_title, seqfile, uniref_type, output_path):
 	if not os.path.isfile(seqfile):
 		sys.exit("Error: " + seqfile + " doesn't exit!")
 	if os.path.isfile(outfile1):
-		print("Already exist file and skip this step: " + outfile1)
+		config.logger.info ("WARNING! Already exist file and skip this step: " + outfile1)
 		return(outfile1)
 	if os.path.isfile(outfile) and not os.path.isfile(outfile1):
 		os.system("gzip " + outfile)
@@ -300,8 +300,6 @@ def extract_info (ann_info, ann_title, seqfile, uniref_type, output_path):
 				myrep = mym.group(6)
 				myann = "NA\tNA\tNA\tNA\tNA\tNA\tNA\tNA\tNA\tNA\tNA\tNA\tNA\tNA\tNA\tNA\tNA\tNA\tNA" 
 				if myrep in ann_info:
-					# debug
-					#print("Hit\t" + myrep)
 					myann = ann_info[myrep]
 				#ann[myid] = myid + "\t" + mytax + "\t" + mytaxID + "\t" + mydec + "\t" + myann
 				tmp = myann.split("\t")
@@ -333,7 +331,7 @@ def extract_info (ann_info, ann_title, seqfile, uniref_type, output_path):
 					mystr = myid + "\t" + mytax + "\t" + mytaxID + "\t" + mydec + "\t" + myann
 					open_out.write(mystr + "\n")
 				else:
-					print("Exception\t" + line)
+					config.logger.info ("WARNING! Exception\t" + line)
 		else:
 			continue
 	# foreach line
@@ -416,27 +414,28 @@ def main():
 	values=parser.parse_args()
 
 
-	sys.stderr.write("### Start prepare_uniref_annotation.py -o " + values.output + " ####\n")
+	config.logger.info ("### Start prepare_uniref_annotation step ####")
 	
 	### Extraction ###
-	sys.stderr.write("Download uniref sequences......starting\n")
+	config.logger.info ("Download uniref sequences......starting")
 	seqfile = download_seq (values.output, values.type)
-	sys.stderr.write("Download uniref sequences......done\n")
+	config.logger.info ("Download uniref sequences......done")
+
+	config.logger.info ("Collect uniprot annotations......starting")
 	maps = extract_mapping_info (config.taxonomy_database)
-	sys.stderr.write("Collect uniprot annotations......starting\n")
 	ann_info, ann_title = extract_annotation_info (values.output, maps)
-	sys.stderr.write("Collect uniprot annotations......done\n")
+	config.logger.info ("Collect uniprot annotations......done")
 	
 	### Output ###
-	sys.stderr.write("\nReport uniref combined info......starting\n")
+	config.logger.info ("Report uniref combined info......starting")
 	uniref_ann = extract_info (ann_info, ann_title, seqfile, values.type, values.output)
 	anns_info = {}
-	sys.stderr.write("\nReport uniref combined info......done\n")
-	sys.stderr.write("\nReport uniref mapping info......starting\n")
+	config.logger.info ("Report uniref combined info......done")
+	config.logger.info ("Report uniref mapping info......starting")
 	extract_uniref_maps (uniref_ann, values.type, values.output)
-	sys.stderr.write("\nReport uniref mapping info......done\n")
+	config.logger.info ("Report uniref mapping info......done")
 	
-	sys.stderr.write("### Finish prepare_uniref_annotation.py  ####\n\n\n")
+	config.logger.info ("### Finish prepare_uniref_annotation step ####")
 
 # end: main
 

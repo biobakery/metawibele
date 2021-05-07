@@ -117,7 +117,7 @@ def collect_DDI_info (cluster_mem, extension, ann_path, level, label, outfile):	
 	for myfile in filelist:
 		#myfile = ann_path + "/" + samplelist + "/" + samplelist + "." + suffix
 		if not os.path.isfile(myfile):
-			print ("File not exist!\t" + myfile)
+			config.logger.info ("ERROR! File not exist: " + myfile)
 			continue
 		open_file = open(myfile, "r")
 		for line in open_file.readlines():
@@ -204,8 +204,6 @@ def output_info (cutoff, cluster, cluster_id, DDIs, anns, level, assign_flag, la
 		number = {}
 		for myid in cluster[myclust].keys():
 			if myid in DDIs:
-				# debug
-				#print("Annotated member\t" + myclust + "\t" + myid)
 				for item in DDIs[myid].keys():
 					if not item in number:
 						number[item] = {}
@@ -373,23 +371,23 @@ def main():
 	if values.cluster:
 		myfamily = values.cluster
 
-	sys.stderr.write("### Start ddi_DOMINE_protein_family.py -p " + values.path + " ####\n")
+	config.logger.info ("### Start ddi_DOMINE_protein_family step ####")
 	
 	### collect sample info ###
-	sys.stderr.write("Get info ......starting\n")
+	config.logger.info ("Get info ......starting")
 	cluster, cluster_id, cluster_mem = collect_cluster_info (myfamily)
 
 	### collect annotation info and do stat ###
-	sys.stderr.write("Get pfam info ......starting\n")
+	config.logger.info ("Get pfam info ......starting")
 	DDIs, anns = collect_DDI_info (cluster_mem, values.extension, values.path, "HC", values.label, values.output)
-	sys.stderr.write("Get pfam info ......done\n")
+	config.logger.info ("Get pfam info ......done")
 	
 	### Output sample info
-	sys.stderr.write("\nOutput Pfam summary info ......starting\n")
+	config.logger.info ("Output Pfam summary info ......starting")
 	output_info (config.tshld_consistency, cluster, cluster_id, DDIs, anns, "HC", values.method, values.label, values.output)
-	sys.stderr.write("Output Pfam summary info ......done\n")
+	config.logger.info ("Output Pfam summary info ......done")
 
-	sys.stderr.write("### Finish ddi_DOMINE_protein_family.py ####\n\n\n")
+	config.logger.info ("### Finish ddi_DOMINE_protein_family step ####")
 
 # end: main
 

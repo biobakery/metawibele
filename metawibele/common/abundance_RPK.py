@@ -124,7 +124,7 @@ def normalization (cluster, abun_file, outfile):	# summary_peptide_family_abunda
 		# if exist cluster length info
 		else:
 			# debug
-			print("No length info!\t" + myclust)
+			config.logger.info ("WARNING! No length info!\t" + myclust)
 	# foreach line
 	open_file.close()
 	open_out.close()
@@ -139,22 +139,19 @@ def main():
 	### get arguments ###
 	values = get_args ()
 
-
-	sys.stderr.write("### Start abundance_RPK.py -i " + values.i + " ####\n")
-	
+	config.logger.info ("### Start abundance_RPK step ####")
 
 	### collect cluster info ###
-	sys.stderr.write("Get cluster info ......starting\n")
+	config.logger.info ("Get cluster info ......starting")
 	cluster = collect_cluster_info (values.l, values.t)
-	sys.stderr.write("Get cluster info ......done\n")
+	config.logger.info ("Get cluster info ......done")
 	
 	### normalization ###
-	sys.stderr.write("Normalize abundance......starting\n")
+	config.logger.info ("Normalize abundance......starting")
 	normalization (cluster, values.i, values.o)
-	sys.stderr.write("Normalizae abundance......done\n")
+	config.logger.info ("Normalizae abundance......done")
 
-
-	sys.stderr.write("### Finish abundance_RPK.py ####\n\n\n")
+	config.logger.info ("### Finish abundance_RPK step ####")
 
 # end: main
 

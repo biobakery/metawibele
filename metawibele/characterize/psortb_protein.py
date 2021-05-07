@@ -34,6 +34,7 @@ import argparse
 
 try:
 	from metawibele import utilities
+	from metawibele import contig
 except ImportError:
 	sys.exit("CRITICAL ERROR: Unable to find the MetaWIBELE python package." +
 	         " Please check your install.")
@@ -68,9 +69,9 @@ def extract_psortb_info (extension, psortb_path):
 		# gram+
 		#myfile = psortb_path + "/" + samplelist + "/" + samplelist + ".psortb.gram_positive.out.txt"
 		if not os.path.isfile(myfile):
-			print ("File not exist!\t" + myfile)
+			config.logger.info ("ERROR! File not exist: " + myfile)
 		else:
-			print ("OK!\t" + myfile)
+			config.logger.info ("OK!\t" + myfile)
 			open_file = open(myfile, "r")
 			myid = ""
 			out_p = []
@@ -123,9 +124,9 @@ def extract_psortb_info (extension, psortb_path):
 		#myfile = psortb_path + "/" + samplelist + "/" + samplelist + ".psortb.gram_negtive.out.txt"
 		myfile1 = re.sub("psortb.gram_positive.out.txt", "psortb.gram_negative.out.txt", myfile)
 		if not os.path.isfile(myfile1):
-			print ("File not exist!\t" + myfile1)
+			config.logger.info ("ERROR! File not exist: " + myfile1)
 		else:
-			print ("OK!\t" + myfile1)
+			config.logger.info ("OK!\t" + myfile1)
 			open_file = open(myfile1, "r")
 			out_n = []
 			myid = ""
@@ -179,9 +180,9 @@ def extract_psortb_info (extension, psortb_path):
 		#myfile = psortb_path + "/" + samplelist + "/" + samplelist + ".psortb.archaea.out.txt"
 		myfile1 = re.sub("psortb.gram_positive.out.txt", "psortb.archaea.out.txt", myfile)
 		if not os.path.isfile(myfile1):
-			print ("File not exist!\t" + myfile1)
+			config.logger.info ("ERROR! File not exist: " + myfile1)
 			continue
-		print ("OK!\t" + myfile1)
+		config.logger.info("OK!\t" + myfile1)
 		open_file = open(myfile1, "r")
 		myid = ""
 		out_a = []
@@ -239,14 +240,14 @@ def main():
 	values = get_args()
 
 
-	sys.stderr.write("### Start psortb_protein.py -p " + values.path + " ####\n")
+	config.logger.info ("### Start psortb_protein step ####")
 	
 	### collect PSORTb info ###
-	sys.stderr.write("Get localization info ......starting\n")
+	config.logger.info ("Get localization info ......starting")
 	extract_psortb_info (values.extension, values.path)
-	sys.stderr.write("Get localization info ......done\n")
+	config.logger.info ("Get localization info ......done")
 
-	sys.stderr.write("### Finish psortb_protein.py ####\n\n\n")
+	config.logger.info ("### Finish psortb_protein step ####")
 
 # end: main
 

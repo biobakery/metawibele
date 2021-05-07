@@ -32,6 +32,12 @@ import re
 import argparse
 import math
 
+try:
+	from metawibele import config
+except ImportError:
+	sys.exit("CRITICAL ERROR: Unable to find the MetaWIBELE python package." +
+	         " Please check your install.")
+
 # ---------------------------------------------------------------
 # Description and arguments
 # ---------------------------------------------------------------
@@ -107,17 +113,14 @@ def main():
 	### get arguments ###
 	values = get_args ()
 
+	config.logger.info ("### Start filter_prevalence step ####")
 
-	sys.stderr.write("### Start filter_prevalence.py -a " + values.a + " ####\n")
-	
-	
 	### filter info ###
-	sys.stderr.write("Filter info ......starting\n")
+	config.logger.info ("Filter info ......starting")
 	filter_feature (values.f, values.a, values.o)
-	sys.stderr.write("Filter info ......done\n")
+	config.logger.info ("Filter info ......done")
 
-
-	sys.stderr.write("### Finish filter_prevalence.py ####\n\n\n")
+	config.logger.info ("### Finish filter_prevalence step ####")
 
 # end: main
 

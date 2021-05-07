@@ -340,7 +340,7 @@ def assign_annotation (identity_cutoff, coverage_cutoff, cutoff, pep_cluster, an
 			maps_num[myt][pepid] = ""
 		else:
 			# debug
-			print("No UniRef90 mapping info!\t" + pepid)
+			config.logger.info ("No UniRef90 mapping info!\t" + pepid)
 			myt = "UniRef90_worse_homology"
 			myp = "NA"
 			if not myt in maps_num:
@@ -357,7 +357,7 @@ def assign_annotation (identity_cutoff, coverage_cutoff, cutoff, pep_cluster, an
 			clust_id = pep_cluster[pepid][member]
 			if not gene_id in annotation:	# no corresponding annotation
 				# debug
-				print("No UniRef90 mapping info for the member!\t" + gene_id)
+				config.logger.info ("No UniRef90 mapping info for the member!\t" + gene_id)
 				continue
 			for myall in annotation[gene_id]:
 				myid, myinfo = myall.split("\n")
@@ -542,27 +542,25 @@ def main():
 	if values.cluster:
 		myfamily = values.cluster
 
-
-	sys.stderr.write("### Start uniref_protein_family.py -m " + values.mapping + " ####\n")
-	
+	config.logger.info ("### Start uniref_protein_family step ####")
 
 	### collect cluster info ###
-	sys.stderr.write("Get cluster info ......starting\n")
+	config.logger.info ("Get cluster info ......starting")
 	pep_cluster = collect_peptide_cluster_info (myfamily)
-	sys.stderr.write("Get cluster info ......done\n")
+	config.logger.info ("Get cluster info ......done")
 	
 	### collect annotation info ###
-	sys.stderr.write("Get annotation info ......starting\n")
+	config.logger.info ("Get annotation info ......starting")
 	maps = collect_uniref_mapping(values.mapping)
 	annotation, uniref_type, ann_title = collect_annotation(values.protein_annotation)
-	sys.stderr.write("Get annotation info ......done")
+	config.logger.info ("Get annotation info ......done")
 
 	### assign annotation to peptide families ###
-	sys.stderr.write("\nAssign annotation to peptide families ......starting\n")
+	config.logger.info ("Assign annotation to peptide families ......starting")
 	assign_annotation (config.tshld_identity, config.tshld_coverage, config.tshld_consistency, pep_cluster, annotation, uniref_type, ann_title, maps, values.method, values.output)
-	sys.stderr.write("\nAssign annotation to peptide families ......done\n")
+	config.logger.info ("Assign annotation to peptide families ......done")
 
-	sys.stderr.write("### Finish uniref_protein_family.py ####\n\n\n")
+	config.logger.info ("### Finish uniref_protein_family step ####")
 
 # end: main
 

@@ -183,20 +183,20 @@ def main():
 	if values.cluster:
 		myfamily = values.cluster
 
-	sys.stderr.write("### Start sum_to_protein_family_abundance.py -i " + values.i + " ####\n")
+	config.logger.info ("### Start sum_to_protein_family_abundance step ####")
 	
 
 	### collect cluster info ###
-	sys.stderr.write("Get cluster info ......starting\n")
+	config.logger.info  ("Get cluster info ......starting")
 	pep_cluster = collect_protein_cluster_info (myfamily)
-	sys.stderr.write("Get cluster info ......done\n")
+	config.logger.info ("Get cluster info ......done")
 
 	### assign counts to protein families ###
-	sys.stderr.write("\nAssign counts to protein families ......starting\n")
+	config.logger.info ("Assign counts to protein families ......starting")
 	assign_counts (pep_cluster, values.t, values.i, values.o)
-	sys.stderr.write("\nAssign counts to protein families ......done\n")
+	config.logger.info ("Assign counts to protein families ......done")
 
-	sys.stderr.write("### Finish sum_to_protein_family_abundance.py ####\n\n\n")
+	config.logger.info ("### Finish sum_to_protein_family_abundance step ####")
 
 # end: main
 

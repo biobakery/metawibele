@@ -93,7 +93,7 @@ class ReportHook():
 		if blocknum == 0:
 			self.start_time = time.time()
 			if total_size > 0:
-				print("Downloading file of size: " + "{:.2f}".format(byte_to_gigabyte(total_size)) + " GB\n")
+				config.logger.info ("Downloading file of size: " + "{:.2f}".format(byte_to_gigabyte(total_size)) + " GB\n")
 		else:
 			total_downloaded = blocknum * block_size
 			status = "{:3.2f} GB ".format(byte_to_gigabyte(total_downloaded))
@@ -118,12 +118,12 @@ def download_file(url, filename, folder):
 	Download the file at the url
 	"""
 
-	print("Download URL: " + url)
+	config.logger.info ("Download URL: " + url)
 
 	try:
 		#url_handle = urlretrieve(url, filename, reporthook=ReportHook().report)
 		os.system("wget " + url + " --no-check-certificate ")
-		print("\nExtracting: " + filename)
+		config.logger.info ("Extracting: " + filename)
 		os.system("tar zxf " + filename)
 		#tarfile_handle = tarfile.open(filename)
 		#tarfile_handle.extractall(path=folder)
@@ -140,7 +140,7 @@ def download_database(database, db_type, location):
 		if db_type in current_downloads[database]:
 			if not os.path.isdir(location):
 				try:
-					print("Creating directory to install database: " + location)
+					config.logger.info ("Creating directory to install database: " + location)
 					os.mkdir(location)
 				except EnvironmentError:
 					sys.exit("CRITICAL ERROR: Unable to create directory: " + location)
@@ -153,9 +153,9 @@ def download_database(database, db_type, location):
 			try:
 				os.unlink(downloaded_file)
 			except EnvironmentError:
-				print("Unable to remove file: " + downloaded_file)
+				config.logger.info ("ERROR! Unable to remove file: " + downloaded_file)
 
-			print("\nDatabase installed: " + location + "\n")
+			config.logger.info ("Successfully installed database into the location: " + location + "\n")
 		else:
 			sys.exit("ERROR: Please select an available database type.")
 	else:

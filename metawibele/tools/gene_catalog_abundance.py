@@ -105,7 +105,7 @@ def collect_counts(map_path, extension, gene_cluster):
 		sample = mym.group(1)
 		sample = re.sub("." + extension, "", sample)
 		if not os.path.isfile(myfile):
-			print("File not exist!\t" + myfile)
+			config.logger.info ("ERROR! File not exist: " + myfile)
 			continue
 		mysample[sample] = ""
 		open_file = open(myfile, "r")
@@ -162,25 +162,25 @@ def main():
 	### get arguments ###
 	values = get_args()
 
-	sys.stderr.write("### Start gene_catalog_abundance.py -p " + values.p + " ####\n")
+	config.logger.info ("#### Start gene_catalog_abundance step ####")
 
 
 	### collect cluster info ###
-	sys.stderr.write("Get cluster info ......starting\n")
+	config.logger.info ("Get cluster info ......starting")
 	gene_cluster = collect_gene_cluster_info (values.c)
-	sys.stderr.write("Get cluster info ......done\n")
+	config.logger.info ("Get cluster info ......done")
 	
 	### collect counts info ###
-	sys.stderr.write("Get counts info ......starting\n")
+	config.logger.info ("Get counts info ......starting")
 	counts, samples = collect_counts(values.p, values.s, gene_cluster)
-	sys.stderr.write("Get counts info ......done\n")
+	config.logger.info ("Get counts info ......done")
 
 	### assign counts to peptide families ###
-	sys.stderr.write("\nAssign counts to peptide families ......starting\n")
+	config.logger.info ("Assign counts to peptide families ......starting")
 	assign_counts (counts, samples, values.o)
-	sys.stderr.write("\nAssign counts to peptide families ......done\n")
+	config.logger.info ("Assign counts to peptide families ......done")
 
-	sys.stderr.write("### Finish gene_catalog_abundance.py ####\n\n\n")
+	config.logger.info ("### Finish gene_catalog_abundance step ####")
 
 # end: main
 

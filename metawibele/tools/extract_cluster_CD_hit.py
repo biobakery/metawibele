@@ -31,6 +31,13 @@ import os.path
 import re
 import argparse
 
+try:
+	from metawibele import config
+except ImportError:
+	sys.exit("CRITICAL ERROR: Unable to find the MetaWIBELE python package." +
+	         " Please check your install.")
+
+
 #==============================================================
 # collect clustering info
 #==============================================================
@@ -38,7 +45,7 @@ def collect_clustering_info (clust_file):	# combined_genes.sorted.centroid.fna.c
 	cluster = {}
 	length = {}
 	if not os.path.isfile(clust_file):
-		print ("File not exist!\t" + clust_file)
+		config.logger.info ("ERROR! File not exist: " + clust_file)
 	else:
 		open_file = open(clust_file, "r")
 		myclust = ""
@@ -121,19 +128,19 @@ def main():
 	values=parser.parse_args()
 
 
-	sys.stderr.write("### Start extract_cluster_CD_hit.py -c " + values.c + " ####\n")
+	config.logger.info ("### Start extract_cluster_CD_hit step ####")
 	
 	### collect clustering info ###
-	sys.stderr.write("Get cluster info ......starting\n")
+	config.logger.info ("Get cluster info ......starting")
 	cluster, length = collect_clustering_info (values.c)
-	sys.stderr.write("Get cluster info ......done\n")
+	config.logger.info ("Get cluster info ......done")
 	
 	### Output summary info
-	sys.stderr.write("\nOutput clustering summary info ......starting\n")
+	config.logger.info ("Output clustering summary info ......starting")
 	output_info (cluster, length, values.o)
-	sys.stderr.write("Output clustering summary info ......done\n")
+	config.logger.info ("Output clustering summary info ......done")
 
-	sys.stderr.write("### Finish extract_cluster_CD_hit.py ####\n\n\n")
+	config.logger.info ("### Finish extract_cluster_CD_hit step ####")
 
 # end: main
 

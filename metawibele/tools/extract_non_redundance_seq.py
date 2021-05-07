@@ -30,6 +30,13 @@ import os
 import re
 import argparse
 
+try:
+	from metawibele import config
+except ImportError:
+	sys.exit("CRITICAL ERROR: Unable to find the MetaWIBELE python package." +
+	         " Please check your install.")
+
+
 #==============================================================
 # collect sequences
 #==============================================================
@@ -78,7 +85,7 @@ def output_info (AA_seq, seqid, outfile):
 	# check sequences
 	for myid in seqid.keys():
 		if not myid in flags:
-			print("No sequences for gene_id\t" + myid)
+			config.logger.info ("WARNING! No sequences for gene_id: " + myid)
 # output_info
 
 
@@ -94,19 +101,19 @@ def main():
 	values=parser.parse_args()
 
 
-	sys.stderr.write("### Start extract_non_redundance_seq.py -i " + values.i + " ####\n")
+	config.logger.info ("### Start extract_non_redundance_seq step ####")
 	
 	### collect cluster id info ###
-	sys.stderr.write("Get clustering info ......starting\n")
+	config.logger.info ("Get clustering info ......starting")
 	seqid = collect_seq_id (values.r)
-	sys.stderr.write("Get clustering info ......done\n")
+	config.logger.info ("Get clustering info ......done")
 	
 	### Output non-redundance protein sequence
-	sys.stderr.write("\nOutput sequence info ......starting\n")
+	config.logger.info ("Output sequence info ......starting")
 	output_info (values.i, seqid, values.o)
-	sys.stderr.write("Output sequence info ......done\n")
+	config.logger.info ("Output sequence info ......done")
 
-	sys.stderr.write("### Finish extract_non_redundance_seq.py ####\n\n\n")
+	config.logger.info ("### Finish extract_non_redundance_seq step ####")
 
 # end: main
 

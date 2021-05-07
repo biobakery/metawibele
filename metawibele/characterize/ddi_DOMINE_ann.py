@@ -219,22 +219,22 @@ def main():
 	### get arguments ###
 	values = get_args ()
 
-	sys.stderr.write("### Start ddi_DOMINE_ann.py -i " + values.ddi_annotation + " ####\n")
+	config.logger.info ("### Start ddi_DOMINE_ann step ####")
 	
 
 	### collect info ###
-	sys.stderr.write("Get info ......starting\n")
+	config.logger.info ("Get info ......starting")
 	pfams = collect_pfam_info (config.pfam_database)
 	pfam2go = collect_pfam2go_info (config.pfam2go_database)
 	myflag, DDI = collect_DDI_info (values.ddi_annotation)
-	sys.stderr.write("Get info ......done\n")
+	config.logger.info ("Get info ......done")
 	
 	### assign annotation to peptide families ###
-	sys.stderr.write("\nAssign annotation to DDIs ......starting\n")
+	config.logger.info ("Assign annotation to DDIs ......starting")
 	assign_annotation (myflag, DDI, pfams, pfam2go, values.output)
-	sys.stderr.write("\nAssign annotation to DDIs ......done\n")
+	config.logger.info ("Assign annotation to DDIs ......done")
 
-	sys.stderr.write("### Finish ddi_DOMINE_ann.py ####\n\n\n")
+	config.logger.info ("### Finish ddi_DOMINE_ann step ####")
 
 # end: main
 

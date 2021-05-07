@@ -119,7 +119,7 @@ def collect_basic_info (uniref_list, hits):
 		if re.search("^#", myfile):
 			continue
 		if not os.path.isfile(myfile):
-			print("File does not exist! " + myfile)
+			config.logger.info ("ERROR! File does not exist: " + myfile)
 			continue
 		myname = os.path.basename(myfile)
 		if not re.search("^map_", myname):
@@ -314,20 +314,19 @@ def main():
 	if values.cluster:
 		myfamily = values.cluster
 
-
-	sys.stderr.write("### Start uniref_protein.py -m " + values.mapping+ " ####\n")
+	config.logger.info ("### Start uniref_protein step ####")
 	
 	### collect uniref and annotation info ###
-	sys.stderr.write("Get UniRef DB and annotation info ......starting\n")
+	config.logger.info ("Get UniRef DB and annotation info ......starting")
 	member = collect_peptide_cluster_info (myfamily)
 	mapping, hits = collect_uniref_mapping (values.mapping, member)
 	pfam = collect_pfam_info (config.pfam_database)
 	uniref, names = collect_basic_info(config.uniref_database, hits)
 	uniref_info, uniref_title = collect_uniref_info (uniref, names, pfam)
 	extract_annotation_info (uniref_info, uniref_title, mapping, values.output)
-	sys.stderr.write("Get UniRef DB and annotation info ......done\n")
+	config.logger.info ("Get UniRef DB and annotation info ......done")
 
-	sys.stderr.write("### Finish uniref_protein.py ####\n\n\n")
+	config.logger.info ("### Finish uniref_protein step ####")
 
 # end: main
 

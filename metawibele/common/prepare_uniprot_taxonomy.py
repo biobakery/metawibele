@@ -32,6 +32,7 @@ import argparse
 
 try:
 	from metawibele.common import utils
+	from metawibele import config
 except ImportError:
 	sys.exit("CRITICAL ERROR: Unable to find the MetaWIBELE python package." +
             " Please check your install.")
@@ -238,14 +239,14 @@ def main():
 	values = get_args ()
 
 
-	sys.stderr.write("### Start prepare_uniprot_taxonomy.py -i " + values.input + " ####\n")
+	config.logger.info ("### Start prepare_uniprot_taxonomy step ####")
 	
 	### Extraction ###
-	sys.stderr.write("Extract taxonomic info......starting\n")
+	config.logger.info ("Extract taxonomic info......starting")
 	format_taxonomy_info (values.input, values.output)
-	sys.stderr.write("Extract taxonomic info......done\n")
+	config.logger.info ("Extract taxonomic info......done")
 	
-	sys.stderr.write("### Finish prepare_uniprot_taxonomy.py ####\n\n\n")
+	config.logger.info ("### Finish prepare_uniprot_taxonomy step ####")
 
 # end: main
 

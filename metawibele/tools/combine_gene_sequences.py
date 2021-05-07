@@ -30,7 +30,12 @@ import os
 import re
 import argparse
 
-from metawibele import utilities
+try:
+	from metawibele import config
+	from metawibele import utilities
+except ImportError:
+	sys.exit("CRITICAL ERROR: Unable to find the MetaWIBELE python package." +
+	         " Please check your install.")
 
 def get_args():	
 	parser = argparse.ArgumentParser()
@@ -76,7 +81,7 @@ def collect_sequence (gene_path, extension, outfile):
 				#print("Protein-coding gene:\t" + mym.group(1))
 			else:
 				# debug
-				print("Not CDS\t" + info[2])
+				config.logger.info ("Skip non-CDS\t" + info[2])
 		# foreach line
 		open_gff.close()
 		
@@ -109,7 +114,7 @@ def collect_sequence (gene_path, extension, outfile):
 					#open_out1.write(line + "\n")
 				else:
 					# debug
-					print("Not protein coding sequences!\t" + mygene + "\t" + line)
+					config.logger.info ("Skip non protein coding sequences: " + mygene + "\t" + line)
 					flag = 0
 				continue
 			else:
@@ -147,14 +152,14 @@ def main():
 	values = get_args()
 
 
-	sys.stderr.write("### Start combine_gene_sequences.py -p " + values.p + " ####\n")
+	config.logger.info ("### Start combine_gene_sequences step ####")
 	
 	### collect sequence info ###
-	sys.stderr.write("Get sequence info ......starting\n")
+	config.logger.info ("Get sequence info ......starting")
 	collect_sequence (values.p, values.e, values.o)
-	sys.stderr.write("Get sequence info ......done\n")
+	config.logger.info ("Get sequence info ......done")
 	
-	sys.stderr.write("### Finish combine_gene_sequences.py ####\n\n\n")
+	config.logger.info ("### Finish combine_gene_sequences step ####")
 
 # end: main
 

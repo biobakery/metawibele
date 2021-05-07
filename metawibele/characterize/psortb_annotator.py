@@ -34,6 +34,12 @@ import tempfile
 import re
 import argparse
 
+try:
+	from metawibele import config
+except ImportError:
+	sys.exit("CRITICAL ERROR: Unable to find the MetaWIBELE python package." +
+	         " Please check your install.")
+
 description = """
 A workflow to annotate subcellular annotation
 """
@@ -107,8 +113,6 @@ def main():
 		stderr_log = os.path.join(annotation_dir, '%s.psortb.archaea.err' % protein_base)
 		os.system("psort -a " + protein + " > " + out_file + " 2> " + stderr_log)
 	# foreach sequence file
-
-
 
 if __name__ == "__main__":
 	main()

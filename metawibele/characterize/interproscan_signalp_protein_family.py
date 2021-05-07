@@ -116,7 +116,7 @@ def collect_signaling_info (cluster_mem, extension, ann_path, outfile):	# split.
 	filelist = utilities.find_files(ann_path, extension, None)
 	for myfile in filelist:
 		if not os.path.isfile(myfile):
-			print ("File not exist!\t" + myfile)
+			config.logger.info ("ERROR! File not exist: " + myfile)
 			continue
 		open_file = open(myfile, "r")
 		titles = {}
@@ -291,23 +291,23 @@ def main():
 	if values.cluster:
 		myfamily = values.cluster
 
-	sys.stderr.write("### Start interproscan_signalp_protein_family.py -p " + values.path + " ####\n")
+	config.logger.info ("### Start interproscan_signalp_protein_family step ####")
 
-	sys.stderr.write("Get info ......starting\n")
+	config.logger.info ("Get info ......starting")
 	cluster, cluster_mem = collect_cluster_info (myfamily)
-	sys.stderr.write("Get info ......done\n")
+	config.logger.info ("Get info ......done")
 
 	### collect annotation info and do stat ###
-	sys.stderr.write("Get signaling info ......starting\n")
+	config.logger.info ("Get signaling info ......starting")
 	gram_p, gram_n, signals, signals_p, signals_n = collect_signaling_info (cluster_mem, values.extension, values.path, values.output)
-	sys.stderr.write("Get signaling info ......done\n")
+	config.logger.info ("Get signaling info ......done")
 
 	### Output sample info
-	sys.stderr.write("\nOutput signaling summary info ......starting\n")
+	config.logger.info ("Output signaling summary info ......starting")
 	output_info (config.tshld_consistency, cluster, gram_p, gram_n, signals, signals_p, signals_n, values.method, values.output)
-	sys.stderr.write("Output signaling summary info ......done\n")
+	config.logger.info ("Output signaling summary info ......done")
 
-	sys.stderr.write("### Finish interproscan_signalp_protein_family.py ####\n\n\n")
+	config.logger.info ("### Finish interproscan_signalp_protein_family step ####")
 
 # end: main
 

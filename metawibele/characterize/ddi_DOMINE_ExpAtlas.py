@@ -291,23 +291,23 @@ def main():
 	### get arguments ###
 	values = get_args ()
 
-	sys.stderr.write("### Start ddi_DOMINE_ExpAtlas.py -i " + values.ddi_annotation + " ####\n")
+	config.logger.info ("### Start ddi_DOMINE_ExpAtlas step ####")
 	
 
 	### collect info ###
-	sys.stderr.write("Get info ......starting\n")
+	config.logger.info ("Get info ......starting")
 	pfams = collect_pfam_info (config.human_pfam_database)
 	exp = collect_expression_info (config.Expression_Atlas_database)
 	interact, title, id_flag = collect_interaction_info (values.ddi_annotation)
-	sys.stderr.write("Get info ......done\n")
+	config.logger.info ("Get info ......done")
 	
 	### assign annotation to peptide families ###
-	sys.stderr.write("\nAssign ExpAtlas expression to peptide families ......starting\n")
+	config.logger.info ("Assign ExpAtlas expression to peptide families ......starting")
 	cutoff = 0
 	assign_interaction (cutoff, pfams, exp, interact, title, id_flag, values.output)
-	sys.stderr.write("\nAssign ExpAtlas expression to peptide families ......done\n")
+	config.logger.info ("Assign ExpAtlas expression to peptide families ......done")
 
-	sys.stderr.write("### Finish ddi_DOMINE_ExpAtlas.py ####\n\n\n")
+	config.logger.info ("### Finish ddi_DOMINE_ExpAtlas step ####")
 
 # end: main
 

@@ -133,7 +133,7 @@ def stat_annotation (query, hits, identity, qcov, mcov, outfile):
 	for myid in sorted(query.keys()):
 		if not myid in hits:	# no hit
 			# debug
-			print("No UniRef90 mapping information\t" + myid)
+			config.logger.info ("No UniRef90 mapping information\t" + myid)
 			mystr = myid + "\tNA\tNA\tNA\tNA\tno_hit\tno_hit"
 			mystr1 = myid + "\tNA\tNA\tNA\tNA\tNA\tno_hit\tno_hit"
 			if not "no_hit" in stat:
@@ -276,23 +276,20 @@ def main():
 	### get arguments ###
 	values = get_args()
 
+	config.logger.info ("### Start uniref_annotator_stat step ####")
 
-	sys.stderr.write("### Start uniref_annotator_stat.py ####\n")
-	
-	
 	### collect info ###
-	sys.stderr.write("Get info ......starting\n")
+	config.logger.info ("Get info ......starting")
 	query = collect_query (values.seq)
 	hits = collect_hits (values.hit)
-	sys.stderr.write("Get info ......done\n")
+	config.logger.info ("Get info ......done")
 	
 	### Stat info ###
-	sys.stderr.write("Statistic annotation info ......starting\n")
+	config.logger.info ("Statistic annotation info ......starting")
 	stat_annotation(query, hits, config.diamond_identity, config.diamond_query_coverage, config.diamond_mutual_coverage, values.output)
-	sys.stderr.write("Statistic annotation info ......done\n")
+	config.logger.info ("Statistic annotation info ......done")
 
-
-	sys.stderr.write("### Finish uniref_annotator_stat.py ####\n\n")
+	config.logger.info ("### Finish uniref_annotator_stat step ####")
 
 # end: main
 

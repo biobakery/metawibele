@@ -31,6 +31,11 @@ import os.path
 import re
 import argparse
 
+try:
+	from metawibele import config
+except ImportError:
+	sys.exit("CRITICAL ERROR: Unable to find the MetaWIBELE python package." +
+	         " Please check your install.")
 
 # ---------------------------------------------------------------
 # Description and arguments
@@ -92,10 +97,11 @@ def main():
 	### get arguments ###
 	values = get_args ()
 
+	config.logger.info ("### Start filter_clusters step ####")
 
-	sys.stderr.write("### Start filter_clusters.py -l " + values.l + " ####\n")
 	collect_info (values.l, values.i, values.o)
-	sys.stderr.write("\n### Finish filter_clusters.py ####\n\n")
+
+	config.logger.info ("### Finish filter_clusters step ####")
 
 # end: main
 

@@ -32,7 +32,12 @@ import re
 import argparse
 import math
 
-from metawibele import utilities
+try:
+	from metawibele import config
+	from metawibele import utilities
+except ImportError:
+	sys.exit("CRITICAL ERROR: Unable to find the MetaWIBELE python package." +
+	         " Please check your install.")
 
 def get_args():
 	parser = argparse.ArgumentParser()
@@ -133,18 +138,17 @@ def main():
 	### get arguments ###
 	values = get_args()
 
-
-	sys.stderr.write("### Start combine_abundance_annotation.py -i " + values.i + " ####\n")
+	config.logger.info ("### Start combine_abundance_annotation step ####")
 	
 	### collect abundance info ###
-	sys.stderr.write("Get abundance info ......starting\n")
+	config.logger.info ("Get abundance info ......starting")
 	dna_abu = extract_abundance_info (values.a)
 	rna_abu = extract_abundance_info (values.b)
 	ratio_abu = extract_abundance_info (values.c)
 	combine_info (dna_abu, rna_abu, ratio_abu, values.i, values.o)
-	sys.stderr.write("Get abundance info ......done\n")
+	config.logger.info ("Get abundance info ......done")
 
-	sys.stderr.write("### Finish combine_abundance_annotation.py ####\n\n\n")
+	config.logger.info ("### Finish combine_abundance_annotation step ####")
 
 # end: main
 

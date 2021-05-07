@@ -31,6 +31,11 @@ import os.path
 import re
 import argparse
 
+try:
+	from metawibele import config
+except ImportError:
+	sys.exit("CRITICAL ERROR: Unable to find the MetaWIBELE python package." +
+	         " Please check your install.")
 
 #==============================================================
 # split abundance info
@@ -108,17 +113,14 @@ def main():
 	parser.add_argument('-n', help='the number of samples for each split file', required=True)
 	values=parser.parse_args()
 
+	config.logger.info ("### Start split_family_abundance step ####")
 
-	sys.stderr.write("### Start split_family_abundance.py -a " + values.a + " ####\n")
-	
-	
 	### collect abundance info ###
-	sys.stderr.write("Get abundance info ......starting\n")
+	config.logger.info ("Get abundance info ......starting")
 	split_abundance_info(values.a, values.n)
-	sys.stderr.write("Get abundance info ......done\n")
+	config.logger.info ("Get abundance info ......done")
 
-
-	sys.stderr.write("### Finish split_family_abundance.py ####\n\n\n")
+	config.logger.info ("### Finish split_family_abundance step ####")
 
 # end: main
 

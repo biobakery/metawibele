@@ -30,7 +30,12 @@ import os
 import re
 import argparse
 
-from metawibele import utilities
+try:
+	from metawibele import config
+	from metawibele import utilities
+except ImportError:
+	sys.exit("CRITICAL ERROR: Unable to find the MetaWIBELE python package." +
+	         " Please check your install.")
 
 
 def get_args():
@@ -68,9 +73,9 @@ def collect_sequence (ann_path, extension, partial_path, outfile):
 		mapping = {}
 		mygff = re.sub("." + extension, ".gff", myfile)
 		if not os.path.isfile(mygff):
-			print("Gff file doesn't exist!\t" + mygff)
+			config.logger.info ("ERROR! Gff file doesn't exist!\t" + mygff)
 			continue
-		print("Read gff file: " + mygff)
+		config.logger.info ("Read gff file: " + mygff)
 		open_gff = open(mygff, "r")
 		for line in open_gff:
 			line = line.strip()
@@ -171,7 +176,7 @@ def collect_sequence (ann_path, extension, partial_path, outfile):
 				info = line.split(" # ")
 				if len(info) < 4:
 					# debug
-					print("No info!\t" + myfile1 + "\t" + line)
+					config.logger.info("WARNING! No info!\t" + myfile1 + "\t" + line)
 					continue
 				myref = re.sub("_[\d]+$", "", info[0])
 				mystart = info[1]
@@ -198,7 +203,7 @@ def collect_sequence (ann_path, extension, partial_path, outfile):
 					flag = 1
 				else:
 					# debug
-					print("No mapping info!\t" + line)
+					config.logger.info ("No mapping info!\t" + line)
 				continue
 			else:
 				if flag == 1:
@@ -273,9 +278,9 @@ def output_info (gff, types, partial, outfile):
 				if item in partial[sample]:
 					mypartial = partial[sample][item]
 			if mytype == "NA":
-				print("Unknown feature\t" + sample + "\t" + item)
+				config.logger.info ("Unknown feature\t" + sample + "\t" + item)
 			if mypartial == "NA":
-				print("Unknown partial\t" + sample + "\t" + item)
+				config.logger.info ("Unknown partial\t" + sample + "\t" + item)
 			tmp = gff[sample][item].split("\n")
 			open_file.write(tmp[0] + "\t" + mytype + "\t" + mypartial + "\t" + tmp[1] + "\t" + tmp[2] + "\n")
 	# foreach line
@@ -293,19 +298,19 @@ def main():
 
 	values = get_args()
 
-	sys.stderr.write("### Start format_protein_sequences.py -p " + values.p + " ####\n")
+	config.logger.info ("### Start format_protein_sequences step ####")
 
 	### collect sequence info ###
-	sys.stderr.write("Get sequence info ......starting\n")
+	config.logger.info ("Get sequence info ......starting")
 	gff, types, partial = collect_sequence (values.p, values.e, values.q, values.o)
-	sys.stderr.write("Get sequence info ......done\n")
+	config.logger.info ("Get sequence info ......done")
 
 	### Output sample info
-	sys.stderr.write("\nOutput sequence info ......starting\n")
+	config.logger.info ("Output sequence info ......starting")
 	output_info (gff, types, partial, values.m)
-	sys.stderr.write("Output sequence info ......done\n")
+	config.logger.info ("Output sequence info ......done")
 
-	sys.stderr.write("### Finish format_protein_sequences.py ####\n\n\n")
+	config.logger.info ("### Finish format_protein_sequences step ####")
 
 # end: main
 

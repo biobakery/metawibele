@@ -142,7 +142,7 @@ def collect_annotation (list_file, id_flag, mybase):
 		if re.search("^#", myfile):
 			continue
 		if not os.path.isfile(myfile):
-			print("File not exist!\t" + myfile)
+			config.logger.info ("ERROR! File not exist!\t" + myfile)
 			continue
 		open_file = open(myfile, "r")
 		titles = {}
@@ -166,11 +166,10 @@ def collect_annotation (list_file, id_flag, mybase):
 				taxID = info[titles["TaxID"]]
 				reptax = info[titles["Rep_Tax"]]
 				reptaxID = info[titles["Rep_TaxID"]]
-				#org = info[titles["organism"]]
 				uniprot = info[titles["UniProtKB"]]
 				uniref = info[titles["unirefID"]]
 				if len(info) < 8:
-					print(line)
+					config.logger.info ("WARNING!" + line)
 				mytype = info[1] + "\t" + info[2] + "\t" + desc + "\t" + tax + "\t" + taxID + "\t" +  reptax + "\t" + reptaxID + "\t" + uniprot + "\t" + uniref
 			else:
 				mytype = info[1] + "\t" + info[2] + "\tNA\tNA\tNA\tNA\tNA\tNA\tNA"
@@ -196,7 +195,6 @@ def collect_annotation (list_file, id_flag, mybase):
 		if "UniRef90" in anns[myid]:
 			flag = 0
 			if "UniRef90_unknown" in anns[myid]["UniRef90"] or "UniRef90_uncharacterized" in anns[myid]["UniRef90"]:	# UniRef90 unannotated ones
-				#print(myid)
 				flag = 1
 				if not myid in annotation_non_uniref:
 					annotation_non_uniref[myid] = {}
@@ -272,7 +270,7 @@ def assign_annotation (id_flag, pep_cluster, annotation, study, note1, note2, ou
 		for mytype in anns[myclust].keys():
 			if not re.search("_", mytype):
 				# debug
-				print(mytype)
+				config.logger.info (mytype)
 				continue
 			mym, category = mytype.split("_")
 			category = re.sub("GO\(BP\)", "GO", category)
@@ -328,7 +326,7 @@ def assign_annotation (id_flag, pep_cluster, annotation, study, note1, note2, ou
 				mytype = myinfo[0]
 				if not re.search("_", mytype):
 					# debug
-					print(mytype)
+					config.logger.info (mytype)
 					continue
 				mym, category = mytype.split("_")
 				if category in unknown:
@@ -360,30 +358,30 @@ def main():
 	if values.study:
 		mystudy = values.study
 
-	sys.stderr.write("### Start summary_function_annotation.py -l " + values.list + " ####\n")
+	config.logger.info ("### Start summary_function_annotation step ####")
 	
 
 	### collect cluster info ###
-	sys.stderr.write("Get cluster info ......starting\n")
+	config.logger.info ("Get cluster info ......starting")
 	pep_cluster = collect_cluster_info (myfamily)
-	sys.stderr.write("Get cluster info ......done\n")
+	config.logger.info ("Get cluster info ......done")
 	
 	### collect annotation info ###
-	sys.stderr.write("Get annotation info ......starting\n")
+	config.logger.info ("Get annotation info ......starting")
 	note1, id_flag = collect_uniref_info (values.uniref_annotation)
 	annotation, anns_uniref, anns_non_uniref, note2 = collect_annotation (values.list, id_flag, mybase)
-	sys.stderr.write("Get annotation info ......done\n")
+	config.logger.info ("Get annotation info ......done")
 
 	### assign annotation to peptide families ###
-	sys.stderr.write("\nAssign annotation......starting\n")
+	config.logger.info ("Assign annotation......starting")
 	assign_annotation (id_flag, pep_cluster, annotation, mystudy, note1, note2, values.output)
 	uniref_out = re.sub(".tsv", ".uniref.tsv", values.output)
 	assign_annotation (id_flag, pep_cluster, anns_uniref, mystudy, note1, note2, uniref_out)
 	uniref_non = re.sub(".tsv", ".non_uniref.tsv", values.output)
 	assign_annotation (id_flag, pep_cluster, anns_non_uniref, mystudy, note1, note2, uniref_non)
-	sys.stderr.write("\nAssign annotation......done\n")
+	config.logger.info ("Assign annotation......done")
 
-	sys.stderr.write("### Finish summary_function_annotation.py ####\n\n\n")
+	config.logger.info ("### Finish summary_function_annotation step ####")
 
 # end: main
 

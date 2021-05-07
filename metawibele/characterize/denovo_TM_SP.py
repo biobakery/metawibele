@@ -34,6 +34,7 @@ import argparse
 
 try:
 	from metawibele import utilities
+	from metawibele import config
 	#import utilities
 except ImportError:
 	sys.exit("CRITICAL ERROR: Unable to find the MetaWIBELE python package." +
@@ -201,24 +202,24 @@ def main():
 	### get arguments ###
 	values = get_args ()
 
-	sys.stderr.write("### Start denovo_TM_SP.py -o " + values.output + " ####\n")
+	config.logger.info ("### Start denovo_TM_SP step ####")
 
 	### collect cluster info ###
-	sys.stderr.write("Get info ......starting\n")
+	config.logger.info ("Get info ......starting")
 	cluster = {}
 	types = {}
 	title = collect_annotation_info (values.phobius_signal, cluster, types)
 	title = collect_annotation_info (values.phobius_transmembrane, cluster, types)
 	title = collect_annotation_info (values.signlap, cluster, types)
 	title = collect_annotation_info (values.tmhmm, cluster, types)
-	sys.stderr.write("Get cluster info ......done\n")
+	config.logger.info ("Get cluster info ......done")
 	
 	### annotation overlap ###
-	sys.stderr.write("\nOverlapped annotation to peptide families ......starting\n")
+	config.logger.info ("Overlapped annotation to peptide families ......starting")
 	overlap_annotation(cluster, types, title, values.output)
-	sys.stderr.write("\nOverlapped annotation to peptide families ......done\n")
+	config.logger.info ("Overlapped annotation to peptide families ......done")
 
-	sys.stderr.write("### Finish denovo_TM_SP.py ####\n\n")
+	config.logger.info ("### Finish denovo_TM_SP step ####")
 
 # end: main
 

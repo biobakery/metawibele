@@ -135,7 +135,7 @@ def collect_pfam_info (cluster_mem, extension, ann_path, outfile):	# list.txt
 	for myfile in filelist:
 		#myfile = ann_path + "/" + samplelist + "/" + samplelist + ".interpro.PfamDomain.tsv"
 		if not os.path.isfile(myfile):
-			print ("File not exist!\t" + myfile)
+			config.logger.info ("ERROR! File not exist: " + myfile)
 			continue
 		open_file = open(myfile, "r")
 		for line in open_file.readlines():
@@ -197,7 +197,6 @@ def output_info (cutoff, cluster, cluster_id, pfams, pfam_ann, assign_flag, outf
 					if not item in number:
 						number[item] = {}
 					number[item][myid] = ""
-					#print(myclust + "\t" + item + "\t" + str(number[item].keys()))
         # foreach member
 		if len(number.keys()) == 0:
 			continue
@@ -293,24 +292,24 @@ def main():
 	if values.cluster:	
 		myfamily = values.cluster
 
-	sys.stderr.write("### Start interproscan_pfam_protein_family.py -p " + values.path + " ####\n")
+	config.logger.info ("### Start interproscan_pfam_protein_family step ####")
 	
 	### collect sample info ###
-	sys.stderr.write("Get info ......starting\n")
+	config.logger.info ("Get info ......starting")
 	cluster, cluster_id, cluster_mem = collect_cluster_info (myfamily)
 
 	### collect annotation info and do stat ###
-	sys.stderr.write("Get pfam info ......starting\n")
+	config.logger.info ("Get pfam info ......starting")
 	pfam_ann = collect_pfam_ann (config.pfam_database)
 	pfams = collect_pfam_info (cluster_mem, values.extension, values.path, values.output)
-	sys.stderr.write("Get pfam info ......done\n")
+	config.logger.info ("Get pfam info ......done")
 	
 	### Output sample info
-	sys.stderr.write("\nOutput Pfam summary info ......starting\n")
+	config.logger.info ("Output Pfam summary info ......starting")
 	output_info (config.tshld_consistency, cluster, cluster_id, pfams, pfam_ann, values.method, values.output)
-	sys.stderr.write("Output Pfam summary info ......done\n")
+	config.logger.info ("Output Pfam summary info ......done")
 
-	sys.stderr.write("### Finish interproscan_pfam_protein_family.py ####\n\n\n")
+	config.logger.info ("### Finish interproscan_pfam_protein_family step ####")
 
 # end: main
 

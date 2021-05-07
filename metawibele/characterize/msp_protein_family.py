@@ -264,25 +264,25 @@ def main():
 	if values.cluster:
 		myfamily = values.cluster
 
-	sys.stderr.write("### Start msp_protein_family.py -m " + values.msp + " ####\n")
+	config.logger.info ("### Start msp_protein_family step ####")
 	
 
 	### collect cluster info ###
-	sys.stderr.write("Get cluster info ......starting\n")
+	config.logger.info ("Get cluster info ......starting")
 	propt_cluster = collect_protein_cluster_info (myfamily)
-	sys.stderr.write("Get cluster info ......done\n")
+	config.logger.info ("Get cluster info ......done")
 	
 	### collect annotation info ###
-	sys.stderr.write("Get annotation info ......starting\n")
+	config.logger.info ("Get annotation info ......starting")
 	annotation, ann_title = collect_annotation(values.msp)
-	sys.stderr.write("Get annotation info ......done")
+	config.logger.info ("Get annotation info ......done")
 
 	### assign annotation to protein families ###
-	sys.stderr.write("\nAssign annotation to protein families ......starting\n")
+	config.logger.info ("Assign annotation to protein families ......starting")
 	assign_annotation (propt_cluster, annotation, ann_title, values.output)
-	sys.stderr.write("\nAssign annotation to protein families ......done\n")
+	config.logger.info ("Assign annotation to protein families ......done")
 
-	sys.stderr.write("### Finish msp_protein_family.py ####\n\n\n")
+	config.logger.info ("### Finish msp_protein_family step ####")
 
 # end: main
 

@@ -189,14 +189,14 @@ def smooth_abundance (smooth_method, prevalence_flt, abufile, fixed_min, samples
 							myabu = float(samples[mys])
 						else:
 							# debug
-							print("Per-sample pseudocount is unavailable!\t" + myid + "\t" + mys)
+							config.logger.info ("Per-sample pseudocount is unavailable!\t" + myid + "\t" + mys)
 							myabu = float("NaN")
 					if smooth_method == "feature":
 						if myid in features:
 							myabu = float(features[myid])
 						else:
 							# debug
-							print("Per-feature pseudocount is unavailable!\t" + myid)
+							config.logger.info ("Per-feature pseudocount is unavailable!\t" + myid)
 							myabu = float("NaN")
 				if not math.isnan(myabu):
 					myabu2 = math.log(myabu)
@@ -232,22 +232,19 @@ def main():
 	### get arguments ###
 	values = get_args ()
 
-
-	sys.stderr.write("### Start abundance_smoothing.py -i " + values.i + " ####\n")
-	
+	config.logger.info ("### Start abundance_smoothing step ####")
 
 	### collect info ###
-	sys.stderr.write("Get info ......starting\n")
+	config.logger.info ("Get info ......starting")
 	fixed_min, samples, features = collect_cluster_abundance (values.i)
-	sys.stderr.write("Get info ......done\n")
+	config.logger.info ("Get info ......done")
 	
 	### smooth info ###
-	sys.stderr.write("Smooth info ......starting\n")
+	config.logger.info ("Smooth info ......starting")
 	smooth_abundance (values.t, values.f, values.i, fixed_min, samples, features, values.o)
-	sys.stderr.write("Smooth info ......done\n")
+	config.logger.info ("Smooth info ......done")
 
-
-	sys.stderr.write("### Finish abundance_smoothing.py ####\n\n\n")
+	config.logger.info ("### Finish abundance_smoothing step ####")
 
 # end: main
 

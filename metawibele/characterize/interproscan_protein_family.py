@@ -337,23 +337,23 @@ def main():
 	if values.cluster:
 		myfamily = values.cluster
 
-	sys.stderr.write("### Start interproscan_protein_family.py -p " + values.path + " ####\n")
+	config.logger.info ("#### Start interproscan_protein_family step ####")
 	
 	### collect sample info ###
-	sys.stderr.write("Get info ......starting\n")
+	config.logger.info ("Get info ......starting")
 	cluster, cluster_id, cluster_mem = collect_cluster_info (myfamily)
 
 	### collect annotation info and do stat ###
-	sys.stderr.write("Get annotation info ......starting\n")
+	config.logger.info ("Get annotation info ......starting")
 	anns, anns_info = collect_ann_info (cluster_mem, values.extension, values.path, config.interproscan_type, values.output)
-	sys.stderr.write("Get annotation info ......done\n")
+	config.logger.info ("Get annotation info ......done")
 	
 	### Output sample info
-	sys.stderr.write("\nOutput annotation summary info ......starting\n")
+	config.logger.info ("Output annotation summary info ......starting")
 	output_info (config.tshld_consistency, cluster, cluster_id, anns, anns_info, values.method, values.output)
-	sys.stderr.write("Output annotation summary info ......done\n")
+	config.logger.info ("Output annotation summary info ......done")
 
-	sys.stderr.write("### Finish interproscan_protein_family.py ####\n\n\n")
+	config.logger.info ("#### Finish interproscan_protein_family step ####")
 
 # end: main
 

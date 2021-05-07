@@ -286,9 +286,8 @@ def DDI_annotation (extension, pfam_path, filter_flag, spe_level, interact, pfam
 	for myfile in filelist:
 		#myfile = pfam_path + "/" + samplelist + "/" + samplelist + ".interpro.PfamDomain.tsv"
 		if not os.path.isfile(myfile):
-			print ("File not exist!\t" + myfile)
+			config.logger.info ("ERROR! File not exist: " + myfile)
 		else:
-			#print ("OK!\t" + myfile)
 			myout = re.sub(extension, suffix, myfile)
 			myout_detail = re.sub(".tsv", ".detail.tsv", myout)
 			peptide = collect_pfam_info (myfile)
@@ -306,22 +305,22 @@ def main():
 	### get arguments ###
 	values = get_args ()
 
-	sys.stderr.write("### Start ddi_DOMINE_protein.py -p " + values.path + " ####\n")
+	config.logger.info ("### Start ddi_DOMINE_protein step ####")
 
 
 	### collect info ###
-	sys.stderr.write("Get info ......starting\n")
+	config.logger.info ("Get info ......starting")
 	pfams = collect_pfam_ann (config.pfam_database)
 	human_pfam = collect_mapping_info (config.human_pfam_database)
 	interact = collect_interaction_info (config.interaction_database, values.filter, human_pfam)
-	sys.stderr.write("Get info ......done\n")
+	config.logger.info ("Get info ......done")
 	
 	### assign annotation to peptide families ###
-	sys.stderr.write("\nAssign interaction to peptide families ......starting\n")
+	config.logger.info ("Assign interaction to peptide families ......starting")
 	DDI_annotation (values.extension, values.path, values.filter, "HC", interact, pfams, human_pfam, values.suffix)
-	sys.stderr.write("\nAssign interaction to peptide families ......done\n")
+	config.logger.info ("Assign interaction to peptide families ......done")
 
-	sys.stderr.write("### Finish ddi_DOMINE_protein.py ####\n\n\n")
+	config.logger.info ("### Finish ddi_DOMINE_protein step ####")
 
 # end: main
 

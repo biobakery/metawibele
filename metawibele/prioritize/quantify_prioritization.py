@@ -112,7 +112,7 @@ def read_config_file (conf_file, method):
 	Output: evidence_conf = {DNA_prevalence:1, DNA_abundance:1, ...}
 	"""
 
-	print('read_config_file')
+	config.logger.info ("Start read_config_file")
 
 	config_items = config.read_user_edit_config_file(conf_file)
 	ann_conf = {}
@@ -126,7 +126,7 @@ def read_config_file (conf_file, method):
 				try:
 					float(myvalue)
 				except ValueError:
-					print("Not numberic values for the config item " + name)
+					config.logger.info ("Not numberic values for the config item " + name)
 					continue
 				if myvalue.lower() == "none":
 					continue
@@ -143,9 +143,9 @@ def read_config_file (conf_file, method):
 					name = re.sub("\)", "", name)
 					ann_conf[name] = myvalue
 				if myvalue.lower() == "required":
-					print("Required ranking item: " + name + "\t" + myvalue)
+					config.logger.info ("Required ranking item: " + name + "\t" + myvalue)
 				if myvalue.lower() == "optional":
-					print("Optional ranking item: " + name + "\t" + myvalue)
+					config.logger.info ("Optional ranking item: " + name + "\t" + myvalue)
 
 	if method == "supervised":
 		if "supervised" in config_items:
@@ -155,11 +155,11 @@ def read_config_file (conf_file, method):
 					try:
 						float(myvalue)
 					except ValueError:
-						print('Not numberic values for the config item ' + name)
+						config.logger.info ('Not numberic values for the config item ' + name)
 						continue
 				else:
 					if not myvalue in values:
-						print("Please use valid value for the config item " + name + ": e.g. required | optional | none")
+						config.logger.info ("Please use valid value for the config item " + name + ": e.g. required | optional | none")
 						continue
 				if myvalue.lower() == "none":
 					continue
@@ -176,9 +176,11 @@ def read_config_file (conf_file, method):
 					name = re.sub("\)", "", name)
 					ann_conf[name] = myvalue
 				if myvalue.lower() == "required":
-					print("Required ranking item: " + name + "\t" + myvalue)
+					config.logger.info ("Required ranking item: " + name + "\t" + myvalue)
 				if myvalue.lower() == "optional":
-					print("Optional ranking item: " + name + "\t" + myvalue)
+					config.logger.info ("Optional ranking item: " + name + "\t" + myvalue)
+
+	config.logger.info ("Finish read_config_file")
 
 	return ann_conf, attr_conf
 
@@ -244,7 +246,7 @@ def read_annotation_file (ann_file, ann_conf):
 	Input: filename of the characterization file
 	Output: ann = {Cluster_XYZ: {prevalence:0.001, abundance:0.3, ...}, ...}
 	"""
-	print('read_annotation_file')
+	config.logger.info ("Start read_annotation_file")
 
 	required = {}
 	annotation = {}
@@ -278,6 +280,8 @@ def read_annotation_file (ann_file, ann_conf):
 	# foreach line
 	open_file.close()
 
+	config.logger.info ("Finish read_annotation_file")
+
 	return annotation, required
 
 
@@ -289,7 +293,7 @@ def combine_annotation (annotation, split, required, total_ann, ann_types, requi
 			split = {Cluster_XYZ:{Cluster_XYZ|A, Cluster_XYZ|B, ...}, ...}
 	Output: total = {Cluster_XYZ: {prevalence:0.001, abundance:0.3, ...}, ...}
 	"""
-	print('combine_annotation')
+	config.logger.info ("Start combine_annotation")
 
 	for myid in annotation.keys():
 		if myid in split:
@@ -309,6 +313,8 @@ def combine_annotation (annotation, split, required, total_ann, ann_types, requi
 	for myitem in required.keys():
 		required_types[myitem] = ""
 
+	config.logger.info ("Finish combine_annotation")
+
 
 def check_annotation (annotation, required_types):
 	"""
@@ -324,7 +330,7 @@ def check_annotation (annotation, required_types):
 		myflag = 0
 		for myitem in required_types.keys():
 			if not myitem in annotation[myclust]:
-				print("No required type\t" + myitem + "\t" + myclust)
+				config.logger.info ("WARNING! No required type\t" + myitem + "\t" + myclust)
 				myflag = 1
 				break
 		if myflag == 0:
@@ -345,7 +351,7 @@ def combine_evidence (ann, ann_types):
 	Output: evidence_dm = {Cluster_XYZ: {'qvalue':0.001, 'coef':-0.3, 'annotation':3, ...}, ...}
 	"""
 
-	print('combine_evidence')
+	config.logger.info ("Start combine_evidence")
 
 	evidence_row = sorted(ann_types.keys())
 	metawibele_row = []
@@ -372,6 +378,8 @@ def combine_evidence (ann, ann_types):
 		evidence_table[item] = myvalue
 	# foreach evidence
 
+	config.logger.info ("Finish combine_evidence")
+
 	return evidence_table, evidence_row, metawibele_row
 
 
@@ -390,7 +398,7 @@ def get_correlated_weight (evidence_table):
 		df_corr['weight'] = 1.0 / df_corr.sum(skipna=True)
 		for index, row in df_corr.iterrows():
 			weight_conf[index] = row.weight
-			print(index + "\t" + str(row.weight))
+			config.logger.info (index + "\t" + str(row.weight))
 		
 		return weight_conf
 
@@ -406,7 +414,7 @@ def get_equal_weight (ann_types):
 	myweight = 1.0 / len(ann_types.keys())
 	for mytype in ann_types.keys():
 		weight_conf[mytype] = myweight
-		print(mytype + "\t" + str(myweight))
+		config.logger.info (mytype + "\t" + str(myweight))
 	
 	return weight_conf
 
@@ -423,10 +431,10 @@ def get_fixed_weight (ann_types, ann_conf, attr_conf):
 		if mytype.lower() in ann_conf:
 			weight_conf[mytype] = ann_conf[mytype.lower()]
 			# debug
-			print(mytype + "\t" + str(ann_conf[mytype.lower()]))
+			config.logger.info (mytype + "\t" + str(ann_conf[mytype.lower()]))
 		if mytype.lower() in attr_conf:
 			weight_conf[mytype] = attr_conf[mytype.lower()]
-			print(mytype + "\t" + str(attr_conf[mytype.lower()]))
+			config.logger.info (mytype + "\t" + str(attr_conf[mytype.lower()]))
 	
 	return weight_conf
 
@@ -487,7 +495,7 @@ def get_rank_score (evidence_table, evidence_row, metawibele_row, weight_conf, r
 		Output: summary_table = {family: {'abundance_value': 0.5, 'abundance_percentiles': 0.9,...},...}
 		"""
 
-		print('get_rank_score')
+		config.logger.info ("Start get_rank_score")
 
 		# create a data frame
 		try:
@@ -503,17 +511,17 @@ def get_rank_score (evidence_table, evidence_row, metawibele_row, weight_conf, r
 			summary_table[mytype + "__percentile"] = scipy.stats.rankdata(pd.to_numeric(summary_table[mytype + "__value"], errors='coerce'), method='average')
 			if re.search("\_coef", mytype) or re.search("\_log\_FC", mytype) or re.search("\_mean_log", mytype):
 				# debug
-				print("Sorting by abs(effect size), e.g. abs(coef), abs(log_FC), abs(mean_log)")
+				config.logger.info ("Sorting by abs(effect size), e.g. abs(coef), abs(log_FC), abs(mean_log)")
 				summary_table[mytype + "__percentile"] = scipy.stats.rankdata(abs(pd.to_numeric(summary_table[mytype + "__value"], errors='coerce')), method='average')
 			if re.search("_foldChange", mytype):
 				# debug
-				print("Soring by abs(log2(FC))")
+				config.logger.info ("Soring by abs(log2(FC))")
 				mytable = pd.to_numeric(summary_table[mytype + "__value"], errors='coerce')
 				mytable = math.log(mytable, 2)
 				summary_table[mytype + "__percentile"] = scipy.stats.rankdata(abs(mytable), method='average')
 			if re.search("qvalue", mytype) or re.search("q-value", mytype) or re.search("pvalue", mytype) or re.search("p-value", mytype):
 				# debug
-				print("Sorting by negative qvalue")
+				config.logger.info ("Sorting by negative qvalue")
 				summary_table[mytype + "__percentile"] = scipy.stats.rankdata(-pd.to_numeric(summary_table[mytype + "__value"], errors='coerce'), method='average')
 			summary_table[mytype + "__percentile"] = summary_table[mytype + "__percentile"] / summary_table[mytype + "__percentile"].max()
 			rank_name.append(mytype + "__percentile")
@@ -529,6 +537,8 @@ def get_rank_score (evidence_table, evidence_row, metawibele_row, weight_conf, r
 			arithmetic_mean (summary_table, evidence_row, "priority_score")
 		summary_rank = summary_table[rank_name]
 
+		config.logger.info ("Finish get_rank_score")
+
 		return summary_table, summary_rank
 
 
@@ -539,7 +549,7 @@ def prioritize_families (summary_table, score_column, ann_conf):
 			beta = parameter value
 	Output: imp_families = {family: {'abundance': mean abundance, 'prevalence': prevalence}}
 	"""
-	print('prioritize_families')
+	config.logger.info ("Start prioritize_families")
 
 	#pri_percentile = ann_conf["tshld_priority"]
 	#pri_score = ann_conf["tshld_priority_score"]
@@ -563,7 +573,9 @@ def prioritize_families (summary_table, score_column, ann_conf):
 	#		print("Specified threshold of priority: " + str(pri_percentile))
 	#	else:
 	#		imp_families = summary_table
-	
+
+	config.logger.info ("Finish prioritize_families")
+
 	return summary_table
 
 
@@ -575,7 +587,7 @@ def write_results (summary_table, split, out_file):
 	Output: Writes the family dictionary to the output_filename
 	"""
 
-	print('write_prioritization_results')
+	config.logger.info ("Start write_prioritization_results")
 
 	keys = summary_table.columns.values.tolist()
 	foo = open(out_file, 'w')
@@ -587,6 +599,8 @@ def write_results (summary_table, split, out_file):
 	foo.close()
 	summary_table.to_csv(out_file, mode='a', sep='\t', header=False)
 
+	config.logger.info ("Finish write_prioritization_results")
+
 
 def main():
 	args_value = parse_arguments()
@@ -594,7 +608,7 @@ def main():
 
 	### calculate Ranking score ###
 	if config.verbose == 'DEBUG':
-		print ("--- Collecting annotations for protein families ---")
+		config.logger.info ("--- Collecting annotations for protein families ---")
 	ann_conf, attr_conf = read_config_file (args_value.config, args_value.method)
 	attribute, split, required_attr = read_attribute_file (args_value.attribute, attr_conf)
 	annotation, required_ann = read_annotation_file (args_value.annotation, ann_conf)
@@ -607,14 +621,14 @@ def main():
 	evidence_table, evidence_row, metawibele_row = combine_evidence (ann_new, ann_types_new)
 
 	if config.verbose == 'DEBUG':
-		print ("--- MetaWIBELE evidence table are written to the output ---")
+		config.logger.info ("--- MetaWIBELE evidence table are written to the output ---")
 	if not os.path.exists(args_value.output):
 		os.system("mkdir -p " + args_value.output)
 	metawibele_output_file = args_value.output + '/' + myout + '.evidence.tsv'
 	write_results (evidence_table, split, metawibele_output_file)
 
 	if config.verbose == 'DEBUG':
-		print ("\n--- Calculate Ranking score for protein families ---")
+		config.logger.info ("--- Calculate Ranking score for protein families ---")
 	if args_value.weight == "fixed":
 		weight_conf = get_fixed_weight (ann_types, ann_conf, attr_conf)
 	if args_value.weight == "equal":
@@ -622,13 +636,13 @@ def main():
 	if args_value.weight == "correlated":
 		weight_conf = get_correlated_weight (evidence_table)
 	if config.verbose == 'DEBUG':
-		print ("\n--- Weighted method: " + args_value.weight)
-		print ("\n--- Ranking method: " + args_value.ranking)
+		config.logger.info("--- Weighted method: " + args_value.weight)
+		config.logger.info ("--- Ranking method: " + args_value.ranking)
 	summary_table, rank_table = get_rank_score (evidence_table, evidence_row, metawibele_row, weight_conf, args_value.ranking)
 
 	### get important families ###
 	if config.verbose == 'DEBUG':
-		print ("\n--- Get prioritized families based on MetaWIBELE score ---")
+		config.logger.info ("--- Get prioritized families based on MetaWIBELE score ---")
 	summary_table = prioritize_families (summary_table, "priority_score", ann_conf)
 	metawibele_output_file = args_value.output + '/' + myout + '.rank.tsv'
 	write_results(summary_table, split, metawibele_output_file)
@@ -636,8 +650,8 @@ def main():
 	#write_results (imp_family, split, metawibele_output_file)
 
 	if config.verbose == 'DEBUG':
-		print ("\n--- The prioritization output is written in %s ..." % (args_value.output))
-		print ("--- Prioritization process is successfully completed ---")
+		config.logger.info ("--- The prioritization output is written in %s ..." % (args_value.output))
+		config.logger.info ("--- Prioritization process is successfully completed ---")
 
 
 if __name__ == '__main__':

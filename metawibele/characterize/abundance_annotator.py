@@ -259,21 +259,21 @@ def main():
 		myfamily = values.cluster
 	
 	
-	sys.stderr.write("### Start abundance_annotator.py -a " + values.abundance + " ####\n")
+	config.logger.info ("#### Start abundance_annotator step ####")
 
 	### collect info ###
-	sys.stderr.write("Get info ......starting\n")
+	config.logger.info ("Get info ......starting")
 	sample_info = utilities.sample_info (mymeta)
 	cluster = collect_cluster_info (myfamily, values.flag)
 	sample_num, phe_category, abundance = collect_cluster_abundance (values.abundance, sample_info)
-	sys.stderr.write("Get info ......done\n")
+	config.logger.info ("Get info ......done")
 
 	### convert info ###
-	sys.stderr.write("Convert info ......starting\n")
+	config.logger.info ("Convert info ......starting")
 	output_info (cluster, sample_num, phe_category, abundance, values.type, values.flag, values.output)
-	sys.stderr.write("Output info ......done\n")
+	config.logger.info ("Output info ......done")
 
-	sys.stderr.write("### Finish abundance_annotator.py ####\n\n\n")
+	config.logger.info ("### Finish abundance_annotator step ####")
 
 # end: main
 

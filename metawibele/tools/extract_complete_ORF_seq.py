@@ -31,6 +31,13 @@ import os.path
 import re
 import argparse
 
+try:
+	from metawibele import config
+except ImportError:
+	sys.exit("CRITICAL ERROR: Unable to find the MetaWIBELE python package." +
+	         " Please check your install.")
+
+
 #==============================================================
 # collect gene info
 #==============================================================
@@ -106,21 +113,19 @@ def main():
 	parser.add_argument('-o', help='output subset sequence file', required=True)
 	values=parser.parse_args()
 
-
-	sys.stderr.write("### Start extract_complete_ORF_seq.py -i " + values.i + " ####\n")
-	
+	config.logger.info ("### Start extract_complete_ORF_seq step ####")
 
 	### collect gene info  ###
-	sys.stderr.write("Get gene info ......starting\n")
+	config.logger.info ("Get gene info ......starting")
 	genes = collect_gene_info (values.m, values.t)
-	sys.stderr.write("Get gene info ......done\n")
+	config.logger.info ("Get gene info ......done")
 	
 	### Output sequence info
-	sys.stderr.write("\nOutput sequence info ......starting\n")
+	config.logger.info ("Output sequence info ......starting")
 	output_info (genes, values.i, values.o)
-	sys.stderr.write("Output sequence info ......done\n")
+	config.logger.info ("Output sequence info ......done")
 
-	sys.stderr.write("### Finish extract_complete_ORF_seq.py ####\n\n\n")
+	config.logger.info ("### Finish extract_complete_ORF_seq step ####")
 
 # end: main
 

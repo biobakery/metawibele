@@ -75,7 +75,7 @@ def clustering (workflow, gene_catalog_seq, threads, output_folder, protein_fami
 		workflow.go()
 	"""
 
-	print("clustering")
+	config.logger.info ("###### Start clustering module #####")
 	
 	# get the clustering output files
 	main_folder = os.path.join(output_folder, "clustering")
@@ -115,11 +115,11 @@ def clustering (workflow, gene_catalog_seq, threads, output_folder, protein_fami
 			cores = threads,
 			name = "clustering-proteins")
 
-	workflow.add_task("ln -fs [depends[0]] [targets[0]]",
+	workflow.add_task("cp -f [depends[0]] [targets[0]]",
 	        depends = [clustering_output_seq],
 	        targets = [protein_family_seq],
 	        cores = 1,
-	        name = "clustering-proteins")
+	        name = "store__clustering-proteins")
 	workflow.add_task("ln -fs [depends[0]] [targets[0]]",
 			depends = [clustering_output_seq],
 	        targets = [os.path.join(tmps_dir, os.path.basename(protein_family_seq))],
@@ -134,17 +134,18 @@ def clustering (workflow, gene_catalog_seq, threads, output_folder, protein_fami
 			cores = 1,
 			name = "extract_cluster_CD-hit")
 
-	workflow.add_task("ln -fs [depends[0]] [targets[0]]",
+	workflow.add_task("cp -f [depends[0]] [targets[0]]",
 			depends = [clustering_output_cluster],
 	        targets = [protein_family],
 	        cores = 1,
-	        name = "ln__clustering-proteins")
+	        name = "store__clustering-proteins")
 	
 	workflow.add_task("ln -fs [depends[0]] [targets[0]]",
 			depends = [clustering_output_cluster],
 	        targets = [os.path.join(tmps_dir, os.path.basename(protein_family))],
 	        cores = 1,
 	        name = "ln__clustering-proteins")
+
 
 	return clustering_output_cluster, main_folder
 
@@ -189,7 +190,7 @@ def global_homology_annotation (workflow, family_conf, gene_catalog_seq,
 		workflow.go()
 	"""
 	
-	print("global_homology_annotation")
+	config.logger.info ("###### Start global_homology_annotation module ######")
 
 	# define the annotation output files
 	main_folder = os.path.join(output_folder, "global_homology_annotation")
@@ -286,16 +287,16 @@ def global_homology_annotation (workflow, family_conf, gene_catalog_seq,
 				cores = 1,
 				name = "summary_protein_family_uniref_annotation")
 
-		workflow.add_task("ln -fs [depends[0]] [targets[0]]",
+		workflow.add_task("cp -f [depends[0]] [targets[0]]",
 		        depends = [uniref_taxa_family],
 	            targets = [uniref_taxonomy_family],
 		        cores = 1,
-	            name = "ln__uniref_taxa_family")
-		workflow.add_task("ln -fs [depends[0]] [targets[0]]",
+	            name = "store__uniref_taxa_family")
+		workflow.add_task("cp -f [depends[0]] [targets[0]]",
 	            depends = [uniref_taxa],
 	            targets = [uniref_taxonomy],
 		        cores = 1,
-	            name = "ln__uniref_taxa")
+	            name = "store__uniref_taxa")
 		
 		workflow.add_task("ln -fs [depends[0]] [targets[0]]",
 		        depends = [uniref_taxa_family],
@@ -318,6 +319,7 @@ def global_homology_annotation (workflow, family_conf, gene_catalog_seq,
 	if len(myprotein_ann.keys()) > 0:
 		for myfile in myprotein_ann.keys():
 			protein_ann_list[myfile] = ""
+
 
 	return myprotein_ann_family, myprotein_ann, main_folder
 
@@ -364,15 +366,15 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 		# run the workflow
 		workflow.go()
 	"""
-	
-	print("domain_motif_annotation")
+
+	config.logger.info("###### Start domain_motif_annotation module ######")
 
 	# define the annotation output files
 	main_folder = os.path.join(output_folder, "domain_motif_annotation")
 	interpro = os.path.join(main_folder, "InterProScan")
 	if len(interpro) >200:
 		# debug
-		sys.stderr.write("The path for InterProScan output has more than 230 characters it throws the error you are getting! Change your path to home folder.")
+		config.logger.info ("WARNING! The path for InterProScan output has more than 230 characters it throws the error you are getting. Thus change your path to home folder.")
 		interpro = "~/"
 	psortb = os.path.join(main_folder, "PSORTb")
 	tmps_dir = os.path.join (os.getcwd(), "temp")
@@ -599,7 +601,7 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 	## Pfam2GO info
 	if domain_motif_conf["pfam2go"].lower() == "yes":
 		if domain_motif_conf["interproscan"].lower() == "no":
-			sys.stderr.write("WARNING: Please make sure that domain annotations have been assigned by interproscan. Otherwise, errors might be caused!")
+			config.logger.info ("WARNING! Please make sure that domain annotations have been assigned by interproscan. Otherwise, errors might be caused!")
 		mylog = re.sub(".tsv", ".log", pfam2go_ann_family)
 		workflow.add_task(
 				"metawibele_pfam2go -i [depends[0]] -o [targets[0]] > [args[0]] 2>&1",
@@ -625,7 +627,7 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 	## DOMINE (domain-domain interaction)
 	if domain_motif_conf["domine"].lower() == "yes":
 		if domain_motif_conf["interproscan"].lower() == "no":
-			sys.stderr.write("WARNING: Please make sure that domain annotations have been assigned by interproscan. Otherwise, errors might be caused!")
+			config.logger.info ("WARNING! Please make sure that domain annotations have been assigned by interproscan. Otherwise, errors might be caused!")
 		# DDI annotation
 		mylog = re.sub(".tsv", ".log", domine_ann)
 		myout_ddi = []
@@ -730,9 +732,9 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 	# DDI + SIFTS annotation
 	if domain_motif_conf["sifts"].lower() == "yes":
 		if domain_motif_conf["interproscan"].lower() == "no":
-			sys.stderr.write("WARNING: Please make sure that domain annotations have been assigned by interproscan. Otherwise, errors might be caused!")
+			config.logger.info ("WARNING! Please make sure that domain annotations have been assigned by interproscan. Otherwise, errors might be caused!")
 		if domain_motif_conf["domine"].lower() == "no":
-			sys.stderr.write("WARNING: Please make sure that DDIs have been assigned based on DOMINE. Otherwise, errors might be caused!")
+			config.logger.info ("WARNING! Please make sure that DDIs have been assigned based on DOMINE. Otherwise, errors might be caused!")
 		mylog = re.sub(".tsv", ".log", SIFTS_ann_family)
 		myout1_1 = re.sub(".tsv", ".ann.tsv", domine_ann_family)
 		myout2_1 = re.sub(".tsv", ".ann.tsv", domine_ann)
@@ -760,9 +762,9 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 	# DDI + human expression
 	if domain_motif_conf["expatlas"].lower() == "yes": 
 		if domain_motif_conf["interproscan"].lower() == "no":
-			sys.stderr.write("WARNING: Please make sure that domain annotations have been assigned by interproscan. Otherwise, errors might be caused!")
+			config.logger.info ("WARNING! Please make sure that domain annotations have been assigned by interproscan. Otherwise, errors might be caused!")
 		if domain_motif_conf["domine"].lower() == "no":
-			sys.stderr.write("WARNING: Please make sure that DDIs have been assigned based on DOMINE. Otherwise, errors might be caused!")
+			config.logger.info ("WARNING! Please make sure that DDIs have been assigned based on DOMINE. Otherwise, errors might be caused!")
 		mylog = re.sub(".tsv", ".log", ExpAtlas_ann_family)
 		myout1_3 = re.sub(".tsv", ".ann.tsv", domine_ann_family_sub)
 		myout2_3 = re.sub(".tsv", ".ann.tsv", domine_ann_sub)
@@ -865,6 +867,7 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 		for myfile in myprotein_ann.keys():
 			protein_ann_list[myfile] = ""
 
+
 	return myprotein_family_ann, myprotein_ann, main_folder
 
 
@@ -915,7 +918,7 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog_seq, gene_catal
 		workflow.go()
 	"""
 
-	print("abundance_annotation")
+	config.logger.info ("###### Start abundance_annotation module ######")
 	
 	# define the annotation output files
 	main_folder = os.path.join(output_folder, "abundance_annotation")
@@ -1108,16 +1111,16 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog_seq, gene_catal
 			cores = 1,
 			name = "mspminer_protein_family_taxonomy")
 
-		workflow.add_task("ln -fs [depends[0]] [targets[0]]",
+		workflow.add_task("cp -f [depends[0]] [targets[0]]",
 		    depends=[mymsp_detail_taxa_family],
 			targets=[taxonomy_annotation_family],
 		    cores = 1,
-		    name="ln__mymsp_detail_taxa_family")
-		workflow.add_task("ln -fs [depends[0]] [targets[0]]",
+		    name="store__mymsp_detail_taxa_family")
+		workflow.add_task("cp -f [depends[0]] [targets[0]]",
 			depends=[mymsp_detail_taxa],
 		    targets=[taxonomy_annotation],
 		    cores=1,
-		    name="ln__mymsp_detail_taxa")
+		    name="store__mymsp_detail_taxa")
 
 		myprotein_family_ann[mymsp_detail_family] = ""
 		myprotein_ann[mymsp_detail] = ""
@@ -1211,11 +1214,11 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog_seq, gene_catal
 			mem = mem_equation,
 			name = "abundance_annotator")
 
-		workflow.add_task("ln -fs [depends[0]] [targets[0]]",
+		workflow.add_task("cp -f [depends[0]] [targets[0]]",
 			depends = [family_relab],
 		    targets = [protein_family_relab],
 		    cores = 1,
-		    name="ln__proteinfamilies_relab")
+		    name="store__proteinfamilies_relab")
 		workflow.add_task("ln -fs [depends[0]] [targets[0]]",
 			depends = [family_relab],
 		    targets = [os.path.join(tmps_dir, os.path.basename(family_relab))],
@@ -1244,9 +1247,9 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog_seq, gene_catal
 				mem = mem_equation,
 				name = "abundance_smoothing")
 		
-		feature_pcl = re.sub(".tsv", ".feature.pcl", family_smooth)
+		feature_pcl = re.sub(".tsv", ".feature.pcl", family_relab)
 		workflow.add_task("ln -fs [depends[0]] [targets[0]]",
-		        depends = [family_smooth],
+		        depends = [family_relab, family_smooth],
 		        targets = [feature_pcl],
 		        cores = 1,
 		        name="ln__proteinfamilies_relab_feature")
@@ -1362,13 +1365,13 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog_seq, gene_catal
 
 	# if DA for DNA abundance
 
-
 	if len(myprotein_family_ann.keys()) > 0:
 		for myfile in myprotein_family_ann.keys():
 			protein_family_ann_list[myfile] = ""
 	if len(myprotein_ann.keys()) > 0:
 		for myfile in myprotein_ann.keys():
 			protein_ann_list[myfile] = ""
+
 
 	return myprotein_family_ann, myprotein_ann, main_folder
 
@@ -1426,6 +1429,8 @@ def integration_annotation (workflow, integration_conf,
 		workflow.go()
 
 	"""
+
+	config.logger.info("###### Start integration_annotation module ######")
 
 	# define the annotation output files
 	main_folder = output_folder
@@ -1509,7 +1514,8 @@ def integration_annotation (workflow, integration_conf,
 		workflow.add_task(
 				"metawibele_finalize_annotation -l [depends[0]] -a [depends[1]] -t [depends[2]] -u [depends[3]] -c [depends[4]] -b [args[0]] -s protein_family -o [targets[0]] > [args[1]] 2>&1",
 				depends = utilities.add_to_list(myinputs, TrackedExecutable("metawibele_finalize_annotation")),
-				targets = [final_ann_family, final_attr_family],
+				#targets = [final_ann_family, final_attr_family],
+				targets = [protein_family_ann, protein_family_attr],
 				args = [basename, mylog],
 				cores = 1,
 				name = "finalize_annotation")
@@ -1529,5 +1535,6 @@ def integration_annotation (workflow, integration_conf,
 				args = [basename, mylog],
 				cores = 1,
 				name = "finalize_annotation")
+
 
 	return final_ann_family, final_attr_family, main_folder

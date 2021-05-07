@@ -31,7 +31,12 @@ import os
 import re
 import argparse
 
-from metawibele import utilities
+try:
+	from metawibele import config
+	from metawibele import utilities
+except ImportError:
+	sys.exit("CRITICAL ERROR: Unable to find the MetaWIBELE python package." +
+	         " Please check your install.")
 
 
 def get_args():
@@ -59,7 +64,7 @@ def format_contig_info (contig_path, extension, outfile):
 		sample = re.sub("." + extension, "", sample)
 		# collect seq info
 		if not os.path.isfile(myfile):
-			print("Contig file doesn't exist!\t" + myfile)
+			config.logger.info ("WARNING! Contig file doesn't exist!\t" + myfile)
 			continue
 		open_contig = open(myfile, "r")
 		contigs = {}
@@ -101,14 +106,14 @@ def main():
 	values = get_args()
 
 
-	sys.stderr.write("### Start format_contig_table.py -p " + values.p + " ####\n")
+	config.logger.info ("### Start format_contig_sequences step ####")
 	
 	### collect sequence info ###
-	sys.stderr.write("Get contig and gff info ......starting\n")
+	config.logger.info ("Get contig and gff info ......starting")
 	format_contig_info (values.p, values.e, values.o)
-	sys.stderr.write("Get contig and gff info ......done\n")
+	config.logger.info ("Get contig and gff info ......done")
 
-	sys.stderr.write("### Finish format_contig_table.py ####\n\n\n")
+	config.logger.info ("### Finish format_contig_sequences step ####")
 
 # end: main
 

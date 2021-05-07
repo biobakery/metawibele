@@ -117,7 +117,7 @@ def collect_localizing_info (cluster_mem, extension, ann_path, outfile):	# list.
 	for myfile in filelist:
 		#myfile = ann_path + "/" + samplelist + "/" + samplelist + ".psortb.gram_positive.out.location.tsv"
 		if not os.path.isfile(myfile):
-			print ("File not exist!\t" + myfile)
+			config.logger.info ("ERROR! File not exist: " + myfile)
 		else:
 			open_file = open(myfile, "r")
 			for line in open_file.readlines():
@@ -148,7 +148,7 @@ def collect_localizing_info (cluster_mem, extension, ann_path, outfile):	# list.
 		#myfile = ann_path + "/" + samplelist + "/" + samplelist + ".psortb.gram_negative.out.location.tsv"
 		myfile1 = re.sub("psortb.gram_positive.out.location.tsv", "psortb.gram_negative.out.location.tsv", myfile)
 		if not os.path.isfile(myfile1):
-			print ("File not exist!\t" + myfile1)
+			config.logger.info ("ERROR! File not exist: " + myfile1)
 		else:
 			open_file = open(myfile1, "r")
 			for line in open_file.readlines():
@@ -179,7 +179,7 @@ def collect_localizing_info (cluster_mem, extension, ann_path, outfile):	# list.
 		#myfile = ann_path + "/" + samplelist + "/" + samplelist + ".psortb.archaea.out.location.tsv"
 		myfile1 = re.sub("psortb.gram_positive.out.location.tsv", "psortb.archaea.out.location.tsv", myfile)
 		if not os.path.isfile(myfile1):
-			print ("File not exist!\t" + myfile1)
+			config.logger.info ("ERROR! File not exist: " + myfile1)
 		else:
 			open_file = open(myfile1, "r")
 			for line in open_file.readlines():
@@ -451,24 +451,24 @@ def main():
 	if values.cluster:
 		myfamily = values.cluster
 
-	sys.stderr.write("### Start psortb_protein_family.py ####\n")
+	config.logger.info ("### Start psortb_protein_family step ####")
 	
 	### collect sample info ###
-	sys.stderr.write("Get info ......starting\n")
+	config.logger.info ("Get info ......starting")
 	cluster, cluster_mem = collect_cluster_info (myfamily)
-	sys.stderr.write("Get info ......done\n")
+	config.logger.info ("Get info ......done")
 
 	### collect annotation info and do stat ###
-	sys.stderr.write("Get localizing info ......starting\n")
+	config.logger.info ("Get localizing info ......starting")
 	gram_p, gram_n, archaea, location, scores, location_p, location_n, location_a = collect_localizing_info (cluster_mem, values.extension, values.path, values.output)
-	sys.stderr.write("Get localizing info ......done\n")
+	config.logger.info ("Get localizing info ......done")
 	
 	### Output sample info
-	sys.stderr.write("\nOutput localizing summary info ......starting\n")
+	config.logger.info ("Output localizing summary info ......starting")
 	output_info (config.tshld_consistency, cluster, gram_p, gram_n, archaea, location, scores, location_p, location_n, location_a, values.method, values.output)
-	sys.stderr.write("Output localizing summary info ......done\n")
+	config.logger.info ("Output localizing summary info ......done")
 
-	sys.stderr.write("### Finish psortb_protein_family.py ####\n\n\n")
+	config.logger.info ("### Finish psortb_protein_family step ####")
 
 # end: main
 

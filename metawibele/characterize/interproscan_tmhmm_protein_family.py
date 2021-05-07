@@ -111,7 +111,7 @@ def collect_transmembrane_info (cluster_mem, extension, ann_path, outfile): # li
 	filelist = utilities.find_files(ann_path, extension, None)
 	for myfile in filelist:
 		if not os.path.isfile(myfile):
-			print ("File not exist!\t" + myfile)
+			config.logger.info ("ERROR! File not exist: " + myfile)
 		else:
 			open_file = open(myfile, "r")
 			titles = {}
@@ -246,24 +246,24 @@ def main():
 	if values.cluster:
 		myfamily = values.cluster
 
-	sys.stderr.write("### Start interproscan_tmhmm_protein_family.py -p " + values.path + " ####\n")
+	config.logger.info ("### Start interproscan_tmhmm_protein_family step ####")
 	
 	### collect sample info ###
-	sys.stderr.write("Get info ......starting\n")
+	config.logger.info ("Get info ......starting")
 	cluster, cluster_mem = collect_cluster_info (myfamily)
-	sys.stderr.write("Get info ......done\n")
+	config.logger.info ("Get info ......done")
 
 	### collect annotation info and do stat ###
-	sys.stderr.write("Get transmembrane info ......starting\n")
+	config.logger.info ("Get transmembrane info ......starting")
 	transmem = collect_transmembrane_info (cluster_mem, values.extension, values.path, values.output)
-	sys.stderr.write("Get transmembrane info ......done\n")
+	config.logger.info ("Get transmembrane info ......done")
 	
 	### Output sample info
-	sys.stderr.write("\nOutput transmembrane summary info ......starting\n")
+	config.logger.info ("Output transmembrane summary info ......starting")
 	output_info (config.tshld_consistency, cluster, transmem, values.method, values.output)
-	sys.stderr.write("Output transmembrane summary info ......done\n")
+	config.logger.info ("Output transmembrane summary info ......done")
 
-	sys.stderr.write("### Finish interproscan_tmhmm_protein_family.py ####\n\n\n")
+	config.logger.info ("### Finish interproscan_tmhmm_protein_family step ####")
 
 # end: main
 

@@ -33,6 +33,7 @@ import argparse
 
 try:
 	from metawibele import utilities
+	from metawibele import config
 except ImportError:
 	sys.exit("CRITICAL ERROR: Unable to find the MetaWIBELE python package." +
 	         " Please check your install.")
@@ -66,9 +67,9 @@ def extract_interproscan_info (extension, interproscan_path):
 	for myfile in filelist:
 		#myfile = interproscan_path + "/" + samplelist + "/" + samplelist + ".interproscan.txt"
 		if not os.path.isfile(myfile):
-			print ("File not exist!\t" + myfile)
+			config.logger.info ("ERROR! File not exist: " + myfile)
 		else:
-			print ("OK!\t" + myfile)
+			config.logger.info ("OK!\t" + myfile)
 			myout1 = re.sub(".interproscan.txt", ".signalp.signaling.tsv", myfile)
 			myout2 = re.sub(".interproscan.txt", ".tmhmm.transmembrane.tsv", myfile)
 			myout3 = re.sub(".interproscan.txt", ".phobius.signaling.tsv", myfile)
@@ -262,14 +263,14 @@ def main():
 	values = get_args ()
 
 
-	sys.stderr.write("### Start interproscan_protein.py -p " + values.path + " ####\n")
+	config.logger.info ("### Start interproscan_protein setp ####")
 	
 	### collect Pfam info ###
-	sys.stderr.write("Get InterProScan info ......starting\n")
+	config.logger.info ("Get InterProScan info ......starting")
 	extract_interproscan_info (values.extension, values.path)
-	sys.stderr.write("Get InterProScan info ......done\n")
+	config.logger.info ("Get InterProScan info ......done")
 
-	sys.stderr.write("### Finish interproscan_protein.py ####\n\n\n")
+	config.logger.info ("### Finish interproscan_protein step ####")
 
 # end: main
 

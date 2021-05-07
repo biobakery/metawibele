@@ -31,6 +31,11 @@ import os.path
 import re
 import argparse
 
+try:
+	from metawibele import config
+except ImportError:
+	sys.exit("CRITICAL ERROR: Unable to find the MetaWIBELE python package." +
+	         " Please check your install.")
 
 #==============================================================
 # join abundance info
@@ -82,17 +87,14 @@ def main():
 	parser.add_argument('-o', help='output joint abundance file', required=True)
 	values=parser.parse_args()
 
-
-	sys.stderr.write("### Start join_family_abundance.py -l " + values.l + " ####\n")
-	
+	config.logger.info ("### Start join_family_abundance step ####")
 	
 	### collect abundance info ###
-	sys.stderr.write("Get abundance info ......starting\n")
+	config.logger.info ("Get abundance info ......starting")
 	join_abundance_info(values.l, values.o)
-	sys.stderr.write("Get abundance info ......done\n")
+	config.logger.info ("Get abundance info ......done")
 
-
-	sys.stderr.write("### Finish join_family_abundance.py ####\n\n\n")
+	config.logger.info ("### Finish join_family_abundance step ####")
 
 # end: main
 

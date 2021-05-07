@@ -114,7 +114,7 @@ def collect_phobius_info (cluster_mem, extension, ann_path, outfile):	# list.txt
 	filelist = utilities.find_files(ann_path, extension, None)
 	for myfile in filelist:
 		if not os.path.isfile(myfile):
-			print ("File not exist!\t" + myfile)
+			config.logger.info ("ERROR! File not exist: " + myfile)
 		else:
 			open_file = open(myfile, "r")
 			for line in open_file.readlines():
@@ -137,7 +137,7 @@ def collect_phobius_info (cluster_mem, extension, ann_path, outfile):	# list.txt
 
 		myfile = re.sub(extension, "phobius.transmembrane.tsv", myfile)
 		if not os.path.isfile(myfile):
-			print ("File not exist!\t" + myfile)
+			config.logger.info ("ERROR! File not exist: " + myfile)
 		else:
 			open_file = open(myfile, "r")
 			for line in open_file.readlines():
@@ -195,8 +195,6 @@ def output_info (cutoff_s, cutoff_t, cluster, signal, transmem, assign_flag, out
 	for sample in sorted(signal.keys()):
 		for myid in sorted(signal[sample].keys()):
 			annotation_s[myid] = "Phobius_signaling" + "\t" + str(signal[sample][myid])
-			#mystr = sample + "\t" + mydia + "\t" + myid + "\t" + str(signal[sample][myid])
-			#open_file.write(mystr + "\t1\n")
 	# foreach sample
 	
 	"""
@@ -209,8 +207,6 @@ def output_info (cutoff_s, cutoff_t, cluster, signal, transmem, assign_flag, out
 	for sample in sorted(transmem.keys()):
 		for myid in sorted(transmem[sample].keys()):
 			annotation_t[myid] = "Phobius_transmembrane" + "\t" + str(transmem[sample][myid])
-			#mystr = sample + "\t" + mydia + "\t" + myid + "\t" + str(transmem[sample][myid])
-			#open_file.write(mystr + "\t1\n")
 	# foreach sample
 
 	# get details and numbers
@@ -338,24 +334,24 @@ def main():
 	if values.cluster:
 		myfamily = values.cluster
 
-	sys.stderr.write("### Start interproscan_phobius_protein_family.py -p " + values.path + " ####\n")
+	config.logger.info ("### Start interproscan_phobius_protein_family step ####")
 	
 	### collect sample info ###
-	sys.stderr.write("Get info ......starting\n")
+	config.logger.info ("Get info ......starting")
 	cluster, cluster_mem = collect_cluster_info (myfamily)
-	sys.stderr.write("Get info ......done\n")
+	config.logger.info ("Get info ......done")
 
 	### collect annotation info and do stat ###
-	sys.stderr.write("Get phobius info ......starting\n")
+	config.logger.info ("Get phobius info ......starting")
 	signal, transmem = collect_phobius_info (cluster_mem, values.extension, values.path, values.output)
-	sys.stderr.write("Get phobius info ......done\n")
+	config.logger.info ("Get phobius info ......done")
 	
 	### Output sample info
-	sys.stderr.write("\nOutput signaling and transmembrane summary info ......starting\n")
+	config.logger.info ("Output signaling and transmembrane summary info ......starting")
 	output_info (config.tshld_consistency, config.tshld_consistency, cluster, signal, transmem, values.method, values.output)
-	sys.stderr.write("Output signaling and transmembrane summary info ......done\n")
+	config.logger.info ("Output signaling and transmembrane summary info ......done")
 
-	sys.stderr.write("### Finish interproscan_phobius_protein_family.py ####\n\n\n")
+	config.logger.info ("### Finish interproscan_phobius_protein_family step ####")
 
 # end: main
 

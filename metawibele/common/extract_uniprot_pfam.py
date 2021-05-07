@@ -30,6 +30,11 @@ import os
 import re
 import argparse
 
+try:
+	from metawibele import config
+except ImportError:
+	sys.exit("CRITICAL ERROR: Unable to find the MetaWIBELE python package." +
+	         " Please check your install.")
 
 # ---------------------------------------------------------------
 # Description and arguments
@@ -176,20 +181,19 @@ def main():
 	### get arguments ###
 	values = get_args ()
 
-
-	sys.stderr.write("### Start extract_uniprot_pfam.py -a " + values.a + " ####\n")
+	config.logger.info ("### Start extract_uniprot_pfam step ####")
 	
 	### Extraction ###
-	sys.stderr.write("Extract info......starting\n")
+	config.logger.info ("Extract info......starting")
 	ann1, ann2, ann3, ann4, ann5 = extract_annotation_info (values.a)
-	sys.stderr.write("Extract info......done\n")
+	config.logger.info ("Extract info......done")
 	
 	### Output ###
-	sys.stderr.write("\nOutput info......starting\n")
+	config.logger.info ("Output info......starting")
 	output_info (ann1, ann2, ann3, ann4, ann5, values.o)
-	sys.stderr.write("\nOutput info......done\n")
+	config.logger.info ("Output info......done")
 	
-	sys.stderr.write("### Finish  extract_uniprot_pfam.py  ####\n\n\n")
+	config.logger.info ("### Finish  extract_uniprot_pfam step ####")
 
 # end: main
 

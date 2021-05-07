@@ -90,7 +90,7 @@ def collect_annotation_info (ann_file, spe_note):
 #==============================================================
 def collect_abundance_info (cluster, abun_file, outfile):	
 	# collect abundance info
-	sys.stderr.write("Collect abundance info ......\n")
+	config.logger.info ("Collect abundance info ......")
 	open_file = open(abun_file, "r")
 	open_out = open(outfile, "w")
 	title = open_file.readline()
@@ -117,21 +117,19 @@ def main():
 	### get arguments ###
 	values = get_args()
 
-
-	sys.stderr.write("### Start abundance_filtering.py -a " + values.a + " ####\n")
+	config.logger.info ("### Start abundance_filtering step ####")
 	
 	### collect stat abundance info ###
-	sys.stderr.write("Get bioactivity info ......starting\n")
+	config.logger.info ("Get bioactivity info ......starting")
 	cluster = collect_annotation_info (values.i, values.f)
-	sys.stderr.write("Get bioactivity info ......done\n")
+	config.logger.info ("Get bioactivity info ......done")
 
 	### collect abundance info ###
-	sys.stderr.write("Get abundance info ......starting\n")
+	config.logger.info ("Get abundance info ......starting")
 	collect_abundance_info (cluster, values.a, values.o)
-	sys.stderr.write("Get abundance info ......done\n")
-	
+	config.logger.info ("Get abundance info ......done")
 
-	sys.stderr.write("### Finish abundance_filtering.py ####\n\n\n")
+	config.logger.info ("### Finish abundance_filtering step ####")
 
 # end: main
 

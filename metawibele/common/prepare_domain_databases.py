@@ -32,6 +32,7 @@ import argparse
 
 try:
 	from metawibele.common import utils
+	from metawibele import config
 except ImportError:
 	sys.exit("CRITICAL ERROR: Unable to find the MetaWIBELE python package." +
             " Please check your install.")
@@ -150,20 +151,19 @@ def main():
 	### get arguments ###
 	values = get_args ()
 
-
-	sys.stderr.write("### Start prepare_domain_databases.py -o " + values.output + " ####\n")
+	config.logger.info ("### Start prepare_domain_databases step ####")
 	
 	### Download ###
-	sys.stderr.write("Download domain info......starting\n")
+	config.logger.info ("Download domain info......starting")
 	datfile = download_dat (values.output, values.type)
-	sys.stderr.write("Download domain......done\n")
+	config.logger.info ("Download domain......done")
 	
 	### Extract ###
-	sys.stderr.write("\nExtract info......starting\n")
+	config.logger.info ("Extract info......starting")
 	extract_annotation_info (datfile, values.output)
-	sys.stderr.write("\nExtract info......done\n")
+	config.logger.info ("Extract info......done")
 	
-	sys.stderr.write("### Finish  prepare_domain_databases.py  ####\n\n\n")
+	config.logger.info ("### Finish prepare_domain_databases step ####")
 
 # end: main
 

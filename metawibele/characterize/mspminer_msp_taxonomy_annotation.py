@@ -50,21 +50,21 @@ def get_args ():
 	parser = argparse.ArgumentParser(description=description)
 	parser.add_argument('-a', "--msp-annotation",
 	                    help='input the MSPs annotation file',
-	                    required=True)
+	                    required = True)
 	parser.add_argument('-t', "--homology-type",
 	                    help='specify the type of uniref90 homology',
 	                    choices=["no", "UniRef90_strong_homology", "UniRef90_homology"],
-	                    required=True,
+	                    required = True,
 	                    default="UniRef90_homology")
 	parser.add_argument('-u', "--tshld-classified",
 						help = 'the minimum percentile of classified genes in each MSP',
-						default = "none")
+						default = None)
 	parser.add_argument('-d', "--tshld-diff",
 						help = 'the minimum difference between most and second dominant taxa in the MSP',
-						default = "none")
+						default = None)
 	parser.add_argument('-o', "--output",
 	                    help='output taxonomy annotation of MSP file',
-	                    required=True)
+	                    required = True)
 	values = parser.parse_args()
 	return values
 # get_args
@@ -313,9 +313,9 @@ def taxonomy_annotation (msp, taxa, normalized_known, min_known, min_cutoff, cut
 				hit_num = first_num
 				hit_per = myper1
 				# debug
-				print("No taxon that is sig. more dominant than the second one!\t" + msp_name + "\t" + myclass + "\t" + first_tax + "\t" + str(first_num) + "\t" + second_tax + "\t" + str(second_num))
+				config.logger.info ("WARNING! No taxon that is sig. more dominant than the second one: " + msp_name + "\t" + myclass + "\t" + first_tax + "\t" + str(first_num) + "\t" + second_tax + "\t" + str(second_num))
 				if float(myper1) > 0.50:
-					print("Assign the MSP using the most dominant taxon given most members are classified\t" + msp_name + "\t" + myclass + "\t" + first_tax + "\t" + str(myper1))
+					config.logger.info ("WARNING! Assign the MSP using the most dominant taxon given most members are classified: " + msp_name + "\t" + myclass + "\t" + first_tax + "\t" + str(myper1))
 					taxa_name = first_tax
 			taxa_info = "NA\tNA\tUnclassified\tNA\tNA"
 			if taxa_name in taxa_map:
@@ -338,28 +338,27 @@ def main():
 	
 	### get arguments ###
 	values = get_args ()
-	if values.tshld_classified == "none":
-		tshld_classified = config.tshld_classified
-	else:
+	if values.tshld_classified:
 		tshld_classified = values.tshld_classified
-	if values.tshld_diff == "none":
-		tshld_diff = config.tshld_diff
 	else:
+		tshld_classified = config.tshld_classified
+	if values.tshld_diff:
 		tshld_diff = values.tshld_diff
+	else:
+		tshld_diff = config.tshld_diff
 
-	sys.stderr.write("### Start mspminer_msp_taxonomy_annotation.py -a " + values.msp_annotation + " ####\n")
-	
+	config.logger.info ("### Start mspminer_msp_taxonomy_annotation step ####")
 
 	### collect cluster info ###
-	sys.stderr.write("Get info ......starting\n")
+	config.logger.info("Get info ......starting")
 	taxa_map = collect_taxonomy_info (config.taxonomy_database)
 	msp, taxa = extract_taxon_info (values.msp_annotation, values.homology_type)
 	normalized_known = "yes"
 	cutoff_type = "diff"
 	taxonomy_annotation (msp, taxa, normalized_known, float(tshld_classified), float(tshld_diff), cutoff_type, taxa_map, values.output)
-	sys.stderr.write("Get info ......done\n")
+	config.logger.info ("Get info ......done")
 
-	sys.stderr.write("### Finish mspminer_msp_taxonomy_annotation.py ####\n\n\n")
+	config.logger.info ("### Finish mspminer_msp_taxonomy_annotation step ####")
 
 # end: main
 

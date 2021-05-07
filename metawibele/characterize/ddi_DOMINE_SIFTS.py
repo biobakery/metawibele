@@ -362,7 +362,7 @@ def main():
 	### get arguments ###
 	values = get_args ()
 
-	sys.stderr.write("### Start ddi_DOMINE_SIFTS.py -i " + values.ddi_annotation + " ####\n")
+	config.logger.info ("### Start ddi_DOMINE_SIFTS step ####")
 	
 
 	### collect info ###
@@ -372,16 +372,16 @@ def main():
 	pfams = collect_pfam_info (config.pdb_pfam)
 	pdb_taxa = collect_taxanomy_info (config.pdb_taxonomy)
 	interact, title, id_flag = collect_interaction_info (values.ddi_annotation)
-	sys.stderr.write("Get info ......done\n")
+	config.logger.info ("Get info ......done")
 	
 	### assign annotation to peptide families ###
-	sys.stderr.write("\nAssign SIFTS structure to peptide families ......starting\n")
+	config.logger.info ("Assign SIFTS structure to peptide families ......starting")
 	cutoff = "stringent"
 	filter = "yes"
 	assign_interaction ("yes", taxa1, taxa2, "stringent", pfams, pdb_taxa, interact, title, id_flag, values.output)
-	sys.stderr.write("\nAssign SIFTS structure to peptide families ......done\n")
+	config.logger.info ("Assign SIFTS structure to peptide families ......done")
 
-	sys.stderr.write("### Finish ddi_DOMINE_SIFTS.py ####\n\n\n")
+	config.logger.info ("### Finish ddi_DOMINE_SIFTS step ####")
 
 # end: main
 
