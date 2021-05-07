@@ -205,21 +205,21 @@ def main():
 	### get arguments ###
 	values = get_args ()
 
-	sys.stderr.write("### Start pfam2go.py -i " + values.pfam_annotation + " ####\n")
+	config.logger.info ("### Start pfam2go step ####")
 	
 
 	### collect info ###
-	sys.stderr.write("Get info ......starting\n")
+	config.logger.info ("Get info ......starting")
 	id_flag, pfams = collect_pfam_info (values.pfam_annotation)
 	pfam2go = collect_pfam2go_info (config.pfam2go_database)
-	sys.stderr.write("Get info ......done\n")
+	config.logger.info ("Get info ......done")
 	
 	### assign annotation to peptide families ###
-	sys.stderr.write("\nAssign annotation ......starting\n")
+	config.logger.info ("Assign annotation ......starting")
 	assign_annotation (id_flag, pfams, pfam2go, values.output)
-	sys.stderr.write("\nAssign annotation ......done\n")
+	config.logger.info ("Assign annotation ......done")
 
-	sys.stderr.write("### Finish pfam2go.py ####\n\n\n")
+	config.logger.info ("### Finish pfam2go step ####")
 
 # end: main
 
