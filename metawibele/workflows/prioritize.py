@@ -3,9 +3,9 @@
 """
 MeteWIBELE workflow: MeteWIBELE prioritization workflow
 1) unsupervised prioritization based on abundance and prevalence
-2) supervised prioritization based on association with phenotypes
-3) selected prioritization based on interested functions
-4) format and finalize prioritization
+   supervised prioritization based on association with phenotypes
+2) selected prioritization based on interested functions
+3) format and finalize prioritization
 
 
 Copyright (c) 2019 Harvard School of Public Health
@@ -122,7 +122,7 @@ def main(workflow):
 		args.prioritization_config = os.path.abspath(args.prioritization_config)
 	else:
 		args.prioritization_config = default_prioritization_conf
-	print(args.prioritization_config)
+	config.logger.info ("The config file for prioritization: " + args.prioritization_config)
 
 	# input files
 	study = config.study
@@ -145,7 +145,6 @@ def main(workflow):
 	priority_dir = config.priority_dir
 	priority_dir = os.path.abspath(priority_dir)
 	if args.output:
-		#priority_dir = os.path.joint(os.path.abspath(args.output), "prioritization")
 		priority_dir = os.path.abspath(args.output)
 	unsupervised_rank = os.path.join(priority_dir, basename + "_unsupervised_prioritization.rank.tsv")
 	supervised_rank = os.path.join(priority_dir, basename + "_supervised_prioritization.rank.tsv")
@@ -160,17 +159,20 @@ def main(workflow):
 	final_selected_unsup_priority = re.sub(".tsv", ".table.tsv", selected_unsup_priority)
 
 
-	### STEP #1: mandatory prioritization: quantification-based ranking ###
+	#### STEP #1: mandatory prioritization: quantification-based ranking ####
 	# if mandatory action is provided, then prioritize protein families using quantitative criteria
 	if not args.bypass_mandatory:
+		config.logger.info("Start to run mandatory prioritization module......")
 		unsupervised_file, supervised_file = prioritization.mandatory_prioritization (workflow, args.prioritization_config,
 		                                                                        protein_family_ann, protein_family_attr,
 		                                                                        priority_dir)
+	else:
+		config.logger.info ("WARNING! Bypass module: the mandatory prioritization  module is skipped......")
 
-
-	### STEP #2: optional prioritization: binary filtering ###
+	#### STEP #2: optional prioritization: binary filtering ####
 	# if optional action is provided, then prioritize protein families based on interested functions (selection factor)
 	if not args.bypass_optional:
+		config.logger.info("Start to run optional prioritization module based on filers......")
 		myselection = prioritization.optional_prioritization (workflow, args.prioritization_config, args.vignette_config,
 		                                                             protein_family_ann,
 		                                                             unsupervised_rank,
@@ -180,19 +182,23 @@ def main(workflow):
 		                                                             protein_family_ann,
 		                                                             supervised_rank,
 		                                                             priority_dir, selected_priority)
-	
+	else:
+		config.logger.info ("WARNING! Bypass module: the optional prioritization module is skipped......")
 
-	### STEP #4: finalized annotation ###
+	#### STEP #3: finalized annotation ####
 	# if finalized action is provided, then format and fianlize prioritizations
 	if not args.bypass_finalized:
+		config.logger.info("Start to run finalized prioritizations module......")
 		prioritization.finalize_prioritization (workflow,
 		                                        unsupervised_rank, selected_unsup_priority,
 		                                        supervised_rank, selected_priority,
 		                                        priority_dir,
 		                                        final_unsupervised_rank, final_selected_unsup_priority,
 		                                        final_supervised_rank, final_selected_priority)
+	else:
+		config.logger.info ("WARNING! Bypass module: the finalized prioritizations module is skipped......")
 
-	### start the workflow
+	## start the workflow
 	workflow.go()
 
 
