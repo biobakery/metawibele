@@ -72,14 +72,14 @@ def parse_arguments(args, workflows):
 		formatter_class = argparse.ArgumentDefaultsHelpFormatter,
 		prog = "metawibele")
 	parser.add_argument(
-		"--version",
-		action="version",
-		version="%(prog)s v" + VERSION)
-	parser.add_argument(
 		"workflow",
 		choices = workflows,
 		help = "workflow to run")
-
+	parser.add_argument(
+		"--global-config",
+		help = "the global configuration file of MetaWIBELE",
+		default = None)
+	
 	return parser.parse_args(args)
 
 
@@ -97,9 +97,18 @@ def main():
 	# find workflows
 	workflows = find_workflows()
 
+	if "--global-config" in sys.argv:
+		myvalue = sys.argv[sys.argv.index("--global-config") + 1]
+		sys.argv.remove("--global-config")
+		sys.argv.remove(myvalue)
+		myconfig = os.path.abspath(myvalue)
+		# copy the config file to the working directory and rename it
+		if not os.path.isfile(os.path.join(os.getcwd(), "metawibele.cfg")):
+			os.system("cp -f " + myconfig + " " + os.path.join(os.getcwd(), "metawibele.cfg"))
+	
 	# parse the arguments (only the first two as the rest are for the workflow)
 	args = parse_arguments(sys.argv[1:2], workflows.keys())
-
+	
 	# run the workflow (providing all of the arguments)
 	run_workflow(sys.argv, workflows[args.workflow])
 
