@@ -46,13 +46,14 @@ Config metawibele
 """
 
 def get_args (): 
-    parser = argparse.ArgumentParser(description=description)
-    parser.add_argument('-c', "--config",
-                        help='input global config file',
-                        required=False,
-						default="none")
-    values = parser.parse_args()
-    return values
+	parser = argparse.ArgumentParser(description=description)
+	parser.add_argument('-c', "--config",
+                        help = 'input global config file',
+                        required = False,
+						default = "none")
+	
+	values = parser.parse_args()
+	return values
 # get_args
 
 
@@ -233,12 +234,17 @@ def get_item(config_items, section, name, type=None):
 
 
 ## default option for MetaWIBELE ##
-version = '0.3.9'
-log_level = 'DEBUG'
+version = '0.4.0'
+log_level_choices = ["DEBUG","INFO","WARNING","ERROR","CRITICAL"]
+log_level = log_level_choices[1]
 verbose = 'DEBUG'
 
 # name global logging instance
 logger = logging.getLogger(__name__)
+#logging.basicConfig(format='%(asctime)s - %(levelname)s: %(message)s',
+#        level=getattr(logging, "INFO"), datefmt='%m-%d-%Y %I:%M:%S %p')
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s: %(message)s',
+					level = getattr(logging, log_level), filemode='w', datefmt='%m/%d/%Y %I:%M:%S %p')
 
 
 ## constant values ##
@@ -343,8 +349,21 @@ vignettes_database = os.path.join(misc_directory, "vignette_function.tsv")
 
 # update databases by using user provided
 # uniref database
-uniref_database_dir = get_item (config_items, "database", "uniref_db", "string")
-uniref_database_dir = os.path.abspath(uniref_database_dir)
+uniref_database_dir = ""
+try:
+	env_uniref_db = os.path.abspath(os.environ['UNIREF_LOCATION'])
+	if os.path.exists (env_uniref_db):
+		uniref_database_dir = env_uniref_db
+except:
+	pass
+user_uniref_db = os.path.join(os.getcwd(), "uniref_database")
+if os.path.exists (user_uniref_db):
+	uniref_database_dir = user_uniref_db
+config_uniref_db = get_item (config_items, "database", "uniref_db", "string")
+config_uniref_db = os.path.abspath(config_uniref_db)
+if os.path.exists (config_uniref_db):
+	if os.path.abspath(uniref_directory) != config_uniref_db:
+		uniref_database_dir = config_uniref_db
 if not uniref_database_dir.lower() == "none" and not uniref_database_dir == "":
 	files = [os.path.abspath(x) for x in os.listdir(uniref_database_dir)]
 	for i in files:
@@ -368,6 +387,11 @@ if not uniref_database_dir.lower() == "none" and not uniref_database_dir == "":
 			else:
 				uniref_database.append(i)
 	uniref_database.sort(reverse=True)
+else:
+	config.logger.info ("ERROR! Please provide the location for the required uniref database by any one of the following options:\n" +
+	                    "1) set the location with the environment variable $UNIREF_LOCATION\n" +
+	                    "2) include the database (named as \"uniref_database\") in the current working directory\n" +
+	                    "3) set the location in the global config file (metawibele.cfg) which is in the current working directory")
 
 # domain database
 domain_database_dir = get_item (config_items, "database", "domain_db", "string")
@@ -436,10 +460,20 @@ tshld_identity = 0.25	# the minimum identity of homology
 tshld_coverage = 0.25	# the minimum coverage of homology
 taxa_source = "Rep"		# the source of taxa for one protein family, representatives vs. LCA
 
+# abundance
+normalize = get_item(config_items, "abundance", "normalize", "string") 		# the method for abundance normalization
+abundance_detection_level = get_item(config_items, "abundance", "abundance_detection_level", "float")
+
+# MSP
+tshld_classified = get_item(config_items, "msp", "tshld_classified", "float")   # the minimum percentage of classified genes in each MSP
+tshld_diff = get_item(config_items, "msp", "tshld_diff", "float")               # the minimum percentage difference between most and second dominant taxa in the MSP
+tshld_lca = 0.80            # the minimum consistency cutoff for LCA calculattion
+taxa_final = "Rep"          # the source of taxa for one protein family, representatives vs. LCA
+mspminer = os.path.join(config_directory, "MSPminer_setting.cfg")
+
 # interporscan
 interproscan_cmmd = get_item(config_items, "interproscan", "interproscan_cmmd", "string")
 interproscan_cmmd = re.sub("\"", "", interproscan_cmmd)
-#interproscan_cmmd = "interproscan.sh"
 interproscan_appl = get_item(config_items, "interproscan", "interproscan_appl", "string")
 interproscan_appl = re.sub("\"", "", interproscan_appl)
 if interproscan_appl.lower() == "none" or interproscan_appl.lower() == "":
@@ -471,29 +505,20 @@ for item in tmp:
 # DDI
 #human_microbiome_ddi = get_item(config_items, "DDI", "human_microbiome_ddi", "string")
 
-# MSP
-tshld_unclassified = 0.10	# the minimum percentile of unclassified in one MSP
-tshld_diff = 0.50			# the minimum difference between most and second dominant taxa in the MSP
-tshld_lca = 0.80			# the minimum consistency for LCA calculattion
-taxa_final = "Rep"			# the source of taxa for one protein family, representatives vs. LCA
-mspminer = os.path.join(config_directory, "MSPminer_setting.cfg")
-
-# abundance
-normalize = get_item(config_items, "abundance", "normalize", "string") 		# the method for abundance normalization
-abundance_detection_level = get_item(config_items, "abundance", "abundance_detection_level", "float")
-
 # maaslin2
 maaslin2_dir =  os.path.join(abundance_dir, "DA", "maaslin2_output/") 
 phenotype = get_item(config_items, "maaslin2", "phenotype", "string")
 phenotype = re.sub("\"", "", phenotype)
 phenotype = phenotype.split(";")
-contrast_status = get_item(config_items, "maaslin2", "case_control_status", "string")
-contrast_status = re.sub("\"", "", contrast_status)
-tmp = contrast_status.split(";")
+if phenotype == "":
+	phenotype = "none"
+reference = get_item(config_items, "maaslin2", "reference", "string")
+reference = re.sub("\"", "", reference)
+tmp = reference.split(";")
 contrast_status = {}
 ref_status_tmp = {}
 for item in tmp:
-	tmp1 = item.split(":")
+	tmp1 = item.split(",")
 	if len(tmp1) > 1:
 		contrast_status[tmp1[0]] = tmp1[1]
 		if not tmp1[0] in ref_status_tmp:
@@ -520,7 +545,7 @@ pcl_utils = os.path.join(metawibele_install_directory, "Rscripts", "pcl_utils.R"
 transpose_cmmd = "metawibele_transpose" 
 min_abundance = get_item(config_items, "maaslin2", "min_abundance", "float")
 min_prevalence = get_item(config_items, "maaslin2", "min_prevalence", "float")
-#min_variance = get_item(config_items, "maaslin2", "min_variance", "float")
+min_variance = get_item(config_items, "maaslin2", "min_variance", "float")
 max_significance = get_item(config_items, "maaslin2", "max_significance", "float")
 normalization = get_item(config_items, "maaslin2", "normalization", "string")
 transform = get_item(config_items, "maaslin2", "transform", "string")
@@ -534,9 +559,9 @@ heatmap_first_n = get_item(config_items, "maaslin2", "heatmap_first_n", "string"
 plot_scatter = get_item(config_items, "maaslin2", "plot_scatter", "string")
 maaslin2_cores = get_item(config_items, "maaslin2", "maaslin2_cores", "int")
 if fixed_effects == "all":
-	maaslin2_cmmd_opts = ["--min_abundance", min_abundance, "--min_prevalence", min_prevalence, "--max_significance", max_significance, "--normalization", normalization,  "--transform", transform, "--analysis_method", analysis_method, "--cores", maaslin2_cores, "--random_effects", random_effects, "--correction", correction, "--standardize", standardize, "--plot_heatmap", plot_heatmap, "--heatmap_first_n", heatmap_first_n, "--plot_scatter", plot_scatter]
+	maaslin2_cmmd_opts = ["--min_abundance", min_abundance, "--min_prevalence", min_prevalence, "--min_variance", min_variance, "--max_significance", max_significance, "--normalization", normalization,  "--transform", transform, "--analysis_method", analysis_method, "--cores", maaslin2_cores, "--random_effects", random_effects, "--correction", correction, "--standardize", standardize, "--plot_heatmap", plot_heatmap, "--heatmap_first_n", heatmap_first_n, "--plot_scatter", plot_scatter, "--reference", reference]
 else:
-	maaslin2_cmmd_opts = ["--min_abundance", min_abundance, "--min_prevalence", min_prevalence, "--max_significance", max_significance, "--normalization", normalization,  "--transform", transform, "--analysis_method", analysis_method, "--cores", maaslin2_cores, "--fixed_effects", fixed_effects, "--random_effects", random_effects, "--correction", correction, "--standardize", standardize, "--plot_heatmap", plot_heatmap, "--heatmap_first_n", heatmap_first_n, "--plot_scatter", plot_scatter]
+	maaslin2_cmmd_opts = ["--min_abundance", min_abundance, "--min_prevalence", min_prevalence, "--min_variance", min_variance, "--max_significance", max_significance, "--normalization", normalization,  "--transform", transform, "--analysis_method", analysis_method, "--cores", maaslin2_cores, "--fixed_effects", fixed_effects, "--random_effects", random_effects, "--correction", correction, "--standardize", standardize, "--plot_heatmap", plot_heatmap, "--heatmap_first_n", heatmap_first_n, "--plot_scatter", plot_scatter, "--reference", reference]
 
 
 if __name__=='__main__':
