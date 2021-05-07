@@ -1,6 +1,13 @@
 
 # MetaWIBELE History #
 
+## v0.4.0 2021-05-05 ##
+* Added "--tshld-diff" "--tshld-classified" setting to global config file
+* Added "--min_variance" "--reference" for MaAsLin2 >= v1.5.1
+* Added "--global-config" option for taking the user provided global config file
+* Added time stamp for each processing step
+* Added default setting for uniref database and mutiple options for setting up the DB
+
 ## v0.3.9 2021-03-18 ##
 * Added options for msp-based taxonomy assignment "--tshld-diff" "--tshld-classified"
 * Renamed the name of config option for taxonomy assignment
@@ -12,7 +19,6 @@
 ## v0.3.8 2020-10-02 ##
 * Added bowtie2 options "--very-sensitive"
 * Fixed issue of summarizing uniref annotations and contig sequences
-* Fixed eggNOG issue
 
 ## v0.3.7 2020-08-25 ##
 * Added functions for downloading databases
