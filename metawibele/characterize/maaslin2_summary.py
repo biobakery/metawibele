@@ -34,6 +34,7 @@ import math
 
 try:
 	from metawibele import utilities
+	from metawibele import config
 except ImportError:
 	sys.exit("CRITICAL ERROR: Unable to find the MetaWIBELE python package." +
 	         " Please check your install.")
@@ -272,11 +273,11 @@ def summary_info (folds, p_cutoff, q_value_cutoff, outfile):
 				flag = 1
 				if p_cutoff != "no" and mypre != "NA":
 					if float(mypre) < float(p_cutoff):	# filtering based on prevalence
-						print("Filter out based on prevalence\t" + myid + "\t" + str(mypre))
+						config.logger.info ("Filter out based on prevalence\t" + myid + "\t" + str(mypre))
 						flag = 0	
 				if q_value_cutoff != "no" and qvalue != "NA":
 					if float(qvalue) >= float(q_value_cutoff):	# filtering based on q-value
-						print("Filter out based on q-value\t" + myid + "\t" + str(qvalue))
+						config.logger.info ("Filter out based on q-value\t" + myid + "\t" + str(qvalue))
 						flag = 0	
 				if flag == 1: # not filtering out
 					if not mytype in pres:
@@ -322,6 +323,10 @@ def summary_info (folds, p_cutoff, q_value_cutoff, outfile):
 	open_file3.close()
 
 	# output prevalence distribution
+	mydir_qc = os.path.join(os.path.dirname(outfile), "stat_QC")
+	if not os.path.exists(mydir_qc):
+		os.system("mkdir -p " + mydir_qc)
+	outfile = os.path.join(mydir_qc, os.path.basename(outfile))
 	outfile4 = re.sub(".tsv", ".prevalence.plot.tsv", outfile)
 	open_file = open(outfile4, "w")
 	open_file.write("prevalence\ttype\tnumber\n")
@@ -406,7 +411,6 @@ def summary_info (folds, p_cutoff, q_value_cutoff, outfile):
 		# foreach prevalence
 	# foreach type
 	open_file.close()
-	
 
 	# output qvalue
 	outfile4 = re.sub(".tsv", ".qvalue.plot.tsv", outfile)
@@ -468,47 +472,6 @@ def summary_info (folds, p_cutoff, q_value_cutoff, outfile):
 	# foreach type
 	open_file.close()
 
-	# venn plot
-	outfile2 = re.sub(".tsv", ".venn.tsv", outfile)
-	open_file2 = open(outfile2, "w")
-	mystr = ""
-	for mytype in sorted(types.keys()):
-		mystr = mystr + mytype + "\t"
-	# foreach type
-	mystr = mystr.strip()
-	open_file2.write(mystr + "\n")
-	for myclust in sorted(diff.keys()):
-		mystr = ""
-		for mytype in sorted(types.keys()):
-			if mytype in diff[myclust]:
-				mystr = mystr + myclust + "\t"
-			else:
-				mystr = mystr + "NA\t"
-		# foreach type
-		mystr = mystr.strip()
-		open_file2.write(mystr + "\n")
-	# foreach cluster
-	open_file2.close()
-	outfile2 = re.sub(".tsv", ".all.venn.tsv", outfile)
-	open_file2 = open(outfile2, "w")
-	mystr = ""
-	for mytype in sorted(types_all.keys()):
-		mystr = mystr + mytype + "\t"
-	# foreach type
-	mystr = mystr.strip()
-	open_file2.write(mystr + "\n")
-	for myclust in sorted(diff_all.keys()):
-		mystr = ""
-		for mytype in sorted(types_all.keys()):
-			if mytype in diff_all[myclust]:
-				mystr = mystr + myclust + "\t"
-			else:
-				mystr = mystr + "NA\t"
-		# foreach type
-		mystr = mystr.strip()
-		open_file2.write(mystr + "\n")
-	# foreach cluster
-	open_file2.close()
 # function collect_diff_abundance_info
 
 
@@ -521,22 +484,22 @@ def main():
 	values.effect_size = re.sub("mean_log", "mean(log)", values.effect_size)
 	values.effect_size = re.sub("log_FC", "log(FC)", values.effect_size)
 
-	sys.stderr.write("### Start maaslin2_summary.py -a " + values.abundance + " ####\n")
+	config.logger.info ("#### Start maaslin2_summary step ####")
 	
 
 	### collect stat abundance info ###
-	sys.stderr.write("Get stat abundance and fold change info ......starting\n")
+	config.logger.info ("Collect stat abundance and fold change info ......starting")
 	stat = collect_DA_stat_info (values.abundance)
 	prevalence = collect_DA_prevalence_info (values.prevalence)
 	folds = collect_fold_change_info (values.fold_change, stat, prevalence, values.effect_size)
-	sys.stderr.write("Get stat abundance and fold change info ......done\n")
+	config.logger.info ("Collect stat abundance and fold change info ......done")
 	
 	### Output sample info
-	sys.stderr.write("\nOutput diff abundance summary info ......starting\n")
+	config.logger.info ("Output diff abundance summary info ......starting")
 	summary_info (folds, values.prevalence_cutoff, values.qvalue_cutoff, values.output)
-	sys.stderr.write("Output diff abundance summary info ......done\n")
+	config.logger.info ("Output diff abundance summary info ......done")
 
-	sys.stderr.write("### Finish maaslin2_summary.py ####\n\n\n")
+	config.logger.info ("#### Finish maaslin2_summary step ####")
 
 # end: main
 

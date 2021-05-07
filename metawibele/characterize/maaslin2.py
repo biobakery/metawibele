@@ -110,7 +110,7 @@ def run_maaslin2 (feature, metadata, split_num, workdir, output, outfile):
 
 	if split_num == 1:
 		mycmd = myexe + " " + feature + " " + metadata + " " + output + " " + myopt
-		print(mycmd)
+		config.logger.info ("Run command: " + mycmd)
 		os.system(mycmd)
 	else:
 		mytrans = re.sub(".tsv", ".pcl", feature)
@@ -121,7 +121,7 @@ def run_maaslin2 (feature, metadata, split_num, workdir, output, outfile):
 			os.system(mytranspos + " < " + feature + " > " + mytrans)
 		# split files
 		mycmd = "Rscript " + myutils + " " + "split" + " " + mytrans + " " + mybase + " " + mypcl + " " + str(split_num)
-		print(mycmd)
+		config.logger.info ("Run command: " + mycmd)
 		os.system(mycmd)
 		mylist = re.sub(".tsv", ".pcl.list", feature)
 		os.system("ls " + mybase + "*.pcl > " + mylist)
@@ -137,12 +137,12 @@ def run_maaslin2 (feature, metadata, split_num, workdir, output, outfile):
 			myfeature = re.sub(".pcl", ".tsv", i)
 			myinput = output + "/" + myfeature
 			mycmd = mytranspos + " < " + output + "/" + i + " > " + myinput
-			print(mycmd)
+			config.logger.info ("Run command: " + mycmd)
 			os.system(mycmd)
 			myoutput = re.sub(".pcl", "", i)
 			myoutput = output + "/" + myoutput
 			mycmd = myexe + " " + myinput + " " + metadata + " " + myoutput + " " + myopt
-			print(mycmd)
+			config.logger.info ("Run command: " + mycmd)
 			os.system(mycmd)
 			if not os.path.isfile(myout):
 				os.system("less " + myoutput + "/all_results.tsv > " + myout)
@@ -166,11 +166,12 @@ def fdr_correction (output, outfile, mycorr):
 	mypcl = config.pcl_utils
 	myutils = config.maaslin2_utils
 	mycmd = "Rscript " + myutils + " " + "correct" + " " + myin + " " + myout + " " + mypcl + " 0 " + " " + mycorr
-	print(mycmd)
+	config.logger.info ("Run command: " + mycmd)
 	os.system(mycmd)
 	myout1 = myout
 	myout2 = re.sub(".tsv", ".correct_per_variable.tsv", myout)
 	myout3 = re.sub(".tsv", ".correct_per_level.tsv", myout)
+
 	return myout1, myout2, myout3
 # fdr_correction
 
@@ -189,9 +190,9 @@ def main():
 	try: 
 		values.split_num = int(values.split_num)
 	except ValueError:
-		sys.exit("Please specify valid number for spliting file")
+		sys.exit("Please specify valid number for splitting file")
 
-	sys.stderr.write("### Start maaslin2.py -i " + values.feature_table + " ####\n")
+	config.logger.info ("#### Start maaslin2 step ####")
 	
 	### Run MaAsLin2 info ###
 	mycorr = config.correction
@@ -208,12 +209,12 @@ def main():
 			mymeta_file = re.sub(".tsv", "." + item + ".tsv", values.metadata_table)
 			collect_metadata (values.metadata_table, mytype, item, mymeta_file)
 			outfile = re.sub(".tsv", "." + item + ".tsv", values.output)
-			sys.stderr.write("Run MaAsLin2 ......" + mymeta_file + "\n")
+			config.logger.info ("Run MaAsLin2 ......" + mymeta_file)
 			run_maaslin2 (values.feature_table, mymeta_file, values.split_num, values.workdir, output, outfile)
-			sys.stderr.write("Run MaAsLin2 ......done\n")
-			sys.stderr.write("FDR correction ......" + outfile + "\n")
+			config.logger.info ("Run MaAsLin2 ......done")
+			config.logger.info ("FDR correction ......" + outfile)
 			myout1, myout2, myout3 = fdr_correction (values.workdir, outfile, mycorr)
-			sys.stderr.write("FDR correction ......done\n")
+			config.logger.info ("FDR correction ......done")
 			out1.append(myout1)
 			out2.append(myout2)
 			out3.append(myout3)
@@ -236,15 +237,15 @@ def main():
 			myindex = myindex + 1
 	# if nested effect
 	else:
-		sys.stderr.write("Run MaAsLin2 ......starting\n")
+		config.logger.info ("Run MaAsLin2 ......starting")
 		run_maaslin2 (values.feature_table, values.metadata_table, values.split_num, values.workdir, values.workdir, values.output)
-		sys.stderr.write("Run MaAsLin2 ......done\n")
+		config.logger.info ("Run MaAsLin2 ......done")
 
-		sys.stderr.write("FDR correction ......starting\n")
+		config.logger.info ("FDR correction ......starting")
 		fdr_correction (values.workdir, values.output, mycorr)
-		sys.stderr.write("FDR correction ......done\n")
+		config.logger.info ("FDR correction ......done")
 	
-	sys.stderr.write("### Finish maaslin2.py ####\n\n\n")
+	config.logger.info ("#### Finish maaslin2 step ####")
 
 # end: main
 

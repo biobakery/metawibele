@@ -34,6 +34,7 @@ import math
 
 try:
 	from metawibele import utilities
+	from metawibele import config
 except ImportError:
 	sys.exit("CRITICAL ERROR: Unable to find the MetaWIBELE python package." +
 	         " Please check your install.")
@@ -120,16 +121,16 @@ def main():
 	### get arguments ###
 	values = get_args()
 
-	sys.stderr.write("### Start maaslin2_annotator.py -s " + values.stat + " ####\n")
+	config.logger.info ("#### Start maaslin2_annotator step ####")
 
 	### get info
-	sys.stderr.write("\nGet DA annotation info ......starting\n")
+	config.logger.info ("Collect DA annotation info ......starting")
 	values.effect_size = re.sub("mean_log", "mean(log)", values.effect_size)
 	values.effect_size = re.sub("log_FC", "log(FC)", values.effect_size)
 	stat_annotation (values.stat, values.type, values.effect_size, values.output)
-	sys.stderr.write("Get DA annotation info ......done\n")
+	config.logger.info ("Collect DA annotation info ......done")
 
-	sys.stderr.write("### Finish maaslin2_annotator.py ####\n\n\n")
+	config.logger.info ("#### Finish maaslin2_annotator step ####")
 
 # end: main
 

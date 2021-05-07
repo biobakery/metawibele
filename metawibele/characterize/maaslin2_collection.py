@@ -77,6 +77,8 @@ def get_args():
 def collect_metadata (meta_file):
 	meta = {}
 	titles = {}
+	if not os.path.isfile(meta_file):
+		sys.exit("ERROR! The metadata file does not exist. Please provide valid metadata file.")
 	open_file = open(meta_file, "r")
 	line = open_file.readline()
 	line = line.strip()
@@ -113,14 +115,13 @@ def collect_DA_info (DA_file, metas):
 		if myphe in config.contrast_status:
 			tmp = config.contrast_status[myphe].split(",")
 			for item in tmp:
-				if re.search("|", item): 
-					print(item)
-					mym = re.search("([\S]+)\|([\S]+)", item)
-					mycon = mym.group(1)
-					item = re.sub("\|", "_vs_", item)
-					cons[mycon] = item
-				else:
-					sys.exit("Not correct format for case-control paris for the specified metadata!\t" + myphe + "\t" + item)
+				myref = item.split("|")[-1]
+				if myphe in metas:
+					for i in metas[myphe].keys():
+						if i == myref:
+							continue
+						mycmp = i + "_vs_" + myref
+						cons[i] = mycmp
 		else:
 			if myphe in metas:
 				tmp = sorted(metas[myphe].keys())
@@ -144,7 +145,8 @@ def collect_DA_info (DA_file, metas):
 		item = info[myindex]
 		titles[item] = myindex
 		myindex = myindex + 1
-	sys.stderr.write("Collect DA info......starting\n")
+
+	config.logger.info ("Collect DA info......starting\n")
 	for line in open_file:
 		line = line.strip()
 		if not len(line):
@@ -167,8 +169,6 @@ def collect_DA_info (DA_file, metas):
 		if value in cons:
 			cmp_type = cons[value]
 		if cmp_type == "NA":
-			# debug
-			#print("Didn't find comprison type!\t" + cmp_type)
 			continue
 		prevalence = 1.0 * float(non_zero) / float(total)
 		if not feature in stats:
@@ -176,9 +176,9 @@ def collect_DA_info (DA_file, metas):
 		stats[feature][cmp_type] = str(prevalence) + "\t" + coef + "\t" + stderr + "\t" + p_value + "\t" + q_value
 	# foreach line
 	open_file.close()
-	sys.stderr.write("Collect DA info......done\n")
+	config.logger.info ("Collect DA info......done\n")
 
-	# select ovalapped features based on minimum q-value
+	# select minimum q-value for the same feature
 	qvalues = {}
 	stats_flt = {}
 	for myf in stats.keys():
@@ -197,7 +197,6 @@ def collect_DA_info (DA_file, metas):
 # collect_DA_info
 
 
-
 #==============================================================
 # collect metadata for each sample
 #==============================================================
@@ -206,11 +205,13 @@ def collect_meta_info (meta_file, metas):
 	meta_control = {}
 	titles = {}
 	titles2 = {}
+	if not os.path.isfile(meta_file):
+		sys.exit("ERROR! The metadata file does not exist. Please provide valid metadata file.")
 	open_file = open(meta_file, "r")
 	line = open_file.readline()
 	line = line.strip()
 	info = line.split("\t")
-	sys.stderr.write("Collect metadata info......starting\n")
+	config.logger.info ("Collect metadata info......starting\n")
 	for item in info:
 		titles[item] = info.index(item)
 		titles2[info.index(item)] = item
@@ -219,23 +220,24 @@ def collect_meta_info (meta_file, metas):
 	for myphe in config.phenotype:
 		if myphe in titles:
 			item = myphe
-			myindex = titles[item]
 			if item in config.contrast_status:
 				mycontrast = config.contrast_status[item].split(",")
 				for x in mycontrast:
-					if re.search("|", x):
-						mym = re.search("([\S]+)\|([\S]+)", x)
-						mycon_tmp = mym.group(1)
-						myref_tmp = mym.group(2)
-						x = re.sub("\|", "_vs_", x)
+					myref_tmp = x.split("|")[-1]
+					if not myphe in metas:
+						config.logger.info ("ERROR! The metadata file does not include the phenotype!")
+						break
+					for i in metas[myphe].keys():
+						if i == myref_tmp:
+							continue
+						mycon_tmp = i
+						x = mycon_tmp + "_vs_" + myref_tmp
 						if not myref_tmp in myrefs:
 							myrefs[myref_tmp] = []
 						myrefs[myref_tmp].append(x)
 						if not mycon_tmp in mycons:
 							mycons[mycon_tmp] = []
 						mycons[mycon_tmp].append(x)
-					else:
-						sys.exit("Not correct format for case-control paris for the specified metadata!\t" + config.phenotype + "\t" + item)
 			else:
 				if myphe in metas:
 					tmp = sorted(metas[myphe].keys())
@@ -280,7 +282,7 @@ def collect_meta_info (meta_file, metas):
 			myindex = myindex + 1
 	# foreach line
 	open_file.close()
-	sys.stderr.write("Collect metadata info......done\n")
+	config.logger.info ("Collect metadata info......done\n")
 	return meta_case, meta_control
 # collect_meta_info
 
@@ -300,7 +302,7 @@ def collect_abundance (abundance_file, DA_cluster, meta_case, meta_control):
 	line = line.strip()
 	info = line.split("\t")
 	myindex = 1
-	sys.stderr.write("Collect abundance info......starting\n")
+	config.logger.info ("Collect abundance info......starting\n")
 	while myindex < len(info):
 		item = info[myindex]
 		samples[myindex] = item
@@ -354,7 +356,7 @@ def collect_abundance (abundance_file, DA_cluster, meta_case, meta_control):
 			myindex = myindex + 1
 	# foreah sample
 	open_file.close()
-	sys.stderr.write("Collect abundance info......done\n")
+	config.logger.info ("Collect abundance info......done\n")
 
 	return samples, total_value, meta_case_new, meta_control_new
 
@@ -365,11 +367,11 @@ def collect_abundance_info (abundance_file, smooth_file, DA_cluster, meta_case, 
 	samples1, total_smooth, meta_case_new1, meta_control_new1 = collect_abundance(smooth_file, DA_cluster, meta_case, meta_control)
 
 	# debug
-	print("Raw abundance\t" + str(len(samples.keys())))
-	print("Smooth abundance\t" + str(len(samples1.keys())))
+	config.logger.info ("Raw abundance\t" + str(len(samples.keys())))
+	config.logger.info ("Smooth abundance\t" + str(len(samples1.keys())))
 
 	# get fold change
-	sys.stderr.write("Collect abundance fold change......starting\n")
+	config.logger.info ("Collect abundance fold change......starting\n")
 	folds = {}
 	for myclust in total_value.keys():
 		for mycmp in total_value[myclust].keys():
@@ -431,7 +433,7 @@ def collect_abundance_info (abundance_file, smooth_file, DA_cluster, meta_case, 
 			myvar = logyes - logno
 			if myyes_sd == 0 and myno_sd == 0:
 				# debug
-				print("SD is zero!\t" + mycmp + "\t" + myclust + "\t" + str(myyes) + "\t" + str(myno))
+				config.logger.info ("SD is zero: " + mycmp + "\t" + myclust + "\t" + str(myyes) + "\t" + str(myno))
 				myeffect = "NaN"
 			else:
 				myeffect = (myyes - myno) / math.sqrt((myyes_sd * myyes_sd + myno_sd * myno_sd) / 2)
@@ -455,7 +457,7 @@ def collect_abundance_info (abundance_file, smooth_file, DA_cluster, meta_case, 
 			tmp.extend(total_value[myclust][mycmp]["yes"])
 			tmp.extend(total_value[myclust][mycmp]["no"])
 			if len(tmp) == 0:
-				print("Zero prevalence\t" + myclust)
+				config.logger.info ("Zero prevalence\t" + myclust)
 				mymean = 0
 				myvar = 0
 			else:
@@ -473,7 +475,7 @@ def collect_abundance_info (abundance_file, smooth_file, DA_cluster, meta_case, 
 	tmp2 = []
 	tmp = []
 	sample = {}
-	sys.stderr.write("Collect abundance fold change......done\n")
+	config.logger.info ("Collect abundance fold change......done\n")
 	return folds, meta_case_new, meta_control_new
 
 # function collect_abundance_info_fold
@@ -487,7 +489,7 @@ def collect_prevalence_info (abundance_file, DA_cluster, meta_case, meta_control
 	pre_meta_control = {}
 	samples = {}
 	open_file = open(abundance_file, "r")
-	sys.stderr.write("Collect prevalence info......starting\n")
+	config.logger.info ("Collect prevalence info......starting\n")
 	line = open_file.readline()
 	line = line.strip()
 	info = line.split("\t")
@@ -514,7 +516,6 @@ def collect_prevalence_info (abundance_file, DA_cluster, meta_case, meta_control
 					if mys in meta_case[mycmp]:
 						if item != "NA" and item != "NaN" and item != "nan" and item != "Inf" and item != "inf" and item != "-Inf" and item != "-inf":
 							count = float(item)
-							#if count > float(config.abundance_detection_level):
 							if count != 0:
 								if not cluster in pre_meta_case:
 									pre_meta_case[cluster] = {}
@@ -525,7 +526,6 @@ def collect_prevalence_info (abundance_file, DA_cluster, meta_case, meta_control
 					if mys in meta_control[mycmp]:
 						if item != "NA" and item != "NaN" and item != "nan" and item != "Inf" and item != "inf" and item != "-Inf" and item != "-inf":
 							count = float(item)
-							#if count > float(config.abundance_detection_level):
 							if count != 0:
 								if not cluster in pre_meta_control:
 									pre_meta_control[cluster] = {}
@@ -535,17 +535,15 @@ def collect_prevalence_info (abundance_file, DA_cluster, meta_case, meta_control
 			myindex = myindex + 1
 	# foreach family
 	open_file.close()
-	sys.stderr.write("Collect prevalence info......done\n")
+	config.logger.info ("Collect prevalence info......done\n")
 
 	# get prevalence
 	prevalence = {}
-	sys.stderr.write("Calculate prevalence info......starting\n")
+	config.logger.info ("Calculate prevalence info......starting\n")
 	for mycmp in sorted(meta_control.keys()):
 		meta_yes_num = len(meta_case[mycmp].keys())
 		meta_no_num = len(meta_control[mycmp].keys())
 		total_num = meta_yes_num + meta_no_num
-		#print(">>" + mycmp + "\t" + str(meta_yes_num) + "\t" + str(meta_no_num) + "\t" + str(total_num))
-
 		for myclust in DA_cluster.keys():
 			mymeta_yes = 0
 			mymeta_no = 0
@@ -555,7 +553,6 @@ def collect_prevalence_info (abundance_file, DA_cluster, meta_case, meta_control
 			if myclust in pre_meta_control:
 				if mycmp in pre_meta_control[myclust]:
 					mymeta_no = len(pre_meta_control[myclust][mycmp].keys())
-			#print(myclust + "\t" + str(mymeta_yes) + "\t" + str(mymeta_no))
 			pre_yes = 1.0 * mymeta_yes / meta_yes_num
 			pre_no = 1.0 * mymeta_no / meta_no_num
 			pre = 1.0 * (mymeta_yes + mymeta_no) / total_num
@@ -563,7 +560,7 @@ def collect_prevalence_info (abundance_file, DA_cluster, meta_case, meta_control
 				prevalence[myclust] = {}
 			prevalence[myclust][mycmp] = str(pre) + "\t" + str(pre_yes) + "\t" + str(pre_no) + "\t" + str(total_num) + "\t" + str(meta_yes_num) + "\t" + str(meta_no_num)
 	# foreach cluster
-	sys.stderr.write("Calculate prevalence info......done\n")
+	config.logger.info ("Calculate prevalence info......done\n")
 	pre_meta_case = {}
 	pre_meta_control = {}
 	samples = {}
@@ -621,48 +618,46 @@ def main():
 	values = get_args()
 
 
-	sys.stderr.write("### Start maaslin2_collection.py -i " + values.maaslin2_results+ " ####\n")
+	config.logger.info ("#### Start maaslin2_collection step ####")
 	
 	
 	### collect abundance info ###
-	sys.stderr.write("Get stat info......starting\n")
+	config.logger.info("Collect statistic info......starting")
 	if values.metadata:
 		meta_file = values.metadata
 	else:
 		meta_file = config.metadata
-	
 	metas = collect_metadata (meta_file)
 	meta_case, meta_control = collect_meta_info (meta_file, metas)
 	DA_cluster, DA_cluster_minQ = collect_DA_info (values.maaslin2_results, metas)
-	
-	sys.stderr.write("Get stat info......done\n")
+	config.logger.info("Collect statistic info......done")
 
 	# stat all info
-	sys.stderr.write("Get abundance info......starting\n")
+	config.logger.info ("Collect abundance info......starting")
 	folds, meta_case, meta_control = collect_abundance_info (values.abundance_table, values.smoothed_abundance, DA_cluster, meta_case, meta_control)
 	prevalence = collect_prevalence_info (values.abundance_table, DA_cluster, meta_case, meta_control)
-	sys.stderr.write("Get abundance info......done\n")
+	config.logger.info ("Collect abundance info......done")
 
-	sys.stderr.write("Output stat file......starting\n")
+	config.logger.info ("Output statistic file......starting")
 	output_DA_info (DA_cluster, values.output)
 	output_abundance_info(folds, meta_control, meta_case, values.output)
 	output_prevalence_info(prevalence, values.output)
-	sys.stderr.write("Output stat file......done\n")
+	config.logger.info ("Output stat file......done")
 	
 	# stat unique features selected by minimum q-values
 	outfile = re.sub(".tsv", ".minQ.tsv", values.output)
-	sys.stderr.write("Get abundance info......starting\n")
+	config.logger.info ("Get abundance info......starting")
 	folds, meta_case, meta_control = collect_abundance_info (values.abundance_table, values.smoothed_abundance, DA_cluster_minQ, meta_case, meta_control)
 	prevalence = collect_prevalence_info (values.abundance_table, DA_cluster_minQ, meta_case, meta_control)
-	sys.stderr.write("Get abundance info......done\n")
+	config.logger.info ("Get abundance info......done")
 
-	sys.stderr.write("Output stat file......starting\n")
+	config.logger.info ("Output stat file......starting")
 	output_DA_info (DA_cluster_minQ, outfile)
 	output_abundance_info(folds, meta_control, meta_case, outfile)
 	output_prevalence_info(prevalence, outfile)
 
 
-	sys.stderr.write("### Finish maaslin2_collection.py ####\n\n\n")
+	config.logger.info ("#### Finish maaslin2_collection step ####")
 
 # end: main
 

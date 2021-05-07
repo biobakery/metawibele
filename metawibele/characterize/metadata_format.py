@@ -61,13 +61,16 @@ def get_args():
 def format_metadata (infile, outfile):
 	titles = {}
 	if not os.path.isfile(infile):
-		print ("File not exist!\t" + infile)
+		config.logger.info ("ERROR! File not exist: " + infile)
 		return
 	open_file = open(infile, "r")
 	open_out = open(outfile, "w")
 	line = open_file.readline()
+	info = line.split('\t')
 	line = re.sub("External_ID", "ID", line)
 	line = re.sub("SID", "ID", line)
+	if not re.search("^ID\t", line):
+		line = re.sub(info[0], "ID", line)
 	open_out.write(line)
 	line = line.strip()
 	info = line.split("\t")
@@ -112,14 +115,14 @@ def main():
 	values = get_args()
 
 
-	sys.stderr.write("### Start metadata_format.py -o " + values.o + " ####\n")
+	config.logger.info ("#### Start metadata_format step ####")
 	
 	### collect sample info ###
-	sys.stderr.write("Format info ......starting\n")
+	config.logger.info ("Format info ......starting")
 	format_metadata (values.i, values.o)
-	sys.stderr.write("Format info ......done\n")
+	config.logger.info ("Format info ......done")
 	
-	sys.stderr.write("### Finish metadata_format.py ####\n\n\n")
+	config.logger.info ("#### Finish metadata_format step ####")
 
 # end: main
 
