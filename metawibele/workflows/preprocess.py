@@ -39,16 +39,11 @@ from anadama2 import Workflow
 # import the utilities functions and config settings from MetaWIBELE
 try:
 	from metawibele import utilities, config
-except ImportError:
-	sys.exit("CRITICAL ERROR: Unable to find the MetaWIBELE python package." +
-		         " Please check your install.")
-
-# import the library of MetaWIBELE tasks for characterization
-try:
 	from metawibele.tools import preprocessing_tasks
 except ImportError:
 	sys.exit("CRITICAL ERROR: Unable to find the MetaWIBELE python package." +
 		         " Please check your install.")
+
 
 VERSION = config.version
 
@@ -120,27 +115,28 @@ def main(workflow):
 	file_extension = args.extension
 
 	# get all output files
-	assembly_dir = os.path.join(output_dir, "assembly/")
-	contigs = os.path.join(output_dir, args.output_basename + "_contig_sequence.fasta")
+	os.system("mkdir -p " + os.path.join(output_dir, "finalized"))
+	assembly_dir = os.path.join(output_dir, "assembly")
+	contigs = os.path.join(output_dir, "finalized", args.output_basename + "_contig_sequence.fasta")
 	assembly_extentsion = ".contigs.fa"
 
-	prokka_dir = os.path.join(output_dir, "gene_annotation/")
-	prodigal_dir = os.path.join(output_dir, "gene_calls/")
-	gene_file = os.path.join(output_dir, args.output_basename + "_combined_gene.fna")
-	gene_PC_file = os.path.join(output_dir, args.output_basename + "_combined_gene_protein_coding.sorted.fna")
-	protein_file = os.path.join(output_dir, args.output_basename + "_combined_protein.faa")
-	protein_sort = os.path.join(output_dir, args.output_basename + "_combined_protein.sorted.faa")
-	gene_info = os.path.join(output_dir, args.output_basename + "_gene_info.tsv")
-	complete_gene = os.path.join(output_dir, args.output_basename + "_combined_gene_protein_coding.complete.sorted.fna")
-	complete_protein = os.path.join(output_dir, args.output_basename + "_combined_protein.complete.sorted.faa")
+	prokka_dir = os.path.join(output_dir, "gene_annotation")
+	prodigal_dir = os.path.join(output_dir, "gene_calls")
+	gene_file = os.path.join(output_dir, "finalized", args.output_basename + "_combined_gene.fna")
+	gene_PC_file = os.path.join(output_dir, "finalized", args.output_basename + "_combined_gene_protein_coding.sorted.fna")
+	protein_file = os.path.join(output_dir, "finalized", args.output_basename + "_combined_protein.faa")
+	protein_sort = os.path.join(output_dir, "finalized", args.output_basename + "_combined_protein.sorted.faa")
+	gene_info = os.path.join(output_dir, "finalized", args.output_basename + "_gene_info.tsv")
+	complete_gene = os.path.join(output_dir, "finalized", args.output_basename + "_combined_gene_protein_coding.complete.sorted.fna")
+	complete_protein = os.path.join(output_dir, "finalized", args.output_basename + "_combined_protein.complete.sorted.faa")
 
-	mapping_dir = os.path.join(output_dir, "mapping/")
-	prefix_gene_catalog = os.path.join(output_dir, args.output_basename + "_genecatalogs.centroid")
-	gene_catalog = os.path.join(output_dir, args.output_basename + "_genecatalogs.clstr")
-	gene_catalog_nuc = os.path.join(output_dir, args.output_basename + "_genecatalogs.centroid.fna")
-	gene_catalog_prot = os.path.join(output_dir, args.output_basename + "_genecatalogs.centroid.faa")
-	gene_catalog_saf = os.path.join(output_dir, args.output_basename + "_genecatalogs.centroid.saf.gtf")
-	gene_catalog_count = os.path.join(output_dir, args.output_basename + "_genecatalogs_counts.all.tsv")
+	mapping_dir = os.path.join(output_dir, "mapping")
+	prefix_gene_catalog = os.path.join(output_dir, "finalized", args.output_basename + "_genecatalogs.centroid")
+	gene_catalog = os.path.join(output_dir, "finalized", args.output_basename + "_genecatalogs.clstr")
+	gene_catalog_nuc = os.path.join(output_dir, "finalized", args.output_basename + "_genecatalogs.centroid.fna")
+	gene_catalog_prot = os.path.join(output_dir, "finalized", args.output_basename + "_genecatalogs.centroid.faa")
+	gene_catalog_saf = os.path.join(output_dir, "finalized", args.output_basename + "_genecatalogs.centroid.saf.gtf")
+	gene_catalog_count = os.path.join(output_dir, "finalized", args.output_basename + "_genecatalogs_counts.all.tsv")
 
 	
 	### STEP #1: assembly ###

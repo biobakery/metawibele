@@ -125,7 +125,7 @@ def parse_cli_arguments ():
 	                      required = True)
 	workflow.add_argument("input-metadata",
 	                      desc="input the metadata file", 
-	                      default = True)
+	                      required = True)
 	workflow.add_argument("output",
 	                      desc = "provide an output folder which the workflow database and log is written. By default, thet be written to the anadama2 folder of users' working directory",
 	                      default = tmp_output)
@@ -139,7 +139,7 @@ def get_method_config (config_file):
 	:param config_file:
 	:return: config info for each analysis
 	'''
-	print('get_method_config')
+	config.logger.info ("###### Start get_method_config module ######")
 
 	config_items = config.read_user_edit_config_file(config_file)
 	family_conf = {}
@@ -152,7 +152,7 @@ def get_method_config (config_file):
 		for name in config_items["global_homology"].keys():
 			myvalue = config_items["global_homology"][name]
 			if not myvalue in values:
-				print('The config value can not be recognized. Please check your config file!')
+				config.logger.info ('ERROR! The config value can not be recognized. Please check your config file!')
 				continue
 			family_conf[name] = myvalue
 		# for each method
@@ -161,7 +161,7 @@ def get_method_config (config_file):
 		for name in config_items["domain_motif"].keys():
 			myvalue = config_items["domain_motif"][name]
 			if not myvalue in values:
-				print('The config value can not be recognized. Please check your config file!')
+				config.logger.info ('ERROR! The config value can not be recognized. Please check your config file!')
 				continue
 			domain_motif_conf[name] = myvalue
 		# for each method
@@ -176,10 +176,12 @@ def get_method_config (config_file):
 		for name in config_items["integration"].keys():
 			myvalue = config_items["integration"][name]
 			if not myvalue in values:
-				print('The config value can not be recognized. Please check your config file!')
+				config.logger.info ('ERROR! The config value can not be recognized. Please check your config file!')
 				continue
 			integration_conf[name] = myvalue
 		# for each method
+
+	config.logger.info("###### Finish get_method_config module ######")
 
 	return family_conf, domain_motif_conf, abundance_conf, integration_conf
 
@@ -203,7 +205,7 @@ def main(workflow):
 		args.characterization_config = os.path.abspath(args.characterization_config)
 	else:
 		args.characterization_config = default_characterization_conf
-	print(args.characterization_config)
+	config.logger.info ("The config file used for characterization: " + args.characterization_config)
 	
 	# update configurations of characterization
 	family_conf, domain_motif_conf, abundance_conf, integration_conf = get_method_config(args.characterization_config)
@@ -219,6 +221,8 @@ def main(workflow):
 		abundance_conf["mspminer"] = os.path.abspath(args.mspminer_config)
 	else:
 		abundance_conf["mspminer"] = config.mspminer
+	if args.bypass_global_homology:
+		family_conf["uniref"] = "no"
 	if args.bypass_interproscan:
 		domain_motif_conf["interproscan"] = "no"
 		domain_motif_conf["pfam2go"] = "no"
@@ -237,8 +241,7 @@ def main(workflow):
 		domain_motif_conf["psortb"] = "no"
 	if "".join(config.phenotype) == "none":
 		abundance_conf["dna_da"] = "no"
-	
-	
+
 	# get all input files
 	gene_catalog_seq = config.gene_catalog_prot
 	gene_catalog_count = config.gene_catalog_count
@@ -266,71 +269,96 @@ def main(workflow):
 	output_dir = config.annotation_dir
 	output_dir = os.path.abspath(output_dir)
 	if args.output:
-		#output_dir = os.path.joint(os.path.abspath(args.output), "characterization")
 		output_dir = os.path.abspath(args.output)
-	annotation_dir = output_dir
+	annotation_dir = os.path.join(output_dir, "finalized")
+	os.system("mkdir -p " + annotation_dir)
 	protein_family = os.path.join(annotation_dir, basename + "_proteinfamilies.clstr")
 	protein_family_seq = os.path.join(annotation_dir, basename + "_proteinfamilies.centroid.faa")
 	protein_family_relab = os.path.join(annotation_dir, basename + "_proteinfamilies_nrm.tsv")
 	protein_family_ann = os.path.join(annotation_dir, basename + "_proteinfamilies_annotation.tsv")
 	protein_family_attr = os.path.join(annotation_dir, basename + "_proteinfamilies_annotation.attribute.tsv")
-	uniref_taxonomy_family = os.path.join(output_dir, basename + "_proteinfamilies_annotation.uniref90_annotation.tsv")
-	uniref_taxonomy = os.path.join(output_dir, basename + "_protein_annotation.uniref90_annotation.tsv")
-	taxonomy_annotation_family = os.path.join(output_dir, basename + "_proteinfamilies_annotation.taxonomy.tsv")
-	taxonomy_annotation = os.path.join(output_dir, basename + "_protein_annotation.taxonomy.tsv")
+	uniref_taxonomy_family = os.path.join(annotation_dir, basename + "_proteinfamilies_annotation.uniref90_annotation.tsv")
+	uniref_taxonomy = os.path.join(annotation_dir, basename + "_protein_annotation.uniref90_annotation.tsv")
+	taxonomy_annotation_family = os.path.join(annotation_dir, basename + "_proteinfamilies_annotation.taxonomy.tsv")
+	taxonomy_annotation = os.path.join(annotation_dir, basename + "_protein_annotation.taxonomy.tsv")
 	protein_family_ann_list = {}
 	protein_ann_list = {}
 
 
-	### STEP #1: clustering ###
+	#### STEP #1: clustering ####
 	# if clustering action is provided, then cluster proteins into protein families
 	if not args.bypass_clustering:
-		print("Run clustering")
+		config.logger.info ("Start to run clustering module......")
 		myprotein_family, myprotein_family_output_folder = characterization.clustering (workflow, gene_catalog_seq,
 		                                                                                args.threads,
 		                                                                                output_dir, protein_family, protein_family_seq)
 
-	### STEP #2: global-homology annotation ###
+	else:
+		config.logger.info ("WARNING! Bypass module: the clustering module is skipped......")
+
+	#### STEP #2: global-homology annotation ####
 	# if global-homology action is provided, then directly extract annotations from database (UniProt)
 	if not args.bypass_global_homology:
-		print("Run global-homology annotation")
+		config.logger.info ("Start to run global-homology annotation module......")
+		if family_conf["uniref"] == "no":
+			config.logger.info ("WARNING! Bypass module: the global-homology annotation module is skipped......")
 		myprotein_family_ann, myprotein_ann, homology_output_folder = characterization.global_homology_annotation (workflow, family_conf,
 		                                                                                                          gene_catalog_seq, metadata, study, basename, args.threads,
 																												  output_dir, uniref_taxonomy_family, uniref_taxonomy,
 		                                                                                                          protein_family_ann_list, protein_ann_list, protein_family, protein_family_seq)
+	else:
+		config.logger.info ("WARNING! Bypass module: the global-homology annotation module is skipped......")
 
-	### STEP #3: domain-motif annotation ###
+	#### STEP #3: domain-motif annotation ####
 	# if domain-motif action is provided, then do annotations based on sequence information
 	if not args.bypass_domain_motif:
-		print("Run domain_motif annotation")
+		config.logger.info ("Start to run domain-motif annotation module......")
+		if domain_motif_conf["interproscan"] == "no":
+			config.logger.info ("WARNING! Bypass module: the interproscan annotation module is skipped......")
+		if domain_motif_conf["pfam2go"] == "no":
+			config.logger.info ("WARNING! Bypass module: the pfam2go annotation module is skipped......")
+		if domain_motif_conf["domine"] == "no":
+			config.logger.info ("WARNING! Bypass module: the DDI annotation module is skipped......")
+		if domain_motif_conf["sifts"] == "no":
+			config.logger.info ("WARNING! Bypass module: the DDI-SIFTS annotation module is skipped......")
+		if domain_motif_conf["expatlas"] == "no":
+			config.logger.info ("WARNING! Bypass module: the DDI-ExpAtlas annotation module is skipped......")
+		if domain_motif_conf["psortb"] == "no":
+			config.logger.info ("WARNING! Bypass module: the psortb annotation module is skipped......")
 		myprotein_family_ann, myprotein_ann, sequence_output_folder = characterization.domain_motif_annotation (workflow, domain_motif_conf,
 		                                                                                                          gene_catalog_seq,
 		                                                                                                          args.split_number, metadata, study, basename, args.threads,
 		                                                                                                          output_dir, protein_family_ann_list, protein_ann_list, protein_family, protein_family_seq)
 
+	else:
+		config.logger.info ("WARNING! Bypass module: the domain-motif annotation module is skipped......")
 
-	### STEP #4: abundance annotation ###
+	#### STEP #4: abundance annotation ####
 	# if abundance action is provided, then do annotations based on abundance information
 	if not args.bypass_abundance:
-		print("Run abundance annotation")
+		config.logger.info ("Start to run abundance annotation module......")
 		myprotein_family_ann, myprotein_ann, abundance_output_folder = characterization.abundance_annotation (workflow, abundance_conf,
 		                                                                                                             gene_catalog_seq, gene_catalog_count,
 		                                                                                                            uniref_taxonomy_family, uniref_taxonomy,
 		                                                                                                            args.split_number, metadata, study, basename, args.threads,
 		                                                                                                            output_dir, protein_family, protein_family_relab, taxonomy_annotation_family, taxonomy_annotation,
 		                                                                                                            protein_family_ann_list, protein_ann_list)
-
-	### STEP #4: integrate annotations ###
+	else:
+		config.logger.info ("WARNING! Bypass module: the abundance annotation module is skipped......")
+	
+	#### STEP #4: integrate annotations ####
 	if not args.bypass_integration:
-		print("Run integration annotation")
+		config.logger.info ("Start to run integration annotation module......")
 		myprotein_family_ann, myprotein_family_attr, annotation_output_folder = characterization.integration_annotation (workflow, integration_conf,
 		                                                                                                               protein_family_ann_list, protein_ann_list,
 		                                                                                                               uniref_taxonomy_family, uniref_taxonomy,
 		                                                                                                               taxonomy_annotation_family, taxonomy_annotation,
 		                                                                                                               metadata, study, basename, protein_family, args.threads,
-		                                                                                                               output_dir, protein_family_ann, protein_family_attr)
+		                                                                                                               annotation_dir, protein_family_ann, protein_family_attr)
+	else:
+		config.logger.info ("WARNING! Bypass module: the integration annotation module is skipped......")
 
-	### start the workflow
+	## start the workflow
 	workflow.go()
 
 
