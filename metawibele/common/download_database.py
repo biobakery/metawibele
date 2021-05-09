@@ -53,6 +53,10 @@ current_downloads = {
 			"uniref90_diamond": "https://huttenhower.sph.harvard.edu/MetaWIBELE_data/uniref90.fasta.dmnd.tar.gz",
 			"uniref90_fasta": "https://huttenhower.sph.harvard.edu/MetaWIBELE_data/uniref90.fasta.tar.gz",
 			"uniref90_annotation": "https://huttenhower.sph.harvard.edu/MetaWIBELE_data/uniref90_annotations.tar.gz"
+		},
+	"DEMO":
+		{
+			"demo_uniref": "https://huttenhower.sph.harvard.edu/MetaWIBELE_data/demo_uniref_database.tar.gz"
 		}
 }
 
@@ -124,9 +128,9 @@ def download_file(url, filename, folder):
 		#url_handle = urlretrieve(url, filename, reporthook=ReportHook().report)
 		os.system("wget " + url + " --no-check-certificate ")
 		config.logger.info ("Extracting: " + filename)
-		os.system("tar zxf " + filename)
+		os.system("tar zxf " + filename + " -C " + folder)
 		#tarfile_handle = tarfile.open(filename)
-		#tarfile_handle.extractall(path=folder)
+		#tarfile_handle.extractall(path = folder)
 	except (EnvironmentError, tarfile.ReadError):
 		sys.exit("CRITICAL ERROR: Unable to download and extract from URL: " + url)
 
@@ -146,7 +150,7 @@ def download_database(database, db_type, location):
 					sys.exit("CRITICAL ERROR: Unable to create directory: " + location)
 
 			# download the database
-			downloaded_file = os.path.join(location, current_downloads[database][db_type].split('/')[-1])
+			downloaded_file = os.path.join(current_downloads[database][db_type].split('/')[-1])
 			download_file(current_downloads[database][db_type], downloaded_file, location)
 
 			# remove the download
@@ -172,12 +176,12 @@ def parse_arguments(args):
 	parser.add_argument(
 		"--database",
 		help="provide which database do you want to download",
-		choices=["uniref"],
+		choices=["uniref", "DEMO"],
 		default="uniref")
 	parser.add_argument(
 		"--build",
 		help="provide which type of data do you want to download from the database",
-		choices=["uniref90_diamond", "uniref90_fasta", "uniref90_annotation"],
+		choices=["uniref90_diamond", "uniref90_fasta", "uniref90_annotation", "demo_uniref"],
 		required=True)
 	parser.add_argument(
 		"--install-location",
