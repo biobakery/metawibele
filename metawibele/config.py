@@ -360,11 +360,11 @@ user_uniref_db = os.path.join(os.getcwd(), "uniref_database")
 if os.path.exists (user_uniref_db):
 	uniref_database_dir = user_uniref_db
 config_uniref_db = get_item (config_items, "database", "uniref_db", "string")
-config_uniref_db = os.path.abspath(config_uniref_db)
-if os.path.exists (config_uniref_db):
+if os.path.exists (config_uniref_db) and config_uniref_db != "" and config_uniref_db != "none":
+	config_uniref_db = os.path.abspath(config_uniref_db)
 	if os.path.abspath(uniref_directory) != config_uniref_db:
 		uniref_database_dir = config_uniref_db
-if not uniref_database_dir.lower() == "none" and not uniref_database_dir == "":
+if uniref_database_dir.lower() != "none" and uniref_database_dir != "":
 	files = [os.path.abspath(x) for x in os.listdir(uniref_database_dir)]
 	for i in files:
 		myname = os.path.basename(i)

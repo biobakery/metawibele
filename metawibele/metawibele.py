@@ -36,15 +36,7 @@ import subprocess
 # import the workflow class from anadama2
 from anadama2 import Workflow
 
-# import the utilities functions and config settings from MetaWIBELE
-try:
-	from metawibele import config
-except ImportError:
-	sys.exit("CRITICAL ERROR: Unable to find the MetaWIBELE python package." +
-		         " Please check your install.")
 
-
-VERSION = config.version
 WORKFLOW_FOLDER = "workflows"
 WORKFLOW_EXTENSION = ".py"
 
