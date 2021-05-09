@@ -7,6 +7,7 @@
 * Added "--global-config" option for taking the user provided global config file
 * Added time stamp for each processing step
 * Added default setting for uniref database and mutiple options for setting up the DB
+* Added option for downloading demo database
 
 ## v0.3.9 2021-03-18 ##
 * Added options for msp-based taxonomy assignment "--tshld-diff" "--tshld-classified"
