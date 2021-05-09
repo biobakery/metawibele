@@ -388,10 +388,11 @@ if uniref_database_dir.lower() != "none" and uniref_database_dir != "":
 				uniref_database.append(i)
 	uniref_database.sort(reverse=True)
 else:
-	config.logger.info ("ERROR! Please provide the location for the required uniref database by any one of the following options:\n" +
-	                    "1) set the location with the environment variable $UNIREF_LOCATION\n" +
-	                    "2) include the database (named as \"uniref_database\") in the current working directory\n" +
-	                    "3) set the location in the global config file (metawibele.cfg) which is in the current working directory")
+	logger.info ("\n  WARNING!! MetaWIBELE does't find valid uniref databse and will use the demo databse by default.\n" +
+				"\tPlease provide the correct location of the required uniref database by any one of the following options:\n" +
+				"\t1) set the location with the environment variable $UNIREF_LOCATION\n" +
+				"\t2) include the database (named as \"uniref_database\") in the current working directory\n" +
+				"\t3) set the location in the global config file (metawibele.cfg) which is in the current working directory")
 
 # domain database
 domain_database_dir = get_item (config_items, "database", "domain_db", "string")
