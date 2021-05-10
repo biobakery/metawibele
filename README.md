@@ -28,7 +28,6 @@ If you have questions, please direct it to [the MetaWIBELE channel](https://foru
 * [Install MetaWIBELE](#install-metawibele)
     * [Requirements](#requirements)
     * [Installation](#installation)
-    	* [Download MetaWIBELE](#download-metawibele)
     	* [Install MetaWIBELE](#install-metawibele)
     	* [Install databases](#install-databases)
     		* [UniRef database](#uniref-database)
@@ -100,17 +99,17 @@ Bypass options:
 ### Requirements
 
 1. [Python](https://www.python.org/) (version >= 3.6, required numpy, pandas, scipy packages)
-2. [AnADAMA2](https://huttenhower.sph.harvard.edu/anadama2) (version >= 0.7.4-devel)
+2. [AnADAMA2](https://huttenhower.sph.harvard.edu/anadama2) (version >= 0.7.4)
 3. [CD-hit](http://weizhongli-lab.org/cd-hit/) (version >= 4.7)
 4. [Diamond](http://www.diamondsearch.org/index.php) (version >= 0.9.24)
 5. [MSPminer](https://www.enterome.com/downloads/) (version >= 2; licensed software)
-6. [MaAsLin2](https://huttenhower.sph.harvard.edu/maaslin2) (version >= 1.1.2) (only required if using MaAsLin2 to associate with environmental parameters or phenotypes)
-7. [Interproscan](https://github.com/ebi-pf-team/interproscan/wiki) (version >= 5.31-70) (only required if using Interproscan to annotate domains and motifs; installing with activating Phobius/SignalP/TMHMM analyses)
-8. [Signalp](http://www.cbs.dtu.dk/services/SignalP-4.1/) (version >= 4.1) (only required if using Signalp to annotate signal peptides integrated in interproscan; licensed software)
-9. [TMHMM](http://www.cbs.dtu.dk/services/TMHMM/) (version >= 2.0) (only required if using TMHMM to annotate transmembrane proteins integrated by interproscan; licensed software)
-10. [Phobius](http://phobius.sbc.su.se/) (version >= 1.01) (only required if using Phobius to annotate both signal peptides and transmembrane proteins integrated by interproscan; licensed software)
-11. [PSORTb](https://psort.org/documentation/index.html) (version >= 3.0) (only required if using PSORTb to predict subcellular localization; licensed software)
-12. **Optional**: only required if using MetaWIBELE utility to preprocess metagenomic sequencing reads
+6. [MaAsLin2](https://huttenhower.sph.harvard.edu/maaslin2) (version >= 1.5.1)
+7. [Interproscan](https://github.com/ebi-pf-team/interproscan/wiki) (version >= 5.31-70) (installing with activating Phobius/SignalP/TMHMM analyses; used for domain/motif annotation)
+8. [Signalp](http://www.cbs.dtu.dk/services/SignalP-4.1/) (version >= 4.1) (licensed software; installing with integrating in interproscan; used for domain/motif annotation)
+9. [TMHMM](http://www.cbs.dtu.dk/services/TMHMM/) (version >= 2.0) (licensed software; installing with integrating in interproscan; used for domain/motif annotation)
+10. [Phobius](http://phobius.sbc.su.se/) (version >= 1.01) (licensed software; installing with integrating in interproscan; used for domain/motif annotation)
+11. [PSORTb](https://psort.org/documentation/index.html) (version >= 3.0) (licensed software; used for domain/motif annotation)
+12. **Optional**: only required if using MetaWIBELE utilities to prepare inputs for MetaWIBELE using metagenomic sequencing reads
 	* [MEGAHIT](https://github.com/voutcn/megahit) (version >= 1.1.3) 
 	* [Prokka](https://github.com/tseemann/prokka) (version >= 1.14-dev; recommend to not set '-c' parameter when running prodigal with metagenome mode)
 	* [Prodigal](https://github.com/hyattpd/Prodigal) (version >= 2.6)
@@ -123,46 +122,33 @@ Bypass options:
 
 
 ### Installation
-#### Download MetaWIBELE
-You can download the latest MetaWIBELE release or the development version. The source contains example files.
-
-Option 1: Latest Release (Recommended)
-
-* download [metawibele-master.zip](https://github.com/biobakery/metawibele/archive/master.zip) and unpack the latest release of MetaWIBELE
-
-Option 2: Development Version
-
-* Create a clone of the Git repository 
-	* `$ git clone https://github.com/biobakery/metawibele.git`
-* You can always update to the latest version of the repository with:
-	* `$ git pull --update`
-
-
 #### Install MetaWIBELE
 You only need to do **any one** of the following options to install the MetaWIBELE package.
 
-
-Option 1: Installing with pip
-
-* `$ pip install metawibele`
-* If you do not have write permissions to `/usr/lib/`, then add the option --user to the install command. This will install the python package into subdirectories of `~/.local/`. Please note when using the --user install option on some platforms, you might need to add `~/.local/bin/` to your $PATH as it might not be included by default. You will know if it needs to be added if you see the following message `metawibele: command not found` when trying to run MetaWIBELE after installing with the --user option.
-
-Option 2: Installing with docker
+**Option 1: Installing with docker**
 
 * `$ docker pull biobakery/metawibele`
 * This docker image includes most of the dependent software packages.
-* Large software packages and those with licenses are not included in this image:
-	* Softwares with the license : mspimer, signalp, TMHMM, phobius, psortb
-	* Softwares with large size: interproscan
+* Large software packages and those with licenses are **NOT** included in this image and needed installed additionally:
 	* Users should review the license terms and install these packages manually. 
+	* Softwares with large size: [Interproscan](https://github.com/ebi-pf-team/interproscan/wiki)
+	* Softwares with the license : [MSPminer](https://www.enterome.com/downloads/), [Signalp](http://www.cbs.dtu.dk/services/SignalP-4.1/), [TMHMM](http://www.cbs.dtu.dk/services/TMHMM/), [Phobius](http://phobius.sbc.su.se/), [PSORTb](https://psort.org/documentation/index.html)
 	
-Option 3: Installing with conda
+
+**Option 2: Installing with pip**
+
+* `$ pip install metawibele`
+* If you do not have write permissions to `/usr/lib/`, then add the option --user to the install command. This will install the python package into subdirectories of `~/.local/`. Please note when using the --user install option on some platforms, you might need to add `~/.local/bin/` to your $PATH as it might not be included by default. You will know if it needs to be added if you see the following message `metawibele: command not found` when trying to run MetaWIBELE after installing with the --user option.
+	
+**Option 3: Installing with conda**
 
 * `$ conda install -c biobakery metawibele`
 
 
-Option 4: Installing from source
+**Option 4: Installing from source (not recommanded)**
 
+* Create a clone of the Git repository 
+	* `$ git clone https://github.com/biobakery/metawibele.git`
 * Move to the MetaWIBELE directory
 	* `$ cd $MetaWIBELE_PATH`
 
@@ -175,60 +161,59 @@ Option 4: Installing from source
 #### Install databases
 To run metawibele, you need to install the dependent databases: 1) uniref databases (**required**); 2) domain databases (optional).
 
-##### UniRef database
-UniRef databases are **required** if you will use MetaWIBELE to do global-homology based annotation and taxonomic annotation. You can use **any one** of the following options to install these databases.
+##### 1. UniRef database
+UniRef database is **required** if you will use MetaWIBELE to do global-homology based annotation and taxonomic annotation. You can use **any one** of the following options to install the database with providing `$UNIREF_LOCATION` as the location for installation.
 
-Option 1: Download uniref databases (Recommended)
+**NOTE:** Please point to this location for the default uniref database in the global config file (`metawibele.cfg`, see details in the section [Prepare global configuration file](#prepare-global-configuration-file)). Alternatively, you can either set the location with the environment variable `$UNIREF_LOCATION`, or move the downloaded database to the folder named `uniref_database` in the current working directory.
 
-* We have built the dependent UniRef databases based on UniProt/UniRef 2019_01 sequences and annotations. You can download and uncompress these databases (both sequences and annotations) and provide `$UNIREF_LOCATION` as the location to install the databases.
+**Option 1: Download uniref databases (Recommended)**
+
+We have built the dependent UniRef database based on UniProt/UniRef 2019_01 sequences and annotations. You can download and uncompress this database (both sequences and annotations) and provide `$UNIREF_LOCATION` as the location to install the database.
 	
-	* UniRef90 sequence file (20 GB): 
-		* If you are using Diamond v0.9.24, just download and uncompress the indexed version of sequences to `$UNIREF_LOCATION`: [uniref90.fasta.dmnd.tar.gz](http://huttenhower.sph.harvard.edu/MetaWIBELE_data/uniref90.fasta.dmnd.tar.gz). Or run the following command to download the indexed sequence file into `$UNIREF_LOCATION`:
+* UniRef90 sequence file (20 GB): 	
+	* If you are using Diamond v0.9.24, just download and uncompress the indexed version of sequences to `$UNIREF_LOCATION`: [uniref90.fasta.dmnd.tar.gz](http://huttenhower.sph.harvard.edu/MetaWIBELE_data/uniref90.fasta.dmnd.tar.gz) 
+	* Alternatively, run the following command to download the indexed sequence file by Diamond v0.9.24 into `$UNIREF_LOCATION`:
 	`$ metawibele_download_database --database uniref --build uniref90_diamond --install-location $UNIREF_LOCATION`
-		* If you are using different version of Diamond, 
-			* download raw sequences in fasta format: [uniref90.fasta.tar.gz](http://huttenhower.sph.harvard.edu/MetaWIBELE_data/uniref90.fasta.tar.gz). Or run the following command to download the sequence file into `$UNIREF_LOCATION`:
+	* If you are using different version of Diamond, download raw sequences in fasta format: [uniref90.fasta.tar.gz](http://huttenhower.sph.harvard.edu/MetaWIBELE_data/uniref90.fasta.tar.gz) 
+		* Alternatively, run the following command to download the sequence file into `$UNIREF_LOCATION`:
 	`$ metawibele_download_database --database uniref --build uniref90_fasta --install-location $UNIREF_LOCATION` 
-			* index the sequences using your local Diamond: 
+		* And then, index the sequences using your local Diamond: 
 			`$ diamond makedb --in $UNIREF_LOCATION/uniref90.fasta -d $UNIREF_LOCATION/uniref90.fasta`
-	* UniRef90 annotation files (2.8 GB): [uniref90_annotations.tar.gz](http://huttenhower.sph.harvard.edu/MetaWIBELE_data/uniref90_annotations.tar.gz). Or run the following command to download the annotation files into `$UNIREF_LOCATION`:
+
+* UniRef90 annotation files (2.8 GB): 
+	* Download the annotation files and uncompress into `$UNIREF_LOCATION`: [uniref90_annotations.tar.gz](http://huttenhower.sph.harvard.edu/MetaWIBELE_data/uniref90_annotations.tar.gz). 
+	* Alternatively, run the following command to download the annotation files into `$UNIREF_LOCATION`:
 	`$ metawibele_download_database --database uniref --build uniref90_annotation --install-location $UNIREF_LOCATION`
-		* Annotations are available for the UniRef90 gene families to the following systems:
-			* UniProt ID corresponding to the UniRef representative
-			* Protein names of the UniRef representative
-			* Gene names of the UniRef representative
-			* Taxon name and taxon ID of the latest common ancestor (LCA) for each uniref90 cluster
-			* Taxon name and taxon ID of the representative of each uniref90 cluster
-			* Gene Ontology (GO)
-			* KEGG Orthogroups (KOs)
-			* EggNOG (including COGs)
-			* Pfam domains（Pfams)
-		* In most cases, mappings are directly inferred from the annotation of the corresponding UniRef representative sequence in UniProt.
 
-Option 2: Create local uniref databases
 
-* You can also create these databases locally by using MetaWIBELE utility scripts based on the latest release version of UniProt/UniRef, and provide `$DATABASE_LOCATION` as the location to install the database.
+**Option 2: Create local uniref databases**
+
+* You can also create these databases locally by using MetaWIBELE utility scripts based on the latest release version of UniProt/UniRef, and provide `$UNIREF_LOCATION` as the location to install the database.
 
 * Download and obtain UniProt annotations:
 
-	`$ metawibele_prepare_uniprot_annotation --output $DATABASE_LOCATION`
+	`$ metawibele_prepare_uniprot_annotation --output $UNIREF_LOCATION `
 
 * Download UniRef sequences and obtain annotations:
 	
-	`$ metawibele_prepare_uniref_annotation -t uniref90 --output $DATABASE_LOCATION`
+	`$ metawibele_prepare_uniref_annotation -t uniref90 --output $UNIREF_LOCATION `
 
 * Use `diamond` to index sequences
 	
 	`$ diamond makedb --in uniref90.fasta -d uniref90.fasta`
 
 
-##### Domain database
-De default, the dependent domain databases **have already been automatically installed** when you install the MetaWIBELE package and you can skip this step. Alternatively, you can also create these domain databases locally and provide `$DATABASE_LOCATION` as the location to install the database.
+
+##### 2. Domain database
+De default, the dependent domain databases **have already been automatically installed** when you install the MetaWIBELE package and you can skip this step. Alternatively, you can also create these domain databases locally and provide `$DOMAIN_LOCATION` as the location to install the database.
+
+**NOTE:** Please point to this location for the default domain database in the global config file (`metawibele.cfg`, see details in the section [Prepare global configuration file](#prepare-global-configuration-file)).
 
 Create local domain databases (**optional**)
 
 * Download and obtain dependent protein domains information:
 	
-	`$ metawibele_prepare_domain_databases -t Pfam33.0 --output $DATABASE_LOCATION`
+	`$ metawibele_prepare_domain_databases -t Pfam33.0 --output $DOMAIN_LOCATION `
 	
 	* Pfam domains from the specified version of [Pfam](https://pfam.xfam.org/) database will be downloaded.
 	* PDB information from the latest version of [SIFT](https://www.ebi.ac.uk/pdbe/docs/sifts/) database will be downloaded.
@@ -237,9 +222,11 @@ Create local domain databases (**optional**)
 	
 #### Prepare configuration files
 ##### Prepare global configuration file
-To run MetaWIBELE, you are **required** to customize the global configuration file `metawibele.cfg` and make sure that it's in your working directory. 
+To run MetaWIBELE, you are **required** to customize the global configuration file `metawibele.cfg` and make sure that it's in the current working directory. 
 
-* Download `metawibele.cfg` into your working directory:
+**NOTE:** De default, MetaWIBELE will use the global configurations from `metawibele.cfg` in the current working directory. Alternatively you can always provide the location of the global configuration file you would like to use with the "--global-config " option to metawibele (see more in the section [How to run](#how-to-run)).
+
+* Download `metawibele.cfg` into your current working directory:
 	* Option 1) run this command to download global configuration file:
 		* `$ metawibele_download_config --config-type global`
 	* Option 2) obtain copies by right-clicking the link and selecting "save link as":
@@ -292,6 +279,12 @@ To run MetaWIBELE, you are **required** to customize the global configuration fi
 	# The minimum abundance for each feature [ Default: 0 ]   
 	abundance_detection_level = 0
 
+	[msp]
+	# The minimum fraction of taxonomy classified genes in each MSP [0-1]. [Default: 0.10]
+	tshld_classified = 0.10 
+	# The minimum percent differences between the most and second dominant taxon for each MSP [0-1]. [Default: 0.50] 
+	tshld_diff = 0.50 
+
 	[interproscan]
 	# Interproscan executable file, e.g. /my/path/interproscan/interproscan.sh [ Default: interproscan.sh ]
 	interproscan_cmmd = interproscan.sh
@@ -301,16 +294,18 @@ To run MetaWIBELE, you are **required** to customize the global configuration fi
 	split_number = 1
 	```
 	
-	* Customize parameter settings for association with environmental/host phenotypes (**optional**; but you **need** to specify your settings for maaslin2 if you run MetaWIBELE for supervised prioritization, and at least the main phenotype metadata used for prioritization is **required** to set):
+	* Customize parameter settings for association with environmental/host phenotypes (**optional**; but you are **required** to specify your settings for maaslin2 if you run MetaWIBELE for supervised prioritization, and at least the main phenotype metadata used for prioritization is **required** to set):
 
 	```
 	[maaslin2]
 	# The absolute path of Maaslin2 executable file, e.g. /my/path/Maaslin2/R/Maaslin2.R [ Default: Maaslin2.R ]
 	maaslin2_cmmd = Maaslin2.R
 	# The minimum abundance for each feature [ Default: 0 ]  
-	min_abundance = 0 
+	min_abundance = 0
 	# The minimum percent of samples for which a feature is detected at minimum abundance [ Default: 0.1 ]
-	min_prevalence = 0.1  
+	min_prevalence = 0.1
+	# Keep features with variance greater than [Default: 0.0]
+	min_variance = 0
 	# The q-value threshold for significance [ Default: 0.25 ]
 	max_significance = 0.25
 	# The normalization method to apply [ Choices: TSS, CLR, CSS, NONE, TMM ], [ Default: TSS ]
@@ -335,6 +330,8 @@ To run MetaWIBELE, you are **required** to customize the global configuration fi
 	plot_scatter = FALSE
 	# The number of R processes to run in parallel [ Default: 1 ]
 	maaslin2_cores = 1
+	# The factor to use as a reference for a variable with more than two levels provided as a string of 'variable,reference' semi-colon delimited for multiple variables [ Default: NA ] NOTE: A space between the variable and reference will not error but will cause an inaccurate result.
+	reference = NA
 	# The minimum percent of case-control samples used for comparison in which a feature is detected [ Default: 0.1 ]
 	tshld_prevalence = 0.10
 	# The q-value threshold for significance used as DA annotations [ Default: 0.05 ]
@@ -343,8 +340,6 @@ To run MetaWIBELE, you are **required** to customize the global configuration fi
 	effect_size = mean(log)
 	# The main phenotype metadata used for prioritization, e.g. metadata1. [ Default: none ]: skip the association with environmental/phenotypic parameters
 	phenotype = none
-	# Case and control metadata pairs for phenotype metadata variables; use semicolon to separate variables, e.g. "metadata1:case_status1|control_status1;metadata2:case_status2|control_status2,case_status3|control_status2". [Default: none] where metadata values for the main phenotype will be sorted based on alphabet order and the value with the smallest alphabet order will be treated as control status.
-	case_control_status = none
 	```
 
 
@@ -358,7 +353,7 @@ By default, MetaWIBELE will perform by using the local configuration files insta
 		* [characterization.cfg](http://huttenhower.sph.harvard.edu/MetaWIBELE_data/configs/characterization.cfg)
 		* [prioritization.cfg](http://huttenhower.sph.harvard.edu/MetaWIBELE_data/configs/prioritization.cfg)
 		 
-* Modify and provide your own configurations:
+* Customize local configurations:
 	* Configurations for characterization in `characterization.cfg` which can be provided with `--characterization-config characterization.cfg`:
 	
 	```
@@ -488,22 +483,26 @@ By default, MetaWIBELE will perform by using the local configuration files insta
 ### How to run
 * For a list of all available workflows, run:
 
-	`$ metawibele preprocess --help`
+	`$ metawibele --help`
 
 	This command yields:
 
 	```
-	usage: metawibele [-h] [--version] {characterize,prioritize,preprocess}
+	usage: metawibele [-h] [--global-config GLOBAL_CONFIG]
+                  {characterize,prioritize,preprocess}
 
 	MetaWIBELE workflows: A collection of AnADAMA2 workflows
 
 	positional arguments:
-  	{characterize,prioritize,preprocess}	workflow to run
+  	{profile,characterize,prioritize,preprocess}
+                        workflow to run
 
 	optional arguments:
   	-h, --help            show this help message and exit
- 	 --version             show program's version number and exit
+  	--global-config GLOBAL_CONFIG the global configuration file of 	MetaWIBELE (default: None)
 	```
+	
+**NOTE:** De default, MetaWIBELE will use the global configurations from `metawibele.cfg` in the current working directory. Alternatively you can always provide the location of the global configuration file you would like to use with the "--global-config " option to metawibele.	
 	
 * All workflows follow the general command format:
 
@@ -519,7 +518,7 @@ By default, MetaWIBELE will perform by using the local configuration files insta
 	
 	```
 	usage: characterize.py [-h] [--version] [--threads THREADS]
-                       [--characterization-config 	CHARACTERIZATION_CONFIG]
+                       [--characterization-config CHARACTERIZATION_CONFIG]
                        [--mspminer-config MSPMINER_CONFIG]
                        [--bypass-clustering] [--bypass-global-homology]
                        [--bypass-domain-motif] [--bypass-interproscan]
@@ -528,9 +527,9 @@ By default, MetaWIBELE will perform by using the local configuration files insta
                        [--bypass-abundance] [--split-number SPLIT_NUMBER]
                        [--bypass-integration] [--study STUDY]
                        [--basename BASENAME] --input-sequence INPUT_SEQUENCE
-                       --input-count INPUT_COUNT
-                       [--input-metadata INPUT_METADATA] [--output OUTPUT]
-                       [-i INPUT] [--config CONFIG] [--local-jobs JOBS]
+                       --input-count INPUT_COUNT --input-metadata
+                       INPUT_METADATA [--output OUTPUT] [-i INPUT]
+                       [--config CONFIG] [--local-jobs JOBS]
                        [--grid-jobs GRID_JOBS] [--grid GRID]
                        [--grid-partition GRID_PARTITION]
                        [--grid-benchmark {on,off}]
@@ -568,10 +567,11 @@ By default, MetaWIBELE will perform by using the local configuration files insta
 ### Standard Workflows
 #### MetaWIBELE-characterize
 * ##### Input files for for characterization
-	* protein sequences for non-redundant gene families (Fasta format file), e.g. [demo_genecatalogs.centroid.faa](https://github.com/biobakery/metawibele/tree/master/examples/input/demo_genecatalogs.centroid.faa)
-	* reads counts table for non-redundant gene families (TSV format file), e.g. [demo\_genecatalogs_counts.all.tsv](https://github.com/biobakery/metawibele/tree/master/examples/input/demo_genecatalogs_counts.all.tsv)
-	* metadata file (TSV format file), e.g. [demo\_mgx_metadata.tsv](https://github.com/biobakery/metawibele/tree/master/examples/input/demo_mgx_metadata.tsv)
-	* the global configuration file in your working directory, e.g. [metawibele.cfg](https://github.com/biobakery/metawibele/tree/master/examples/metawibele.cfg)
+	* protein sequences for non-redundant gene families (Fasta format file), e.g. [demo_genecatalogs.centroid.faa](https://raw.githubusercontent.com/biobakery/metawibele/master/examples/input/demo_genecatalogs.centroid.faa)
+	* reads counts table for non-redundant gene families (TSV format file), e.g. [demo\_genecatalogs_counts.all.tsv](https://raw.githubusercontent.com/biobakery/metawibele/master/examples/input/demo_genecatalogs_counts.all.tsv)
+	* metadata file (TSV format file), e.g. [demo\_mgx_metadata.tsv](https://raw.githubusercontent.com/biobakery/metawibele/master/examples/input/demo_mgx_metadata.tsv)
+	* the global configuration file in the current working directory, e.g. [metawibele.cfg](https://raw.githubusercontent.com/biobakery/metawibele/master/examples/metawibele.cfg)
+	* the uniref database pointed to the default location of uniref database in the global config file (`metawibele.cfg`), e.g. downloaded and uncompressed into [demo\_uniref\_database](http://huttenhower.sph.harvard.edu/MetaWIBELE_data/demo_uniref_database.tar.gz)
 	
 
 * ##### MetaWIBELE-characterize workflow
@@ -584,7 +584,7 @@ By default, MetaWIBELE will perform by using the local configuration files insta
 	
 * ##### Demo run of MetaWIBELE-characterize
 
-	`$ metawibele characterize --input-sequence demo_genefamilies.centroid.faa --input-count demo_genefamilies_counts.all.tsv --input-metadata demo_mgx_metadata.tsv --output $OUTPUT_DIR`
+	`$ metawibele characterize --input-sequence demo_genecatalogs.centroid.faa --input-count demo_genecatalogs_counts.all.tsv --input-metadata demo_mgx_metadata.tsv --output $OUTPUT_DIR`
 
 * ##### Output files of MetaWIBELE-characterize
 	**1. Annotation file**
@@ -602,7 +602,7 @@ By default, MetaWIBELE will perform by using the local configuration files insta
 	...
 	```
 	
-	* File name: `$OUTPUT_DIR/$BASENAME_proteinfamilies_annotation.tsv`
+	* File name: `$OUTPUT_DIR/finalized/$BASENAME_proteinfamilies_annotation.tsv`
 	* This file includes the main characterization results (TSV format file).
 	* `$OUTPUT_DIR` = the output folder
 	* `$BASENAME` = the prefix for output files provided by `metawibele.cfg`
@@ -630,7 +630,7 @@ By default, MetaWIBELE will perform by using the local configuration files insta
 	...
 	```
 	
-	* File name: `$OUTPUT_DIR/$BASENAME_proteinfamilies_annotation.attribute.tsv`
+	* File name: `$OUTPUT_DIR/finalized/$BASENAME_proteinfamilies_annotation.attribute.tsv`
 	* This file includes the supplementary results for characterization (TSV format file).
 	* Each item is supplemental information about the corresponding results. `AID` is the key to connect `$BASENAME_proteinfamilies_annotation.tsv` with `$BASENAME_proteinfamilies_annotation.attribute.tsv`.
 	
@@ -646,7 +646,7 @@ By default, MetaWIBELE will perform by using the local configuration files insta
 	...
 	```
 	
-	* File name: `$OUTPUT_DIR/$BASENAME_proteinfamilies_annotation.taxonomy.tsv`
+	* File name: `$OUTPUT_DIR/finalized/$BASENAME_proteinfamilies_annotation.taxonomy.tsv`
 	* This file includes the detailed information about taxonomic annotation (TSV format file).
 	* `$BASENAME_proteinfamilies_annotation.taxonomy.all.tsv` shows the taxonomic information at each taxonomic level.
 	
@@ -664,7 +664,7 @@ By default, MetaWIBELE will perform by using the local configuration files insta
 	...
 	```
 	
-	* File name: `$OUTPUT_DIR/$BASENAME_proteinfamilies_nrm.tsv`
+	* File name: `$OUTPUT_DIR/finalized/$BASENAME_proteinfamilies_nrm.tsv`
 	* This file includes the normalized abundance of each protein family across samples (TSV format file).
 	* Protein family abundance is reported in copies per million (CPM) units, which is "total sum scaling (TSS)"-style normalization: each sample is constrained to sum to 1 million. First, each protein family is normalized to RPK (reads per kilobase) units for gene length normalization; RPK units reflect relative gene (or transcript) copy number in the community. Then, RPK values are further sum-normalized (CPM) to adjust for differences in sequencing depth across samples. Further information can refer to the normalization approach in [HUMAnN](https://github.com/biobakery/humann). 
 	
@@ -681,7 +681,7 @@ By default, MetaWIBELE will perform by using the local configuration files insta
 	...
 	```
 	
-	* File name: `$OUTPUT_DIR/$BASENAME_proteinfamilies.clstr`
+	* File name: `$OUTPUT_DIR/finalized/$BASENAME_proteinfamilies.clstr`
 	* This file includes the clustering information for protein families, formatted using an extension-fasta style based on the version of CD-hit clustering file (extension-fasta format file).
 	
 	**6. Sequences of protein families**  
@@ -693,25 +693,25 @@ By default, MetaWIBELE will perform by using the local configuration files insta
 	
 	* Clustering results
 		* MetaWIBELE clusters all representative sequences of gene families into protein families. 
-		* All intermediate results are in the folder `$OUTPUT_DIR/clustering`.
+		* All intermediate results are in the folder `$OUTPUT_DIR/clustering/`.
 		
 	* Global-homology based search results
 		* MetaWIBELE queries each sequence in protein families against the UniRef90 database by performing protein-level search.
-		* All intermediate results are in the folder `$OUTPUT_DIR/global_homology_annotation`.
+		* All intermediate results are in the folder `$OUTPUT_DIR/global_homology_annotation/`.
 	
 	* Domain-motif annotation results
 		* MetaWIBELE uses the local-homology approach (domain/motif search) to characterize the secondary structures of protein families.
-		* All intermediate results are in the folder `$OUTPUT_DIR/domain_motif_annotation`.
+		* All intermediate results are in the folder `$OUTPUT_DIR/domain_motif_annotation/`.
 	
 	* Abundance-based annotation results
 		* MetaWIBELE implements non-homology based strategy compromising (i) taxonomic annotation with phylogenetic binning, (ii) abundance profiling for protein families, and (iii) association with environmental parameters or phenotypes based on differential abundance. 
-		* All intermediate results are in the folder `$OUTPUT_DIR/abundance_annotation`.
+		* All intermediate results are in the folder `$OUTPUT_DIR/abundance_annotation/`.
 	
 
 #### MetaWIBELE-prioritize
 * ##### Input files for prioritization
-	* annotation file produced by MetaWIBELE-characterize workflow (TSV format file), e.g. [demo\_proteinfamilies_annotation.tsv](https://github.com/biobakery/metawibele/tree/master/examples/output/characterization/demo_proteinfamilies_annotation.tsv)
-	* annotation attribute file produced by MetaWIBELE-characterize workflow (TSV format file), e.g. [demo\_proteinfamilies\_annotation.attribute.tsv](https://github.com/biobakery/metawibele/tree/master/examples/output/characterization/demo_proteinfamilies_annotation.attribute.tsv)
+	* annotation file produced by MetaWIBELE-characterize workflow (TSV format file), e.g. [demo\_proteinfamilies_annotation.tsv](https://github.com/biobakery/metawibele/raw/master/examples/output/characterization/finalized/demo_proteinfamilies_annotation.tsv)
+	* annotation attribute file produced by MetaWIBELE-characterize workflow (TSV format file), e.g. [demo\_proteinfamilies\_annotation.attribute.tsv](https://github.com/biobakery/metawibele/raw/master/examples/output/characterization/finalized/demo_proteinfamilies_annotation.attribute.tsv)
 
 * ##### MetaWIBELE-prioritize workflow
 
@@ -940,10 +940,10 @@ This command yields:
 ```
 usage: preprocess.py [-h] [--version] [--threads THREADS]
                      [--extension-paired EXTENSION_PAIRED]
-                     [--sample-list SAMPLE_LIST]
+                     [--extension {.fastq.gz,.fastq}]
                      [--gene-call-type {prokka,prodigal,both}]
-                     [--extension {.fastq.gz,.fastq}] [--bypass-assembly]
-                     [--bypass-gene-calling] [--bypass-gene-catalog]
+                     [--bypass-assembly] [--bypass-gene-calling]
+                     [--bypass-gene-catalog]
                      [--output-basename OUTPUT_BASENAME] -o OUTPUT [-i INPUT]
                      [--config CONFIG] [--local-jobs JOBS]
                      [--grid-jobs GRID_JOBS] [--grid GRID]
@@ -956,7 +956,7 @@ usage: preprocess.py [-h] [--version] [--threads THREADS]
                      [--exclude-target EXCLUDE_TARGET]
                      [--log-level {DEBUG,INFO,WARNING,ERROR,CRITICAL}]
 
-A workflow to preprocess shotgun sequencing reads of metagenomes with tasks of metagenomic assembly, gene calling, building gene families, and generating gene abundance for each sample.
+A workflow to preprocess shotgun sequencing reads of metagenomes with tasks of metagenomic assembly, gene calling, building gene catalogs and generating gene abundance for each sample.
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -964,14 +964,12 @@ optional arguments:
   --threads THREADS     number of threads/cores for each task to use
   --extension-paired EXTENSION_PAIRED
                         provide the extension for paired fastq files using comma to separate, e.g. .R1.fastq.gz,.R2.fastq.gz | .R1.fastq,.R2.fastq
-  --sample-list SAMPLE_LIST
-                        sample list file
-  --gene-call-type {prokka,prodigal,both}
-                        specify which type of gene calls will be used
-                        [default: both]
   --extension {.fastq.gz,.fastq}
                         provide the extension for all fastq files
                         [default: .fastq.gz]
+  --gene-call-type {prokka,prodigal,both}
+                        specify which type of gene calls will be used
+                        [default: prodigal]
   --bypass-assembly     do not run assembly
   --bypass-gene-calling
                         do not call ORFs
@@ -982,7 +980,8 @@ optional arguments:
   -o OUTPUT, --output OUTPUT
                         Write output to this directory
   -i INPUT, --input INPUT
-                        Find inputs in this directory
+                        Find inputs in this directory 
+                        [default: /srv/export/hutlab11_nobackup/share_root/users/yancong/metawibele_demo/output/characterization/finalized]
   --config CONFIG       Find workflow configuration in this folder 
                         [default: only use command line options]
   --local-jobs JOBS     Number of tasks to execute in parallel locally 
@@ -996,7 +995,7 @@ optional arguments:
                         Partition/queue used for gridable tasks.
                         Provide a single partition or a comma-delimited list
                         of short/long partitions with a cutoff.
-                        [default: serial_requeue,shared,240]
+                        [default: serial_requeue,serial_requeue,240]
   --grid-benchmark {on,off}
                         Benchmark gridable tasks 
                         [default: on]
@@ -1032,18 +1031,18 @@ optional arguments:
 * `--output`: the output directory. 
 
 #### Input files of preprocessing workflow
-* QC'ed shotgun sequencing metagenome file (fastq, fastq.gz, fasta, or fasta.gz format), e.g. 
-	- [sample1_R1.fastq.gz](https://github.com/biobakery/metawibele/tree/master/examples/raw_reads/sample1_R1.fastq.gz)
-	- [sample1_R2.fastq.gz](https://github.com/biobakery/metawibele/tree/master/examples/raw_reads/sample1_R2.fastq.gz)
-	- [sample2_R1.fastq.gz](https://github.com/biobakery/metawibele/tree/master/examples/raw_reads/sample2_R1.fastq.gz)
-	- [sample2_R2.fastq.gz](https://github.com/biobakery/metawibele/tree/master/examples/raw_reads/sample2_R2.fastq.gz)
+* QC'ed shotgun sequencing metagenome file (fastq, fastq.gz, fasta, or fasta.gz format), e.g. "raw_reads" folder including:
+	- [sample1_R1.fastq.gz](https://github.com/biobakery/metawibele/raw/master/examples/raw_reads/sample1_R1.fastq.gz)
+	- [sample1_R2.fastq.gz](https://github.com/biobakery/metawibele/raw/master/examples/raw_reads/sample1_R2.fastq.gz)
+	- [sample2_R1.fastq.gz](https://github.com/biobakery/metawibele/raw/master/examples/raw_reads/sample2_R1.fastq.gz)
+	- [sample2_R2.fastq.gz](https://github.com/biobakery/metawibele/raw/master/examples/raw_reads/sample2_R2.fastq.gz)
 * See the section on parallelization options to optimize the workflow run based on your computing resources. 
 * The workflow runs with the default settings for all main tool subtasks. If you need to customize your workflow settings for the preprocessing workflow to modify the default settings, you can change the parameter settings.
 	* For example, `--extension-paired "$R1_suffix,$R2_suffix"`, `--extension "$fastq_suffix"` (what are the following part after `$SAMPLE` in the input file names) will modify the default settings when running the assembly task.
 
 #### Demo run of preprocessing workflow
 
-`$ metawibele preprocess --input examples/raw_reads/ --output $OUTPUT_DIR/ --output-basename demo --extension-paired "_R1.fastq.gz,_R2.fastq.gz" --extension ".fastq.gz"`
+`$ metawibele preprocess --input raw_reads/ --output $OUTPUT_DIR/ --output-basename demo --extension-paired "_R1.fastq.gz,_R2.fastq.gz" --extension ".fastq.gz"`
 
 #### Output files of preprocessing workflow
 **Main output files**
@@ -1051,8 +1050,8 @@ optional arguments:
 The following are the two main output files of the preprocessing utility that are used for MetaWIBELE:
 
 ```
-$OUTPUT_DIR/$BASENMAE_genecatalogs.centroid.faa
-$OUTPUT_DIR/$BASENMAE_genecatalogs_counts.all.tsv
+$OUTPUT_DIR/finalized/$BASENMAE_genecatalogs.centroid.faa
+$OUTPUT_DIR/finalized/$BASENMAE_genecatalogs_counts.all.tsv
 
 ```
 
@@ -1101,20 +1100,20 @@ PRISM_7122_50124	26	3	3	16	6	35	2139	191	22
 	
 **2. gene-calling results**
 	
-* `$OUTPUT_DIR/$BASENMAE_gene_info.tsv`: all gene calls information (TSV format file).
-* `$OUTPUT_DIR/$BASENMAE_combined_gene_protein_coding.complete.sorted.fna`: nucleotide sequences for all complete ORFs sorted by gene length (Fasta format file).
-* `$OUTPUT_DIR/$BASENMAE_combined_protein.complete.sorted.faa`: protein sequences for all complete ORFs sorted by protein length (Fasta format file).
-* `$OUTPUT_DIR/$BASENMAE_combined_gene_protein_coding.sorted.fna`: nucleotide sequences for all ORFs (including partial genes) sorted by gene length (Fasta format file).
-* `$OUTPUT_DIR/$BASENMAE_combined_protein.sorted.faa`: protein sequences for all ORFs (including partial genes) sorted by protein length.
-* The gene-calling outputs from prodigal are in the `$OUTPUT_DIR/gene_calls` folder. 
-* The gene-annotation outputs from prokka are in the `$OUTPUT_DIR/gene_annotation` folder.
+* `$OUTPUT_DIR/finalized/$BASENMAE_gene_info.tsv`: all gene calls information (TSV format file).
+* `$OUTPUT_DIR/finalized/$BASENMAE_combined_gene_protein_coding.complete.sorted.fna`: nucleotide sequences for all complete ORFs sorted by gene length (Fasta format file).
+* `$OUTPUT_DIR/finalized/$BASENMAE_combined_protein.complete.sorted.faa`: protein sequences for all complete ORFs sorted by protein length (Fasta format file).
+* `$OUTPUT_DIR/finalized/$BASENMAE_combined_gene_protein_coding.sorted.fna`: nucleotide sequences for all ORFs (including partial genes) sorted by gene length (Fasta format file).
+* `$OUTPUT_DIR/finalized/$BASENMAE_combined_protein.sorted.faa`: protein sequences for all ORFs (including partial genes) sorted by protein length.
+* The gene-calling outputs from prodigal are in the `$OUTPUT_DIR/gene_calls/` folder. 
+* The gene-annotation outputs from prokka are in the `$OUTPUT_DIR/gene_annotation/` folder.
 	
 **3. gene families**
 	
-* `$OUTPUT_DIR/$BASENMAE_genecatalogs.clstr`: clustering information for non-redundant gene families (extension-fasta format file).
-* `$OUTPUT_DIR/$BASENMAE_genecatalogs_counts.all.tsv`: reads counts of gene families per sample (TSV format file).
+* `$OUTPUT_DIR/finalized/$BASENMAE_genecatalogs.clstr`: clustering information for non-redundant gene families (extension-fasta format file).
+* `$OUTPUT_DIR/finalized/$BASENMAE_genecatalogs_counts.all.tsv`: reads counts of gene families per sample (TSV format file).
 * `$OUTPUT_DIR/$BASENMAE_genecatalogs.centroid.fna`: nucleotide sequences of representatives for gene families (Fasta format file).
-* `$OUTPUT_DIR/$BASENMAE_genecatalogs.centroid.faa`: protein sequences of representatives for gene families.
-* All mapping outputs for each sample are in the `$OUTPUT_DIR/mapping` folder. 
+* `$OUTPUT_DIR/finalized/$BASENMAE_genecatalogs.centroid.faa`: protein sequences of representatives for gene families.
+* All mapping outputs for each sample are in the `$OUTPUT_DIR/mapping/` folder. 
 	
 ----
