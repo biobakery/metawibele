@@ -7,7 +7,7 @@
 
 **If you use the MetaWIBELE software, please cite our manuscript:**
 
-Yancong et.al (2020+). ["Identifying Novel Bioactive Microbial Gene Products in Inflammatory Bowel Disease."](http://huttenhower.sph.harvard.edu/metawibele) [submitted]
+Yancong Zhang, Amrisha Bhosle, Sena Bae, Lauren McIver, Emma Accorsi, Kelsey N. Thompson, Cesar Arze, Ya Wang, Ayshwarya Subramanian, Damian R. Plichita, Gholamali Rahnavard, Afrah Shafquat, Ramnik J. Xavier, Hera Vlamakis, Wendy S. Garrett, Andy Krueger, Curtis Huttenhower\*, Eric A. Franzosa\*. "Identifying Novel Bioactive Microbial Gene Products in Inflammatory Bowel Disease." *[in submission]*
 
 **And feel free to link to MetaWIBELE in your Methods:**
 
@@ -97,7 +97,6 @@ Bypass options:
 
 ## Install MetaWIBELE
 ### Requirements
-
 1. [Python](https://www.python.org/) (version >= 3.6, required numpy, pandas, scipy packages)
 2. [AnADAMA2](https://huttenhower.sph.harvard.edu/anadama2) (version >= 0.7.4)
 3. [CD-hit](http://weizhongli-lab.org/cd-hit/) (version >= 4.7)
@@ -143,19 +142,6 @@ You only need to do **any one** of the following options to install the MetaWIBE
 **Option 3: Installing with conda**
 
 * `$ conda install -c biobakery metawibele`
-
-
-**Option 4: Installing from source (not recommanded)**
-
-* Create a clone of the Git repository 
-	* `$ git clone https://github.com/biobakery/metawibele.git`
-* Move to the MetaWIBELE directory
-	* `$ cd $MetaWIBELE_PATH`
-
-* Install MetaWIBELE package
-	* `$ python setup.py install`
-	* If you do not have write permissions to `/usr/lib/`, then add the option --user to the install command. This will install the python package into subdirectories of `~/.local/`. Please note when using the --user install option on some platforms, you might need to add `~/.local/bin/` to your $PATH as it might not be included by default. You will know if it needs to be added if you see the following message `metawibele: command not found` when trying to run MetaWIBELE after installing with the --user option. 
-	* Similarly, you can also specify the installation directory using --prefix option which will install the python package into the directory `$YOUR_INSTALL_DIR` that is a directory on PYTHONPATH and which Python reads ".pth" files from. You might need to add `$YOUR_INSTALL_DIR/bin` to your `$PATH` as it might not be included by default.
  
 
 #### Install databases
@@ -226,11 +212,10 @@ To run MetaWIBELE, you are **required** to customize the global configuration fi
 
 **NOTE:** De default, MetaWIBELE will use the global configurations from `metawibele.cfg` in the current working directory. Alternatively you can always provide the location of the global configuration file you would like to use with the "--global-config " option to metawibele (see more in the section [How to run](#how-to-run)).
 
-* Download `metawibele.cfg` into your current working directory:
-	* Option 1) run this command to download global configuration file:
-		* `$ metawibele_download_config --config-type global`
-	* Option 2) obtain copies by right-clicking the link and selecting "save link as":
-		* [metawibele.cfg](http://huttenhower.sph.harvard.edu/MetaWIBELE_data/configs/metawibele.cfg)
+* Download `metawibele.cfg` into your current working directory by any one of the following options:
+	* Option 1) obtain copies by right-clicking the link and selecting "save link as": [metawibele.cfg](http://huttenhower.sph.harvard.edu/MetaWIBELE_data/configs/metawibele.cfg)
+	* Option 2) run this command to download global configuration file:
+	`$ metawibele_download_config --config-type global`
 
 * Customize your configurations in `metawibele.cfg` before running MetaWIBELE:
 	
@@ -571,7 +556,6 @@ By default, MetaWIBELE will perform by using the local configuration files insta
 	* reads counts table for non-redundant gene families (TSV format file), e.g. [demo\_genecatalogs_counts.all.tsv](https://raw.githubusercontent.com/biobakery/metawibele/master/examples/input/demo_genecatalogs_counts.all.tsv)
 	* metadata file (TSV format file), e.g. [demo\_mgx_metadata.tsv](https://raw.githubusercontent.com/biobakery/metawibele/master/examples/input/demo_mgx_metadata.tsv)
 	* the global configuration file in the current working directory, e.g. [metawibele.cfg](https://raw.githubusercontent.com/biobakery/metawibele/master/examples/metawibele.cfg)
-	* the uniref database pointed to the default location of uniref database in the global config file (`metawibele.cfg`), e.g. downloaded and uncompressed into [demo\_uniref\_database](http://huttenhower.sph.harvard.edu/MetaWIBELE_data/demo_uniref_database.tar.gz)
 	
 
 * ##### MetaWIBELE-characterize workflow
