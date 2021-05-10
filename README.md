@@ -14,7 +14,7 @@ Yancong Zhang, Amrisha Bhosle, Sena Bae, Lauren McIver, Emma Accorsi, Kelsey N. 
 [http://huttenhower.sph.harvard.edu/metawibele](http://huttenhower.sph.harvard.edu/metawibele)
 
 
-**For additional information, read the [MetaWIBELE Tutorial](https://github.com/biobakery/biobakery/wiki/metawibele).**
+**For additional information, read the [MetaWIBELE Tutorial](https://github.com/biobakery/biobakery/wiki/metawibele)**
 
 
 If you have questions, please direct it to [the MetaWIBELE channel](https://forum.biobakery.org/c/Microbial-community-profiling/metawibele) of the bioBakery Support Forum.
@@ -128,7 +128,7 @@ You only need to do **any one** of the following options to install the MetaWIBE
 
 * `$ docker pull biobakery/metawibele`
 * This docker image includes most of the dependent software packages.
-* Large software packages and those with licenses are **NOT** included in this image and needed installed additionally:
+* Large software packages and those with licenses are **NOT** included in this image and needed to be installed additionally:
 	* Users should review the license terms and install these packages manually. 
 	* Softwares with large size: [Interproscan](https://github.com/ebi-pf-team/interproscan/wiki)
 	* Softwares with the license : [MSPminer](https://www.enterome.com/downloads/), [Signalp](http://www.cbs.dtu.dk/services/SignalP-4.1/), [TMHMM](http://www.cbs.dtu.dk/services/TMHMM/), [Phobius](http://phobius.sbc.su.se/), [PSORTb](https://psort.org/documentation/index.html)
@@ -219,7 +219,7 @@ To run MetaWIBELE, you are **required** to customize the global configuration fi
 
 * Customize your configurations in `metawibele.cfg` before running MetaWIBELE:
 	
-	Setting the path of dependent databases is the most important to pay attention to and is required for customizing, and most of other sections can leave as defaults.
+	The path of the dependent databases is **required** for customization. Most of other sections can be left as defaults.
 	
 	* Customize the path of dependent databases (**required**):
 	
@@ -487,7 +487,7 @@ By default, MetaWIBELE will perform by using the local configuration files insta
   	--global-config GLOBAL_CONFIG the global configuration file of 	MetaWIBELE (default: None)
 	```
 	
-**NOTE:** De default, MetaWIBELE will use the global configurations from `metawibele.cfg` in the current working directory. Alternatively you can always provide the location of the global configuration file you would like to use with the "--global-config " option to metawibele.	
+**NOTE:** De default, MetaWIBELE will use the global configurations from `metawibele.cfg` in the current working directory. Alternatively, you can always provide the location of the global configuration file you would like to use with the "--global-config " option to metawibele.	
 	
 * All workflows follow the general command format:
 
