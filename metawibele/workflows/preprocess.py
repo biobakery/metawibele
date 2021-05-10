@@ -85,7 +85,7 @@ def parse_cli_arguments():
 	                      action = "store_true")
 	workflow.add_argument("output-basename",
 	                      desc = "provide the basename for output files",
-	                      default = "mgx")
+	                      default = None)
 
 	return workflow
 
