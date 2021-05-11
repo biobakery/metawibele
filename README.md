@@ -103,7 +103,7 @@ Bypass options:
 4. [Diamond](http://www.diamondsearch.org/index.php) (version >= 0.9.24)
 5. [MSPminer](https://www.enterome.com/downloads/) (version >= 2; licensed software)
 6. [MaAsLin2](https://huttenhower.sph.harvard.edu/maaslin2) (version >= 1.5.1)
-7. [Interproscan](https://github.com/ebi-pf-team/interproscan/wiki) (version >= 5.31-70) (installing with activating Phobius/SignalP/TMHMM analyses; used for domain/motif annotation)
+7. [Interproscan](https://interproscan-docs.readthedocs.io/en/latest/) (version >= 5.31-70) (installing with activating Phobius/SignalP/TMHMM analyses; InterProScan 5.51-85.0 or later are recommended for potential simpler installation; used for domain/motif annotation)
 8. [Signalp](http://www.cbs.dtu.dk/services/SignalP-4.1/) (version >= 4.1) (licensed software; installing with integrating in interproscan; used for domain/motif annotation)
 9. [TMHMM](http://www.cbs.dtu.dk/services/TMHMM/) (version >= 2.0) (licensed software; installing with integrating in interproscan; used for domain/motif annotation)
 10. [Phobius](http://phobius.sbc.su.se/) (version >= 1.01) (licensed software; installing with integrating in interproscan; used for domain/motif annotation)
@@ -130,8 +130,8 @@ You only need to do **any one** of the following options to install the MetaWIBE
 * This docker image includes most of the dependent software packages.
 * Large software packages and those with licenses are **NOT** included in this image and needed to be installed additionally:
 	* Users should review the license terms and install these packages manually. 
-	* Softwares with large size: [Interproscan](https://github.com/ebi-pf-team/interproscan/wiki)
 	* Softwares with the license : [MSPminer](https://www.enterome.com/downloads/), [Signalp](http://www.cbs.dtu.dk/services/SignalP-4.1/), [TMHMM](http://www.cbs.dtu.dk/services/TMHMM/), [Phobius](http://phobius.sbc.su.se/), [PSORTb](https://psort.org/documentation/index.html)
+	* Softwares with large size: [Interproscan](https://interproscan-docs.readthedocs.io/en/latest/) (**Note:** We recommen dinstalling InterProScan 5.51-85.0 or later for potential simpler installation, and active Phobius/SignalP/TMHMM analyses by customizing your interproscan.properties configuration, see more details from [InterProScan document](https://interproscan-docs.readthedocs.io/en/latest/ActivatingLicensedAnalyses.html))
 	
 
 **Option 2: Installing with pip**
