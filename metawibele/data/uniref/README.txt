@@ -16,7 +16,6 @@ uniprot_taxaID_mammalia.txt.gz
 uniprot_taxaID_microbiome.txt.gz
 uniprot_taxonomy.tsv.gz
 
-map_Protein_names_uniref90.demo.txt.gz
 map_Rep_TaxID_uniref90.demo.txt.gz
 map_Rep_Tax_uniref90.demo.txt.gz
 map_TaxID_uniref90.demo.txt.gz

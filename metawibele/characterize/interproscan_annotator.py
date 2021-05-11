@@ -85,8 +85,10 @@ def main():
 		protein_base = os.path.basename(protein).split(os.extsep)[-2]
 		out_file = os.path.join(annotation_dir, '%s.interproscan.txt' % protein_base)
 		stderr_log = os.path.join(annotation_dir, '%s.interproscan.err' % protein_base)
-		#commands = config.interproscan_cmmd + " -appl " + config.interproscan_appl + " -cpu " + str(args.threads) + " -i " + protein + " -f tsv -dp -t p -o " + out_file + " >" + stderr_log + " 2>&1"
-		commands = config.interproscan_cmmd + " -appl " + config.interproscan_appl + " -i " + protein + " -f tsv -dp -t p -o " + out_file + " >" + stderr_log + " 2>&1"
+		if config.interproscan_appl == "all":
+			commands = config.interproscan_cmmd  + " -i " + protein + " -f tsv -dp -t p -o " + out_file + " >" + stderr_log + " 2>&1"
+		else:
+			commands = config.interproscan_cmmd + " -appl " + config.interproscan_appl + " -i " + protein + " -f tsv -dp -t p -o " + out_file + " >" + stderr_log + " 2>&1"
 		config.logger.info ("Run command: " + commands)
 		os.system(commands)
 	# foreach sequence file

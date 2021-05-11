@@ -477,8 +477,9 @@ interproscan_cmmd = get_item(config_items, "interproscan", "interproscan_cmmd", 
 interproscan_cmmd = re.sub("\"", "", interproscan_cmmd)
 interproscan_appl = get_item(config_items, "interproscan", "interproscan_appl", "string")
 interproscan_appl = re.sub("\"", "", interproscan_appl)
-if interproscan_appl.lower() == "none" or interproscan_appl.lower() == "":
-	interproscan_appl = "CDD,COILS,Gene3D,HAMAP,MobiDBLite,PANTHER,Pfam,PIRSF,PRINTS,ProDom,PROSITEPATTERNS,PROSITEPROFILES,SFLD,SMART,SUPERFAMILY,TIGRFAM,Phobius,SignalP,TMHMM"
+if interproscan_appl.lower() == "none" or interproscan_appl.lower() == "" or interproscan_appl.lower() == "all":
+	#interproscan_appl = "CDD,COILS,Gene3D,HAMAP,MobiDBLite,PANTHER,Pfam,PIRSF,PRINTS,PROSITEPATTERNS,PROSITEPROFILES,SFLD,SMART,SUPERFAMILY,TIGRFAM,Phobius,SignalP,TMHMM"
+	interproscan_appl = "all"
 interproscan_appl = re.sub("\"", "", interproscan_appl)
 split_number = get_item(config_items, "interproscan", "split_number", "int")
 interproscan_type = []
