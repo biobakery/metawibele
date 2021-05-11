@@ -187,7 +187,10 @@ def collect_annotation (uniref):
 			continue
 		mytype = info[1]
 		myinfo = "\t".join(info[1:len(info)])
-		ann = info[titles["Protein_names"]]
+		if "Protein_names" in titles:
+			ann = info[titles["Protein_names"]]
+		else:
+			ann = "NA"
 		if ann == "NA":
 			ann = mytype
 		if not re.search("_unknown", info[1]):
