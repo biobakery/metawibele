@@ -313,7 +313,8 @@ setuptools.setup(
 			'metawibele_prepare_uniprot_annotation = metawibele.common.prepare_uniprot_annotation:main',
 			'metawibele_prepare_uniref_annotation = metawibele.common.prepare_uniref_annotation:main',
 			'metawibele_prepare_domain_databases = metawibele.common.prepare_domain_databases:main',
-			'metawibele_extract_uniref_maps = metawibele.common.extract_uniref_maps:main'
+			'metawibele_extract_uniref_maps = metawibele.common.extract_uniref_maps:main',
+			'metawibele_check_install = metawibele.common.check_install:main'
 		]},
 	package_data={
 		'metawibele': [

@@ -32,6 +32,7 @@ If you have questions, please direct it to [the MetaWIBELE channel](https://foru
     	* [Install databases](#install-databases)
     		* [UniRef database](#uniref-database)
     		* [Domain database](#domain-database)
+    	* [Check install](#check-install)
     	* [Prepare configuration files](#prepare-configuration-files)
 			* [Prepare global configuration file](#prepare-global-configuration-file)
     		* [Prepare local configuration file](#prepare-local-configuration-file)
@@ -205,6 +206,14 @@ Create local domain databases (**optional**)
 	* PDB information from the latest version of [SIFT](https://www.ebi.ac.uk/pdbe/docs/sifts/) database will be downloaded.
 	* Domain-domain interactions from version 2.0 of [DOMINE](https://manticore.niehs.nih.gov/cgi-bin/Domine?page=start) database will be downloaded.
 
+
+#### Check install
+To check out the install of MetaWIBELE packages and all dependencies (tools and databases), run the command: 
+	
+* `$ metawibele_check_install`
+* By default, it will check both MetaWIBEKE packages and all dependencies.
+* Alternatively, add the option "--types {metawibele,required,optional,all}" to check the install of specific package or dependency.
+ 
 	
 #### Prepare configuration files
 ##### Prepare global configuration file

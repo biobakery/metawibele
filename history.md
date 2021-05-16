@@ -10,6 +10,7 @@
 * Added option for downloading demo database
 * Fixed issues when running interproscan with all analyses
 * Updated requirements for install
+* Added a new module to check install
 
 ## v0.3.9 2021-03-18 ##
 * Added options for msp-based taxonomy assignment "--tshld-diff" "--tshld-classified"
