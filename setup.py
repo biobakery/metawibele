@@ -76,7 +76,7 @@ import re
 import time
 
 
-VERSION = "0.4.0"
+VERSION = "0.4.1"
 AUTHOR = "MetaWIBELE Development Team"
 MAINTAINER = "Yancong Zhang"
 MAINTAINER_EMAIL = "zhangyc201211@gmail.com"
