@@ -117,7 +117,7 @@ Bypass options:
 	* [SAMtools](https://github.com/samtools/) (version >= 1.9; *tested 1.9*)
 	* [featureCounts](http://bioinf.wehi.edu.au/featureCounts/) (version >= 1.6.2; *tested 1.6.2*)
 
-**Note:** Please install the required software in a location in your `$PATH`. If you always run with gene families (non-redundant gene catalogs), the optional softwares are not required. Also if you always run with one or more bypass options (for information on bypass options, see optional arguments to the section [Workflow by bypass mode](#workflow-by-bypass-mode)).The software required for the steps you bypass does not need to be installed.
+**Note:** Please install the required software in a location in your `$PATH`. If you always run with gene families (non-redundant gene catalogs), the optional softwares are not required. Also if you always run with one or more bypass options (for information on bypass options, see optional arguments to the section [Workflow by bypass mode](#workflow-by-bypass-mode)). The software required for the steps you bypass does not need to be installed.
 
 
 ### Installation
