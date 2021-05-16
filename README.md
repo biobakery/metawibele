@@ -97,27 +97,27 @@ Bypass options:
 
 ## Install MetaWIBELE
 ### Requirements
-1. [Python](https://www.python.org/) (version >= 3.6, required numpy, pandas, scipy packages)
-2. [AnADAMA2](https://huttenhower.sph.harvard.edu/anadama2) (version >= 0.7.4)
-3. [CD-hit](http://weizhongli-lab.org/cd-hit/) (version >= 4.7)
-4. [Diamond](http://www.diamondsearch.org/index.php) (version >= 0.9.24)
-5. [MSPminer](https://www.enterome.com/downloads/) (version >= 2; licensed software)
-6. [MaAsLin2](https://huttenhower.sph.harvard.edu/maaslin2) (version >= 1.5.1)
-7. [Interproscan](https://interproscan-docs.readthedocs.io/en/latest/) (version >= 5.31-70) (installing with activating Phobius/SignalP/TMHMM analyses; InterProScan 5.51-85.0 or later are recommended for potential simpler installation; used for domain/motif annotation)
-8. [Signalp](http://www.cbs.dtu.dk/services/SignalP-4.1/) (version >= 4.1) (licensed software; installing with integrating in interproscan; used for domain/motif annotation)
-9. [TMHMM](http://www.cbs.dtu.dk/services/TMHMM/) (version >= 2.0) (licensed software; installing with integrating in interproscan; used for domain/motif annotation)
-10. [Phobius](http://phobius.sbc.su.se/) (version >= 1.01) (licensed software; installing with integrating in interproscan; used for domain/motif annotation)
-11. [PSORTb](https://psort.org/documentation/index.html) (version >= 3.0) (licensed software; used for domain/motif annotation)
+1. [Python](https://www.python.org/) (version >= 3.6, requiring numpy, pandas, scipy packages; *tested 3.6, 3.7*)
+2. [AnADAMA2](https://huttenhower.sph.harvard.edu/anadama2) (version >= 0.7.4; *tested 0.7.4, 0.8.0*)
+3. [CD-hit](http://weizhongli-lab.org/cd-hit/) (version >= 4.7; *tested 4.7*)
+4. [Diamond](http://www.diamondsearch.org/index.php) (version >= 0.9.24; *tested 0.9.24*)
+5. [MSPminer](https://www.enterome.com/downloads/) (version >= 2; licensed software; *tested version 2*)
+6. [MaAsLin2](https://huttenhower.sph.harvard.edu/maaslin2) (version >= 1.5.1; *tested 1.5.1*)
+7. [Interproscan](https://interproscan-docs.readthedocs.io/en/latest/) (version >= 5.31-70) (installing with activating Phobius/SignalP/TMHMM analyses; InterProScan 5.51-85.0 or later are recommended for potential simpler installation; used for domain/motif annotation; *tested 5.31-70, 5.51-85.0*)
+8. [Signalp](http://www.cbs.dtu.dk/services/SignalP-4.1/) (version >= 4.1; licensed software; installing with integrating in interproscan; used for domain/motif annotation; *tested 4.1*)
+9. [TMHMM](http://www.cbs.dtu.dk/services/TMHMM/) (version >= 2.0; licensed software; installing with integrating in interproscan; used for domain/motif annotation; *tested 2.0*)
+10. [Phobius](http://phobius.sbc.su.se/) (version >= 1.01; licensed software; installing with integrating in interproscan; used for domain/motif annotation; *tested 1.01*)
+11. [PSORTb](https://psort.org/documentation/index.html) (version >= 3.0) (licensed software; used for domain/motif annotation; *tested 3.0*)
 12. **Optional**: only required if using MetaWIBELE utilities to prepare inputs for MetaWIBELE using metagenomic sequencing reads
-	* [MEGAHIT](https://github.com/voutcn/megahit) (version >= 1.1.3) 
-	* [Prokka](https://github.com/tseemann/prokka) (version >= 1.14-dev; recommend to not set '-c' parameter when running prodigal with metagenome mode)
-	* [Prodigal](https://github.com/hyattpd/Prodigal) (version >= 2.6)
-	* [USEARCH](http://www.drive5.com/usearch/) (version >= 9.0.2132; licensed software)
-	* [Bowtie2](http://bowtie-bio.sourceforge.net/bowtie2/index.shtml) (version >= 2.3.2)
-	* [SAMtools](https://github.com/samtools/) (version >= 1.9)
-	* [featureCounts](http://bioinf.wehi.edu.au/featureCounts/) (version >= 1.6.2)
+	* [MEGAHIT](https://github.com/voutcn/megahit) (version >= 1.1.3; tested *1.1.3*) 
+	* [Prokka](https://github.com/tseemann/prokka) (version >= 1.14-dev; recommend to not set '-c' parameter when running prodigal with metagenome mode; *tested 1.14-dev*)
+	* [Prodigal](https://github.com/hyattpd/Prodigal) (version >= 2.6; *tested 2.6*)
+	* [USEARCH](http://www.drive5.com/usearch/) (version >= 9.0.2132; licensed software; *tested 9.0.2132*)
+	* [Bowtie2](http://bowtie-bio.sourceforge.net/bowtie2/index.shtml) (version >= 2.3.2; *tested 2.3.2*)
+	* [SAMtools](https://github.com/samtools/) (version >= 1.9; *tested 1.9*)
+	* [featureCounts](http://bioinf.wehi.edu.au/featureCounts/) (version >= 1.6.2; *tested 1.6.2*)
 
-**Note:** Please install the required software in a location in your `$PATH`. If you always run with gene families (non-redundant gene catalogs), the optional softwares are not required. Also if you always run with one or more bypass options (for information on bypass options, see optional arguments to the section [Workflow by bypass mode](#workflow-by-bypass-mode)), the software required for the steps you bypass does not need to be installed.
+**Note:** Please install the required software in a location in your `$PATH`. If you always run with gene families (non-redundant gene catalogs), the optional softwares are not required. Also if you always run with one or more bypass options (for information on bypass options, see optional arguments to the section [Workflow by bypass mode](#workflow-by-bypass-mode)).The software required for the steps you bypass does not need to be installed.
 
 
 ### Installation
@@ -131,7 +131,7 @@ You only need to do **any one** of the following options to install the MetaWIBE
 * Large software packages and those with licenses are **NOT** included in this image and needed to be installed additionally:
 	* Users should review the license terms and install these packages manually. 
 	* Softwares with the license : [MSPminer](https://www.enterome.com/downloads/), [Signalp](http://www.cbs.dtu.dk/services/SignalP-4.1/), [TMHMM](http://www.cbs.dtu.dk/services/TMHMM/), [Phobius](http://phobius.sbc.su.se/), [PSORTb](https://psort.org/documentation/index.html)
-	* Softwares with large size: [Interproscan](https://interproscan-docs.readthedocs.io/en/latest/) (**Note:** We recommen dinstalling InterProScan 5.51-85.0 or later for potential simpler installation, and active Phobius/SignalP/TMHMM analyses by customizing your interproscan.properties configuration, see more details from [InterProScan document](https://interproscan-docs.readthedocs.io/en/latest/ActivatingLicensedAnalyses.html))
+	* Softwares with large size: [Interproscan](https://interproscan-docs.readthedocs.io/en/latest/) (**Note:** We recommen dinstalling InterProScan 5.51-85.0 (requiring at least Java 11) or later for potential simpler installation, and active Phobius/SignalP/TMHMM analyses by customizing your interproscan.properties configuration, see more details from [InterProScan document](https://interproscan-docs.readthedocs.io/en/latest/ActivatingLicensedAnalyses.html))
 	
 
 **Option 2: Installing with pip**

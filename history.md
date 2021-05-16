@@ -9,6 +9,7 @@
 * Added default setting for uniref database and mutiple options for setting up the DB
 * Added option for downloading demo database
 * Fixed issues when running interproscan with all analyses
+* Updated requirements for install
 
 ## v0.3.9 2021-03-18 ##
 * Added options for msp-based taxonomy assignment "--tshld-diff" "--tshld-classified"
