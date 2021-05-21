@@ -583,15 +583,20 @@ By default, MetaWIBELE will perform by using the local configuration files insta
 	**1. Annotation file**
 	
 	```
-	familyID    annotation  feature category    method  AID
-	Cluster_1   demo    study   project Shotgun NA
-	Cluster_1   Cluster_1   protein_family  Denovo_clustering   CD-hit  Cluster_1__Denovo_clustering
-	Cluster_1   UniRef90_A0A3E2UKI3 strong_homology UniRef90_homology   UniRef90    Cluster_1__UniRef90_homology
-	Cluster_1   Faecalibacterium prausnitzii    Species Taxonomy_characterization   Taxonomy_annotation	Cluster_1__Taxonomy_characterization
-	Cluster_1   UniRef90_uncharacterized    UniRef90_uncharacterized    UniRef90_characterization   UniRef90    Cluster_1__UniRef90_uncharacterized
-	Cluster_1   184.02247661692778  DNA_abundance   Denovo_characterization DNA Cluster_1__DNA_abundance
-	Cluster_1   0.9410658307210031  DNA_prevalence  Denovo_characterization DNA Cluster_1__DNA_prevalence
-	Cluster_1   PF00408:PF02878;PF00408:PF02879;PF00408:PF02880;PF02878:PF02879;PF02878:PF02880;PF02879:PF02880 DOMINE_interaction  Denovo_characterization DOMINE  Cluster_1__DOMINE_interaction
+	familyID	annotation	feature	category	method	AID
+Cluster_1	good	quality	note	Quality_control	NA
+Cluster_1	demo	study	project	Shotgun	NA
+Cluster_1	Cluster_1	protein_family	Denovo_clustering	CD-hit	Cluster_1__Denovo_clustering
+Cluster_1	UniRef90_A7B522	strong_homology	UniRef90_homology	UniRef90	Cluster_1__UniRef90_homology
+Cluster_1	Ruminococcus gnavus (strain ATCC 29149 / VPI C7-9)	Terminal	Taxonomy_characterization	Taxonomy_annotation	Cluster_1__Taxonomy_characterization
+Cluster_1	4734.313443	DNA-CD_abundance	Denovo_characterization	DNA	Cluster_1__DNA-CD_abundance
+Cluster_1	0.926470588	DNA-CD_prevalence	Denovo_characterization	DNA	Cluster_1__DNA-CD_prevalence
+Cluster_1	1048.199147	DNA-nonIBD_abundance	Denovo_characterization	DNA	Cluster_1__DNA-nonIBD_abundance
+Cluster_1	1	DNA-nonIBD_prevalence	Denovo_characterization	DNA	Cluster_1__DNA-nonIBD_prevalence
+Cluster_1	4734.313443	DNA-within-phenotype_abundance	Denovo_characterization	DNA	Cluster_1__DNA-within-phenotype_abundance
+Cluster_1	1	DNA-within-phenotype_prevalence	Denovo_characterization	DNA	Cluster_1__DNA-within-phenotype_prevalence
+Cluster_1	3505.608677	DNA_abundance	Denovo_characterization	DNA	Cluster_1__DNA_abundance
+Cluster_1	0.950980392	DNA_prevalence	Denovo_characterization	DNA	Cluster_1__DNA_prevalence
 	...
 	```
 	
@@ -606,20 +611,20 @@ By default, MetaWIBELE will perform by using the local configuration files insta
 	**2. Attribute file**
 	
 	```
-	TID AID key value
-	1   Cluster_1__Denovo_clustering    repID   HSMA33LJ_27125
-	2   Cluster_1__Denovo_clustering    rep_length  504
-	3   Cluster_1__Denovo_clustering    cluster_size    139
-	4   Cluster_1__UniRef90_homology    UniProtKB   A0A3E2UKI3_9FIRM
-	5   Cluster_1__UniRef90_homology    description Phosphoglucosamine mutase
-	6   Cluster_1__UniRef90_homology    organism    Faecalibacterium prausnitzii
-	7   Cluster_1__UniRef90_homology    query_cov_type  high_confidence
-	8   Cluster_1__UniRef90_homology    mutual_cov_type high_confidence
-	9   Cluster_1__UniRef90_homology    identity    95.2
-	10  Cluster_1__UniRef90_homology    query_coverage  0.9146825396825397
-	11  Cluster_1__UniRef90_homology    mutual_coverage 0.9146825396825397
-	12  Cluster_1__UniRef90_homology    taxa_id 1239
-	13  Cluster_1__UniRef90_homology    taxa_name   Firmicutes
+	TID	AID	key	value
+	1	Cluster_1__Denovo_clustering	repID	PRISM_7861_211956
+	2	Cluster_1__Denovo_clustering	rep_length	85
+	3	Cluster_1__Denovo_clustering	cluster_size	24
+	4	Cluster_1__UniRef90_homology	UniProtKB	A7B522
+	5	Cluster_1__UniRef90_homology	Protein_names	Translation initiation factor IF-1
+	6	Cluster_1__UniRef90_homology	query_cov_type	high_confidence
+	7	Cluster_1__UniRef90_homology	mutual_cov_type	high_confidence
+	8	Cluster_1__UniRef90_homology	identity	100
+	9	Cluster_1__UniRef90_homology	query_coverage	1
+	10	Cluster_1__UniRef90_homology	mutual_coverage	1
+	11	Cluster_1__UniRef90_homology	taxa_id	1
+	12	Cluster_1__UniRef90_homology	taxa_name	Unclassified
+	13	Cluster_1__Taxonomy_characterization	taxa_id	411470
 	...
 	```
 	
@@ -630,12 +635,18 @@ By default, MetaWIBELE will perform by using the local configuration files insta
 	**3. Taxonomic file**
 	
 	```
-	familyID    study   map_type    query_type  mutual_type identity    query_coverage  mutual_coverage detail  Tax TaxID   Rep_Tax Rep_TaxID   organism    UniProtKB   unirefID    note    msp_name    msp_taxa_name   msp_taxa_id MSP_Tax MSP_TaxID   MSP_Rep_Tax MSP_Rep_TaxID   taxa_id taxa_name   taxa_rank   taxa_lineage
-	Cluster_1   demo    UniRef90_uncharacterized    high_confidence high_confidence 95.2    0.9146825396825397  0.9146825396825397  Phosphoglucosamine mutase   Firmicutes  1239    Faecalibacterium prausnitzii    853 Faecalibacterium prausnitzii    A0A3E2UKI3_9FIRM    UniRef90_A0A3E2UKI3 good    msp_unknown NA  NA  Faecalibacterium prausnitzii    853 Faecalibacterium prausnitzii    853 853 Faecalibacterium prausnitzii    Species k__Bacteria|p__Firmicutes|c__Clostridia|o__Clostridiales|f__Ruminococcaceae|g__Faecalibacterium|s__Faecalibacterium_prausnitzii
-	Cluster_10  demo    UniRef90_uncharacterized    high_confidence high_confidence 93.3    0.9782608695652174  0.9782608695652174  MafF    Bacteria    2   Escherichia coli    562 Escherichia coli    B8QUG6_ECOLX    UniRef90_B8QUG6 good    msp_unknown NA  NA  NA  NA  Escherichia coli    562 562 Escherichia coli    Species k__Bacteria|p__Proteobacteria|c__Gammaproteobacteria|o__Enterobacterales|f__Enterobacteriaceae|g__Escherichia|s__Escherichia_coli
-	Cluster_100 demo    UniRef90_characterized  high_confidence high_confidence 95.8    1.0 1.0 Uncharacterized protein Clostridiales   186802  Faecalibacterium prausnitzii M21/2  411485  Faecalibacterium prausnitzii M21/2  A8SEK6_9FIRM    UniRef90_A8SEK6 good    msp_unknown NA  NA  Faecalibacterium prausnitzii M21/2  411485  Faecalibacterium prausnitzii M21/2  411485  411485  Faecalibacterium prausnitzii M21/2  Terminal    k__Bacteria|p__Firmicutes|c__Clostridia|o__Clostridiales|f__Ruminococcaceae|g__Faecalibacterium|s__Faecalibacterium_prausnitzii|t__Faecalibacterium_prausnitzii_M21/2
-	Cluster_1000    demo    UniRef90_characterized  high_confidence high_confidence 99.8    1.0 1.0 FeS assembly protein SufD   Bacteroidaceae  815 Bacteroides fragilis HMW 615    1073387 Bacteroides fragilis HMW 615    K1GB77_BACFG    UniRef90_K1GB77 good    msp_02  Bacteroides fragilis    817 Bacteroides 816 Bacteroides fragilis HMW 615    1073387 1073387 Bacteroides fragilis HMW 615    Terminal    k__Bacteria|p__Bacteroidetes|c__Bacteroidia|o__Bacteroidales|f__Bacteroidaceae|g__Bacteroides|s__Bacteroides_fragilis|t__Bacteroides_fragilis_HMW_615
-	Cluster_10000   demo    UniRef90_characterized  high_confidence high_confidence 90.9    0.900355871886121   0.900355871886121   Methanol dehydrogenase  Faecalibacterium    216851  Faecalibacterium prausnitzii    853 Faecalibacterium prausnitzii    A0A329U1M8_9FIRM    UniRef90_A0A329U1M8 good    msp_unknown NA  NA  NA  NA  Faecalibacterium prausnitzii    853 853 Faecalibacterium prausnitzii    Species k__Bacteria|p__Firmicutes|c__Clostridia|o__Clostridiales|f__Ruminococcaceae|g__Faecalibacterium|s__Faecalibacterium_prausnitzii
+	familyID	study	map_type	query_type	mutual_type	identity	query_coverage	mutual_coverage	detail	Tax	TaxID	Rep_Tax	Rep_TaxID	UniProtKB	unirefID	note	msp_name	msp_taxa_name	msp_taxa_id	MSP_Tax	MSP_TaxID	MSP_Rep_Tax	MSP_Rep_TaxID	taxa_id	taxa_name	taxa_rank	taxa_lineage
+	Cluster_1	demo	UniRef90_characterized	high_confidence	high_confidence	100	1	1	Translation initiation factor IF-1	root	1	Ruminococcus gnavus (strain ATCC 29149 / VPI C7-9)	411470	A7B522	UniRef90_A7B522	good	msp_1	Ruminococcus gnavus	33038	Lachnospiraceae	186803	Ruminococcus gnavus (strain ATCC 29149 / VPI C7-9)	411470	411470	Ruminococcus gnavus (strain ATCC 29149 / VPI C7-9)	Terminal	k__Bacteria|p__Firmicutes|c__Clostridia|o__Clostridiales|f__Lachnospiraceae|g__Blautia|s__Ruminococcus_gnavus|t__Ruminococcus_gnavus_(strain_ATCC_29149_/_VPI_C7-9)
+	Cluster_10	demo	UniRef90_uncharacterized	high_confidence	high_confidence	97.2	0.829457364	0.829457364	Uncharacterized protein	Clostridiales	186802	[Eubacterium] rectale	39491	A0A0M6W8Q5	UniRef90_A0A0M6W8Q5	good	msp_2	[Eubacterium] rectale	39491	[Eubacterium] rectale	39491	[Eubacterium] rectale	39491	39491	[Eubacterium] rectale	Species	k__Bacteria|p__Firmicutes|c__Clostridia|o__Clostridiales|f__Lachnospiraceae|unclassified_Lachnospiraceae|s__[Eubacterium]_rectale
+	Cluster_100	demo	UniRef90_characterized	high_confidence	high_confidence	99.7	1	1	S-adenosylmethionine:tRNA ribosyltransferase-isomerase	Clostridiales	186802	[Eubacterium] rectale	39491	A0A0M6WLI9	UniRef90_A0A0M6WLI9	good	msp_2	[Eubacterium] rectale	39491	[Eubacterium] rectale	39491	[Eubacterium] rectale	39491	39491	[Eubacterium] rectale	Species	k__Bacteria|p__Firmicutes|c__Clostridia|o__Clostridiales|f__Lachnospiraceae|unclassified_Lachnospiraceae|s__[Eubacterium]_rectale
+	Cluster_1000	demo	UniRef90_uncharacterized	high_confidence	high_confidence	99.5	1	1	Domain of uncharacterized function (DUF1836)	Clostridiales	186802	[Eubacterium] rectale	39491	A0A174GTW6	UniRef90_A0A174GTW6	good	msp_2	[Eubacterium] rectale	39491	[Eubacterium] rectale	39491	[Eubacterium] rectale	39491	39491	[Eubacterium] rectale	Species	k__Bacteria|p__Firmicutes|c__Clostridia|o__Clostridiales|f__Lachnospiraceae|unclassified_Lachnospiraceae|s__[Eubacterium]_rectale
+	Cluster_1001	demo	UniRef90_characterized	high_confidence	high_confidence	97.7	1	1	DUF624 domain-containing protein	Clostridiales	186802	[Eubacterium] rectale	39491	A0A173U990	UniRef90_A0A173U990	good	msp_2	[Eubacterium] rectale	39491	[Eubacterium] rectale	39491	[Eubacterium] rectale	39491	39491	[Eubacterium] rectale	Species	k__Bacteria|p__Firmicutes|c__Clostridia|o__Clostridiales|f__Lachnospiraceae|unclassified_Lachnospiraceae|s__[Eubacterium]_rectale
+	Cluster_1002	demo	UniRef90_characterized	high_confidence	high_confidence	93.5	1	0.981900452	Proton-coupled thiamine transporter YuaJ	Clostridiales	186802	Ruminococcus gnavus	33038	A0A2N5PZR6	UniRef90_A0A2N5PZR6	good	msp_unknown	NA	NA	Ruminococcus gnavus	33038	Ruminococcus gnavus	33038	33038	Ruminococcus gnavus	Species	k__Bacteria|p__Firmicutes|c__Clostridia|o__Clostridiales|f__Lachnospiraceae|g__Blautia|s__Ruminococcus_gnavus
+	Cluster_1003	demo	UniRef90_characterized	high_confidence	high_confidence	98.6	1	1	HAD hydrolase, family IA, variant 1	Clostridiales	186802	Ruminococcus gnavus (strain ATCC 29149 / VPI C7-9)	411470	A7B2S9	UniRef90_A7B2S9	good	msp_1	Ruminococcus gnavus	33038	Ruminococcus gnavus (strain ATCC 29149 / VPI C7-9)	411470	Ruminococcus gnavus (strain ATCC 29149 / VPI C7-9)	411470	411470	Ruminococcus gnavus (strain ATCC 29149 / VPI C7-9)	Terminal	k__Bacteria|p__Firmicutes|c__Clostridia|o__Clostridiales|f__Lachnospiraceae|g__Blautia|s__Ruminococcus_gnavus|t__Ruminococcus_gnavus_(strain_ATCC_29149_/_VPI_C7-9)
+	Cluster_1004	demo	UniRef90_uncharacterized	high_confidence	high_confidence	99.5	1	0.96	YheO-like protein	Clostridiales	186802	Ruminococcus gnavus (strain ATCC 29149 / VPI C7-9)	411470	A7B3N1	UniRef90_A7B3N1	good	msp_1	Ruminococcus gnavus	33038	Ruminococcus gnavus (strain ATCC 29149 / VPI C7-9)	411470	Ruminococcus gnavus (strain ATCC 29149 / VPI C7-9)	411470	411470	Ruminococcus gnavus (strain ATCC 29149 / VPI C7-9)	Terminal	k__Bacteria|p__Firmicutes|c__Clostridia|o__Clostridiales|f__Lachnospiraceae|g__Blautia|s__Ruminococcus_gnavus|t__Ruminococcus_gnavus_(strain_ATCC_29149_/_VPI_C7-9)
+	Cluster_1005	demo	UniRef90_characterized	high_confidence	high_confidence	100	1	1	Zf-HC2 domain-containing protein	Clostridiales	186802	Ruminococcus gnavus	33038	A0A2N5Q1F5	UniRef90_A0A2N5Q1F5	good	msp_1	Ruminococcus gnavus	33038	Ruminococcus gnavus	33038	Ruminococcus gnavus	33038	33038	Ruminococcus gnavus	Species	k__Bacteria|p__Firmicutes|c__Clostridia|o__Clostridiales|f__Lachnospiraceae|g__Blautia|s__Ruminococcus_gnavus
+	Cluster_1006	demo	UniRef90_uncharacterized	high_confidence	high_confidence	99.5	1	1	YigZ family protein	Clostridiales	186802	Ruminococcus gnavus (strain ATCC 29149 / VPI C7-9)	411470	A7B7M9	UniRef90_A7B7M9	good	msp_1	Ruminococcus gnavus	33038	Ruminococcus gnavus (strain ATCC 29149 / VPI C7-9)	411470	Ruminococcus gnavus (strain ATCC 29149 / VPI C7-9)	411470	411470	Ruminococcus gnavus (strain ATCC 29149 / VPI C7-9)	Terminal	k__Bacteria|p__Firmicutes|c__Clostridia|o__Clostridiales|f__Lachnospiraceae|g__Blautia|s__Ruminococcus_gnavus|t__Ruminococcus_gnavus_(strain_ATCC_29149_/_VPI_C7-9)
+	Cluster_1007	demo	UniRef90_characterized	high_confidence	high_confidence	99.5	1	1	Sugar phosphate isomerase/epimerase	Clostridiales	186802	Ruminococcus gnavus	33038	A0A2N5NPC6	UniRef90_A0A2N5NPC6	good	msp_1	Ruminococcus gnavus	33038	Ruminococcus gnavus	33038	Ruminococcus gnavus	33038	33038	Ruminococcus gnavus	Species	k__Bacteria|p__Firmicutes|c__Clostridia|o__Clostridiales|f__Lachnospiraceae|g__Blautia|s__Ruminococcus_gnavus
 	...
 	```
 	
@@ -647,13 +658,14 @@ By default, MetaWIBELE will perform by using the local configuration files insta
 	**4. Abundance file**
 	
 	```
-	ID      CSM5FZ3N_P      CSM5FZ3R_P      CSM5FZ3T_P      CSM5FZ3V_P      CSM5FZ3X_P      CSM5FZ3Z_P      CSM5FZ42_P      CSM5F
-	Cluster_1       399.304 15.8845 0       171.157 1.41663 0.275544        1.16031 0       0       8.46607 321.148 60.9853 347.5
-	Cluster_10      11.1512 8.81212 9.00341 5.77603 0       3.019   4.62291 5.2878  2.12412 7.00065 8.10752 27.1621 47.862  39.04
-	Cluster_100     54.6202 26.7423 0       13.5309 8.26367 0       2.21515 11.261  0       44.7264 12.0862 65.9435 284.451 165.2
-	Cluster_1000    21.6101 11.235  134.379 157.494 244.854 361.196 93.9497 126.383 269.297 0       280.881 13.575  11.6934 20.65
-	Cluster_10000   62.6742 4.6883  0       48.853  0       0       0       0       0       0       72.9965 2.8902  20.9542 16.77
-	Cluster_10001   2.42532 7.18719 0       0.628126        0       0       0       0       0       12.5615 7.93502 2.21535 8.351
+	ID	PRISM_7122	PRISM_7147	PRISM_7150	PRISM_7153	PRISM_7184	PRISM_7238	PRISM_7406	PRISM_7408	PRISM_7421	PRISM_7445	PRISM_7486	PRISM_7547	PRISM_7658	PRISM_7662	PRISM_7744	PRISM_7759	PRISM_7791	PRISM_7843	PRISM_7847	PRISM_7855	PRISM_7858	PRISM_7860	PRISM_7861	PRISM_7862	PRISM_7870	PRISM_7874	PRISM_7875	PRISM_7879	PRISM_7899	PRISM_7904	PRISM_7906	PRISM_7908	PRISM_7909	PRISM_7910	PRISM_7911	PRISM_7912	PRISM_7938	PRISM_7941	PRISM_7947	PRISM_7948	PRISM_7955	PRISM_7971	PRISM_7989	PRISM_8095	PRISM_8226	PRISM_8244	PRISM_8264	PRISM_8283	PRISM_8332	PRISM_8336	PRISM_8361	PRISM_8374	PRISM_8377	PRISM_8406	PRISM_8452	PRISM_8462	PRISM_8466	PRISM_8467	PRISM_8475	PRISM_8483	PRISM_8485	PRISM_8496	PRISM_8523	PRISM_8534	PRISM_8537	PRISM_8550	PRISM_8564	PRISM_8565	PRISM_8573	PRISM_8577	PRISM_8589	PRISM_8591	PRISM_8592	PRISM_8624	PRISM_8629	PRISM_8675	PRISM_8683	PRISM_8746	PRISM_8749	PRISM_8753	PRISM_8754	PRISM_8758	PRISM_8764	PRISM_8765	PRISM_8774	PRISM_8776	PRISM_8783	PRISM_8784	PRISM_8788	PRISM_8789	PRISM_8794	PRISM_8800	PRISM_8802	PRISM_8806	PRISM_8807	PRISM_8841	PRISM_8843	PRISM_8847	PRISM_8878	PRISM_8892	PRISM_9126	PRISM_9148
+	Cluster_1	1628.57	344.191	1779.04	361.815	21274.3	2531.96	1758.21	1325.19	107.936	2479.62	75.0717	10288	140.489	526.223	878.457	544.58	23741.5	23477.1	1020.34	612.181	1677.33	798.845	249.601	350.223	1297.56	565.739	349.645	2893.53	310.445	242.589	1151.99	397.229	1296.43	157.584	1509.21	527.071	730.622	2006.88	1762.46	88.4127	100.735	0	1512.46	1975.95	1348.34	1816.61	926.93	282.481	124.636	0	315.456	1730.5	1576.04	145.977	0	22840.6	276.333	594.827	1821.89	2485.37	11385.1	7361.11	2019.45	1551.36	984.562	16840.9	3328	111359	404.952	424.179	109.963	2260.72	396.53	1677.01	4283.67	1771.56	156.755	0	1171.73	420.518	1235.05	1441.67	4171.22	3716.82	488.319	724.294	1717.69	539.79	529.208	1178.29	144.675	85.8857	2293.57	0	1391.19	1253.93	5509.35	2372.51	1608.11	1249.66	2349.23	2531.25
+	Cluster_10	0	1775.32	1406.68	1703.73	1168.16	61.7906	0	201.504	1249.7	0	1723.06	376.605	1961.33	2162	1653.13	837.274	810.55	0	1859.61	1337.51	1698.26	1445.77	1717.21	1444.15	1019.4	2490.13	230.386	1463.19	2277.4	2028.38	2049.48	1046.96	1952.54	1682.12	520.897	1835.7	1752.66	3.03991	331.803	865.525	1766.34	9685.46	0	72.3325	0	1455.8	0	1669.18	1748.08	0	2188.82	23.4298	0	1682.03	0	106.738	1480.39	1383.32	1200.47	0	0	0	0	17.3256	0	0	0	643.647	1067.32	1816.73	1449.12	0	1704.54	0	0	14.4112	2326.57	4110.52	22.3788	1080.07	1348.1	0	1624.1	1662.67	1808.52	1371	567.361	1382.98	1995.77	1475.15	1715.16	1954	0	0	0	393.108	92.1369	0	1059.61	0	1587.63	0
+	Cluster_100	0	1787.4	1288.79	1809.2	0	203.804	0.617404	243.918	1800.29	20.4127	1880.79	138.017	1865.87	1764.04	1910.84	1358.87	772.325	303.706	1850.54	1766.15	1926.4	1617.81	1813.5	1841.46	1040.42	2278.71	168.862	1397.44	2174	2286.63	1696.9	2039.48	1967.8	1835.68	660.908	2168.23	1472.08	3.34218	121.598	1951.97	2047.38	0	2.9218	0	0	1564.98	671.498	2041.98	1974.21	1165.22	1948.25	8.5865	0	1844.31	1016.6	0	1969.93	1360.33	989.876	0	83.3107	0	243.825	0	0	813.337	0	943.528	928.974	2022.98	1420.61	0	2065.53	0	2068.82	0	2116.92	1506.41	24.604	1278.64	1680.97	5.96794	2258.69	1655.07	1793.17	2281.66	536.34	1865.22	2099.05	1991.72	1887.63	1818.03	11.5384	444.321	1.74742	596.965	33.7661	2.56909	1334.86	0	2327.32	0
+	Cluster_1000	0	1726.58	4340.43	1776.75	0	385.693	0.667669	326.695	1688.15	22.0745	1764.36	74.6268	1568.36	2170.37	1778.29	1330.68	1300.99	0	1547.67	1438.77	1794.79	1305.89	1846.12	2062.19	970.905	2278.08	0	1634.22	1978.07	2136.38	1895.21	1928.29	1958.73	1740.69	640.428	2005.58	1305.73	0	0	2023.48	1854.55	0	2.36976	21.4998	0	1870.29	726.167	2198.71	1758.71	0	1909.65	9.28556	4.60705	1681.68	0	63.4522	1877.75	1219.81	1213.19	0	0	0	0	10.2996	0	0	0	382.629	1268.97	1952.3	1442.94	0	2104.25	0	3355.87	0	1990.95	0	13.3035	1286.38	1773.84	0	1831.94	1282.26	1662.13	2202.62	473.921	1834.25	1680.4	1292.32	1747.84	1713.83	28.0751	240.247	0	542.947	10.9545	4.16737	1745.36	0	1510.08	0
+	Cluster_1001	0	1742.53	1174.7	1638.48	0	293.861	0.333834	228.687	1700.23	0	1472.75	0	1685.3	36.3748	0	1543.99	626.402	0	1726.25	896.073	0	1476.94	1739.73	615.115	1277.16	2473.09	0	1476.07	1909.16	550.479	1624.47	0	29.0182	56.7885	670.925	788.959	0	0	0	1672.22	0	0	0	21.4998	0	1240.45	0	2002.4	1845.89	0	7.48884	4.64278	4.60705	1274.09	3298.09	126.904	828.279	0	749.325	12.1692	270.28	0	0	0	0	0	0	765.258	475.865	1744.61	1550.62	0	1379.41	17.2866	0	0	130.479	0	0	1179.93	1524.63	0	74.2677	1469.25	1569.79	389.456	1.72964	1730.15	0	1292.32	1667.52	1706.85	9.35837	840.865	1.41726	489.771	87.6362	6.25105	984.225	0	47.1899	0
+	Cluster_1002	0	0	0	0	0	1597.87	0	3.62995	3.01994	0	0	0	0	0	0	0	0	0	0	0	0	4.17216	0	0	104.258	0	0	0	0	0	0	0	0	0	0	0	0	0	197.247	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+	Cluster_1003	1495.37	7.28202	80.0097	52.0906	0	1217.79	1224.14	1119.55	57.6446	1297.34	22.1566	1049.61	0	0	0	183.688	338.855	494.928	25.6292	126.792	0	209.574	57.7779	8.89156	510.612	0	963.142	52.9608	12.2166	55.9612	0	3.72184	0	0	904.993	0	139.264	1383.41	990.801	54.6732	0	0	1340.35	1619.95	1528.12	101.434	1094.29	62.7525	2.33556	0	77.116	1497.23	1272.8	55.9718	0	191.238	9.45583	55.0766	824.489	1662.67	1493.42	1295.29	2384.07	1660.73	1601.43	0	1089.06	768.801	557.746	0	151.453	1191.34	3.71528	1467.48	0	1445.92	0	0	1283.05	306.197	0	1397.23	49.741	13.4187	22.0877	7.77336	835.807	0	4.43092	0	14.7934	9.56537	1335.04	0	1460.84	922.221	1122.53	1549.07	197.756	1202.1	71.1126	1372.99
 	...
 	```
 	
@@ -664,13 +676,15 @@ By default, MetaWIBELE will perform by using the local configuration files insta
 	**5. Clustering information for protein families**
 	
 	```
-	>HSMA33LJ_27125;Cluster_1;length=504;size=139;cluster=1
-	HSMA33LJ_27125
-	HSM5MD82_P_40510
-	HSM6XRQ8_06389
-	ESM5GEYY_P_120902
-	HSM5MD5F_P_64814
-	MSM9VZIU_90100
+	>PRISM_7861_211956;Cluster_1;length=85;size=24;cluster=1
+	PRISM_7861_211956
+	PRISM_7791_142577
+	PRISM_8794_132719
+	...
+	>PRISM_7855_54982;Cluster_2;length=559;size=12;cluster=2
+	PRISM_7855_54982
+	PRISM_8776_12844
+	PRISM_8467_139927
 	...
 	```
 	
@@ -679,7 +693,7 @@ By default, MetaWIBELE will perform by using the local configuration files insta
 	
 	**6. Sequences of protein families**  
 	
-	* File name: `$OUTPUT_DIR/$BASENAME_proteinfamilies.centroid.faa`
+	* File name: `$OUTPUT_DIR/finalized/$BASENAME_proteinfamilies.centroid.faa`
 	* This file is the protein sequence for representatives of protein families (Fasta format file).
 
 	**7. Intermediate output files**
@@ -722,13 +736,13 @@ By default, MetaWIBELE will perform by using the local configuration files insta
 	**1. unsupervised prioritization**
 	
 	```
-	TID familyID    evidence    value   rank    description note 
-	1   Cluster_2   DNA_abundance   6728.564309677419   0.9994472084024323  ranking based on single evidence    
-	2   Cluster_2   DNA_prevalence  0.9741935483870968  0.9994472084024323  ranking based on single evidence    
-	3   Cluster_2   priority_score  0.9994472084024324  0.9994472084024324  meta ranking based on multiple evidences    
-	4   Cluster_269 DNA_abundance   4748.32714451613    0.9983416252072969  ranking based on single evidence    
-	5   Cluster_269 DNA_prevalence  0.9483870967741935  0.9964068546158098  ranking based on single evidence    
-	6   Cluster_269 priority_score  0.9973733016134971  0.9973733016134971  meta ranking based on multiple evidences 
+	TID	familyID	evidence	value	rank	description	note
+	1	Cluster_2	DNA_abundance	3976.775288	0.997474747	ranking based on single evidence	
+	2	Cluster_2	DNA_prevalence	0.980392157	0.998737374	ranking based on single evidence	
+	3	Cluster_2	priority_score	0.998105661	0.998105661	meta ranking based on multiple evidences	
+	4	Cluster_1385	DNA_abundance	7579.266327	0.999368687	ranking based on single evidence	
+	5	Cluster_1385	DNA_prevalence	0.960784314	0.994318182	ranking based on single evidence	
+	6	Cluster_1385	priority_score	0.996837037	0.996837037	meta ranking based on multiple evidences	 
 	...
 	```
 	
@@ -743,17 +757,17 @@ By default, MetaWIBELE will perform by using the local configuration files insta
 	**2. supervised prioritization: numeric ranking**
 	
 	```
-	TID familyID    evidence    value   rank    description note 
-	1   Cluster_1058    DNA_within_phenotype_abundance  1455.2607352941177  0.857379767827529   ranking based on single evidence    CD_vs_nonIBD
-	2   Cluster_1058    DNA_within_phenotype_prevalence 1.0 1.0 ranking based on single evidence    CD_vs_nonIBD
-	3   Cluster_1058    MaAsLin2_DA__mean_log   -3.7441751012074533 0.9336650082918739  ranking based on single evidence    CD_vs_nonIBD
-	4   Cluster_1058    MaAsLin2_DA__qvalue 5.01463564253508e-05    0.85437430786268    ranking based on single evidence    CD_vs_nonIBD
-	5   Cluster_1058    priority_score  0.9074740723963038  0.9074740723963038  meta ranking based on multiple evidences    CD_vs_nonIBD
-	6   Cluster_1152    DNA_within_phenotype_abundance  1617.4002382352937  0.9364289662797125  ranking based on single evidence    CD_vs_nonIBD
-	7   Cluster_1152    DNA_within_phenotype_prevalence 1.0 1.0 ranking based on single evidence    CD_vs_nonIBD
-	8   Cluster_1152    MaAsLin2_DA__mean_log   -3.7580207457514616 0.9380873410724156  ranking based on single evidence    CD_vs_nonIBD
-	9   Cluster_1152    MaAsLin2_DA__qvalue 0.000106062753712042    0.7574750830564784  ranking based on single evidence    CD_vs_nonIBD
-	10  Cluster_1152    priority_score  0.8980568683016749  0.8980568683016749  meta ranking based on multiple evidences    CD_vs_nonIBD
+	TID	familyID	evidence	value	rank	description	note
+	1	Cluster_459	DNA_within_phenotype_abundance	2006.049068	0.942838793	ranking based on single evidence	CD_vs_nonIBD
+	2	Cluster_459	DNA_within_phenotype_prevalence	1	1	ranking based on single evidence	CD_vs_nonIBD
+	3	Cluster_459	MaAsLin2_DA__mean_log	-3.55885575	0.892742453	ranking based on single evidence	CD_vs_nonIBD
+	4	Cluster_459	MaAsLin2_DA__qvalue	1.00E-05	0.942122186	ranking based on single evidence	CD_vs_nonIBD
+	5	Cluster_459	priority_score	0.942906085	0.942906085	meta ranking based on multiple evidences	CD_vs_nonIBD
+	6	Cluster_1254	DNA_within_phenotype_abundance	1716.567921	0.846499679	ranking based on single evidence	CD_vs_nonIBD
+	7	Cluster_1254	DNA_within_phenotype_prevalence	1	1	ranking based on single evidence	CD_vs_nonIBD
+	8	Cluster_1254	MaAsLin2_DA__mean_log	-3.944110406	0.97430957	ranking based on single evidence	CD_vs_nonIBD
+	9	Cluster_1254	MaAsLin2_DA__qvalue	7.56E-06	0.954662379	ranking based on single evidence	CD_vs_nonIBD
+	10	Cluster_1254	priority_score	0.940027663	0.940027663	meta ranking based on multiple evidences	CD_vs_nonIBD
 	...
 	```
 	
@@ -1084,12 +1098,12 @@ PRISM_7122_50124	26	3	3	16	6	35	2139	191	22
 
 
 
-**Intermediate files** 
+**Other output files** 
 
 **1. assembly results**
 	
-* `$OUTPUT_DIR/$BASENMAE_contig_sequence.fasta`: contig sequences (Fasta format file).
-* The assembly outputs for each sample are in the `$OUTPUT_DIR/assembly/` folder.
+* `$OUTPUT_DIR/finalized/$BASENMAE_contig_sequence.fasta`: contig sequences (Fasta format file).
+* The intermediate assembly outputs for each sample are in the `$OUTPUT_DIR/assembly/` folder.
 	
 **2. gene-calling results**
 	
@@ -1098,8 +1112,8 @@ PRISM_7122_50124	26	3	3	16	6	35	2139	191	22
 * `$OUTPUT_DIR/finalized/$BASENMAE_combined_protein.complete.sorted.faa`: protein sequences for all complete ORFs sorted by protein length (Fasta format file).
 * `$OUTPUT_DIR/finalized/$BASENMAE_combined_gene_protein_coding.sorted.fna`: nucleotide sequences for all ORFs (including partial genes) sorted by gene length (Fasta format file).
 * `$OUTPUT_DIR/finalized/$BASENMAE_combined_protein.sorted.faa`: protein sequences for all ORFs (including partial genes) sorted by protein length.
-* The gene-calling outputs from prodigal are in the `$OUTPUT_DIR/gene_calls/` folder. 
-* The gene-annotation outputs from prokka are in the `$OUTPUT_DIR/gene_annotation/` folder.
+* The intermediate gene-calling outputs from prodigal are in the `$OUTPUT_DIR/gene_calls/` folder. 
+* The intermediate gene-annotation outputs from prokka are in the `$OUTPUT_DIR/gene_annotation/` folder.
 	
 **3. gene families**
 	
@@ -1107,6 +1121,6 @@ PRISM_7122_50124	26	3	3	16	6	35	2139	191	22
 * `$OUTPUT_DIR/finalized/$BASENMAE_genecatalogs_counts.all.tsv`: reads counts of gene families per sample (TSV format file).
 * `$OUTPUT_DIR/$BASENMAE_genecatalogs.centroid.fna`: nucleotide sequences of representatives for gene families (Fasta format file).
 * `$OUTPUT_DIR/finalized/$BASENMAE_genecatalogs.centroid.faa`: protein sequences of representatives for gene families.
-* All mapping outputs for each sample are in the `$OUTPUT_DIR/mapping/` folder. 
+* The intermediate mapping outputs for each sample are in the `$OUTPUT_DIR/mapping/` folder. 
 	
 ----
