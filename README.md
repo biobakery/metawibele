@@ -584,19 +584,19 @@ By default, MetaWIBELE will perform by using the local configuration files insta
 	
 	```
 	familyID	annotation	feature	category	method	AID
-Cluster_1	good	quality	note	Quality_control	NA
-Cluster_1	demo	study	project	Shotgun	NA
-Cluster_1	Cluster_1	protein_family	Denovo_clustering	CD-hit	Cluster_1__Denovo_clustering
-Cluster_1	UniRef90_A7B522	strong_homology	UniRef90_homology	UniRef90	Cluster_1__UniRef90_homology
-Cluster_1	Ruminococcus gnavus (strain ATCC 29149 / VPI C7-9)	Terminal	Taxonomy_characterization	Taxonomy_annotation	Cluster_1__Taxonomy_characterization
-Cluster_1	4734.313443	DNA-CD_abundance	Denovo_characterization	DNA	Cluster_1__DNA-CD_abundance
-Cluster_1	0.926470588	DNA-CD_prevalence	Denovo_characterization	DNA	Cluster_1__DNA-CD_prevalence
-Cluster_1	1048.199147	DNA-nonIBD_abundance	Denovo_characterization	DNA	Cluster_1__DNA-nonIBD_abundance
-Cluster_1	1	DNA-nonIBD_prevalence	Denovo_characterization	DNA	Cluster_1__DNA-nonIBD_prevalence
-Cluster_1	4734.313443	DNA-within-phenotype_abundance	Denovo_characterization	DNA	Cluster_1__DNA-within-phenotype_abundance
-Cluster_1	1	DNA-within-phenotype_prevalence	Denovo_characterization	DNA	Cluster_1__DNA-within-phenotype_prevalence
-Cluster_1	3505.608677	DNA_abundance	Denovo_characterization	DNA	Cluster_1__DNA_abundance
-Cluster_1	0.950980392	DNA_prevalence	Denovo_characterization	DNA	Cluster_1__DNA_prevalence
+	Cluster_1	good	quality	note	Quality_control	NA
+	Cluster_1	demo	study	project	Shotgun	NA
+	Cluster_1	Cluster_1	protein_family	Denovo_clustering	CD-hit	Cluster_1__Denovo_clustering
+	Cluster_1	UniRef90_A7B522	strong_homology	UniRef90_homology	UniRef90	Cluster_1__UniRef90_homology
+	Cluster_1	Ruminococcus gnavus (strain ATCC 29149 / VPI C7-9)	Terminal	Taxonomy_characterization	Taxonomy_annotation	Cluster_1__Taxonomy_characterization
+	Cluster_1	4734.313443	DNA-CD_abundance	Denovo_characterization	DNA	Cluster_1__DNA-CD_abundance
+	Cluster_1	0.926470588	DNA-CD_prevalence	Denovo_characterization	DNA	Cluster_1__DNA-CD_prevalence
+	Cluster_1	1048.199147	DNA-nonIBD_abundance	Denovo_characterization	DNA	Cluster_1__DNA-nonIBD_abundance
+	Cluster_1	1	DNA-nonIBD_prevalence	Denovo_characterization	DNA	Cluster_1__DNA-nonIBD_prevalence
+	Cluster_1	4734.313443	DNA-within-phenotype_abundance	Denovo_characterization	DNA	Cluster_1__DNA-within-phenotype_abundance
+	Cluster_1	1	DNA-within-phenotype_prevalence	Denovo_characterization	DNA	Cluster_1__DNA-within-phenotype_prevalence
+	Cluster_1	3505.608677	DNA_abundance	Denovo_characterization	DNA	Cluster_1__DNA_abundance
+	Cluster_1	0.950980392	DNA_prevalence	Denovo_characterization	DNA	Cluster_1__DNA_prevalence
 	...
 	```
 	
