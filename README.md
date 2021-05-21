@@ -1119,7 +1119,7 @@ PRISM_7122_50124	26	3	3	16	6	35	2139	191	22
 	
 * `$OUTPUT_DIR/finalized/$BASENMAE_genecatalogs.clstr`: clustering information for non-redundant gene families (extension-fasta format file).
 * `$OUTPUT_DIR/finalized/$BASENMAE_genecatalogs_counts.all.tsv`: reads counts of gene families per sample (TSV format file).
-* `$OUTPUT_DIR/$BASENMAE_genecatalogs.centroid.fna`: nucleotide sequences of representatives for gene families (Fasta format file).
+* `$OUTPUT_DIR/finalized/$BASENMAE_genecatalogs.centroid.fna`: nucleotide sequences of representatives for gene families (Fasta format file).
 * `$OUTPUT_DIR/finalized/$BASENMAE_genecatalogs.centroid.faa`: protein sequences of representatives for gene families.
 * The intermediate mapping outputs for each sample are in the `$OUTPUT_DIR/mapping/` folder. 
 	
