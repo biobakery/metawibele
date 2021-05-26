@@ -416,23 +416,27 @@ def main():
 
 	config.logger.info ("### Start prepare_uniref_annotation step ####")
 	
+	output = os.path.abspath(values.output)
+	if not os.path.isdir(output):
+		os.system("mkdir -p " + output)
+
 	### Extraction ###
 	config.logger.info ("Download uniref sequences......starting")
-	seqfile = download_seq (values.output, values.type)
+	seqfile = download_seq (output, values.type)
 	config.logger.info ("Download uniref sequences......done")
 
 	config.logger.info ("Collect uniprot annotations......starting")
 	maps = extract_mapping_info (config.taxonomy_database)
-	ann_info, ann_title = extract_annotation_info (values.output, maps)
+	ann_info, ann_title = extract_annotation_info (output, maps)
 	config.logger.info ("Collect uniprot annotations......done")
 	
 	### Output ###
 	config.logger.info ("Report uniref combined info......starting")
-	uniref_ann = extract_info (ann_info, ann_title, seqfile, values.type, values.output)
+	uniref_ann = extract_info (ann_info, ann_title, seqfile, values.type, output)
 	anns_info = {}
 	config.logger.info ("Report uniref combined info......done")
 	config.logger.info ("Report uniref mapping info......starting")
-	extract_uniref_maps (uniref_ann, values.type, values.output)
+	extract_uniref_maps (uniref_ann, values.type, output)
 	config.logger.info ("Report uniref mapping info......done")
 	
 	config.logger.info ("### Finish prepare_uniref_annotation step ####")

@@ -241,9 +241,13 @@ def main():
 
 	config.logger.info ("### Start prepare_uniprot_taxonomy step ####")
 	
+	output = os.path.abspath(values.output)
+	if not os.path.isdir(output):
+		os.system("mkdir -p " + output)
+
 	### Extraction ###
 	config.logger.info ("Extract taxonomic info......starting")
-	format_taxonomy_info (values.input, values.output)
+	format_taxonomy_info (values.input, output)
 	config.logger.info ("Extract taxonomic info......done")
 	
 	config.logger.info ("### Finish prepare_uniprot_taxonomy step ####")

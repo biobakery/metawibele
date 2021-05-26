@@ -330,13 +330,17 @@ def main():
 
 	config.logger.info ("### Start prepare_uniprot_annotation step ####")
 	
+	output = os.path.abspath(values.output)
+	if not os.path.isdir(output):
+		os.system("mkdir -p " + output)
+
 	### Extraction ###
 	config.logger.info ("Download uniprot info......starting")
-	datfile = download_dat (values.output)
+	datfile = download_dat (output)
 	config.logger.info ("Download uniprot info......done")
 
 	config.logger.info ("Extract uniprot info......starting")
-	extract_annotation_info (datfile, values.output)
+	extract_annotation_info (datfile, output)
 	config.logger.info ("Extract uniprot info......done")
 	
 	config.logger.info ("### Finish prepare_uniprot_annotation step ####")

@@ -153,14 +153,18 @@ def main():
 
 	config.logger.info ("### Start prepare_domain_databases step ####")
 	
+	output = os.path.abspath(values.output)
+	if not os.path.isdir(output):
+		os.system("mkdir -p " + output)
+	
 	### Download ###
 	config.logger.info ("Download domain info......starting")
-	datfile = download_dat (values.output, values.type)
+	datfile = download_dat (output, values.type)
 	config.logger.info ("Download domain......done")
 	
 	### Extract ###
 	config.logger.info ("Extract info......starting")
-	extract_annotation_info (datfile, values.output)
+	extract_annotation_info (datfile, output)
 	config.logger.info ("Extract info......done")
 	
 	config.logger.info ("### Finish prepare_domain_databases step ####")

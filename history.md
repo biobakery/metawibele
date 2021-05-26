@@ -5,6 +5,7 @@
 * Fixed issues when running interproscan with all analyses
 * Updated requirements for install
 * Added a new module to check install
+* Fixed issues when running utilities to prepare databases
 
 ## v0.4.0 2021-05-05 ##
 * Added "--tshld-diff" "--tshld-classified" setting to global config file
