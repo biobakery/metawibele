@@ -6,6 +6,7 @@
 * Updated requirements for install
 * Added a new module to check install
 * Fixed issues when running utilities to prepare databases
+* Fixed issue in config annotation types from interproscan
 
 ## v0.4.0 2021-05-05 ##
 * Added "--tshld-diff" "--tshld-classified" setting to global config file
