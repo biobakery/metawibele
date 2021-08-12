@@ -70,6 +70,8 @@ There are multiple bypass options that will allow you to adjust the standard wor
 
 Bypass options:
 
+* --bypass-clustering
+	* do not build protein families
 * --bypass-global-homology
 	* do not annotate protein families based on global homology information
 * --bypass-domain-motif
