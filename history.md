@@ -8,6 +8,7 @@
 * Fixed issues when running utilities to prepare databases
 * Fixed issue in config annotation types from interproscan
 * Keep temp directory
+* Updated description texts about configs
 
 ## v0.4.0 2021-05-05 ##
 * Added "--tshld-diff" "--tshld-classified" setting to global config file

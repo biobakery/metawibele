@@ -134,7 +134,7 @@ You only need to do **any one** of the following options to install the MetaWIBE
 * Large software packages and those with licenses are **NOT** included in this image and needed to be installed additionally:
 	* Users should review the license terms and install these packages manually. 
 	* Softwares with the license : [MSPminer](https://www.enterome.com/downloads/), [Signalp](http://www.cbs.dtu.dk/services/SignalP-4.1/), [TMHMM](http://www.cbs.dtu.dk/services/TMHMM/), [Phobius](http://phobius.sbc.su.se/), [PSORTb](https://psort.org/documentation/index.html)
-	* Softwares with large size: [Interproscan](https://interproscan-docs.readthedocs.io/en/latest/) (**Note:** We recommen dinstalling InterProScan 5.51-85.0 (requiring at least Java 11) or later for potential simpler installation, and active Phobius/SignalP/TMHMM analyses by customizing your interproscan.properties configuration, see more details from [InterProScan document](https://interproscan-docs.readthedocs.io/en/latest/ActivatingLicensedAnalyses.html))
+	* Softwares with large size: [Interproscan](https://interproscan-docs.readthedocs.io/en/latest/) (**Note:** We recommen dinstalling InterProScan 5.51-85.0 (requiring at least Java 11) or later for potential simpler installation, and active Phobius/SignalP/TMHMM analyses by customizing your `interproscan.properties` configuration, see more details from [InterProScan document](https://interproscan-docs.readthedocs.io/en/latest/ActivatingLicensedAnalyses.html)).
 	
 
 **Option 2: Installing with pip**
@@ -238,7 +238,7 @@ To run MetaWIBELE, you are **required** to customize the global configuration fi
 	[database]
 	# The absolute path of uniref databases folder.
 	uniref_db = 
-	# The domain databases used by MetaWIBELE. [data_path] provide the absolute path of the domain databases folder; [none] use the default domain databases installed in the metawibele package [ Default: none ]
+	# The domain databases used by MetaWIBELE. [data_path] provide the absolute path of the domain databases folder; [none] use the default domain databases installed in the metawibele package. [ Default: none ]
 	domain_db = none
 	```
 
@@ -246,9 +246,9 @@ To run MetaWIBELE, you are **required** to customize the global configuration fi
 
 	```
 	[basic]
-	# Study name [ Default: MGX ]
+	# Study name. [ Default: MGX ]
 	study = MGX
-	# The prefix name for output results [ Default: metawibele ]
+	# The prefix name for output results. [ Default: metawibele ]
 	basename = metawibele
 	``` 
 		
@@ -256,11 +256,11 @@ To run MetaWIBELE, you are **required** to customize the global configuration fi
 
 	```
 	[computation]
-	# The number of cores that you’re requesting [ Default: 1 ]
+	# The number of cores that you’re requesting. [ Default: 1 ]
 	threads = 1
-	# The amount of memory (in MB) that you will be using for your job [ Default: 20000 ] 
+	# The amount of memory (in MB) that you will be using for your job. [ Default: 20000 ] 
 	memory = 20000
-	# The amount of time (in minute) that you will be using for your job [ Default: 60 ]
+	# The amount of time (in minute) that you will be using for your job. [ Default: 60 ]
 	time = 60
 	```
 
@@ -268,9 +268,9 @@ To run MetaWIBELE, you are **required** to customize the global configuration fi
 
 	```
 	[abundance]
-	# The absolute path of the config file used by MSPminer. [config_file] provide the mspminer config file; [none] use the default config files installed in the metawibele package [ Default: none ]
+	# The absolute path of the config file used by MSPminer. [config_file] provide the mspminer config file; [none] use the default config files installed in the metawibele package. [ Default: none ]
 	mspminer = none
-	# The method for normalization [Choices: cpm, relab]. [cpm] copies per million units (sum to 1 million); [relab] relative abundance (sum to 1) [ Default: cpm ]  
+	# The method for normalization [Choices: cpm, relab]. [cpm] copies per million units (sum to 1 million); [relab] relative abundance (sum to 1). [ Default: cpm ]  
 	normalize = cpm
 	# The minimum abundance for each feature [ Default: 0 ]   
 	abundance_detection_level = 0
@@ -284,55 +284,55 @@ To run MetaWIBELE, you are **required** to customize the global configuration fi
 	[interproscan]
 	# Interproscan executable file, e.g. /my/path/interproscan/interproscan.sh [ Default: interproscan.sh ]
 	interproscan_cmmd = interproscan.sh
-	# The appls used by interproscan: [appls] comma separated list of analyses, [ Choices: CDD,COILS,Gene3D,HAMAP,MobiDBLite,PANTHER,Pfam,PIRSF,PRINTS,ProDom,PROSITEPATTERNS,PROSITEPROFILES,SFLD,SMART,SUPERFAMILY,TIGRFAM,Phobius,SignalP,TMHMM ]; [none] use all all analyses for running [ Default: Pfam,Phobius,SignalP,TMHMM ]
-	interproscan_appl = "Pfam,Phobius,SignalP,TMHMM"
+	# The appls used by interproscan: [appls] comma separated list of analyses, [ Choices: CDD,COILS,Gene3D,HAMAP,MobiDBLite,PANTHER,Pfam,PIRSF,PRINTS,ProDom,PROSITEPATTERNS,PROSITEPROFILES,SFLD,SMART,SUPERFAMILY,TIGRFAM,Phobius,SignalP,TMHMM ]; [all] use all all analyses for running. [ Default: all ]
+	interproscan_appl = all
 	# The number of splitting files which can be annotated in parallel 	[ Default: 1 ]
 	split_number = 1
 	```
 	
-	* Customize parameter settings for association with environmental/host phenotypes (**optional**; but you are **required** to specify your settings for maaslin2 if you run MetaWIBELE for supervised prioritization, and at least the main phenotype metadata used for prioritization is **required** to set):
+	* Customize parameter settings for association with environmental/host phenotypes (**optional**; but you are **required** to specify your settings for [MaAsLin2](https://huttenhower.sph.harvard.edu/maaslin2) if you run MetaWIBELE for supervised prioritization, and at least the main `phenotype` metadata used for prioritization is **required** to set):
 
 	```
 	[maaslin2]
 	# The absolute path of Maaslin2 executable file, e.g. /my/path/Maaslin2/R/Maaslin2.R [ Default: Maaslin2.R ]
 	maaslin2_cmmd = Maaslin2.R
-	# The minimum abundance for each feature [ Default: 0 ]  
+	# The minimum abundance for each feature. [ Default: 0 ]  
 	min_abundance = 0
-	# The minimum percent of samples for which a feature is detected at minimum abundance [ Default: 0.1 ]
+	# The minimum percent of samples for which a feature is detected at minimum abundance. [ Default: 0.1 ]
 	min_prevalence = 0.1
-	# Keep features with variance greater than [Default: 0.0]
+	# Keep features with variance greater than. [Default: 0.0]
 	min_variance = 0
-	# The q-value threshold for significance [ Default: 0.25 ]
+	# The q-value threshold for significance. [ Default: 0.25 ]
 	max_significance = 0.25
-	# The normalization method to apply [ Choices: TSS, CLR, CSS, NONE, TMM ], [ Default: TSS ]
+	# The normalization method to apply. [ Choices: TSS, CLR, CSS, NONE, TMM ], [ Default: TSS ]
 	normalization = NONE
-	# The transform to apply [ Choices: LOG, LOGIT, AST, NONE ],  [ Default: LOG ]
+	# The transform to apply [ Choices: LOG, LOGIT, AST, NONE ].  [ Default: LOG ]
 	transform = LOG
-	# The analysis method to apply [ Choices: LM, CPLM, ZICP, NEGBIN, ZINB ], [ Default: LM ]
+	# The analysis method to apply [ Choices: LM, CPLM, ZICP, NEGBIN, ZINB ]. [ Default: LM ]
 	analysis_method = LM
-	# The fixed effects for the model, comma-delimited for multiple effects [ Default: all ]
+	# The fixed effects for the model, comma-delimited for multiple effects. [ Default: all ]
 	fixed_effects = all
-	# The random effects for the model, comma-delimited for multiple effects [ Default: none ]
+	# The random effects for the model, comma-delimited for multiple effects. [ Default: none ]
 	random_effects = none
-	# The correction method for computing the q-value [ Default: BH ]
+	# The correction method for computing the q-value. [ Default: BH ]
 	correction = BH
-	# Apply z-score so continuous metadata are on the same scale [ Default: TRUE ] apply z-score so continuous metadata are on the same scale [ Default: TRUE ]
+	# Apply z-score so continuous metadata are on the same scale [ Default: TRUE ] apply z-score so continuous metadata are on the same scale. [ Default: TRUE ]
 	standardize = TRUE
-	# Generate a heatmap for the significant associations [ Default: FALSE ]
+	# Generate a heatmap for the significant associations. [ Default: FALSE ]
 	plot_heatmap = FALSE
-	# In heatmap, plot top N features with significant associations [ Default: FALSE ]
+	# In heatmap, plot top N features with significant associations. [ Default: FALSE ]
 	heatmap_first_n = FALSE
-	# Generate scatter plots for the significant associations [ Default: FALSE ]
+	# Generate scatter plots for the significant associations. [ Default: FALSE ]
 	plot_scatter = FALSE
-	# The number of R processes to run in parallel [ Default: 1 ]
+	# The number of R processes to run in parallel. [ Default: 1 ]
 	maaslin2_cores = 1
-	# The factor to use as a reference for a variable with more than two levels provided as a string of 'variable,reference' semi-colon delimited for multiple variables [ Default: NA ] NOTE: A space between the variable and reference will not error but will cause an inaccurate result.
+	# The factor to use as a reference for a variable with more than two levels provided as a string of 'variable,reference' semi-colon delimited for multiple variables. NOTE: A space between the variable and reference will not error but will cause an inaccurate result. [ Default: NA ]
 	reference = NA
-	# The minimum percent of case-control samples used for comparison in which a feature is detected [ Default: 0.1 ]
+	# The minimum percent of case-control samples used for comparison in which a feature is detected. [ Default: 0.1 ]
 	tshld_prevalence = 0.10
-	# The q-value threshold for significance used as DA annotations [ Default: 0.05 ]
+	# The q-value threshold for significance used as DA annotations. [ Default: 0.05 ]
 	tshld_qvalue = 0.05
-	# The statistic used as effect size [ Choices: coef, mean(log) ]. [coef] represents the coefficient from the model; [mean(log)] represents the difference of mean values between case and control conditions. [  Default: mean(log) ]
+	# The statistic used as effect size [ Choices: coef, mean(log) ]. [coef] represents the coefficient from the model; [mean(log)] represents differences of mean log-scaled abundances between case and control conditions. [  Default: mean(log) ]
 	effect_size = mean(log)
 	# The main phenotype metadata used for prioritization, e.g. metadata1. [ Default: none ]: skip the association with environmental/phenotypic parameters
 	phenotype = none
@@ -495,7 +495,7 @@ By default, MetaWIBELE will perform by using the local configuration files insta
 
 	optional arguments:
   	-h, --help            show this help message and exit
-  	--global-config GLOBAL_CONFIG the global configuration file of 	MetaWIBELE (default: None)
+  	--global-config GLOBAL_CONFIG the global configuration file of MetaWIBELE (default: None)
 	```
 	
 **NOTE:** De default, MetaWIBELE will use the global configurations from `metawibele.cfg` in the current working directory. Alternatively, you can always provide the location of the global configuration file you would like to use with the "--global-config " option to metawibele.	
