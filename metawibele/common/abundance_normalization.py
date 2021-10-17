@@ -92,7 +92,7 @@ def normalize(table, method, levelwise, special=True):
 	
 	# remove special features?
 	if not special:
-		test = [rowhead.split( util.c_strat_delim )[0] not in c_special for rowhead in table.rowheads]
+		test = [rowhead.split( utils.c_strat_delim )[0] not in c_special for rowhead in table.rowheads]
 		for flag, rowhead in zip( test, table.rowheads ):
 			if not flag:
 				config.logger.info ( "Excluding special feature:" + rowhead )

@@ -10,6 +10,7 @@
 * Keep temp directory
 * Updated description texts about configs
 * Added final taxonomy file with stratified taxon info
+* Fixed small issue in utilities
 
 ## v0.4.0 2021-05-05 ##
 * Added "--tshld-diff" "--tshld-classified" setting to global config file
