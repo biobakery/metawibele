@@ -1,6 +1,9 @@
 
 # MetaWIBELE History #
 
+## v0.4.2 2021-10-29 ##
+* Release new version
+
 ## v0.4.1 2021-05-16 ##
 * Fixed issues when running interproscan with all analyses
 * Updated requirements for install
