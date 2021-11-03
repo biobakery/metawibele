@@ -719,8 +719,8 @@ By default, MetaWIBELE will perform by using the local configuration files insta
 
 #### MetaWIBELE-prioritize
 * ##### Input files for prioritization
-	* annotation file produced by MetaWIBELE-characterize workflow (TSV format file), e.g. [demo\_proteinfamilies_annotation.tsv](https://github.com/biobakery/metawibele/raw/master/examples/output/characterization/finalized/demo_proteinfamilies_annotation.tsv)
-	* annotation attribute file produced by MetaWIBELE-characterize workflow (TSV format file), e.g. [demo\_proteinfamilies\_annotation.attribute.tsv](https://github.com/biobakery/metawibele/raw/master/examples/output/characterization/finalized/demo_proteinfamilies_annotation.attribute.tsv)
+	* annotation file produced by MetaWIBELE-characterize workflow (TSV format file), e.g. [demo\_proteinfamilies_annotation.tsv](https://github.com/biobakery/metawibele/raw/master/examples/output/characterization/finalized/demo_proteinfamilies_annotation.tsv.gz)
+	* annotation attribute file produced by MetaWIBELE-characterize workflow (TSV format file), e.g. [demo\_proteinfamilies\_annotation.attribute.tsv](https://github.com/biobakery/metawibele/raw/master/examples/output/characterization/finalized/demo_proteinfamilies_annotation.attribute.tsv.gz)
 
 * ##### MetaWIBELE-prioritize workflow
 

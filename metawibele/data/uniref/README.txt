@@ -20,5 +20,4 @@ map_Rep_TaxID_uniref90.demo.txt.gz
 map_Rep_Tax_uniref90.demo.txt.gz
 map_TaxID_uniref90.demo.txt.gz
 map_Tax_uniref90.demo.txt.gz
-map_UniProtKB_uniref90.demo.txt.gz
 uniref90.demo.fasta.dmnd
