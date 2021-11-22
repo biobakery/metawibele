@@ -5,6 +5,7 @@
 * Release new version
 * Fixed small issue on psortb annotator
 * Cut down some space on demo data
+* Fixed small issue when running Maaslin2
 
 ## v0.4.1 2021-05-16 ##
 * Fixed issues when running interproscan with all analyses

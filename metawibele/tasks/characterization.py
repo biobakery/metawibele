@@ -1285,7 +1285,7 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog_seq, gene_catal
 		myresults = re.sub(".tsv", ".fdr_correction.correct_per_level.tsv", DA_results)
 		workflow.add_task(
 				"metawibele_maaslin2 -i [depends[0]] -m [depends[1]] -n [args[2]] -w [args[0]] -o [args[1]] > [args[3]] 2>&1",
-				depends = [feature_tsv, DA_metadata, TrackedExecutable("metawibele_maaslin2")],
+				depends = [feature_tsv, metadata, TrackedExecutable("metawibele_maaslin2")],
 				targets = [myresults],
 				args = [os.path.join(DA, "maaslin2_output"), "all_results.tsv", threads, mylog],
 				cores = threads,
