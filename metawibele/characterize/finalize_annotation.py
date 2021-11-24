@@ -206,8 +206,11 @@ def collect_annotation (list_file, source, mybase):
 			config.logger.info ("ERROR! File not exist: " + myfile)
 			continue
 		open_file = open(myfile, "r")
-		mym = re.search(mybase + "_([\S]+)_proteinfamilies", os.path.basename(myfile))
-		method = mym.group(1)
+		if re.search(mybase + "_([\S]+)_proteinfamilies", os.path.basename(myfile)):
+			mym = re.search(mybase + "_([\S]+)_proteinfamilies", os.path.basename(myfile))
+			method = mym.group(1)
+		else:
+			method = "metawibele"
 		titles = {}
 		titles_item = {}
 		if source == "protein_family":

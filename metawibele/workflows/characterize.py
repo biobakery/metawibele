@@ -73,7 +73,7 @@ def parse_cli_arguments ():
 	                      desc = "the configuration file of characterization analysis",
 	                      default = None)
 	workflow.add_argument("mspminer-config",
-	                      desc = "the configuration file used by mspminer",
+	                      desc = "the configuration file used by mspminer; [no] skip MSPminer-based taxonomic assignment",
 	                      default = None)
 	workflow.add_argument("bypass-clustering",
 	                      desc = "do not cluster proteins into protein families",
@@ -104,6 +104,9 @@ def parse_cli_arguments ():
 	                      action = "store_true")
 	workflow.add_argument("bypass-abundance",
 	                      desc = "do not annotate protein families based on abundance information",
+	                      action = "store_true")
+	workflow.add_argument("bypass-mspminer",
+	                      desc = "do not annotate protein families based on MSPminer",
 	                      action = "store_true")
 	workflow.add_argument("split-number",
 	                      desc="indicates number of spliting files for annotation based on sequence information",
@@ -218,9 +221,15 @@ def main(workflow):
 	else:
 		args.split_number = int(config.split_number)
 	if args.mspminer_config:
-		abundance_conf["mspminer"] = os.path.abspath(args.mspminer_config)
+		if args.mspminer_config != "no" and args.mspminer_config != "No":
+			abundance_conf["mspminer"] = os.path.abspath(args.mspminer_config)
+		else:
+			abundance_conf["mspminer"] = args.mspminer_config
 	else:
 		abundance_conf["mspminer"] = config.mspminer
+	if args.bypass_mspminer:
+		abundance_conf["mspminer"] = "no"
+
 	if args.bypass_global_homology:
 		family_conf["uniref"] = "no"
 	if args.bypass_interproscan:
@@ -337,6 +346,8 @@ def main(workflow):
 	# if abundance action is provided, then do annotations based on abundance information
 	if not args.bypass_abundance:
 		config.logger.info ("Start to run abundance annotation module......")
+		if abundance_conf["mspminer"] == "no":
+			config.logger.info ("WARNING! Bypass module: the MSPminer annotation module is skipped......")
 		myprotein_family_ann, myprotein_ann, abundance_output_folder = characterization.abundance_annotation (workflow, abundance_conf,
 		                                                                                                             gene_catalog_seq, gene_catalog_count,
 		                                                                                                            uniref_taxonomy_family, uniref_taxonomy,

@@ -145,9 +145,18 @@ def combine_annotation (annotation, dna, rna, note, taxa_file, outfile):
 		myuniref = info[titles["unirefID"]]
 		myunprot = info[titles["UniProtKB"]]
 		mydesc = info[titles["detail"]]
-		mymsp = info[titles["msp_name"]]
-		mymsp_taxa = info[titles["msp_taxa_name"]]
-		mymsp_taxa_id = info[titles["msp_taxa_id"]]
+		if "msp_name" in titles:
+			mymsp = info[titles["msp_name"]]
+		else:
+			mymsp = "NA"
+		if "msp_taxa_name" in titles:
+			mymsp_taxa = info[titles["msp_taxa_name"]]
+		else:
+			mymsp_taxa = "NA"
+		if "msp_taxa_id" in titles:
+			mymsp_taxa_id = info[titles["msp_taxa_id"]]
+		else:
+			mymsp_taxa_id = "NA"
 		taxa_id = info[titles["taxa_id"]]
 		taxa_name = info[titles["taxa_name"]]
 		taxa_rank = info[titles["taxa_rank"]]

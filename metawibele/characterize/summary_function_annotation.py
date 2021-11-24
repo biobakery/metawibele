@@ -146,8 +146,11 @@ def collect_annotation (list_file, id_flag, mybase):
 			continue
 		open_file = open(myfile, "r")
 		titles = {}
-		mym = re.search(mybase + "_([\S]+)_proteinfamilies", os.path.basename(myfile))
-		method = mym.group(1)
+		if re.search(mybase + "_([\S]+)_proteinfamilies", os.path.basename(myfile)): 
+			mym = re.search(mybase + "_([\S]+)_proteinfamilies", os.path.basename(myfile))
+			method = mym.group(1)
+		else:
+			method = "metawibele"
 		for line in open_file.readlines():
 			line = line.strip()
 			if not len(line):

@@ -985,12 +985,11 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog_seq, gene_catal
 
 
 	#### MSP annotation ####
-	if abundance_conf["mspminer"] != "no" and abundance_conf["mspminer"] != "No":
-		## summary gene catalog abundance ##
-		# remove eukaryotic contamination
-		mylog = re.sub(".tsv", ".log", count_file)
-		uniref_taxonomy_tmp = os.path.join(tmps_dir, os.path.basename(uniref_taxonomy))
-		workflow.add_task_gridable(
+	## summary gene catalog abundance ##
+	# remove eukaryotic contamination
+	mylog = re.sub(".tsv", ".log", count_file)
+	uniref_taxonomy_tmp = os.path.join(tmps_dir, os.path.basename(uniref_taxonomy))
+	workflow.add_task_gridable(
 				"metawibele_abundance_filtering -a [depends[0]] -f good -i [depends[1]] -o [targets[0]] >[args[0]] 2>&1",
 				depends = [gene_catalog_count_tmp, uniref_taxonomy_tmp, TrackedExecutable("metawibele_abundance_filtering")],
 				targets = [count_file],
@@ -1000,12 +999,13 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog_seq, gene_catal
 				mem = mem_equation,
 				name = "abundance_filtering")
 		
-		workflow.add_task("ln -fs [depends[0]] [targets[0]]",
+	workflow.add_task("ln -fs [depends[0]] [targets[0]]",
 	            depends = [count_file],
 	            targets = [os.path.join(tmps_dir, os.path.basename(count_file))],
 		        cores = 1,
 	            name = "ln__counts_file")
 		
+	if abundance_conf["mspminer"] != "no" and abundance_conf["mspminer"] != "No":
 		## binning co-abundant genes across metagenomic samples ##
 		# run MSPminer
 		raw_conf = abundance_conf["mspminer"]
@@ -1132,6 +1132,18 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog_seq, gene_catal
 		myprotein_family_ann[mymsp_detail_family] = ""
 		myprotein_ann[mymsp_detail] = ""
 	# if MSP
+	else:
+		workflow.add_task("cp -f [depends[0]] [targets[0]]",
+		    depends=[uniref_taxonomy_family],
+		    targets=[taxonomy_annotation_family],
+		    cores = 1,
+		    name="store__uniref_taxa_family")
+		workflow.add_task("cp -f [depends[0]] [targets[0]]",
+		    depends=[uniref_taxonomy],
+		    targets=[taxonomy_annotation],
+		    cores = 1,
+		    name="store__uniref_taxa")
+
 
 	## DNA abundance ##
 	if abundance_conf["dna_abundance"] != "no" and abundance_conf["dna_abundance"] != "No":
