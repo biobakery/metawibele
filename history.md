@@ -1,6 +1,11 @@
 
 # MetaWIBELE History #
 
+## v0.4.4 2021-11-24 ##
+* Release v0.4.4
+* Updated URLs of dependencies
+* Added case bypassing mspminer-based taxonomic assignment
+
 ## v0.4.3 2021-11-22 ##
 * Release v0.4.3
 * Fixed maaslin2 incompatibility
