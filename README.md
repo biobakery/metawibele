@@ -92,6 +92,8 @@ Bypass options:
 	* do not annotate protein families based on abundance information
 * --bypass-mspminer
 	* do not annotate protein families based on MSPminer information
+* --bypass-maaslin
+	* do not annotate protein families based on MaAsLin2 information
 * --bypass-integration
 	* do not integrate annotations for protein families
 * --bypass-mandatory
@@ -522,7 +524,8 @@ By default, MetaWIBELE will perform by using the local configuration files insta
                        [--bypass-domain-motif] [--bypass-interproscan]
                        [--bypass-pfamtogo] [--bypass-domine] [--bypass-sifts]
                        [--bypass-expatlas] [--bypass-psortb]
-                       [--bypass-abundance] [--bypass-mspminer] [--split-number SPLIT_NUMBER]
+                       [--bypass-abundance] [--bypass-mspminer] [--bypass-maaslin]
+                       [--split-number SPLIT_NUMBER]
                        [--bypass-integration] [--study STUDY]
                        [--basename BASENAME] --input-sequence INPUT_SEQUENCE
                        --input-count INPUT_COUNT --input-metadata

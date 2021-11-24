@@ -108,6 +108,9 @@ def parse_cli_arguments ():
 	workflow.add_argument("bypass-mspminer",
 	                      desc = "do not annotate protein families based on MSPminer",
 	                      action = "store_true")
+	workflow.add_argument("bypass-maaslin",
+	                      desc = "do not annotate protein families based on MaAsLin2",
+	                      action = "store_true")
 	workflow.add_argument("split-number",
 	                      desc="indicates number of spliting files for annotation based on sequence information",
 	                      default = None)
@@ -250,6 +253,8 @@ def main(workflow):
 		domain_motif_conf["psortb"] = "no"
 	if "".join(config.phenotype) == "none":
 		abundance_conf["dna_da"] = "no"
+	if args.bypass_maaslin:
+		abundance_conf["dna_da"] = "no"
 
 	# get all input files
 	gene_catalog_seq = config.gene_catalog_prot
@@ -348,6 +353,8 @@ def main(workflow):
 		config.logger.info ("Start to run abundance annotation module......")
 		if abundance_conf["mspminer"] == "no":
 			config.logger.info ("WARNING! Bypass module: the MSPminer annotation module is skipped......")
+		if abundance_conf["dna_da"] == "no":
+			config.logger.info ("WARNING! Bypass module: the MaAsLin2 annotation module is skipped......")
 		myprotein_family_ann, myprotein_ann, abundance_output_folder = characterization.abundance_annotation (workflow, abundance_conf,
 		                                                                                                             gene_catalog_seq, gene_catalog_count,
 		                                                                                                            uniref_taxonomy_family, uniref_taxonomy,
