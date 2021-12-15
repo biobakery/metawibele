@@ -7,7 +7,7 @@
 
 **If you use the MetaWIBELE software, please cite our manuscript:**
 
-Yancong Zhang, Amrisha Bhosle, Sena Bae, Lauren McIver, Emma Accorsi, Kelsey N. Thompson, Cesar Arze, Ya Wang, Ayshwarya Subramanian, Damian R. Plichita, Gholamali Rahnavard, Afrah Shafquat, Ramnik J. Xavier, Hera Vlamakis, Wendy S. Garrett, Andy Krueger, Curtis Huttenhower\*, Eric A. Franzosa\*. "Identifying Novel Bioactive Microbial Gene Products in Inflammatory Bowel Disease." *[in submission]*
+Yancong Zhang, Amrisha Bhosle, Sena Bae, Lauren J. McIver, Gleb Pishchany, Emma K. Accorsi, Kelsey N. Thompson, Cesar Arze, Ya Wang, Ayshwarya Subramanian, Sean M. Kearney, April Pawluk, Damian R. Plichita, Gholamali Rahnavard, Afrah Shafquat, Ramnik J. Xavier, Hera Vlamakis, Wendy S. Garrett, Andy Krueger, Curtis Huttenhower\*, Eric A. Franzosa\*. "Identifying Novel Bioactive Microbial Gene Products in Inflammatory Bowel Disease." *[in submission]*
 
 **And feel free to link to MetaWIBELE in your Methods:**
 
