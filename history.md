@@ -1,10 +1,14 @@
 
 # MetaWIBELE History #
 
+## v0.4.5 2022-03-23 ##
+* Tweaked task names for the preprocessing workflow
+* Fixed issue when running gridable jobs with one local job
+
 ## v0.4.4 2021-11-24 ##
 * Release v0.4.4
 * Updated URLs of dependencies
-* Added case bypassing mspminer-based taxonomic assignment
+* Added case when skipping mspminer-based taxonomic assignment
 
 ## v0.4.3 2021-11-22 ##
 * Release v0.4.3
@@ -13,14 +17,14 @@
 ## v0.4.2 2021-10-29 ##
 * Release new version
 * Fixed small issue on psortb annotator
-* Cut down some space on demo data
+* Cut down some space of demo data
 
 ## v0.4.1 2021-05-16 ##
 * Fixed issues when running interproscan with all analyses
 * Updated requirements for install
 * Added a new module to check install
-* Fixed issues when running utilities to prepare databases
-* Fixed issue in config annotation types from interproscan
+* Fixed issue when running utilities to prepare databases
+* Fixed issue in config annotation types from interproscan  
 * Keep temp directory
 * Updated description texts about configs
 * Added final taxonomy file with stratified taxon info
