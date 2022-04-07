@@ -507,7 +507,7 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 			myout10.append(myfile1)
 		workflow.add_task(
 				"metawibele_interproscan_protein -e [args[0]] -p [args[1]] >[args[2]] 2>&1",
-				depends = utilities.add_to_list(interpro_list, TrackedExecutable("metawibele_interproscan_protein")),
+				depends = utilities.add_to_list(interpro_list, TrackedExecutable("metawibele_interproscan_protein")) + interpro_list1,
 				targets = myout10,
 				args = ["interproscan.txt", interpro, mylog],
 				cores = 1,
@@ -640,7 +640,7 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 		
 		workflow.add_task(
 				"metawibele_ddi_DOMINE_protein -e [args[0]] -p [args[2]] -f [args[3]] -s [args[1]] >>[args[4]] 2>&1 ",
-				depends = utilities.add_to_list(pfam_list, TrackedExecutable("metawibele_ddi_DOMINE_protein")),
+				depends = utilities.add_to_list(pfam_list, TrackedExecutable("metawibele_ddi_DOMINE_protein")) + interpro_list1,
 				targets = myout_ddi,
 				args = ["interpro.PfamDomain.tsv", "interpro.DDI.tsv", interpro, "no", mylog],
 				cores = 1,
@@ -648,7 +648,7 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 		
 		workflow.add_task(
 				"metawibele_ddi_DOMINE_protein -e [args[0]] -p [args[2]] -f [args[3]] -s [args[1]] >> [args[4]] 2>&1 ",
-				depends = utilities.add_to_list(pfam_list, TrackedExecutable("metawibele_ddi_DOMINE_protein")),
+				depends = utilities.add_to_list(pfam_list, TrackedExecutable("metawibele_ddi_DOMINE_protein")) + interpro_list1,
 				targets = myout_sub,
 				args = ["interpro.PfamDomain.tsv", "interpro.sub.DDI.tsv", interpro, "yes", mylog],
 				cores = 1,
@@ -837,7 +837,7 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 		mylog = os.path.join(psortb, "psortb.extract.log")
 		workflow.add_task(
 				"metawibele_psortb_protein -e [args[0]] -p [args[1]] >[args[2]] 2>&1",
-				depends = utilities.add_to_list(psortb_list, TrackedExecutable("metawibele_psortb_protein")),	
+				depends = utilities.add_to_list(psortb_list, TrackedExecutable("metawibele_psortb_protein")) + psortb_list1,	
 				targets = myout5,
 				args = ["psortb.gram_positive.out.txt", psortb, mylog],
 				cores = 1,
