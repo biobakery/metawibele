@@ -348,13 +348,15 @@ def gene_calling (workflow, assembly_dir, assembly_extentsion, input_dir, extens
 			myfna_new = re.sub(".faa", ".fna", myfile_new)
 			if gene_call_type == "prodigal":
 				fna_file.append(myfna_new)
+				mygff_new = re.sub(".faa", ".gff", myfile_new)
+				gff_files.append(mygff_new)
 				prokka_dir = prodigal_dir
 			workflow.add_task(
 				"ln -fs [depends[0]] [targets[0]]",
 				depends = [myfna],
 				targets = [myfna_new],
 				cores = 1,
-				name = "ln__" + myname)
+				name = "ln__" + os.path.basename(myfna))
 			mygff = re.sub(".faa", ".gff", myfile)
 			mygff_new = re.sub(".faa", ".gff", myfile_new)
 			workflow.add_task(
@@ -362,7 +364,7 @@ def gene_calling (workflow, assembly_dir, assembly_extentsion, input_dir, extens
 				depends = [mygff],
 				targets = [mygff_new],
 				cores = 1,
-				name = "ln__" + myname)
+				name = "ln__" + os.path.basename(mygff))
 
 	
 	if gene_call_type == "prokka" or gene_call_type == "both":
@@ -417,7 +419,7 @@ def gene_calling (workflow, assembly_dir, assembly_extentsion, input_dir, extens
 				depends = [myfaa],
 				targets = [myfaa_new],
 				cores = 1,
-				name = "ln__" + myname)
+				name = "ln__" + os.path.basename(myfaa))
 			mygff = re.sub(".ffn", ".gff", myfile)
 			mygff_new = re.sub(".ffn", ".gff", myfile_new)
 			workflow.add_task(
@@ -425,7 +427,7 @@ def gene_calling (workflow, assembly_dir, assembly_extentsion, input_dir, extens
 				depends = [mygff],
 				targets = [mygff_new],
 				cores = 1,
-				name = "ln__" + myname)
+				name = "ln__" + os.path.basename(mygff))
 	
 	
 	# ================================================
@@ -438,7 +440,7 @@ def gene_calling (workflow, assembly_dir, assembly_extentsion, input_dir, extens
 		nuc_type = "fna"
 	mylog = re.sub(".fna", ".log", gene_file)
 	workflow.add_task('metawibele_combine_gene_sequences -p [args[0]] -e [args[1]] -o [targets[0]] > [args[2]] 2>&1 ',
-					depends = utilities.add_to_list(fna_file,TrackedExecutable("metawibele_combine_gene_sequences")),
+					depends = utilities.add_to_list(fna_file, TrackedExecutable("metawibele_combine_gene_sequences")) + fna_file_tmp + gff_files + gff_files_tmp,
 	                targets = [gene_file],
 	                args = [prokka_dir, nuc_type, mylog],
 	                cores = 1,
@@ -449,7 +451,7 @@ def gene_calling (workflow, assembly_dir, assembly_extentsion, input_dir, extens
 	mylog = re.sub(".faa", ".log", protein_file)
 	workflow.add_task('metawibele_format_protein_sequences -p [args[0]] -q [args[1]] -e faa -o [targets[0]] '
 					'-m [targets[1]] >[args[2]] 2>&1 ',
-					depends = utilities.add_to_list(faa_file, TrackedExecutable("metawibele_format_protein_sequences")) + gff_files,
+					depends = utilities.add_to_list(faa_file, TrackedExecutable("metawibele_format_protein_sequences")) + faa_file_tmp + gff_files + gff_files_tmp,
 	                targets = [protein_file, gene_info],
 	                args = [prokka_dir, prodigal_dir, mylog],
 	                cores = 1,
