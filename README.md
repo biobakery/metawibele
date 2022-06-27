@@ -110,11 +110,11 @@ Bypass options:
 4. [Diamond](http://www.diamondsearch.org/index.php) (version >= 0.9.24; *tested 0.9.24*)
 5. [MSPminer](https://academic.oup.com/bioinformatics/article/35/9/1544/5106712?login=true) (version >= 2; licensed software; *tested version 2*)
 6. [MaAsLin2](https://huttenhower.sph.harvard.edu/maaslin2) (version >= 1.5.1; *tested 1.5.1*)
-7. [Interproscan](https://interproscan-docs.readthedocs.io/en/latest/) (version >= 5.31-70) (installing with activating Phobius/SignalP/TMHMM analyses; InterProScan 5.51-85.0 or later are recommended for potential simpler installation; used for domain/motif annotation; *tested 5.31-70, 5.51-85.0*)
+7. [Interproscan](https://interproscan-docs.readthedocs.io/en/latest/) (version >= 5.31-70) (installing with activating Phobius/SignalP/TMHMM analyses; InterProScan 5.51-85.0 or later are recommended for potential simpler installation; *tested 5.31-70, 5.51-85.0*; you can skip to install Interproscan if you’d like to ignore domain/motif annotation by running MetaWIBELE with “--bypass-interproscan”)
 8. [Signalp](http://www.cbs.dtu.dk/services/SignalP-4.1/) (version >= 4.1; licensed software; installing with integrating in interproscan; used for domain/motif annotation; *tested 4.1*)
 9. [TMHMM](http://www.cbs.dtu.dk/services/TMHMM/) (version >= 2.0; licensed software; installing with integrating in interproscan; used for domain/motif annotation; *tested 2.0*)
 10. [Phobius](http://phobius.sbc.su.se/) (version >= 1.01; licensed software; installing with integrating in interproscan; used for domain/motif annotation; *tested 1.01*)
-11. [PSORTb](https://psort.org/documentation/index.html) (version >= 3.0) (licensed software; used for domain/motif annotation; *tested 3.0*)
+11. [PSORTb](https://psort.org/documentation/index.html) (version >= 3.0) (licensed software; used for domain/motif annotation; *tested 3.0*; you can skip to install psortb if you’d like to ignore protein subcellular localization annotations by running MetaWIBELE with “--bypass-psortb”)
 12. **Optional**: only required if using MetaWIBELE utilities to prepare inputs for MetaWIBELE using metagenomic sequencing reads
 	* [MEGAHIT](https://github.com/voutcn/megahit) (version >= 1.1.3; tested *1.1.3*) 
 	* [Prokka](https://github.com/tseemann/prokka) (version >= 1.14-dev; recommend to not set '-c' parameter when running prodigal with metagenome mode; *tested 1.14-dev*)

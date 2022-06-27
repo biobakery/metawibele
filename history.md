@@ -1,9 +1,11 @@
 
 # MetaWIBELE History #
 
-## v0.4.5 2022-03-23 ##
+## v0.4.5 2022-06-27 ##
 * Tweaked task names for the preprocessing workflow
 * Fixed issue when running gridable jobs with one local job
+* Updated publication information
+* The fixed version has been tagged v0.4.5
 
 ## v0.4.4 2021-11-24 ##
 * Release v0.4.4
