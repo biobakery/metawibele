@@ -93,24 +93,58 @@ def collect_uniref_info (uniref_file):
 def collect_msp_info (msp_dir, uniref, outfile):
 	msp = {}
 	msp_stat = {}
-	for mymsp in os.listdir(msp_dir):
-		mymsp_dir = os.path.join(msp_dir, mymsp)
-		if not os.path.isdir(mymsp_dir):
-			continue
-		myfile = mymsp_dir + "/modules.tsv"
+	hit = 0
+	if len(os.listdir(msp_dir)) > 0: # MSPMiner version 1.0.0
+		for mymsp in os.listdir(msp_dir):
+			mymsp_dir = os.path.join(msp_dir, mymsp)
+			if not os.path.isdir(mymsp_dir):
+				continue
+			hit = 1
+			myfile = mymsp_dir + "/modules.tsv"
+			open_file = open(myfile, "r")
+			for line in open_file:
+				line = line.strip()
+				if not len(line):
+					continue
+				if re.search("^module_name", line):
+					continue
+				info = line.split("\t")
+				module_name = info[0]
+				gene_id = info[1]
+				gene_name = info[2]
+				mytype = module_name
+				mytype = re.sub("_module[\S]+", "", mytype)
+				if not mymsp in msp:
+					msp[mymsp] = {}
+				if not module_name in msp[mymsp]:
+					msp[mymsp][module_name] = {}
+				msp[mymsp][module_name][gene_name] = mytype + "\t" + module_name + "\t" + gene_id + "\t" + gene_name
+				if not mymsp in msp_stat:
+					msp_stat[mymsp] = {}
+				if not mytype in msp_stat[mymsp]:
+					msp_stat[mymsp][mytype] = {}
+				msp_stat[mymsp][mytype][gene_name] = ""
+			# foreach line
+			open_file.close()
+		# foreach MSP
+	if hit == 0: # MSPMiner version 1.1.1
+		myfile = os.path.join(msp_dir, "all_msps.tsv")
+		if not os.path.isfile(myfile):
+			config.logger.info("Error! MSPminer failed...")
+			return
 		open_file = open(myfile, "r")
 		for line in open_file:
 			line = line.strip()
 			if not len(line):
 				continue
-			if re.search("^module_name", line):
+			if re.search("^msp_name\t", line):
 				continue
 			info = line.split("\t")
-			module_name = info[0]
-			gene_id = info[1]
-			gene_name = info[2]
+			mymsp = info[0]
+			module_name = info[1]
+			gene_id = info[2]
+			gene_name = info[3]
 			mytype = module_name
-			mytype = re.sub("_module[\S]+", "", mytype)
 			if not mymsp in msp:
 				msp[mymsp] = {}
 			if not module_name in msp[mymsp]:
@@ -123,7 +157,6 @@ def collect_msp_info (msp_dir, uniref, outfile):
 			msp_stat[mymsp][mytype][gene_name] = ""
 		# foreach line
 		open_file.close()
-	# foreach MSP
 
 	# output info
 	open_out = open(outfile, "w")

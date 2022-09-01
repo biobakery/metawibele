@@ -3,9 +3,10 @@
 
 ## v0.4.5 2022-06-27 ##
 * Tweaked task names for the preprocessing workflow
-* Fixed issue when running gridable jobs with one local job
+* Fixed issue when running gridable jobs with one local job 
 * Updated publication information
 * The fixed version has been tagged v0.4.5
+* Added function to handle outputs of MSPminer >v1.0.0
 
 ## v0.4.4 2021-11-24 ##
 * Release v0.4.4
