@@ -234,7 +234,7 @@ def get_item(config_items, section, name, type=None):
 
 
 ## default option for MetaWIBELE ##
-version = '0.4.5'
+version = '0.4.6'
 log_level_choices = ["DEBUG","INFO","WARNING","ERROR","CRITICAL"]
 log_level = log_level_choices[1]
 verbose = 'DEBUG'
