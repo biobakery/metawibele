@@ -32,7 +32,7 @@ import time
 import re
 import subprocess
 import argparse
-
+from pathlib import Path
 
 def check_metawibele ():
 	"""
@@ -53,12 +53,13 @@ def check_metawibele ():
 		print("Checking metawibele install...........OK")
 		from metawibele import config
 		if config.uniref_database_dir.lower() == "none" or config.uniref_database_dir == "":
-			print("\n  WARNING!! MetaWIBELE does't find valid uniref databse and will use the demo databse by default.\n" +
-				"\tPlease provide the correct location of the required uniref database by any one of the following options:\n" +
-				"\t1) set the location with the environment variable $UNIREF_LOCATION\n" +
-				"\t2) include the database (named as \"uniref_database\") in the current working directory\n" +
-				"\t3) set the location in the global config file (metawibele.cfg) which is in the current working directory"
-			      )
+			pass
+			#print("\n  WARNING!! MetaWIBELE does't find valid uniref databse and will use the demo databse by default.\n" +
+			#	"\tPlease provide the correct location of the required uniref database by any one of the following options:\n" +
+			#	"\t1) set the location with the environment variable $UNIREF_LOCATION\n" +
+			#	"\t2) include the database (named as \"uniref_database\") in the current working directory\n" +
+			#	"\t3) set the location in the global config file (metawibele.cfg) which is in the current working directory"
+			#      )
 
 	except ImportError:
 		print("CRITICAL ERROR: Unable to find the MetaWIBELE python package. " +
@@ -72,6 +73,7 @@ def run_cmd (cmd):
 		mystdout = mystdout.decode()
 	if mystderr:
 		mystderr = mystderr.decode()
+	mystderr = None
 	return mystdout, mystderr
 
 
@@ -83,159 +85,184 @@ def check_required_tools ():
 	print("\n###### Checking CD-hit install ######")
 	try:
 		mystout, mysterr = run_cmd (['cd-hit', '-h'])
-		if mystout:
-			print(mystout)
 		if mysterr:
 			print("Checking CD-hit install...........Error!")
+			print(mysterr)
 		else:
 			print("Checking CD-hit install...........OK")
+			if mystout:
+				print(mystout)
 	except:
 		print("Checking CD-hit install...........Error!")
+		os.system("cd-hit -h")
 
 	print("\n###### Checking Diamond install ######")
 	try:
 		mystout, mysterr = run_cmd (['diamond', '--version'])
-		if mystout:
-			print(mystout)
 		if mysterr:
 			print("Checking Diamond install...........Error!")
+			print(mysterr)
 		else:
 			print("Checking Diamond install...........OK")
+			if mystout:
+				print(mystout)
 	except:
 		print("Checking Diamond install...........Error!")
+		os.system("diamond --version")
 
 	print("\n###### Checking MSPminer install ######")
 	try:
 		mystout, mysterr = run_cmd (['mspminer'])
-		if mystout:
-			print(mystout)
 		if mysterr:
 			print("Checking MSPminer install...........Error!")
+			print(mysterr)
 		else:
 			print("Checking MSPminer install...........OK")
+			if mystout:
+				print(mystout)
 	except:
 		print("Checking MSPminer install...........Error!")
+		os.system("mspminer")
 
 	print("\n###### Checking Maaslin2 install ######")
 	try:
 		from metawibele import config
 		maaslin_cmd = config.maaslin2_cmmd
+		if re.search("^\~", maaslin_cmd):
+			home = str(Path.home())
+			maaslin_cmd = re.sub("^~", home, maaslin_cmd)
 	except ImportError:
 		maaslin_cmd = "Maaslin2.R"
 	try:
 		mystout, mysterr = run_cmd ([maaslin_cmd, '-h'])
-		if mystout:
-			print(mystout)
 		if mysterr:
 			print("Checking MaAsLin2 install...........Error! Please check the valid location for " + maaslin_cmd)
+			print(mysterr)
 		else:
 			print("Checking MaAsLin2 install...........OK")
+			if mystout:
+				print(mystout)
 	except:
 		print("Checking MaAsLin2 install...........Error! Please check the valid location for " + maaslin_cmd)
+		os.system(maaslin_cmd + " -h")
 
 	print("\n###### Checking Interproscan install ######")
 	try:
 		from metawibele import config
 		interproscan_cmd = config.interproscan_cmmd
+		if re.search("^\~", interproscan_cmd):
+			home = str(Path.home())
+			interproscan_cmd = re.sub("^~", home, interproscan_cmd)
 	except ImportError:
 		maaslin_cmd = "interproscan.sh"
 	try:
 		mystout, mysterr = run_cmd ([interproscan_cmd, '-version'])
-		if mystout:
-			print(mystout)
 		if mysterr:
 			print("Checking Interproscan install...........Error! Please check valid location for " + interproscan_cmd + "\n" +
 			      "\tPlease install Interproscan in a location in your $PATH or provide the location to MetaWIBELE global config file.\n" +
 			      "\tIf you'd like to skip annotate proteins based on domain/motif, use the option '--bypass-domain-motif' or '--bypass-interproscan' when running MetaWIBELE."
 			      )
+			print(mysterr)
 		else:
 			print("Checking Interproscan install...........OK")
+			if mystout:
+				print(mystout)
 	except:
 		print("Checking Interproscan install...........Error! Please check valid location for " + interproscan_cmd + "\n" +
 		      "\tPlease install Interproscan in a location in your $PATH or provide the location to MetaWIBELE global config file.\n" +
 		      "\tIf you'd like to skip annotate proteins based on domain/motif, use the option '--bypass-domain-motif' or '--bypass-interproscan' when running MetaWIBELE."
 		      )
+		os.system(interproscan_cmd + " -version")
 
 	print("\n###### Checking Signalp install ######")
 	try:
 		mystout, mysterr = run_cmd (['signalp', '-V'])
-		if mystout:
-			print(mystout)
 		if mysterr:
 			print("Checking Signalp install...........Warning!\n" +
 			      "\tSignalp is not installed in a location in your $PATH. Please install it and provide the install location to interproscan.properties to active signalp analysis when running interproscan.\n" +
 				  "\tSee more details from InterProScan document (https://interproscan-docs.readthedocs.io/en/latest/ActivatingLicensedAnalyses.html)."
 			      )
+			print(mysterr)
 		else:
 			print("Checking Signalp install...........Inconclusive\n" +
 			      "\tPlease make sure the install location of Signalp has been provided to interproscan.properties for activing signalp analysis when running interproscan.\n" +
 			      "\tSee more details from InterProScan document (https://interproscan-docs.readthedocs.io/en/latest/ActivatingLicensedAnalyses.html)."
 			      )
+			if mystout:
+				print(mystout)
 	except:
 		print("Checking Signalp install...........Warning!\n" +
 			"\tSignalp is not installed in a location in your $PATH. Please install it and provide the install location to interproscan.properties to active signalp analysis when running interproscan.\n" +
 			"\tSee more details from InterProScan document (https://interproscan-docs.readthedocs.io/en/latest/ActivatingLicensedAnalyses.html)."
 			)
+		os.system("signalp -V") 
 
 	print("\n###### Checking TMHMM install ######")
 	try:
 		mystout, mysterr = run_cmd (['which', 'tmhmm'])
-		if mystout:
-			print(mystout)
 		if mysterr:
 			print("Checking TMHMM install...........Warning!\n" +
 			      "\tTMHMM is not installed in a location in your $PATH. Please install it and provide the install location to interproscan.properties to active TMHMM analysis when running interproscan.\n" +
 				  "\tSee more details from InterProScan document (https://interproscan-docs.readthedocs.io/en/latest/ActivatingLicensedAnalyses.html)."
 			      )
+			print(mysterr)
 		else:
 			print("Checking TMHMM install...........Inconclusive\n" +
 			      "\tPlease make sure the install location of TMHMM has been provided to interproscan.properties for activing TMHMM analysis when running interproscan.\n" +
 			      "\tSee more details from InterProScan document (https://interproscan-docs.readthedocs.io/en/latest/ActivatingLicensedAnalyses.html)."
 			      )
+			if mystout:
+				print(mystout)
 	except:
 		print("Checking TMHMM install...........Warning!\n" +
 			"\tTMHMM is not installed in a location in your $PATH. Please install it and provide the install location to interproscan.properties to active TMHMM analysis when running interproscan.\n" +
 			"\tSee more details from InterProScan document (https://interproscan-docs.readthedocs.io/en/latest/ActivatingLicensedAnalyses.html)."
 			)
+		os.system("which tmhmm")
 
 	print("\n###### Checking Phobius install ######")
 	try:
 		mystout, mysterr = run_cmd (['phobius.pl', '-h'])
-		if mystout:
-			print(mystout)
 		if mysterr:
 			print("Checking Phobius install...........Warning!\n" +
 			      "\tPhobius is not installed in a location in your $PATH. Please install it and provide the install location to interproscan.properties to active Phobius analysis when running interproscan.\n" +
 				  "\tSee more details from InterProScan document (https://interproscan-docs.readthedocs.io/en/latest/ActivatingLicensedAnalyses.html)."
 			      )
+			print(mysterr)
 		else:
 			print("Checking Phobius install...........Inconclusive\n" +
 			      "\tPlease make sure the install location of Phobius has been provided to interproscan.properties for activing Phobius analysis when running interproscan.\n" +
 			      "\tSee more details from InterProScan document (https://interproscan-docs.readthedocs.io/en/latest/ActivatingLicensedAnalyses.html)."
 				)
+			if mystout:
+				print(mystout)
 	except:
 		print("Checking Phobius install...........Warning!\n" +
 			"\tPhobius is not installed in a location in your $PATH. Please install it and provide the install location to interproscan.properties to active Phobius analysis when running interproscan.\n" +
 			"\tSee more details from InterProScan document (https://interproscan-docs.readthedocs.io/en/latest/ActivatingLicensedAnalyses.html)."
 			)
+		os.system("phobius.pl -h")
 
 	print("\n###### Checking PSORTb install ######")
 	try:
 		mystout, mysterr = run_cmd (['psort', '--version'])
-		if mystout:
-			print(mystout)
 		if mysterr:
 			print("Checking PSORTb install...........Error!\n" +
 			      "\tPlease install PSORTb in a location in your $PATH.\n" +
 			      "\tIf you'd like to skip annotate proteins based on domain/motif by PSORTb, use the option '--bypass-psortb' when running MetaWIBELE."
 			      )
+			print(mysterr)
 		else:
 			print("Checking PSORTb install...........OK")
+			if mystout:
+				print(mystout)
 	except:
 		print("Checking PSORTb install...........Error!\n" +
 		      "\tPlease install PSORTb in a location in your $PATH.\n" +
 		      "\tIf you'd like to skip annotate proteins based on domain/motif by PSORTb, use the option '--bypass-psortb' when running MetaWIBELE."
 		      )
+		os.system("psort --version")
+
 
 def check_optional_tools ():
 	"""
@@ -244,114 +271,129 @@ def check_optional_tools ():
 	print("\n###### Checking MEGAHIT install ######")
 	try:
 		mystout, mysterr = run_cmd (['megahit', '-v'])
-		if mystout:
-			print(mystout)
 		if mysterr:
 			print("Checking MEGAHIT install...........Error!\n" +
 			      "\tPlease install MEGAHIT in in a location in your $PATH if you will use MetaWIBELE utilities to prepare MetaWIBELE inputs."
 			      )
+			print(mysterr)
 		else:
 			print("Checking MEGAHIT install...........OK")
+			if mystout:
+				print(mystout)
 	except:
 		print("Checking MEGAHIT install...........Error!\n" +
 		      "\tPlease install MEGAHIT in in a location in your $PATH if you will use MetaWIBELE utilities to prepare MetaWIBELE inputs."
 			)
+		os.system("megahit -v")
 
 	print("\n###### Checking Prokka install ######")
 	try:
 		mystout, mysterr = run_cmd (['prokka', '-v'])
-		if mystout:
-			print(mystout)
 		if mysterr:
 			print("Checking Prokka install...........Error!\n" +
 			      "\tPlease install Prokka in in a location in your $PATH if you will use MetaWIBELE utilities to prepare MetaWIBELE inputs."
 			      )
+			print(mysterr)
 		else:
 			print("Checking Prokka install...........OK")
+			if mystout:
+				print(mystout)
 	except:
 		print("Checking Prokka install...........Error!\n" +
 		      "\tPlease install Prokka in in a location in your $PATH if you will use MetaWIBELE utilities to prepare MetaWIBELE inputs."
 			)
+		os.system("prokka -v")
 
 	print("\n###### Checking Prodigal install ######")
 	try:
 		mystout, mysterr = run_cmd (['prodigal', '-v'])
-		if mystout:
-			print(mystout)
 		if mysterr:
 			print("Checking Prodigal install...........Error!\n" +
 			      "\tPlease install Prodigal in in a location in your $PATH if you will use MetaWIBELE utilities to prepare MetaWIBELE inputs."
 			      )
+			print(mysterr)
 		else:
 			print("Checking Prodigal install...........OK")
+			if mystout:
+				print(mystout)
 	except:
 		print("Checking Prodigal install...........Error!\n" +
 		      "\tPlease install Prodigal in in a location in your $PATH if you will use MetaWIBELE utilities to prepare MetaWIBELE inputs."
 			)
+		os.system("prodigal -v")
 
 	print("\n###### Checking USEARCH install ######")
 	try:
 		mystout, mysterr = run_cmd (['usearch', '--help'])
-		if mystout:
-			print(mystout)
 		if mysterr:
 			print("Checking USEARCH install...........Error!\n" +
 			      "\tPlease install USEARCH in in a location in your $PATH if you will use MetaWIBELE utilities to prepare MetaWIBELE inputs."
 			      )
+			print(mysterr)
 		else:
 			print("Checking USEARCH install...........OK")
+			if mystout:
+				print(mystout)
 	except:
 		print("Checking USEARCH install...........Error!\n" +
 		      "\tPlease install USEARCH in in a location in your $PATH if you will use MetaWIBELE utilities to prepare MetaWIBELE inputs."
 			)
+		os.system("usearch --help")
 
 	print("\n###### Checking Bowtie2 install ######")
 	try:
 		mystout, mysterr = run_cmd (['bowtie2', '--version'])
-		if mystout:
-			print(mystout)
 		if mysterr:
 			print("Checking Bowtie2 install...........Error!\n" +
 			      "\tPlease install Bowtie2 in in a location in your $PATH if you will use MetaWIBELE utilities to prepare MetaWIBELE inputs."
 			      )
+			print(mysterr)
 		else:
 			print("Checking Bowtie2 install...........OK")
+			if mystout:
+				print(mystout)
 	except:
 		print("Checking Bowtie2 install...........Error!\n" +
 		      "\tPlease install Bowtie2 in in a location in your $PATH if you will use MetaWIBELE utilities to prepare MetaWIBELE inputs."
 			)
+		os.system("bowtie2 --version")
 
 	print("\n###### Checking SAMtools install ######")
 	try:
 		mystout, mysterr = run_cmd (['samtools', '--version'])
-		if mystout:
-			print(mystout)
 		if mysterr:
 			print("Checking SAMtools install...........Error!\n" +
 			      "\tPlease install SAMtools in in a location in your $PATH if you will use MetaWIBELE utilities to prepare MetaWIBELE inputs."
 			      )
+			print(mysterr)
 		else:
 			print("Checking SAMtools install...........OK")
+			if mystout:
+				print(mystout)
 	except:
 		print("Checking SAMtools install...........Error!\n" +
 		      "\tPlease install SAMtools in in a location in your $PATH if you will use MetaWIBELE utilities to prepare MetaWIBELE inputs."
 			)
+		os.system("samtools --version")
 
 	print("\n###### Checking featureCounts install ######")
 	try:
 		mystout, mysterr = run_cmd (['featureCounts', '-v'])
-		if mystout:
-			print(mystout)
 		if mysterr:
 			print("Checking featureCounts install...........Error!\n" +
 			      "\tPlease install featureCounts in in a location in your $PATH if you will use MetaWIBELE utilities to prepare MetaWIBELE inputs."
 			      )
+			print(mysterr)
 		else:
 			print("Checking featureCounts install...........OK")
+			if mystout:
+				print(mystout)
 	except:
 		print("Checking featureCounts install...........Error!\n" +
 		      "\tPlease install featureCounts in in a location in your $PATH if you will use MetaWIBELE utilities to prepare MetaWIBELE inputs."
 			)
+		os.system("featureCounts -v")
+
 
 def parse_arguments(args):
 	"""

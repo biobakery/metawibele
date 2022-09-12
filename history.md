@@ -1,9 +1,9 @@
 
 # MetaWIBELE History #
 
-
 ## v0.4.6 2022-08-31 ##
 * Added function to handle outputs of MSPminer >v1.0.0
+* Printed the contents of the variable mysterr for debugging the dependency installs 
 * The fixed version has been tagged v0.4.6
 
 ## v0.4.5 2022-06-27 ##
