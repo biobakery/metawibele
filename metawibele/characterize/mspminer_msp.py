@@ -99,8 +99,11 @@ def collect_msp_info (msp_dir, uniref, outfile):
 			mymsp_dir = os.path.join(msp_dir, mymsp)
 			if not os.path.isdir(mymsp_dir):
 				continue
-			hit = 1
 			myfile = mymsp_dir + "/modules.tsv"
+			if os.path.isfile(myfile):
+				hit = 1
+			else:
+				continue
 			open_file = open(myfile, "r")
 			for line in open_file:
 				line = line.strip()
@@ -127,11 +130,13 @@ def collect_msp_info (msp_dir, uniref, outfile):
 			# foreach line
 			open_file.close()
 		# foreach MSP
+
 	if hit == 0: # MSPMiner version 1.1.1
 		myfile = os.path.join(msp_dir, "all_msps.tsv")
 		if not os.path.isfile(myfile):
 			config.logger.info("Error! MSPminer failed...")
-			return
+			return None
+		hit = 1
 		open_file = open(myfile, "r")
 		for line in open_file:
 			line = line.strip()
@@ -158,6 +163,10 @@ def collect_msp_info (msp_dir, uniref, outfile):
 		# foreach line
 		open_file.close()
 
+	if hit == 0: # not msp
+		config.logger.info("Error! MSPminer failed to build MSPs...")
+		return None
+	
 	# output info
 	open_out = open(outfile, "w")
 	open_out.write("msp_name\tclass\tmodule_name\tgene_id\tgene_name\tcmp_type\n")
