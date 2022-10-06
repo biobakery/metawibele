@@ -288,7 +288,7 @@ To run MetaWIBELE, you are **required** to customize the global configuration fi
 	[interproscan]
 	# Interproscan executable file, e.g. /my/path/interproscan/interproscan.sh [ Default: interproscan.sh ]
 	interproscan_cmmd = interproscan.sh
-	# The appls used by interproscan: [appls] comma separated list of analyses, [ Choices: CDD,COILS,Gene3D,HAMAP,MobiDBLite,PANTHER,Pfam,PIRSF,PRINTS,ProDom,PROSITEPATTERNS,PROSITEPROFILES,SFLD,SMART,SUPERFAMILY,TIGRFAM,Phobius,SignalP,TMHMM ]; [all] use all all analyses for running. [ Default: all ]
+	# The appls used by interproscan: [appls] comma separated list of analyses, [ Choices: CDD,COILS,Gene3D,HAMAP,PANTHER,Pfam,PIRSF,PRINTS,SFLD,SMART,SUPERFAMILY,TIGRFAM,Phobius,SignalP,TMHMM ]; [all] use all all analyses for running. [ Default: all ]
 	interproscan_appl = all
 	# The number of splitting files which can be annotated in parallel 	[ Default: 1 ]
 	split_number = 1
