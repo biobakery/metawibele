@@ -94,15 +94,12 @@ def extract_count_info (work_dir, sam_file, ref_seq, thread):
 	bam_file = re.sub(".sam", ".bam", sam_file)
 	flt_bam = re.sub(".sam", ".flt.bam", sam_file)
 	sort_bam = re.sub(".sam", ".sort.bam", sam_file)
-	#print("\n>>Filtering low mappping quality...")
-	config.logger.info ("Run command:" + "samtools view -b " + sam_file + " > " + bam_file)
-	#print("samtools view -bq " + q_cutoff + " " + bam_file + " > " + flt_bam)
-	config.logger.info ("Run command:" + "samtools sort " + bam_file + " -o " + sort_bam)
-	config.logger.info ("Run command:" + "samtools index " + sort_bam)
-	os.system("samtools view -b " + sam_file + " > " + bam_file)
-	#os.system("samtools view -bq " + q_cutoff + " " + bam_file + " > " + flt_bam)
-	os.system("samtools sort " + bam_file + " -o  " + sort_bam)
-	os.system("samtools index " + sort_bam)
+	config.logger.info ("Run command:" + " samtools view -b " + sam_file + " --threads " + thread + " > " + bam_file)
+	config.logger.info ("Run command:" + " samtools sort " + bam_file + " --threads " + thread + " -o " + sort_bam)
+	config.logger.info ("Run command:" + " samtools index" + " -@ " + thread + " " + sort_bam)
+	os.system ("samtools view -b " + sam_file + " --threads " + thread + " > " + bam_file)
+	os.system ("samtools sort " + bam_file + " --threads " + thread + " -o " + sort_bam)
+	os.system ("samtools index" + " -@ " + thread + " " + sort_bam)
 	os.system("rm -f " + sam_file)
 	os.system("rm -f " + bam_file)
 
@@ -111,8 +108,6 @@ def extract_count_info (work_dir, sam_file, ref_seq, thread):
 	config.logger.info (">>Get abundance...")
 	config.logger.info ("Run command:" + "featureCounts -F SAF -T " + thread + " -a  " + ann_file +  " -o " +  bed + " " + sort_bam)
 	os.system("featureCounts -F SAF -T " + thread + " -a " + ann_file +  " -o " +  bed + " " + sort_bam)	
-	#print("bedtools multicov -bams " + sort_bam + " -bed " + bed_file)	
-	#os.system("bedtools multicov -bams " + sort_bam + " -bed " + bed_file)	
 # extract_count_info
 
 
@@ -127,12 +122,12 @@ def main():
 	
 	### Mapping ###
 	config.logger.info ("Bowtie2 mapping......starting")
-	sam_file = bowtie2_mapping (values.w, values.r, values.u, values.t, values.s)
+	sam_file = bowtie2_mapping (values.w, values.r, values.u, str(values.t), values.s)
 	config.logger.info ("Bowtie2 mapping......done")
 	
 	### Getting abundance ###
 	config.logger.info ("Extract gene abundance......starting")
-	extract_count_info (values.w, sam_file, values.r, values.t)
+	extract_count_info (values.w, sam_file, values.r, str(values.t))
 	config.logger.info ("Extract gene abundance......done")
 	
 	config.logger.info ("### Finish gene_abundance.py ####")

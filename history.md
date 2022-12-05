@@ -1,6 +1,9 @@
 
 # MetaWIBELE History #
 
+## v0.4.7 2022-12-05 ##
+* Added more parallel option for preprocessing workflow
+
 ## v0.4.6 2022-08-31 ##
 * Added function to handle outputs of MSPminer >v1.0.0
 * Printed the contents of the variable mysterr for debugging the dependency installs 
