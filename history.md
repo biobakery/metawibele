@@ -2,7 +2,7 @@
 # MetaWIBELE History #
 
 
-## v0.4.7 2023-06-08 ##
+## v0.4.7 2023-06-09 ##
 * Added more parallel option for preprocessing workflow
 * Tweaked uniref_protein function to save memory
 
