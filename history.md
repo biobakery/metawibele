@@ -1,8 +1,10 @@
 
 # MetaWIBELE History #
 
-## v0.4.7 2022-12-05 ##
+
+## v0.4.7 2023-06-08 ##
 * Added more parallel option for preprocessing workflow
+* Tweaked uniref_protein function to save memory
 
 ## v0.4.6 2022-08-31 ##
 * Added function to handle outputs of MSPminer >v1.0.0

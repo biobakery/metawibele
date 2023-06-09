@@ -102,11 +102,44 @@ def collect_pfam_info (pfamfile):	# Pfam_ann.tsv
 	return pfam
 # collect_pfam_info
 
+#==============================================================
+# collect UniRef mapping info
+#==============================================================
+def collect_uniref_mapping (mapfile, member):
+	titles = {}
+	mapping = {}
+	hits = {}
+	open_file = open(mapfile, "r")
+	for line in open_file:
+		line = line.strip()
+		if not len(line):
+			continue
+		info = line.split("\t")
+		if re.search("^" + utilities.PROTEIN_ID, line):
+			for item in info:
+				titles[item] = info.index(item)
+			continue
+		myid = info[titles[utilities.PROTEIN_ID]]
+		if not myid in member:
+			# debug
+			#print("Not members of specified clusters!\t" + myid)
+			continue
+		myuniref = info[titles["subject"]]
+		query_type = info[titles["query_type"]]
+		mutual_type = info[titles["mutual_type"]]
+		mapping[myid] = myuniref + "\t" + query_type + "\t" + mutual_type
+		hits[myuniref] = ""
+	# foreach line
+	open_file.close()
+
+	return mapping, hits
+# collect_uniref_mapping
+
 
 #==============================================================
 # collect UniRef info
 #==============================================================
-def collect_basic_info (uniref_list, hits):
+def collect_basic_info (uniref_list, hits, pfam):
 	uniref_info = {}
 	uniref_info_tmp = {}
 	flags = {}
@@ -163,25 +196,18 @@ def collect_basic_info (uniref_list, hits):
 					uniref_info_tmp[mykey][myname] = myvalue
 				else:
 					uniref_info_tmp[mykey][myname] = uniref_info_tmp[mykey][myname] + ";" + myvalue
-
-			#myindex = 1
-			#while myindex < len(info):
-			#	mykey = info[myindex]
-			#	if not mykey in hits:
-			#		myindex = myindex + 1
-			#		continue
-			#	if not mykey in uniref_info_tmp:
-			#		uniref_info_tmp[mykey] = {}
-			#	if not myname in uniref_info_tmp[mykey]:
-			#		uniref_info_tmp[mykey][myname] = myvalue
-			#	else:
-			#		uniref_info_tmp[mykey][myname] = uniref_info_tmp[mykey][myname] + ";" + myvalue
-			#	myindex = myindex + 1
-		
 		# foreach line
 	# foreach dataset
 
 	# collecting all info
+	titles = {}
+	uniref_title = "UniRefID\t" + "\t".join(names) + "\tPfam_desc"
+	titles["UniRefID"] = 0
+	myindex = 0
+	while myindex < len(names):
+		item = names[myindex]
+		titles[item] = myindex + 1
+		myindex = myindex + 1
 	for myid in uniref_info_tmp.keys():
 		mystr = myid
 		for myname in names:
@@ -189,11 +215,34 @@ def collect_basic_info (uniref_list, hits):
 				mystr = mystr + "\t" + uniref_info_tmp[myid][myname]
 			else:
 				mystr = mystr + "\tNA"
-		uniref_info[myid] = mystr
-	uniref_info_tmp = {}
+		#uniref_info[myid] = mystr
+		mystr = re.sub("root\tNA", "root\t1", mystr)
+		if "Pfam" in titles:
+			mypfam = info[titles["Pfam"]]
+		else:
+			mypfam = "NA"
+		if mypfam == "NA":
+			mystr = mystr + "\tNA"
+		else:
+			tmp = mypfam.split(";")
+			mypfam_info = ""
+			for item in tmp:
+				if item in pfam:
+					mypfam_info = mypfam_info + pfam[item] + ";"
+				else:
+					mypfam_info = mypfam_info + "NA;"
+			# foreach pfam
+			mypfam_info = re.sub(";$", "", mypfam_info)
+			mystr = mystr + "\t" + mypfam_info
+		if not myid in uniref_info:
+			uniref_info[myid] = []
+			# only use the annotation of representatives
+			uniref_info[myid].append(mystr)
+	# foreach line
+	del uniref_info_tmp
 
-	return uniref_info, names
-# function collect_expression_info
+	return uniref_info, uniref_title
+# function collect_basic_info
 
 
 def collect_uniref_info (uniref, names, pfam):
@@ -234,43 +283,10 @@ def collect_uniref_info (uniref, names, pfam):
 			# only use the annotation of representatives
 			uniref_info[myid].append(mystr)
 	# foreach line
-	
+	del uniref
+
 	return uniref_info, uniref_title
 # collect_uniref_info
-
-
-#==============================================================
-# collect UniRef mapping info
-#==============================================================
-def collect_uniref_mapping (mapfile, member):
-	titles = {}
-	mapping = {}
-	hits = {}
-	open_file = open(mapfile, "r")
-	for line in open_file:
-		line = line.strip()
-		if not len(line):
-			continue
-		info = line.split("\t")
-		if re.search("^" + utilities.PROTEIN_ID, line):
-			for item in info:
-				titles[item] = info.index(item)
-			continue
-		myid = info[titles[utilities.PROTEIN_ID]]
-		if not myid in member:
-			# debug
-			#print("Not members of specified clusters!\t" + myid)
-			continue
-		myuniref = info[titles["subject"]]
-		query_type = info[titles["query_type"]]
-		mutual_type = info[titles["mutual_type"]]
-		mapping[myid] = myuniref + "\t" + query_type + "\t" + mutual_type
-		hits[myuniref] = ""
-	# foreach line
-	open_file.close()
-
-	return mapping, hits
-# collect_uniref_mapping
 
 
 #==============================================================
@@ -321,8 +337,7 @@ def main():
 	member = collect_peptide_cluster_info (myfamily)
 	mapping, hits = collect_uniref_mapping (values.mapping, member)
 	pfam = collect_pfam_info (config.pfam_database)
-	uniref, names = collect_basic_info(config.uniref_database, hits)
-	uniref_info, uniref_title = collect_uniref_info (uniref, names, pfam)
+	uniref_info, uniref_title = collect_basic_info(config.uniref_database, hits, pfam)
 	extract_annotation_info (uniref_info, uniref_title, mapping, values.output)
 	config.logger.info ("Get UniRef DB and annotation info ......done")
 
