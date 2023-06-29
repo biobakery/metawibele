@@ -567,7 +567,7 @@ By default, MetaWIBELE will perform by using the local configuration files insta
 
 ### Standard Workflows
 #### MetaWIBELE-characterize
-* ##### Input files for for characterization
+* ##### Input files for characterization
 	* protein sequences for non-redundant gene families (Fasta format file), e.g. [demo_genecatalogs.centroid.faa](https://raw.githubusercontent.com/biobakery/metawibele/master/examples/input/demo_genecatalogs.centroid.faa)
 	* reads counts table for non-redundant gene families (TSV format file), e.g. [demo\_genecatalogs_counts.all.tsv](https://raw.githubusercontent.com/biobakery/metawibele/master/examples/input/demo_genecatalogs_counts.all.tsv)
 	* metadata file (TSV format file), e.g. [demo\_mgx_metadata.tsv](https://raw.githubusercontent.com/biobakery/metawibele/master/examples/input/demo_mgx_metadata.tsv)
