@@ -253,7 +253,7 @@ def gene_calling (workflow, assembly_dir, assembly_extentsion, input_dir, extens
 	Requires:
 		prokka 1.14-dev: rapid prokaryotic genome annotation (recommend to close '-c' parameter in prodigal)
 		prodigal v2.6: gene prediction
-		usearch (tested with usearch v9.0.2132_i86linux64)
+		seqkit (tested with seqkit v2.6.1) 
 		assembled contig files
 
 	Returns:
@@ -459,13 +459,13 @@ def gene_calling (workflow, assembly_dir, assembly_extentsion, input_dir, extens
 
 	## sort by length and filter out short-length sequence
 	mylog = re.sub(".faa", ".log", protein_sort)
-	workflow.add_task('usearch -sortbylength [depends[0]] '
-	                '-fastaout [targets[0]] -minseqlength 0 >[args[0]] 2>&1 ',
-	                depends = [protein_file, TrackedExecutable("usearch")],
+	workflow.add_task('seqkit sort -l [depends[0]] '
+	                '--quiet -o [targets[0]] >[args[0]] 2>&1 ',
+	                depends = [protein_file, TrackedExecutable("seqkit")],
 	                targets = [protein_sort],
 	                args = [mylog],
 	                cores = 1,
-					name = "usearch__sorting")
+					name = "seqkit__sorting")
 
 	## extract nucleotide sequence for protein coding genes
 	mylog = re.sub(".fna", ".log", gene_PC_file)
