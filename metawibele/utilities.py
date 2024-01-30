@@ -718,6 +718,7 @@ def remove_special_char (myt):
 	myt = re.sub(",", "_", myt)
 	myt = re.sub("'", "", myt)
 	myt = re.sub("\"", "", myt)
+	myt = re.sub("\+", "", myt)
 	myt = re.sub("+", "", myt)
 
 	return myt
