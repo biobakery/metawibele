@@ -517,8 +517,8 @@ phenotype = phenotype.split(";")
 if phenotype == "":
 	phenotype = "none"
 reference = get_item(config_items, "maaslin2", "reference", "string")
-reference = re.sub("\"", "", reference)
-tmp = reference.split(";")
+reference_n = re.sub("\"", "", reference)
+tmp = reference_n.split(";")
 contrast_status = {}
 ref_status_tmp = {}
 for item in tmp:

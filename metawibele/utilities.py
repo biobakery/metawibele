@@ -699,8 +699,28 @@ def remove_duplicate(duplicate):
 			final_list.append(num)
 	return final_list
 
-
 # remove_duplicate
+
+
+def remove_special_char (myt):
+	myt = re.sub("\.", "", myt)
+	myt = re.sub("\(", "", myt)
+	myt = re.sub("\)", "", myt)
+	myt = re.sub("\[", "", myt)
+	myt = re.sub("\]", "", myt)
+	myt = re.sub("=", "", myt)
+	myt = re.sub("\:", "_", myt)
+	myt = re.sub("\/", "_", myt)
+	myt = re.sub("\s+", "_", myt)
+	myt = re.sub("___", "_", myt)
+	myt = re.sub("__", "_", myt)
+	myt = re.sub("-", "_", myt)
+	myt = re.sub(",", "_", myt)
+	myt = re.sub("'", "", myt)
+	myt = re.sub("\"", "", myt)
+	myt = re.sub("+", "", myt)
+
+	return myt
 
 
 # ==============================================================

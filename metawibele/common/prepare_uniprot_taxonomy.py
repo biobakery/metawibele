@@ -32,7 +32,7 @@ import argparse
 
 try:
 	from metawibele.common import utils
-	from metawibele import config
+	from metawibele import config, utilities
 except ImportError:
 	sys.exit("CRITICAL ERROR: Unable to find the MetaWIBELE python package." +
             " Please check your install.")
@@ -106,34 +106,37 @@ def format_taxonomy_info (taxafile, output_path):	# uniprot_taxonomy.tsv
 				mynum_tmp = mynum_tmp + 1		
 		#print(str(len(info)) + "\t" + line)
 
-		mytaxa = info[titles["Taxon"]]
+		if "Taxon" in titles:
+			mytaxa = info[titles["Taxon"]]
+		if "Taxon Id" in titles:
+			mytaxa = info[titles["Taxon Id"]]
 		myname = info[titles["Scientific name"]]
 		if myname == "":
 			continue
-		myrank = info[titles["Rank"]]
+		myrank = info[titles["Rank"]].capitalize()
 		myline = info[titles["Lineage"]]
 		mypar = info[titles["Parent"]]
-		mylevel = re.sub("\s+", "_", myname)
+		mylevel = utilities.remove_special_char(myname)
 		if myrank in kingdom:
-			mylevel = "k__" + re.sub("\s+", "_", myname)
+			mylevel = "k__" + utilities.remove_special_char(myname)
 			kingdoms[myname] = mytaxa
 		if myrank in phylum:
-			mylevel = "p__" + re.sub("\s+", "_", myname)
+			mylevel = "p__" + utilities.remove_special_char(myname)
 			phylums[myname] = mytaxa
 		if myrank in clas:
-			mylevel = "c__" + re.sub("\s+", "_", myname)
+			mylevel = "c__" + utilities.remove_special_char(myname)
 			classes[myname] = mytaxa
 		if myrank in order:
-			mylevel = "o__" + re.sub("\s+", "_", myname)
+			mylevel = "o__" + utilities.remove_special_char(myname)
 			orders[myname] = mytaxa
 		if myrank in family:
-			mylevel = "f__" + re.sub("\s+", "_", myname)
+			mylevel = "f__" + utilities.remove_special_char(myname)
 			families[myname] = mytaxa
 		if myrank in genus:
-			mylevel = "g__" + re.sub("\s+", "_", myname)
+			mylevel = "g__" + utilities.remove_special_char(myname)
 			gena[myname] = mytaxa
 		if myrank in specie:
-			mylevel = "s__" + re.sub("\s+", "_", myname)
+			mylevel = "s__" + utilities.remove_special_char(myname)
 			species[myname] = mytaxa
 		taxa_info[mytaxa] = mytaxa + "\t" + myname + "\t" + myrank + "\t" + myline + "\t" + mylevel + "\t" + mypar	
 	# foreach line
@@ -150,13 +153,17 @@ def format_taxonomy_info (taxafile, output_path):	# uniprot_taxonomy.tsv
 		mytaxa, myname, myrank, myline, mylevel, mypar = taxa_info[mytaxa].split("\t")
 		if myrank == "":
 			mylevel = "t__" + mylevel
-		info = myline.split("; ")
+		if re.search("; ", myline):
+			info = myline.split("; ")
+		if re.search(", ", myline):
+			info = myline.split(", ")
 		mystr = ""
 		if len(info) < 1:
 			mystr = mylevel
 		else:
 			mystr = ""
 			for item in info:
+				item = utilities.remove_special_char(item)
 				if item in kingdoms:
 					item = "k__" + item
 				if item in phylums:
@@ -172,7 +179,6 @@ def format_taxonomy_info (taxafile, output_path):	# uniprot_taxonomy.tsv
 				if item in species:
 					item = "s__" + item
 				if item != "":
-					item = re.sub("\s+", "_", item)
 					mystr = mystr + item + "|"
 			# foreach item
 			# check parent
