@@ -468,8 +468,8 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 			os.system('mkdir -p ' + myout_dir)
 			myout = os.path.join(myout_dir, mysplit + ".interproscan.txt")
 			mylog = os.path.join(myout_dir, os.path.basename(myfile))
-			mylog = re.sub(".fasta$", ".log", mylog)
-			myerr = re.sub(".log$", ".err", mylog)
+			mylog = re.sub(".fasta", ".log", mylog)
+			myerr = re.sub(".log", ".err", mylog)
 
 			workflow.add_task_gridable(
 					"mkdir -p [args[2]] && metawibele_interproscan_annotator --split-file [args[0]] --threads [args[1]] -o [args[2]] -i [depends[0]] > [args[3]] 2> [args[4]] ",
