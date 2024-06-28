@@ -59,9 +59,7 @@ def download_dat (output_path):
 	os.system("lftp -f " + mydownload)
 
 	# combine Swiss-Prot and TrEMBLE data
-	combine_cmd = "less uniprot_sprot.dat.gz > uniprot.dat"
-	combine_cmd = combine_cmd + "; less uniprot_trembl.dat.gz >> uniprot.dat"
-	combine_cmd = combine_cmd + "; gzip uniprot.dat"
+	combine_cmd = "cat uniprot_sprot.dat.gz uniprot_trembl.dat.gz > uniprot.dat.gz"
 	os.system(combine_cmd)
 
 	return dat_file

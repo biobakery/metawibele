@@ -5,6 +5,7 @@
 * Replace urease with seqkit
 * Refine config of reference
 * Refine prepare_uniprot_taxonomy function
+* Updated prepare_uniprot_annotation
 
 ## v0.4.7 2022-12-05 ##
 * Added more parallel option for preprocessing workflow
