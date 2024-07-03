@@ -212,7 +212,7 @@ def collect_annotation (uniref):
 			else:
 				go_cc = "NA"
 			if "GO_MF" in titles:
-				go_MF = info[titles["GO_MF"]]
+				go_mf = info[titles["GO_MF"]]
 			else:
 				go_mf = "NA"
 			if "KO" in titles:
