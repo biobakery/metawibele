@@ -216,7 +216,7 @@ def collect_basic_info (uniref_list, hits, pfam):
 			else:
 				mystr = mystr + "\tNA"
 		#uniref_info[myid] = mystr
-		info = line.split("\t")
+		info = mystr.split("\t")
 		mystr = re.sub("root\tNA", "root\t1", mystr)
 		if "Pfam" in titles:
 			mypfam = info[titles["Pfam"]]
