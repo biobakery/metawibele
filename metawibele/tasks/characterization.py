@@ -468,8 +468,8 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 			os.system('mkdir -p ' + myout_dir)
 			myout = os.path.join(myout_dir, mysplit + ".interproscan.txt")
 			mylog = os.path.join(myout_dir, os.path.basename(myfile))
-			mylog = re.sub(".fasta", ".log", mylog)
-			myerr = re.sub(".log", ".err", mylog)
+			mylog = re.sub(".fasta$", ".log", mylog)
+			myerr = re.sub(".log$", ".err", mylog)
 
 			workflow.add_task_gridable(
 					"mkdir -p [args[2]] && metawibele_interproscan_annotator --split-file [args[0]] --threads [args[1]] -o [args[2]] -i [depends[0]] > [args[3]] 2> [args[4]] ",
@@ -483,7 +483,7 @@ def domain_motif_annotation (workflow, domain_motif_conf, gene_catalog_seq,
 		
 		for myfile in interpro_list1:
 			myname = os.path.basename(myfile)
-			myfile_new = os.path.join(interpro,  myname)
+			myfile_new = os.path.join(interpro, myname)
 			workflow.add_task(
 					"ln -fs [depends[0]] [targets[0]]",
 					depends = [myfile],
@@ -889,7 +889,7 @@ def abundance_annotation (workflow, abundance_conf, gene_catalog_seq, gene_catal
 		output_folder (string): The path of the output folder.
 
 	Requires:
-		MSPminer V2: a tool to create Metagenomic Species Pan-genomes from genes abundance profiles
+		MSPminer: a tool to create Metagenomic Species Pan-genomes from genes abundance profiles
 		MaAsLin2: a comprehensive R package for efficiently determining multivariable association between microbial meta'omic features and clinical metadata
 		the counts table for gene catalogs
 		the clustering information for protein families
