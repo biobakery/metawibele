@@ -196,9 +196,6 @@ def collect_annotation (uniref):
 		if not re.search("_unknown", info[1]):
 			mym = re.search("^([^_]+)", info[1])
 			unitype = mym.group(1)
-			#go_bp = info[titles["GO(BP)"]]
-			#go_mf = info[titles["GO(MF)"]]
-			#go_cc = info[titles["GO(CC)"]]
 			if "GO" in titles:
 				go = info[titles["GO"]]
 			else:
@@ -231,6 +228,10 @@ def collect_annotation (uniref):
 				level4ec = info[titles["Level4EC"]]
 			else:
 				level4ec = "NA"
+			if "metacyc" in titles:
+				metacyc = info[titles["metacyc"]]
+			else:
+				metacyc = "NA"
 			interest_flag = 0
 
 			# based on GO info to define uncharacterized protein
@@ -289,6 +290,12 @@ def collect_annotation (uniref):
 				if not myid in annotation:
 					annotation[myid] = []
 				annotation[myid].append(mytype + "\t" + level4ec + "\t" + ann + "\n" + myinfo)
+			if metacyc != "NA":
+				interest_flag = 1
+				mytype = unitype + "_MetaCyc"
+				if not myid in annotation:
+					annotation[myid] = []
+				annotation[myid].append(mytype + "\t" + metacyc + "\t" + ann + "\n" + myinfo)
 		# if not unknown
 		else:
 			if not myid in annotation:
