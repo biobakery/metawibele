@@ -1,13 +1,13 @@
 
 # MetaWIBELE History #
 
-## v0.4.8 2024-01-14 ##
+## v0.4.8 2024-07-08 ##
 * Replace urease with seqkit
 * Refine config of reference
 * Refine prepare_uniprot_taxonomy function
 * Updated prepare_uniprot_annotation
 
-## v0.4.7 2022-12-05 ##
+## v0.4.7 2023-12-05 ##
 * Added more parallel option for preprocessing workflow
 * Tweaked uniref_protein function to save memory
 
