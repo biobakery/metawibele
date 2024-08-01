@@ -90,7 +90,7 @@ def extract_count_info (work_dir, sam_file, ref_seq, thread):
 	
 	# filter out low quality mapping reads
 	ann_file = re.sub(".fasta", ".saf.gtf", ref_seq)
-	ann_file = re.sub(".fna$", ".saf.gtf", ref_seq)
+	ann_file = re.sub(".fna$", ".saf.gtf", ann_file)
 	bam_file = re.sub(".sam", ".bam", sam_file)
 	flt_bam = re.sub(".sam", ".flt.bam", sam_file)
 	sort_bam = re.sub(".sam", ".sort.bam", sam_file)
