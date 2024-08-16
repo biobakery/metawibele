@@ -40,10 +40,10 @@ except ImportError:
 #==============================================================
 # index with bowtie2
 #==============================================================
-def bowtie2_index (ref_seq, base_name):
+def bowtie2_index (ref_seq, base_name, threads):
 	config.logger.info (">>Running botwie2 to index reference...")
 	# Index reference sequences
-	config.logger.info ("Run command: " + "bowtie2-build " + ref_seq + " " + base_name + "\n")
+	config.logger.info ("Run command: " + "bowtie2-build --thread " + str(threads) + ref_seq + " " + base_name + "\n")
 	os.system("bowtie2-build " + ref_seq + " " + base_name)
 # function bowtie2_index
 
@@ -87,6 +87,7 @@ def main():
 	parser.add_argument('-r', help='the reference file', required=True)
 	parser.add_argument('-b', help='the reference index base name', required=True)
 	parser.add_argument('-t', help='the type of reference, e.g. gene | contig', required=True)
+	parser.add_argument('-n', help='the number of threads', default=1)
 	parser.add_argument('-o', help='the output file for simplified annotation file', required=True)
 	values=parser.parse_args()
 
@@ -94,7 +95,7 @@ def main():
 	
 	### Index ###
 	config.logger.info ("Bowtie2 index......starting")
-	bowtie2_index (values.r, values.b) 
+	bowtie2_index (values.r, values.b, values.n) 
 	config.logger.info ("Bowtie2 index......done")
 	
 	### Getting SAF ###

@@ -585,10 +585,10 @@ def gene_catalog (workflow, complete_gene, complete_protein,
 	# run gene-abundance workflow
 	mylog = gene_catalog_saf + ".log"
 	workflow.add_task(
-			'metawibele_gene_abundance_indexRef -r [depends[0]] -t gene -b [args[0]] -o [targets[0]] >[args[1]] 2>&1 ',
+			'metawibele_gene_abundance_indexRef -r [depends[0]] -t gene -b [args[0]] -n [args[1]] -o [targets[0]] >[args[2]] 2>&1 ',
 			depends = [gene_catalog_nuc, TrackedExecutable("metawibele_gene_abundance_indexRef")],
 			targets = [gene_catalog_saf],
-			args = [prefix_gene_catalog, mylog],
+			args = [prefix_gene_catalog, threads, mylog],
 			cores = 1,
 			name = "gene_abundance_indexRef")
 

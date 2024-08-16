@@ -7,6 +7,7 @@
 * Refine prepare_uniprot_taxonomy function
 * Updated prepare_uniprot_annotation
 * Tweake gene_abundance function
+* Add threads parameter for indexing database
 
 ## v0.4.7 2023-12-05 ##
 * Added more parallel option for preprocessing workflow
