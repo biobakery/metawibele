@@ -119,7 +119,7 @@ Bypass options:
 	* [MEGAHIT](https://github.com/voutcn/megahit) (version >= 1.1.3; tested *1.1.3*) 
 	* [Prokka](https://github.com/tseemann/prokka) (version >= 1.14-dev; recommend to not set '-c' parameter when running prodigal with metagenome mode; *tested 1.14-dev*)
 	* [Prodigal](https://github.com/hyattpd/Prodigal) (version >= 2.6; *tested 2.6*)
-	* [USEARCH](http://www.drive5.com/usearch/) (version >= 9.0.2132; licensed software; *tested 9.0.2132*)
+	* [SeqKit](https://bioinf.shenwei.me/seqkit/) (version >= 2.6.1; *tested 2.6.1*)
 	* [Bowtie2](http://bowtie-bio.sourceforge.net/bowtie2/index.shtml) (version >= 2.3.2; *tested 2.3.2*)
 	* [SAMtools](https://github.com/samtools/) (version >= 1.9; *tested 1.9*)
 	* [featureCounts](http://bioinf.wehi.edu.au/featureCounts/) (version >= 1.6.2; *tested 1.6.2*)

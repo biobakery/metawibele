@@ -616,7 +616,7 @@ def gene_catalog (workflow, complete_gene, complete_protein,
 			else:
 				seq_file = seq_file + "," + os.path.join(input_dir, sample + '%s' % item)
 		flt_seqs.append((sample, seq_file))
-	# foreah sample
+	# foreach sample
 
 	## Now run bowtie2 to map reads to gene categories
 	mappings = []
