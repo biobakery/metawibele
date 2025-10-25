@@ -7,7 +7,7 @@
 
 **If you use the MetaWIBELE software, please cite our manuscript:**
 
-Yancong Zhang, Amrisha Bhosle, Sena Bae, Lauren J. McIver, Gleb Pishchany, Emma K. Accorsi, Kelsey N. Thompson, Cesar Arze, Ya Wang, Ayshwarya Subramanian, Sean M. Kearney, April Pawluk, Damian R. Plichita, Gholamali Rahnavard, Afrah Shafquat, Ramnik J. Xavier, Hera Vlamakis, Wendy S. Garrett, Andy Krueger, Curtis Huttenhower\*, Eric A. Franzosa\*. "[Discovery of Bioactive Microbial Gene Products in Inflammatory Bowel Disease](https://www.nature.com/articles/s41586-022-04648-7)." *Nature*, 606: 754–760 (2022)
+Yancong Zhang, Amrisha Bhosle, Sena Bae, Lauren J. McIver, Gleb Pishchany, Emma K. Accorsi, Kelsey N. Thompson, Cesar Arze, Ya Wang, Ayshwarya Subramanian, Sean M. Kearney, April Pawluk, Damian R. Plichita, Gholamali Rahnavard, Afrah Shafquat, Ramnik J. Xavier, Hera Vlamakis, Wendy S. Garrett, Andy Krueger, Curtis Huttenhower\*, Eric A. Franzosa\*. [Discovery of Bioactive Microbial Gene Products in Inflammatory Bowel Disease](https://www.nature.com/articles/s41586-022-04648-7). *Nature*, 606: 754–760 (2022)
 
 **And feel free to link to MetaWIBELE in your Methods:**
 
