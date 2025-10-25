@@ -8,6 +8,7 @@
 * Updated prepare_uniprot_annotation
 * Tweake gene_abundance function
 * Add threads parameter for indexing database
+* Add threads parameter for CD-hit
 
 ## v0.4.7 2023-12-05 ##
 * Added more parallel option for preprocessing workflow
