@@ -556,10 +556,10 @@ def gene_catalog (workflow, complete_gene, complete_protein,
 	mylog = gene_catalog_nuc + ".log"
 	myclust = gene_catalog_nuc + ".clstr"
 	workflow.add_task(
-			'cd-hit-est -i [depends[0]] [args[0]] -o [targets[0]] >[args[1]] 2>&1 ',
+			'cd-hit-est -i [depends[0]] [args[0]] -T [args[1]] -o [targets[0]] >[args[2]] 2>&1 ',
 			depends = [complete_gene, TrackedExecutable("cd-hit-est")],
 			targets = [gene_catalog_nuc, myclust],
-			args = [config.cd_hit_gene_opts, mylog],
+			args = [config.cd_hit_gene_opts, threads, mylog],
 			cores = threads,
 			name = "cd-hit-est")
 
@@ -616,7 +616,7 @@ def gene_catalog (workflow, complete_gene, complete_protein,
 			else:
 				seq_file = seq_file + "," + os.path.join(input_dir, sample + '%s' % item)
 		flt_seqs.append((sample, seq_file))
-	# foreach sample
+	# foreah sample
 
 	## Now run bowtie2 to map reads to gene categories
 	mappings = []
