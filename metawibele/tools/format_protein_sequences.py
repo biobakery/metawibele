@@ -56,8 +56,9 @@ def get_args():
 def collect_sequence (ann_path, extension, partial_path, outfile):
 	filelist = utilities.find_files(ann_path, extension, None)
 	open_out = open(outfile, "w")
-	outfile2 = re.sub(".faa", ".abnormal_seq.faa", outfile)
-	outfile2 = re.sub(".fasta", ".abnormal_seq.fasta", outfile)
+	#outfile2 = re.sub(".faa", ".abnormal_seq.faa", outfile)
+	#outfile2 = re.sub(".fasta", ".abnormal_seq.fasta", outfile)
+	outfile2 = outfile + ".abnormal_seq.faa"
 	open_out2 = open(outfile2, "w")
 	gff = {}
 	types = {}
@@ -249,7 +250,6 @@ def collect_sequence (ann_path, extension, partial_path, outfile):
 			if re.search("\*", myseq): # terminal codon in CDS
 				#print("Abnormal CDS\t" + sample + "\t" + myname)
 				open_out2.write(myname + "\n" + AA_seq[myname] + "\n")
-				continue
 			else:
 				open_out.write(myname + "\n" + AA_seq[myname] + "\n")
 	# foreach sample
