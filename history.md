@@ -2,13 +2,14 @@
 # MetaWIBELE History #
 
 ## v0.4.8 2024-07-08 ##
-* Replace urease with seqkit
-* Refine config of reference
-* Refine prepare_uniprot_taxonomy function
+* Replaced urease with seqkit
+* Refined config of reference
+* Refined prepare_uniprot_taxonomy function
 * Updated prepare_uniprot_annotation
-* Tweake gene_abundance function
-* Add threads parameter for indexing database
-* Add threads parameter for CD-hit
+* Updated gene_abundance function
+* Added threads parameter for indexing database
+* Added threads parameter for CD-hit
+* Fixed bug for filtering abnormal protein sequences
 
 ## v0.4.7 2023-12-05 ##
 * Added more parallel option for preprocessing workflow
